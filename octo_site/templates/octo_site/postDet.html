@@ -1,0 +1,70 @@
+{%include 'blog/temp.html'%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <div class = "container">
+    <div class = "row">
+
+        <div class = "col-md-12">
+            {%  if user.username == post.author.username %}
+                <a class="btn btn-danger btn-md pull-left" onclick="return confirm('Are you sure?')" href = "delete/"><span class="glyphicon glyphicon-trash"></span> delete</a>
+                <a class="btn btn-warning btn-md pull-left" href = "updates/"><span class="glyphicon glyphicon-clock"></span> update</a>
+                <!--
+                <form action= 'updates' method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">Update</button>
+                </form>
+                <form action= 'delete' method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete </button>
+                </form>
+                -->
+
+            {% endif %}
+        <br>
+            <h3>{{ post.title }}</h3>
+        </div>
+        <div class = "col-md-12">
+            <div class = "row">
+                <div class = "col-md-8" >
+                    <h5><span class="glyphicon glyphicon-time"></span>
+                        Post by <b>{{ post.author.first_name }} {{ post.author.last_name }}</b>,
+                        {{ post.date }}
+                        {{ post.img.url }}
+                        <hr><br>
+                        <br>{{ post.content }}
+                    </h5>
+                </div>
+                <div class = "col-md-4">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</head>
+<body>
+<hr>
+<h3 style="padding-left:200px;">HATER'S COMMENTS</h3>
+    <div class="col-md-2"></div>
+    <div class = "col-md-8">
+        <div class="panel panel-default">
+            {% for comment in comment %}
+                <p>by {{ comment.author.first_name }} {{ comment.author.last_name }}</p>
+                <p>said: {{ comment.content }},  {{ comment.cdate }} </p>
+            {% endfor %}
+        </div>
+    </div>
+{% if request.session.guest %}
+    <form role="form"  style="padding-left:200px;" action = '/blog/{{ post.id }}/' method = 'POST'>
+              {% csrf_token %}
+            <div class="span5 offset1">
+              <textarea class="form-control" rows="3"  style="max-width: 60%"  name = "commentz" required></textarea>
+            </div><br>
+            <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <b><a class="navbar-brand" href="/blog/home/">POST-IT! <span class="glyphicon glyphicon-comment" aria-hidden="true"></span></a></b>
+        </div>
+      {% if user.first_name != "Guest" %}
+        <ul class="nav navbar-nav">
+            <li class=""><a href="/blog/myPosts/">My Posts</a></li>
+            <li class=""><a href="/blog/post/">Create Post</a></li>
+        </ul>
+      {% endif %}
+          <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">{% block uname %}{{ user.last_name}}, {{user.first_name}} {% endblock %}</a></li>
+              <li><a href="{% url 'signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          </ul>
+      </div>
+    </nav>
+</body>
+</html>

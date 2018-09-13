@@ -1,0 +1,41 @@
+{% include 'blog/temp.html' %}
+<html>
+<body>
+
+        <div class="content container">
+            <div class="row">
+                <div class="col-md-8">
+                    {% block content %}
+
+
+                        <center><p class="text-info"><b>NEW POST</b></p></center>
+
+                                <form method="POST" class="post-form" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                 {{ form.non_field_errors }}
+                                   <p class="bg-info">Title</p>
+                                    <div class="fieldWrapper">
+                                        {{ form.title.errors }}
+                                        {{ form.title }}
+                                    </div>
+
+                                    <p class="bg-info">Content</p>
+                                    <div class="fieldWrapper">
+
+                                        {{ form.content.errors }}
+                                        {{ form.content }}
+                                    </div>
+                                      <p><b>Post Image</b>
+                                        <input id="id_image" type="file" class="" name="image">
+                                    </p>
+                                    <button type="submit" class="save btn btn-default">Save</button>
+                                </form>
+
+
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+</body>
+</html>

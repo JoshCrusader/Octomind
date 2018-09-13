@@ -1,0 +1,41 @@
+{%include 'blog/temp.html'%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+    <div class = "container">
+    <div class = "row">
+
+        <div class = "col-md-12">
+            <div class = "row">
+                <div class = "col-md-8" >
+                    <h5><span class="glyphicon glyphicon-time"></span>
+                        Post by <b>{{ post.author.first_name }} {{ post.author.last_name }}</b>
+                        {{ post.date }}
+                        <hr><br>
+
+                        <div class = "col-md-8" >
+                            <form action= 'updatefin' method="POST">
+                                {% csrf_token %}
+
+                                Title <input type="text" value="{{ post.title }}" name="title"> </input>
+                                <br>Content <br>
+                                <textarea class="form-control" id="comment" name = "content">{{ post.content }}</textarea>
+                                <button type="submit" class="btn btn-danger btn-md pull-left">EDIT BOI</button>
+                            </form>
+                        </div>
+                    </h5>
+                </div>
+                <div class = "col-md-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</head>
+<body>
+
+
+</body>
+</html>

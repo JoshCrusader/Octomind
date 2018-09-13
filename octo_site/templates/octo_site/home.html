@@ -1,0 +1,88 @@
+{% include 'blog/temp.html' %}
+
+{% load staticfiles %}
+<html>
+<body>
+<div class="row">
+<div class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <form action={% url 'home' %} method="post">
+        {% csrf_token %}
+
+        <b>Sort Posts by: </b>
+        <input type="radio" name="Author" value="Author"> Author |
+        <input type="radio" name="DateCreate" value="DateCreate"> Date Created |
+        <input type="radio" name="Title" value="Title"> Title
+        <button type="submit" class="btn btn-default" name="submit"> Sort out! </button>
+    </form>
+</div>
+    <div class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+        <form action={% url 'search' %} method="POST" class="navbar-form" role="search">
+            {% csrf_token %}
+    <div class="input-group add-on">
+      <input class="form-control" placeholder="Search" name="q" id="q" type="text">
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+      </div>
+    </div>
+  </form>
+    </div>
+</div>
+{% if posts %}
+    {%  for post in posts reversed %}
+    <div class="container">
+            <div id="loginbox" style="margin-top:10px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+                <div class="panel panel-info" >
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                        <div class="pull-left">
+                                            <a href = "/blog/{{ post.id }}/">{{ post.title|slice:":50" }}</a>
+
+                                        </div>
+
+                                        <div class="pull-right" >
+                                            <div class="text-right">
+                                                {{ post.author.first_name }} {{ post.author.last_name }}   <img src="{{ post.author.avatar.url }}" class="img-circle" alt="" width="55" height="50"><br/>
+                                                @ <small>{{ post.date }}</small>
+                                            </div>
+                                        </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div style="padding-top:10px" class="panel-body" >
+                                    <p>{{ post.content|linebreaks|slice:"200" }}</p>
+
+                                        <img src="{{ post.img.url }}" alt="" style="max-width: 500px; max-height: 500px" >
+
+                        </div>
+                        <div class="panel-footer">
+                            <form action="{% url 'shows' %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-default">Show Comments</button>
+                            </form>
+                            {% if show %}
+
+                                {% for comment in comments %}
+
+                                    {% if comment.post_id == post.id %}
+
+                                        <b><p>{{ comment.author.first_name }} {{ comment.author.last_name }}</p> said on {{ comment.cdate }}</b>
+                                        <b>{{ comment.content }} </b>
+                                    <hr>
+                                    {% endif %}
+
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                </div>
+
+            </div>
+
+    </div>
+    {% endfor %}
+{% else %}p
+    <B> No Posts wwaaaw </B>
+{% endif %}
+    </body>
+</html>

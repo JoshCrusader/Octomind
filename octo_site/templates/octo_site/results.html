@@ -1,0 +1,67 @@
+{% include 'blog/temp.html' %}
+
+{% load staticfiles %}
+<html>
+<body>
+<div class="col-md-6">
+<form action={% url 'home' %} method="post">
+    {% csrf_token %}
+
+    <b>Results: </b>
+
+</form>
+</div>
+{% if posts %}
+    {%  for post in posts reversed %}
+    <div class="container">
+            <div id="loginbox" style="margin-top:40px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+                <div class="panel panel-info" >
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                        <div class="pull-left">
+                                            <a href = "/blog/{{ post.id }}/">{{ post.title|slice:":50" }}</a>
+                                        </div>
+
+                                        <div class="pull-right" >
+                                            <div class="text-right">
+                                                {{ post.author.first_name }} {{ post.author.last_name }} <br/>
+                                                @ <small>{{ post.date }}</small>
+                                            </div>
+                                        </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div style="padding-top:30px" class="panel-body" >
+                                    <p>{{ post.content|linebreaks|slice:"200" }}</p>
+                        </div>
+                        <div class="panel-footer">
+                            <form action="{% url 'shows' %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-default">Show Comments</button>
+                            </form>
+                            {% if show %}
+
+                                {% for comment in comments %}
+
+                                    {% if comment.post_id == post.id %}
+
+                                        <b><p>{{ comment.author.first_name }} {{ comment.author.last_name }}</p> said on {{ comment.cdate }}</b>
+                                        <b>{{ comment.content }} </b>
+                                    <hr>
+                                    {% endif %}
+
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                </div>
+
+            </div>
+
+    </div>-
+    {% endfor %}
+{% else %}
+    <B> No Posts wwaaaw </B>
+{% endif %}
+    </body>
+</html>
