@@ -2,6 +2,23 @@
 <html>
 <title>hello bobo</title>
 <body>
-<h1>gago</h1>
+<h1>GhaGO</h1>
+
+{% for uu in u %}
+    {% for ii in i %}
+        {% if forloop.counter == forloop.parentloop.counter %}
+            <b>{{ uu.name }}</b>
+            <br>
+            <b>{{ uu.email }}</b>
+            <br>
+            <b>{{ ii.father }}</b>
+            <br>
+            <b>{{ ii.mother }}</b>
+            <br>
+            <b>{{ ii.partner }}</b>
+        {% endif %}
+    {% endfor %}
+    <hr>
+{% endfor %}
 </body>
 </html>
