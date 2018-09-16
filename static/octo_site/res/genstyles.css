@@ -1,0 +1,128 @@
+/*
+black 1 - #414a4c
+black 2 - #3b444b
+black 3 - #353839
+black 4 - #232b2b
+black 5 - #0e1111
+*/
+
+body {
+    background-image: url("ss.jpg");
+    background-color: #232b2b;
+    background-size: 100%;
+}
+
+h1 {
+    color: navy;
+    margin-left: 20px;
+}
+.container{
+    vertical-align: middle;
+    width: 100%;    
+}
+.center_form{
+    margin-top:105;
+}
+.logo_container{
+    margin:auto;
+}
+.form_logo{
+    margin:auto;
+    height: 100px;
+    width: 100px;
+    display: block;
+}
+.loginform{
+    vertical-align: middle;
+    margin: auto;
+    margin-top: 15;
+    width:  100%;
+    height: 60%;
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 12px;
+
+}
+.formcontainer{
+    padding: 65px;
+    
+}
+.formLabel{
+    color: white;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+.input_div{
+    margin-top: 5%;
+    width: 100%;
+    height: 10%;
+}
+.text_input{
+    outline: none;
+    -webkit-appearance: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    font-size: 35px;
+    padding: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.bsubmit{
+    margin-top:40px;
+    background-color: #3b444b;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    height: 10%;
+    color: white;
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.form_footer{
+    margin-top: 10px;
+    width:100%;
+    text-align: center;
+}
+.bcontact{
+    color:  #414a4c;
+    text-decoration: none !important;
+}
+@media (min-width: 1201px) {
+    /* For mobile phones: */
+    [class="loginform"] {
+        width: 35%;
+    }
+}
+@media (max-width: 1200px) and (min-width: 991px) {
+    /* For mobile phones: */
+    [class="loginform"] {
+        width: 75%;
+    }
+    [class = "form_logo"]{
+        width: 125px;
+        height: 125px;
+    }
+    [class = "center_form"]{
+        margin-top:85;
+    }
+}
+@media (max-width: 990px) {
+    /* For mobile phones: */
+    [class="loginform"] {
+        width: 100%;
+    }
+    [class = "form_logo"]{
+        width: 22%;
+        height: 22%;
+    }
+    [class = "center_form"]{
+        margin-top:15;
+    }
+}
+@media (max-height: 700px) {
+    /* For mobile phones: */
+    [class="loginform"] {
+        height: 450px;
+    }
+}
