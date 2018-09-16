@@ -1,24 +1,40 @@
 
-<html>
-<title>hello bobo</title>
-<body>
-<h1>GhaGO</h1>
 
-{% for uu in u %}
-    {% for ii in i %}
-        {% if forloop.counter == forloop.parentloop.counter %}
-            <b>{{ uu.name }}</b>
-            <br>
-            <b>{{ uu.email }}</b>
-            <br>
-            <b>{{ ii.father }}</b>
-            <br>
-            <b>{{ ii.mother }}</b>
-            <br>
-            <b>{{ ii.partner }}</b>
-        {% endif %}
-    {% endfor %}
-    <hr>
-{% endfor %}
+    {% load staticfiles %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
+    <title>Octomind | Home</title>
+</head>
+
+<body>
+    
+    <div class = "container">
+        <div class = "center_form">
+            <div class = "logo_container">
+                <img src="{% static 'mystery-logo.png' %}" class = "form_logo">
+            </div>
+            <div class = "loginform">
+
+            <center>
+
+                <img src="{% static 'octomindlogo.png' %}" >
+            </center>
+                <div class = "formcontainer">
+                    <div class = "formLabel">Username:</div>
+                    <div class = "input_div">
+                        <input type = "text" class = "text_input">
+                    </div>
+                    <br>
+                    <div class = "formLabel">Password:</div>
+                    <div class = "input_div">
+                        <input type = "password" class = "text_input">
+                    </div>
+                    <input type = "submit" value = "login" class = "bsubmit">
+                    <div class = "form_footer">
+                        <a href = "administrator/home/home.html" class = "bcontact">Contact adminstrator</a>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-</html>

@@ -5,5 +5,4 @@ from octo_site.models import *
 def index(request):
     u = Users.objects.all()
     i = Info.objects.all()
-
     return render(request,'octo_site/index.html', {'u': u,'i': i,'ctr':0})
