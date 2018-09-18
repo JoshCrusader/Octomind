@@ -5619,7 +5619,7 @@ function defaultDisplay( nodeName ) {
 			iframe = ( iframe || jQuery( "<iframe frameborder='0' width='0' height='0'/>" ) )
 				.appendTo( doc.documentElement );
 
-			// Always write a new HTML skeleton so Webkit and Firefox don't choke on reuse
+			// Always write a new HTML skeleton so Webkit and Firefox don't choke on master
 			doc = iframe[ 0 ].contentDocument;
 
 			// Support: IE

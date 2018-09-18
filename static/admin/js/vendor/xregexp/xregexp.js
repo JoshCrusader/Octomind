@@ -2083,7 +2083,7 @@ XRegExp = XRegExp || (function (undef) {
     }
 
 /**
- * Builds regexes using named subpatterns, for readability and pattern reuse. Backreferences in the
+ * Builds regexes using named subpatterns, for readability and pattern master. Backreferences in the
  * outer pattern and provided subpatterns are automatically renumbered to work correctly. Native
  * flags used by provided subpatterns are ignored in favor of the `flags` argument.
  * @memberOf XRegExp
