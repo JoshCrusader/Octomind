@@ -16,12 +16,14 @@ def log_in(request):
         request.session['guest'] = True
         request.session['logged'] = True
         login(request, user)
-        return render(request, 'octo_site/dashboard.html')
+        return redirect('index')
     else:
         return render(request, 'octo_site/login.html')
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
-
+def signout(request):
+    logout(request)
+    return redirect('index')
 def index(request):
     return render(request,'octo_site/dashboard.html')
