@@ -20,6 +20,22 @@ def log_in(request):
     else:
         return render(request, 'octo_site/login.html')
 
+'''
+    TODO: Using sign up form, create a user
+'''
+def register(request):
+
+    if(request.method == 'POST'):
+        username = request.POST.get('user')
+        password = request.POST.get('password')
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        return render(request, 'octo_site/register.html')
+    else:
+        return render(request, 'octo_site/register.html')
+
+
+
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
