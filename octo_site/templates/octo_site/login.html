@@ -9,18 +9,35 @@
 		<!-- CSS FILES -->
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/uikit.min.css' %}">
+		<!-- JS FILES -->
+		<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
+		<script src="{% static 'octo_site/res/uikit/js/uikit-icons.min.js' %}"></script>
     </head>
+    <style>
+        .lgform{
+            background-color: #222;
+            background-repeat: no-repeat;
+            background-position: top left;
+        }
+    </style>
 
 	<body>
 		<div class="uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-light bg" >
 			<div class="uk-position-bottom-center uk-position-small uk-visible@m">
-				<span class="uk-text-small uk-text-muted">© 2018 Mystery Manila - <a href="https://github.com/zzseba78/Kick-Off" style="color: #1e87f0">by Team Solothesis</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a></span>
+				<span class="uk-text-small uk-text-muted">© 2018 Mystery Manila - <a href="https://github.com/JoshCrusader/Octomind" style="color: #1e87f0">by Team Solothesis</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a></span>
 			</div>
-			<div class="uk-width-medium uk-padding-small" style="background-color: #222">
+            <script>
+                {% if messages %}
+                    {% for message in messages %}
+                        UIkit.notification("{{ message }}", {pos: 'bottom-center'});
+                    {% endfor %}
+                {% endif %}
+            </script>
+			<div class="uk-width-medium uk-padding-small lgform">
 				<form action="{% url 'log_in' %}" method="post">
                     {% csrf_token %}
 					<fieldset class="uk-fieldset">
-                        <center><h3>Octomind</h3></center>
+                        <center><img src="{% static 'octomindlogo.png' %}" style="width: 50%;height: 50%;display: inline"></center>
                         <hr>
 						<div class="uk-margin">
 							<div class="uk-inline uk-width-1-1">
@@ -46,10 +63,10 @@
 				<div>
 					<div class="uk-text-center">
 						<a class="uk-link-reset uk-text-small" data-uk-toggle="target: #recover;animation: uk-animation-slide-top-small">Forgot your password?</a>
+                        <a href="{% url 'register' %}" style="color: #1e87f0">Register</a>
 					</div>
 					<div class="uk-margin-small-top" id="recover" hidden>
 						<form action="login-dark.html">
-
 							<div class="uk-margin-small">
 								<div class="uk-inline uk-width-1-1">
 									<span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: mail"></span>
@@ -65,9 +82,5 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- JS FILES -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.6/js/uikit.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.6/js/uikit-icons.min.js"></script>
 	</body>
 </html>

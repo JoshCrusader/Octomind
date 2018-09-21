@@ -124,7 +124,7 @@ LOGIN_URL = '/octo_site/log_in/'
 
 LOGIN_EXEMPT_URLS = (
     r'^octo_site/log/$',
-    r'^octo_site/signout/$'
+    r'^octo_site/signout/$',
     r'^octo_site/register/$'
 )
 STATIC_URL = '/static/'
