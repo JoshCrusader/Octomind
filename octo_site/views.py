@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 def log_in(request):
+
+    print("loging doging")
     user = None
     try:
         user = authenticate(username=request.POST['user'], password=request.POST['password'])
@@ -23,28 +25,26 @@ def log_in(request):
     else:
         return render(request, 'octo_site/login.html')
 
-'''
-    TODO: Using sign up form, create a user
-'''
 def register(request):
-
-    if(request.method == 'POST'):
+    print("xxxd")
+    if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('password')
         user = User.objects.create_user(username=username, password=password)
         user.save()
-        return render(request, 'octo_site/register.html')
-    else:
-        return render(request, 'octo_site/register.html')
+        print(user.username)
+        messages.warning(request, 'Account Created.')
+        return redirect('index')
 
-
+    print("gagag")
+    return render(request, 'octo_site/register.html')
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
     logout(request)
     return redirect('index')
-def register(request):
-    return render(request, 'octo_site/register.html')
 def index(request):
+
+    print("gago")
     return render(request,'octo_site/dashboard.html')
