@@ -5,77 +5,45 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Mystery Manila - Octomind </title>
-		<link rel="icon" href="{% static 'octomindlogo.png' %}">
+		<link rel="icon" href="{% static 'octomindlogo_white.png' %}">
 		<!-- CSS FILES -->
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/uikit.min.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/dashboard.css' %}">
+
+		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
 	</head>
 	<body>
+
+<style>
+    #hdr{
+        z-index: 50;
+        top: 0;
+        left:0;
+        right:0;
+    }
+    #lft{
+    position: fixed;
+      left: 0;
+      /* Height of the navbar default */
+      top:0;
+      bottom:0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #222;
+      width: 240px;
+      z-index:75;
+    }
+    #hdr [class*="uk-navbar-dropdown-bottom"] {
+	    margin-top: 0;
+    }
+</style>
 		<div class="uk-offcanvas-content">
 			<!--HEADER-->
-			<header id="top-head" class="uk-position-fixed">
-				<div class="uk-container uk-container-expand uk-background-secondary">
-					<nav class="uk-navbar uk-light" data-uk-navbar="mode:click">
-						<div class="uk-navbar-left">
-							<a class="uk-navbar-item uk-logo" href="#"><img class="uk-border-circle" src="{% static 'octomindlogo.png' %}" style="height: 50px;width: 50px; "></a>
-							<ul class="uk-navbar-nav uk-visible@m">
-								<li class="uk-active"><a href="#">Accounts</a></li>
-								<li>
-									<a href="#">Settings <span data-uk-icon="icon: triangle-down"></span></a>
-									<div class="uk-navbar-dropdown">
-										<ul class="uk-nav uk-navbar-dropdown-nav">
-											<li class="uk-nav-header">YOUR ACCOUNT</li>
-											<li><a href="#"><span data-uk-icon="icon: info"></span> Summary</a></li>
-											<li><a href="#"><span data-uk-icon="icon: refresh"></span> Edit</a></li>
-											<li><a href="#"><span data-uk-icon="icon: settings"></span> Configuration</a></li>
-											<li class="uk-nav-divider"></li>
-											<li><a href="#"><span data-uk-icon="icon: image"></span> Your Data</a></li>
-											<li class="uk-nav-divider"></li>
-											<li><a href="#"><span data-uk-icon="icon: sign-out"></span> Logout</a></li>
-											
-										</ul>
-									</div>
-								</li>
-							</ul>
-							<div class="uk-navbar-item uk-visible@s">
-								<form action="dashboard.html" class="uk-search uk-search-default">
-									<span data-uk-search-icon></span>
-									<input class="uk-search-input search-field" type="search" placeholder="Search">
-								</form>
-							</div>
-						</div>
-						<div class="uk-navbar-right">
-							<ul class="uk-navbar-nav">
-								<li>
-									<a href="#" data-uk-icon="icon:user"></a>
-									<div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
-										<ul class="uk-nav uk-navbar-dropdown-nav">
-											<li class="uk-nav-header">YOUR ACCOUNT</li>
-											<li><a href="#"><span data-uk-icon="icon: info"></span> Summary</a></li>
-											<li><a href="#"><span data-uk-icon="icon: refresh"></span> Edit</a></li>
-											<li><a href="#"><span data-uk-icon="icon: settings"></span> Configuration</a></li>
-											<li class="uk-nav-divider"></li>
-											<li><a href="#"><span data-uk-icon="icon: image"></span> Your Pictures</a></li>
-											<li class="uk-nav-divider"></li>
-											<li><a href="#"><span data-uk-icon="icon: sign-out"></span> Logout</a></li>
-											
-										</ul>
-									</div>
-								</li>
-								<li><a href="#" data-uk-icon="icon: settings"></a></li>
-								<li><a href="#" data-uk-icon="icon: cog"></a></li>
-								<li><a class="uk-navbar-toggle" data-uk-toggle data-uk-navbar-toggle-icon href="#offcanvas-nav"></a></li>
-							</ul>
-						</div>
-					</nav>
-				</div>
-			</header>
-			<!--/HEADER-->
-			<!-- LEFT BAR -->
-			<aside id="left-col" class="uk-light uk-visible@m">
+            <!-- LEFT BAR -->
+			<aside id="lft" class="uk-light uk-visible@m">
 				<div class="profile-bar">
 					<div class="uk-grid uk-grid-small uk-flex uk-flex-middle" data-uk-grid>
-						<div class="uk-width-auto"><img src="{% static 'octomindlogo.png' %}" alt="" class="uk-border-circle profile-img"></div>
+						<div class="uk-width-auto"><img src="{% static 'octomindlogo_white.png' %}" style="height: 50px;width:60px" class="uk-border-circle profile-img"></div>
 						<div class="uk-width-expand">
 							<span class="uk-text-small uk-text-muted">Mystery Manila</span>
 							<h4 class="uk-margin-remove-vertical text-light">Octomind</h4>
@@ -88,8 +56,8 @@
 						<li class="uk-parent uk-open">
 							<a href="#">Game Rooms</a>
 							<ul class="uk-nav-sub">
-								<li><a href="#">Start game</a></li>
-								<li><a href="#">Current game</a></li>
+								<li><a href="#">Control Panel</a></li>
+								<li><a href="#">Current game??</a></li>
 							</ul>
 						</li>
 						<li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span> Reports</li>
@@ -114,26 +82,64 @@
 								<li><a href="#">Sub item</a></li>
 							</ul>
                         </li>
-		        <li class="uk-nav-header">Settings</li>
-						<li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: image"></span> Album</a></li>
+		        <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>
+						<li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: nut"></span> Sensors</a></li>
+						<li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: image"></span> Rooms</a></li>
+						<li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: home"></span> Branches</a></li>
 						<li class="uk-nav-divider"></li>
-						<li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> Login</a></li>
+						<li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> xx</a></li>
 					</ul>
 				</div>
 				<div class="uk-position-bottom bar-bottom">
-					<ul class="uk-subnav uk-flex uk-flex-center uk-child-width-1-6" data-uk-grid>
+					<ul class="uk-subnav uk-flex uk-flex-center" data-uk-grid>
 						<li>
-							<a href="#" class="uk-icon-link" data-uk-icon="icon: home"></a>
+							<a href="#" class="uk-icon-link" data-uk-icon="icon: github">Team Solothesis &nbsp;</a>
 						</li>
-						<li>
-							<a href="{% url 'signout' %}" class="uk-icon-link" data-uk-tooltip="Sign out" data-uk-icon="icon: sign-out"></a>
-						</li>
+                        <li>
+                            <a class="uk-icon-link"></a>
+                        </li>
+
 					</ul>
 				</div>
 			</aside>
 			<!-- /LEFT BAR -->
+			<header id="hdr" class="uk-position-fixed">
+				<div class="uk-container uk-container-expand uk-background-secondary">
+					<nav class="uk-navbar uk-light" data-uk-navbar="mode:click">
+						<div class="uk-navbar-left">
+							<a class="uk-navbar-item uk-logo" href="#"><img class="uk-border-circle" src="{% static 'octomindlogo_white.png' %}" style="height: 50px;width: 50px; "></a>
+							<div class="uk-navbar-item uk-visible@s" style="margin-left: 19vh">
+								<form action="dashboard.html" class="uk-search uk-search-default">
+									<span data-uk-search-icon></span>
+									<input class="uk-search-input search-field" type="search" placeholder="Search">
+								</form>
+							</div>
+						</div>
+						<div class="uk-navbar-right">
+							<ul class="uk-navbar-nav">
+								<li>
+									<a href="#" data-uk-icon="icon:user"></a>
+									<div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
+										<ul class="uk-nav uk-navbar-dropdown-nav">
+											<li class="uk-nav-header">{{ request.user.first_name }} {{ request.user.last_name }} </li>
+											<li><a href="#"><span data-uk-icon="icon: info"></span> Summary</a></li>
+											<li><a href="#"><span data-uk-icon="icon: refresh"></span> Edit</a></li>
+											<li><a href="#"><span data-uk-icon="icon: settings"></span> Configuration</a></li>
+											<li class="uk-nav-divider"></li>
+											<li><a href="{% url 'signout' %}"><span data-uk-icon="icon: sign-out"  data-uk-tooltip="Sign out"></span> Logout</a></li>
+											
+										</ul>
+									</div>
+								</li>
+								<li><a class="uk-navbar-toggle" data-uk-toggle data-uk-navbar-toggle-icon href="#offcanvas-nav"></a></li>
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</header>
+			<!--/HEADER-->
 			<!-- CONTENT -->
-			<div id="content" data-uk-height-viewport="expand: true">
+			<div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
 				<div class="uk-container uk-container-expand">
 					<div class="uk-grid uk-grid-divider uk-grid-medium uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl" data-uk-grid>
 						<div>
@@ -144,31 +150,27 @@
 							</div>
 						</div>
 						<div>
-							
+
 							<span class="uk-text-small"><span data-uk-icon="icon:social" class="uk-margin-small-right uk-text-primary"></span>Social Media</span>
 							<h1 class="uk-heading-primary uk-margin-remove uk-text-primary">8.490</h1>
 							<div class="uk-text-small">
 								<span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> less than last week.
 							</div>
-							
+
 						</div>
 						<div>
-							
 							<span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Traffic hours</span>
 							<h1 class="uk-heading-primary uk-margin-remove uk-text-primary">12.00<small class="uk-text-small">PM</small></h1>
 							<div class="uk-text-small">
 								<span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> more than last week.
 							</div>
-							
 						</div>
 						<div>
-							
 							<span class="uk-text-small"><span data-uk-icon="icon:search" class="uk-margin-small-right uk-text-primary"></span>Week Search</span>
 							<h1 class="uk-heading-primary uk-margin-remove uk-text-primary">9.543</h1>
 							<div class="uk-text-small">
 								<span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> less than last week.
 							</div>
-							
 						</div>
 						<div class="uk-visible@xl">
 							<span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span>Lorem ipsum</span>
@@ -385,6 +387,8 @@
 				</div>
 			</div>
 			<!-- /OFFCANVAS -->
+            <!-- content here -->
+
 		</div>
 		
 		<!-- JS FILES -->

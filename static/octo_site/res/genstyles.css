@@ -5,7 +5,24 @@ black 3 - #353839
 black 4 - #232b2b
 black 5 - #0e1111
 */
-
+#hdr{
+        z-index: 0;
+        top: 0;
+        left:0;
+        right:0;
+    }
+#lft{
+position: fixed;
+  left: 0;
+  /* Height of the navbar default */
+  top:0px;
+  bottom:0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #222;
+  width: 250px;
+  z-index:1;
+}
 body {
     background-image: url("ss.jpg");
     background-color: #232b2b;

@@ -26,7 +26,6 @@ def log_in(request):
         return render(request, 'octo_site/login.html')
 
 def register(request):
-    print("xxxd")
     if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('password')
@@ -35,8 +34,6 @@ def register(request):
         print(user.username)
         messages.warning(request, 'Account Created.')
         return redirect('index')
-
-    print("gagag")
     return render(request, 'octo_site/register.html')
 
 def dashboard(request):
