@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-# Create your views here.
+# Create your views here
 def log_in(request):
 
     print("loging doging")
