@@ -1,0 +1,130 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `sensorDB` DEFAULT CHARACTER SET latin1 ;
+-- -----------------------------------------------------
+-- Table `sensorDB`.`sensor_log`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`sensor_log` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`sensor_log` (
+  `sensor_id` INT(11) NOT NULL,
+  `groom_id` INT(11) NOT NULL,
+  `timestamp` VARCHAR(45) NULL DEFAULT NULL,
+  `value` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`sensor_id`, `groom_id`),
+  INDEX `fk_sensor_log_sensor1_idx` (`sensor_id` ASC),
+  INDEX `fk_sensor_log_gameroom1_idx` (`groom_id` ASC),
+  CONSTRAINT `fk_sensor_log_gameroom1`
+    FOREIGN KEY (`groom_id`)
+    REFERENCES `sensorDB`.`gameroom` (`groom_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sensor_log_sensor1`
+    FOREIGN KEY (`sensor_id`)
+    REFERENCES `sensorDB`.`sensor` (`sensor_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `sensorDB`.`branch`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`branch` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`branch` (
+  `branch_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `address` VARCHAR(45) NULL,
+  PRIMARY KEY (`branch_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sensorDB`.`room`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`room` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`room` (
+  `room_id` INT NOT NULL AUTO_INCREMENT,
+  `room_name` VARCHAR(45) NULL,
+  `branch_id` INT NOT NULL,
+  PRIMARY KEY (`room_id`, `branch_id`),
+  INDEX `fk_room_branch1_idx` (`branch_id` ASC),
+  CONSTRAINT `fk_room_branch1`
+    FOREIGN KEY (`branch_id`)
+    REFERENCES `sensorDB`.`branch` (`branch_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sensorDB`.`rpi`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`rpi` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`rpi` (
+  `rpi_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `ip_address` VARCHAR(45) NULL,
+  `room_id` INT NOT NULL,
+  PRIMARY KEY (`rpi_id`, `room_id`),
+  INDEX `fk_rpi_room1_idx` (`room_id` ASC),
+  CONSTRAINT `fk_rpi_room1`
+    FOREIGN KEY (`room_id`)
+    REFERENCES `sensorDB`.`room` (`room_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sensorDB`.`sensor_type`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`sensor_type` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`sensor_type` (
+  `sensor_type_id` INT NOT NULL AUTO_INCREMENT,
+  `sensor_type_name` VARCHAR(45) NULL,
+  `val_name` VARCHAR(45) NULL,
+  `trigger_treshold` INT NULL,
+  PRIMARY KEY (`sensor_type_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sensorDB`.`sensor`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sensorDB`.`sensor` ;
+
+CREATE TABLE IF NOT EXISTS `sensorDB`.`sensor` (
+  `sensor_id` INT NOT NULL,
+  `sensor_name` VARCHAR(45) NULL,
+  `rpi_id` INT NOT NULL,
+  `sensor_type_id` INT NOT NULL,
+  PRIMARY KEY (`sensor_id`, `rpi_id`, `sensor_type_id`),
+  INDEX `fk_sensor_rpi1_idx` (`rpi_id` ASC),
+  INDEX `fk_sensor_sensor_type1_idx` (`sensor_type_id` ASC),
+  CONSTRAINT `fk_sensor_rpi1`
+    FOREIGN KEY (`rpi_id`)
+    REFERENCES `sensorDB`.`rpi` (`rpi_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sensor_sensor_type1`
+    FOREIGN KEY (`sensor_type_id`)
+    REFERENCES `sensorDB`.`sensor_type` (`sensor_type_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
