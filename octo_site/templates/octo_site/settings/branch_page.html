@@ -1,17 +1,61 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
+
+<div id="modal-sections" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD SENSOR <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+        <div class="uk-modal-body">
+            <form class="uk-form">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Sensor Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-stacked-select">
+                            <option>Option 01</option>
+                            <option>Option 02</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-stacked-select">
+                            <option>Option 01</option>
+                            <option>Option 02</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
 <div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
-			<section class="uk-section uk-article" style="background-color: red;padding: 10px" >
+			<section class="uk-section uk-article" style="background-color: white;padding: 10px" >
 				<div class="uk-container uk-container-medium" style="margin-top: 3vh">
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-medium" >
 
                                 <div class="uk-width-auto" >
-                                    <h4 class="uk-margin-remove-bottom"><span  data-uk-icon="icon: nut;ratio: 1"></span> Game Room Sensors </h4>
+                                    <h4 class="uk-margin-remove-bottom"><span  data-uk-icon="icon: nut;ratio: 1"></span> Branch Room Sensors </h4>
                                 </div>
                                 <div class="uk-width-expand uk-text-right">
-                                    <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: plus-circle"> New Sensor  </a>
+                                    <a href="#modal-sections" uk-toggle>
+                                        <button class="uk-button uk-button-default uk-button-small hobor" style="">New Sensor <span data-uk-icon="icon: plus"></span></button>
+                                    </a>
                                 </div>
 
 	                            <div class="uk-card-body uk-align-center">
@@ -40,7 +84,7 @@
 											<tr>
 												<td><img src="https://picsum.photos/40/40/?random=2" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
 												<td>Larry Boile</td>
-												<td>Maecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittMaecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
+												<td> sagittMaecenas a nulla luctus mauris</td>
 												<td>13/09/18</td>
 												<td>
 													<a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>

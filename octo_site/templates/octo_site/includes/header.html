@@ -13,6 +13,7 @@
 
 
 		<!-- JS FILES -->
+		<script src="{% static 'octo_site/res/jquery.js' %}"></script>
 		<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
 		<script src="{% static 'octo_site/res/uikit/js/uikit-icons.min.js' %}"></script>
 	</head>
@@ -20,6 +21,13 @@
 <style>
     .shdw{
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+    }
+    .hobor{
+        color:#232b2b;
+        border-radius: 50px;
+    }
+    .bord_rad{
+        border-radius: 25px;
     }
     #hdr{
         z-index: 50;
@@ -88,9 +96,9 @@
                 </ul>
             </li>
     <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>
-            <li><a href="{% url 'add_sensor' %}"><span class="uk-margin-small-right" data-uk-icon="icon: nut"></span> Sensors</a></li>
-            <li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: image"></span> Rooms</a></li>
-            <li><a href="album.html"><span class="uk-margin-small-right" data-uk-icon="icon: home"></span> Branches</a></li>
+            <li><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
+            <li><a href="{% url 'page_room' %}"><span class="uk-margin-small-left" data-uk-icon="icon: image"></span> Rooms</a></li>
+            <li><a href="{% url 'page_branch' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Branches</a></li>
             <li class="uk-nav-divider"></li>
             <li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> xx</a></li>
         </ul>

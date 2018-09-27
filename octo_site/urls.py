@@ -11,9 +11,9 @@ urlpatterns = [
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),
     #settings
-    path('add_room/', views.add_room, name='add_room'),
-    path('add_sensor/', views.add_sensor, name='add_sensor'),
-    path('add_branch/', views.add_branch, name='add_branch'),
+    path('room/', views.page_room, name='page_room'),
+    path('sensor/', views.page_sensor, name='page_sensor'),
+    path('branch/', views.page_branch, name='page_branch'),
 
     path('admin/', admin.site.urls),
 ]
