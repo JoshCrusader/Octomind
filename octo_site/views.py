@@ -36,6 +36,13 @@ def register(request):
         return redirect('index')
     return render(request, 'octo_site/register.html')
 
+def add_sensor(request):
+    return render(request,'octo_site/dashboard.html')
+def add_room(request):
+    return render(request,'octo_site/dashboard.html')
+def add_branch(request):
+    return render(request,'octo_site/dashboard.html')
+
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
