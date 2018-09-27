@@ -37,11 +37,11 @@ def register(request):
     return render(request, 'octo_site/register.html')
 
 def add_sensor(request):
-    return render(request,'octo_site/dashboard.html')
+    return render(request,'octo_site/settings/addsensor.html')
 def add_room(request):
-    return render(request,'octo_site/dashboard.html')
+    return render(request,'octo_site/settings/addroom.html')
 def add_branch(request):
-    return render(request,'octo_site/dashboard.html')
+    return render(request,'octo_site/settings/addbranch.html')
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
