@@ -1,0 +1,155 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+
+<div id="modal-branch" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD BRANCH <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+        <div class="uk-modal-body">
+            <form class="uk-form">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Address</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-stacked-select">
+                            <option>Option 01</option>
+                            <option>Option 02</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
+        </div>
+    </div>
+</div>
+<div id="modal-rooms" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD ROOM <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+        <div class="uk-modal-body">
+            <form class="uk-form">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Address</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-stacked-select">
+                            <option>Option 01</option>
+                            <option>Option 02</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
+    <section class="uk-section uk-article" style="background-color: white;padding: 10px" >
+        <div class="uk-container uk-container-medium" style="margin-top: 3vh">
+            <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+            <div class="uk-card-header">
+                <div class="uk-grid uk-grid-medium" >
+
+                        <div class="uk-width-auto" >
+                            <h4 class="uk-margin-remove-bottom"><span  data-uk-icon="icon: home;ratio: 1"></span> Venue Settings </h4>
+                        </div>
+                        <div class="uk-width-expand uk-text-right">
+                            <a href="#modal-branch" uk-toggle>
+                                <button class="uk-button uk-button-default uk-button-small hobor" style="">New Branch <span data-uk-icon="icon: plus"></span></button>
+                            </a>
+                            <a href="#modal-rooms" uk-toggle>
+                                <button class="uk-button uk-button-default uk-button-small hobor" style="">New Room <span data-uk-icon="icon: plus"></span></button>
+                            </a>
+                        </div>
+                        <div class="uk-card-body uk-align-center uk-width-1-1">
+                            <div uk-switcher="animation: uk-animation-fade">
+                                <button class="uk-button uk-button-default bord_rad" type="button">ROOMS</button>
+                                <button class="uk-button uk-button-default bord_rad" type="button">BRANCHES</button>
+                            </div>
+                            <ul class="uk-switcher uk-margin">
+                                <li class="uk-width-1-1">
+                                    <div class="uk-overflow-auto uk-width-1-1">
+                                        <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Name</th>
+                                                    <th>Description</th>
+                                                    <th>Last Updated</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
+                                                    <td>Jerry Thomas</td>
+                                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
+                                                    <td>21/09/18</td>
+                                                    <td>
+                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
+                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                                <li>
+                                     <div class="uk-overflow-auto">
+                                        <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th class="uk-table-shrink"></th>
+                                                    <th>Name</th>
+                                                    <th>Description</th>
+                                                    <th>Last Updated</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
+                                                    <td>MARK Thomas</td>
+                                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
+                                                    <td>21/09/18</td>
+                                                    <td>
+                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
+                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- /CONTENT -->
+{% include 'octo_site/includes/offcanvas.html' %}
+

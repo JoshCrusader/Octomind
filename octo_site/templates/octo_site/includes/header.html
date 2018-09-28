@@ -59,7 +59,7 @@
             <div class="uk-width-auto"><img src="{% static 'octomindlogo_white.png' %}" style="height: 60px;width:63px" class="uk-border-circle profile-img"></div>
             <div class="uk-width-expand">
                 <span class="uk-text-small uk-text-muted">Mystery Manila</span>
-                <h4 class="uk-margin-remove-vertical text-light">Octomind</h4>
+                <h4 class="uk-margin-remove-vertical text-light"><a href="{% url 'index' %}">Octomind</a></h4>
             </div>
         </div>
     </div>
@@ -97,8 +97,7 @@
             </li>
     <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>
             <li><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
-            <li><a href="{% url 'page_room' %}"><span class="uk-margin-small-left" data-uk-icon="icon: image"></span> Rooms</a></li>
-            <li><a href="{% url 'page_branch' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Branches</a></li>
+            <li><a href="{% url 'page_venue' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Venues</a></li>
             <li class="uk-nav-divider"></li>
             <li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> xx</a></li>
         </ul>

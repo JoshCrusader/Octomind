@@ -38,10 +38,8 @@ def register(request):
 
 def page_sensor(request):
     return render(request, 'octo_site/settings/sensor_page.html')
-def page_room(request):
-    return render(request, 'octo_site/settings/room_page.html')
-def page_branch(request):
-    return render(request, 'octo_site/settings/branch_page.html')
+def page_venue(request):
+    return render(request, 'octo_site/settings/venue_page.html')
 
 
 def add_sensor(request):
@@ -49,7 +47,7 @@ def add_sensor(request):
 def add_room(request):
     return render(request, 'octo_site/settings/room_page.html')
 def add_branch(request):
-    return render(request, 'octo_site/settings/branch_page.html')
+    return render(request, 'octo_site/settings/venue_page.html')
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
