@@ -126,33 +126,6 @@ INSERT INTO `sensor` VALUES (1,'Panel Switches',1,1),(2,'Door Open Detector',1,1
 UNLOCK TABLES;
 
 --
--- Table structure for table `sensor_log`
---
-
-DROP TABLE IF EXISTS `sensor_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sensor_log` (
-  `log_id` int(45) NOT NULL AUTO_INCREMENT,
-  `timestamp` timestamp NULL DEFAULT NULL,
-  `sensor_id` int(45) NOT NULL,
-  `value` int(45) DEFAULT NULL,
-  PRIMARY KEY (`log_id`,`sensor_id`),
-  KEY `fk_sensor_log_sensor1_idx` (`sensor_id`),
-  CONSTRAINT `fk_sensor_log_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sensor_log`
---
-
-LOCK TABLES `sensor_log` WRITE;
-/*!40000 ALTER TABLE `sensor_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sensor_log` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `sensor_type`
 --
 
@@ -191,4 +164,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-09-26 17:47:48
+-- Dump completed on 2018-09-30 23:27:46
