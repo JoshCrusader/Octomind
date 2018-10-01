@@ -10,45 +10,57 @@ from django.db import models
 
 class Branch(models.Model):
     branch_id = models.AutoField(primary_key=True)
-    branch_name = models.CharField(max_length=45, blank=True, null=True)
-    branch_address = models.CharField(max_length=45, blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=45, blank=True, null=True)
+    address = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'branch'
 
 
-
-class Gameroom(models.Model):
-    groom_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=45, blank=True, null=True)
+class Room(models.Model):
+    room_id = models.AutoField(primary_key=True)
+    room_name = models.CharField(max_length=45, blank=True, null=True)
     branch = models.ForeignKey(Branch, models.DO_NOTHING)
-    status = models.IntegerField(blank=True, null=True)
+    header_img = models.ImageField(upload_to='imgs/')
 
     class Meta:
         managed = False
-        db_table = 'gameroom'
-        unique_together = (('groom_id', 'branch'),)
+        db_table = 'room'
+        unique_together = (('room_id', 'branch'),)
+
+
+
+class Rpi(models.Model):
+    rpi_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=45, blank=True, null=True)
+    ip_address = models.CharField(max_length=45, blank=True, null=True)
+    room = models.ForeignKey(Room, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'rpi'
+        unique_together = (('rpi_id', 'room'),)
 
 
 class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=45, blank=True, null=True)
-    type = models.IntegerField(blank=True, null=True)
+    sensor_name = models.CharField(max_length=45, blank=True, null=True)
+    rpi = models.ForeignKey(Rpi, models.DO_NOTHING)
+    sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'sensor'
+        unique_together = (('sensor_id', 'rpi', 'sensor_type'),)
 
 
-class SensorLog(models.Model):
-    sensor = models.ForeignKey(Sensor, models.DO_NOTHING, primary_key=True)
-    groom = models.ForeignKey(Gameroom, models.DO_NOTHING)
-    timestamp = models.CharField(max_length=45, blank=True, null=True)
-    value = models.CharField(max_length=45, blank=True, null=True)
+class SensorType(models.Model):
+    sensor_type_id = models.AutoField(primary_key=True)
+    sensor_type_name = models.CharField(max_length=45, blank=True, null=True)
+    val_name = models.CharField(max_length=45, blank=True, null=True)
+    trigger_treshold = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'sensor_log'
-        unique_together = (('sensor', 'groom'),)
+        db_table = 'sensor_type'

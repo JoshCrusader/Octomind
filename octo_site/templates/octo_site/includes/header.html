@@ -12,13 +12,39 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
 
 
-		<!-- JS FILES -->
+		<!-- JS FILES
 		<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+        -->
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+
 		<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
 		<script src="{% static 'octo_site/res/uikit/js/uikit-icons.min.js' %}"></script>
 	</head>
 
 <style>
+    .upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+    }
+
+    .btn_up {
+      border: 0.5px dashed gray;
+      color: gray;
+      background-color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: normal;
+    }
+
+    .upload-btn-wrapper input[type=file] {
+      font-size: 50px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+    }
     .shdw{
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
@@ -99,7 +125,6 @@
             <li><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
             <li><a href="{% url 'page_venue' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Venues</a></li>
             <li class="uk-nav-divider"></li>
-            <li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> xx</a></li>
         </ul>
     </div>
     <div class="uk-position-bottom bar-bottom">

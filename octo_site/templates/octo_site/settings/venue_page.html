@@ -7,29 +7,28 @@
         <div class="uk-modal-header">
             <h3 class="uk-text-center">ADD BRANCH <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
         </div>
-        <div class="uk-modal-body">
-            <form class="uk-form">
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+        <form class="uk-form" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="branch">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                        </div>
                     </div>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Address</label>
-                    <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Address</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input uk-display-inline" id="form-stacked-text" name="address" type="text" placeholder="Enter address">
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
-        </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
     </div>
 </div>
 <div id="modal-rooms" uk-modal>
@@ -38,29 +37,60 @@
         <div class="uk-modal-header">
             <h3 class="uk-text-center">ADD ROOM <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
         </div>
-        <div class="uk-modal-body">
-            <form class="uk-form">
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+
+        <form class="uk-form" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="room">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                        <div class="uk-form-controls">
+                            <!--
+                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                            -->
+                            {{ room_form.room_name }}
+                        </div>
                     </div>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Address</label>
-                    <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                        <div class="uk-form-controls">
+                        {{ room_form.branch_id }}
+                        <!--
+                            <select class="uk-select" name="branch_id" id="form-stacked-select">
+                                {% for branch in branches reversed %}
+                                <option value="{{ branch.branch_id }}">{{ branch.name }}</option>
+                                {% endfor %}
+                            </select>
+                        -->
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
-        </div>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                    <div class="js-upload uk-placeholder uk-text-center">
+                        <span uk-icon="icon: cloud-upload"></span>
+                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
+                        <div uk-form-custom>
+                            <!--
+                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
+                            -->
+                        </div>
+                    </div>
+
+                    <div class="uk-margin uk-text-center uk-align-center">
+                        <div class="upload-btn-wrapper">
+                          <button class="btn_up">Manual Upload</button>
+                            {{ room_form.header_img }}
+                        </div>
+                    </div>
+            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -88,33 +118,6 @@
                                 <button class="uk-button uk-button-default bord_rad" type="button">BRANCHES</button>
                             </div>
                             <ul class="uk-switcher uk-margin">
-                                <li class="uk-width-1-1">
-                                    <div class="uk-overflow-auto uk-width-1-1">
-                                        <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Name</th>
-                                                    <th>Description</th>
-                                                    <th>Last Updated</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                                    <td>Jerry Thomas</td>
-                                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                                    <td>21/09/18</td>
-                                                    <td>
-                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </li>
                                 <li>
                                      <div class="uk-overflow-auto">
                                         <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
@@ -122,22 +125,48 @@
                                                 <tr>
                                                     <th class="uk-table-shrink"></th>
                                                     <th>Name</th>
-                                                    <th>Description</th>
-                                                    <th>Last Updated</th>
+                                                    <th>Branch</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+
+                                            {% for room in rooms reversed%}
                                                 <tr>
                                                     <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                                    <td>MARK Thomas</td>
-                                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                                    <td>21/09/18</td>
+                                                    <td>{{ room.room_name }}</td>
+                                                    <td>{{ room.branch.name }}</td>
                                                     <td>
                                                         <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
                                                         <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                     </td>
                                                 </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                                <li class="uk-width-1-1">
+                                    <div class="uk-overflow-auto uk-width-1-1">
+                                        <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for branch in branches reversed %}
+                                                <tr>
+                                                    <td>{{ branch.name }}</td>
+                                                    <td>{{ branch.address }}</td>
+                                                    <td>
+                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
+                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
@@ -150,6 +179,103 @@
         </div>
     </section>
 </div>
+<script>
+
+    var bar = document.getElementById('js-progressbar');
+    var inp = document.getElementById('hd_img');
+    const csrftoken = '{{ csrf_token }}';
+    function showImg(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#hdr_img')
+                    .attr('src', e.target.result).style="display: inline;"
+                ;
+            };
+    
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function handleFile(file) {
+        console.log("i here, handling file!");
+        document.getElementById('hd_img').files[0] = file;
+
+        var preview = document.getElementById('output');
+        var img = document.createElement("img");
+        img.classList.add("obj");
+        img.file = file;
+        preview.appendChild(img); // Assuming that "preview" is the div output where the content will be displayed.
+
+        var reader = new FileReader();
+        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+        reader.readAsDataURL(file);
+
+      }
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    UIkit.upload('.js-upload', {
+        url: '/octo_site/api/upload_process/',
+        multiple: false,
+        beforeSend: function(xhr) {
+            xhr = new XMLHttpRequest();
+            xhr.open("POST","/octo_site/api/upload_process/");
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            const csrfmiddlewaretoken = csrftoken;
+
+        },
+        beforeAll: function () {
+            console.log('beforeAll', arguments);
+            console.log(arguments[1][0].name);
+            handleFile(arguments[1][0]);
+        },
+        load: function () {
+            console.log('load', arguments);
+        },
+        error: function () {
+            console.log('error', arguments);
+        },
+        complete: function () {
+            console.log('complete', arguments);
+        },
+
+        loadStart: function (e) {
+
+
+            console.log('loadStart', arguments);
+            bar.removeAttribute('hidden');
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        progress: function (e) {
+            console.log('progress', arguments);
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        loadEnd: function (e) {
+            console.log('loadEnd', arguments);
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        completeAll: function (arguments) {
+            console.log('completeAll', arguments);
+
+            setTimeout(function () {
+                bar.setAttribute('hidden', 'hidden');
+            }, 1000);
+
+            console.log('Upload Completed');
+        }
+
+    });
+</script>
 <!-- /CONTENT -->
 {% include 'octo_site/includes/offcanvas.html' %}
 
