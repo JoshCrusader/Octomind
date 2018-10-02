@@ -1,0 +1,159 @@
+{% load staticfiles %}
+{% load templaterange %}
+<!DOCTYPE html>
+	<head>
+        {% include 'octo_site/includes/fileheader.html' %}
+        <style>
+            .gameHead{
+                position: relative;
+                width: 100%;
+                height: 200px;
+                color: white;
+            }
+            .cardHeader{
+                background-color: rgba(0,0,0,0.7);
+                position: absolute;
+                width: 100%;
+                height: 200px;
+                color: white;
+                text-align: center;
+                line-height: 200px;
+            }
+            .timeLeft{
+                position: absolute;
+                right: 5px;
+                bottom: 5px;
+            }
+            .playerContainer{
+                width: 70%;
+                float:left;
+            }
+            .clueContainer{
+                width: 30%;
+                float:left;
+            }
+            .playerHeader{
+                color: white;
+            }
+            .clueContainer{
+                text-align: right;
+                color: white;
+            }
+            .div-lock{
+                float: right;
+                width: 15px;
+                height: 15px;
+                margin: 2px;
+            }
+            .personText{
+                width: 50%;
+                float:left;
+                color: white;
+                font-size: 8pt;
+            }
+            .panelCard{
+                background-color: #222;
+            }
+            .panelImage{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+            .div-lock-img{
+                width: 100%;
+                height: 100%;
+            }
+            .a{
+                text-decoration: none;
+            }
+            .clue-button{
+                position: absolute;
+                right: 15px;
+                top: 5px;
+            }
+        </style>
+    </head>
+<body>
+        {% include 'octo_site/includes/navformat.html' %}
+<!-- CONTENT -->
+    <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
+    <div class="uk-container uk-container-expand">
+        
+        <div class="uk-grid uk-grid-medium uk-grid-match" data-uk-grid>
+            <!-- panel -->
+            {% for i in h|times %}
+            <!-- panel -->
+            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
+                <a href = "#">
+                    <div class="panelCard">
+                        <div class = "gameHead">
+                            <img class = "panelImage" src = "{% static 'octo_site/assets/img/rebeccas-room.jpg' %}">
+                            <div class = "cardHeader">Rebeccas room</div>
+                            <div class = "timeLeft">Time left: 12:40</div>
+                            <div class = "clue-button" onClick = "">?</div>
+                        </div>    
+                        <div class="uk-card-body">
+                            <div class = "playerContainer">
+                                <div class = "playerHeader">Current Players</div>
+                                <div class = "personText">Joshua Cruzada</div>
+                                <div class = "personText">Mark Barraquias</div>
+                                <div class = "personText">Betlee Kyle</div>
+                                <div class = "personText">Person 4</div>
+                                <div class = "personText">Person 5</div>
+                                <div class = "personText">Person 6</div>
+                            </div>
+                            <div class = "clueContainer">
+                                <div class = "clueHeader">Clues Left</div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            <!-- panel -->
+            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
+                <a href = "#">
+                    <div class="panelCard">
+                        <div class = "gameHead">
+                            <img class = "panelImage" src = "{% static 'octo_site/assets/img/rebeccas-room.jpg' %}">
+                            <div class = "cardHeader">Rebeccas room</div>
+                            <div class = "timeLeft">Time left: 12:40</div>
+                            <div class = "clue-button" onClick = "">?</div>
+                        </div>    
+                        <div class="uk-card-body">
+                            <div class = "playerContainer">
+                                <div class = "playerHeader">Current Players</div>
+                                <div class = "personText">Joshua Cruzada</div>
+                                <div class = "personText">Mark Barraquias</div>
+                                <div class = "personText">Betlee Kyle</div>
+                                <div class = "personText">Person 4</div>
+                                <div class = "personText">Person 5</div>
+                                <div class = "personText">Person 6</div>
+                            </div>
+                            <div class = "clueContainer">
+                                <div class = "clueHeader">Clues Left</div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- /panel -->
+            
+        </div>
+        <footer class="uk-section uk-section-small uk-text-center">
+            <hr>
+            <a href="https://github.com/zzseba78/Kick-Off">Created by KickOff</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a>
+        </footer>
+    </div>
+</div>
+<!-- /CONTENT -->
+{% include 'octo_site/includes/offcanvas.html' %}
+
+</body>

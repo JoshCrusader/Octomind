@@ -1,0 +1,110 @@
+{% load staticfiles %}
+    <!--HEADER-->
+    <!-- LEFT BAR -->
+    <aside id="lft" class="uk-light uk-visible@m">
+        <div class="profile-bar">
+            <div class="uk-grid uk-grid-small uk-flex uk-flex-middle" data-uk-grid>
+                <div class="uk-width-auto"><img src="{% static 'octomindlogo_white.png' %}" style="height: 60px;width:63px" class="uk-border-circle profile-img"></div>
+                <div class="uk-width-expand">
+                    <span class="uk-text-small uk-text-muted">Mystery Manila</span>
+                    <h4 class="uk-margin-remove-vertical text-light"><a href="{% url 'index' %}">Octomind</a></h4>
+                </div>
+            </div>
+        </div>
+        <div class="bar-content uk-position-relative">
+            <ul class="uk-nav-default uk-nav-parent-icon" data-uk-nav>
+                <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
+                <li class="uk-parent uk-open">
+                    <a href="#">Game Rooms</a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Control Panel</a></li>
+                        <li><a href="#">Current game??</a></li>
+                        <li><a href="#">Schedule</a></li>
+                    </ul>
+                </li>
+                <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span> Reports</li>
+                <li class="uk-parent">
+                    <a href="#">Game Report</a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Sub item</a></li>
+                        <li><a href="#">Sub item</a></li>
+                    </ul>
+                </li>
+                <li class="uk-parent">
+                    <a href="#">Exception Report</a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Sub item</a></li>
+                        <li><a href="#">Sub item</a></li>
+                    </ul>
+                </li>
+                <li class="uk-parent">
+                    <a href="#">Market Report</a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Sub item</a></li>
+                        <li><a href="#">Sub item</a></li>
+                    </ul>
+                </li>
+        <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>
+                <li><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
+                <li><a href="{% url 'page_venue' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Venues</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="login.html"><span class="uk-margin-small-right" data-uk-icon="icon: sign-in"></span> xx</a></li>
+            </ul>
+        </div>
+        <div class="uk-position-bottom bar-bottom">
+            <ul class="uk-subnav uk-flex uk-flex-center" data-uk-grid>
+                <li>
+                    <a href="#" class="uk-icon-link" data-uk-icon="icon: github">Team Solothesis &nbsp;</a>
+                </li>
+                <li>
+                    <a class="uk-icon-link"></a>
+                </li>
+    
+            </ul>
+        </div>
+    </aside>
+    <!-- /LEFT BAR -->
+    <header id="hdr" class="uk-position-fixed">
+        <div class="uk-container uk-container-expand uk-background-secondary">
+            <nav class="uk-navbar uk-light" data-uk-navbar="mode:click">
+                <div class="uk-navbar-left">
+                    <a class="uk-navbar-item uk-logo" href="#"><img class="uk-border-circle" src="{% static 'octomindlogo_white.png' %}" style="height: 50px;width: 30px; "></a>
+                    <div class="uk-navbar-item uk-visible@s" style="margin-left: 19vh">
+                        <form action="dashboard.html" class="uk-search uk-search-default">
+                            <span data-uk-search-icon></span>
+                            <input class="uk-search-input search-field" type="search" placeholder="Search">
+                        </form>
+                    </div>
+                </div>
+                <div class="uk-navbar-right">
+                    <ul class="uk-navbar-nav">
+                    <div class="uk-text-center " style="margin-top: 3.0vh;text-align: center">
+                        <li class="uk-active">
+                            <a href="#">{{ request.user.first_name }} {{ request.user.last_name }}</a>
+                        </li>
+                        <li class="uk-active">
+                            <small>Gamekeeper{{ request.user.username }}</small>
+                        </li>
+                    </div>
+    
+                    <li>
+                        <a href="#" data-uk-icon="icon:user"></a>
+                        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                <li class="uk-nav-header">{{ request.user.first_name }} {{ request.user.last_name }} </li>
+                                <li><a href="#"><span data-uk-icon="icon: info"></span> Summary</a></li>
+                                <li><a href="#"><span data-uk-icon="icon: refresh"></span> Edit</a></li>
+                                <li><a href="#"><span data-uk-icon="icon: settings"></span> Configuration</a></li>
+                                <li class="uk-nav-divider"></li>
+                                <li><a href="{% url 'signout' %}"><span data-uk-icon="icon: sign-out"  data-uk-tooltip="Sign out"></span> Logout</a></li>
+    
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a class="uk-navbar-toggle" data-uk-toggle data-uk-navbar-toggle-icon href="#offcanvas-nav"></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!--/HEADER-->

@@ -58,3 +58,7 @@ def index(request):
 
     print("gago")
     return render(request,'octo_site/dashboard.html')
+
+def control_panel(request):
+    print("control panel")
+    return render(request,'octo_site/control_panel.html', {'h': 5})

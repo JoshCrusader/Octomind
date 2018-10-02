@@ -7,6 +7,7 @@ from . import views
 urlpatterns = [
     #home and setup
     path('', views.index, name='index'),
+    path('control_panel/', views.control_panel, name='control_panel'),
     path('signout', views.signout, name='signout'),
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),

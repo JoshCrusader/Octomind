@@ -1,0 +1,49 @@
+{% load staticfiles %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mystery Manila - Octomind </title>
+<link rel="icon" href="{% static 'octomindlogo_white.png' %}">
+<!-- CSS FILES -->
+<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/uikit.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/dashboard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
+
+
+<!-- JS FILES -->
+<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
+<script src="{% static 'octo_site/res/uikit/js/uikit-icons.min.js' %}"></script>
+
+<style>
+        .shdw{
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+        }
+        .hobor{
+            color:#232b2b;
+            border-radius: 50px;
+        }
+        .bord_rad{
+            border-radius: 25px;
+        }
+        #hdr{
+            z-index: 50;
+            top: 0;
+            left:0;
+            right:0;
+        }
+        #lft{
+        position: fixed;
+          left: 0;
+          /* Height of the navbar default */
+          top:0;
+          bottom:0;
+          overflow-x: hidden;
+          overflow-y: auto;
+          background-color: #222;
+          width: 240px;
+          z-index:75;
+        }
+        #hdr [class*="uk-navbar-dropdown-bottom"] {
+            margin-top: 0;
+        }
+</style>
