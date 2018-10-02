@@ -123,22 +123,25 @@
                                         <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                                             <thead>
                                                 <tr>
-                                                    <th></th>
-                                                    <th>Name</th>
-                                                    <th>Branch</th>
-                                                    <th>Action</th>
+                                                    <th class="uk-width-small"></th>
+                                                    <th class="uk-width-medium">Name</th>
+                                                    <th class="uk-width-medium">Branch</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                             {% load static %}
                                             {% for room in rooms reversed%}
                                                 <tr>
-                                                    <td><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 50px;height: 50px"></td>
-                                                    <td>{{ room.room_name }}</td>
+                                                    <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 50px;height: 50px"></td>
+                                                    <td>
+                                                        <div uk-lightbox>
+                                                            <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
+                                                        </div>
+                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
+                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                    </td>
                                                     <td>{{ room.branch.name }}</td>
                                                     <td>
-                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                     </td>
                                                 </tr>
                                             {% endfor %}
