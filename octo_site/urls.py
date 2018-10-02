@@ -1,6 +1,8 @@
 
 from django.urls import path
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -15,5 +17,6 @@ urlpatterns = [
     path('sensor/', views.page_sensor, name='page_sensor'),
     path('venue/', views.page_venue, name='page_venue'),
 
+    path('api/upload_process/', views.upload_process,name='upload_process'),
     path('admin/', admin.site.urls),
 ]
