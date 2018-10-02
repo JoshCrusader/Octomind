@@ -18,4 +18,4 @@ urlpatterns = [
 
     path('api/upload_process/', views.upload_process,name='upload_process'),
     path('admin/', admin.site.urls),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

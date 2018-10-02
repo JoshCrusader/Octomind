@@ -79,7 +79,7 @@
 
                     <div class="uk-margin uk-text-center uk-align-center">
                         <div class="upload-btn-wrapper">
-                          <button class="btn_up">Manual Upload</button>
+                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
                             {{ room_form.header_img }}
                         </div>
                     </div>
@@ -123,17 +123,17 @@
                                         <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                                             <thead>
                                                 <tr>
-                                                    <th class="uk-table-shrink"></th>
+                                                    <th></th>
                                                     <th>Name</th>
                                                     <th>Branch</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-
+                                            {% load static %}
                                             {% for room in rooms reversed%}
                                                 <tr>
-                                                    <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
+                                                    <td><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 50px;height: 50px"></td>
                                                     <td>{{ room.room_name }}</td>
                                                     <td>{{ room.branch.name }}</td>
                                                     <td>
