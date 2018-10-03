@@ -49,15 +49,33 @@ def page_sensor(request):
     return render(request, 'octo_site/settings/sensor_page.html')
 def page_venue(request):
     if request.method == 'POST':
+
         if request.POST['type'] == "room":
             if RoomForm(request.POST, request.FILES).is_valid():
                 room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'], header_img=request.FILES['header_img'])
                 room.save()
-                return HttpResponseRedirect(reverse('page_venue'))
-        else:
+        elif request.POST['type'] == "room_edit":
+            room = Room.objects.filter(branch_id=request.POST['room_id'])
+            room.room_name = request.POST['room_name']
+            room.branch_id = request.POST['branch_id']
+            room.save()
+        elif request.POST['type'] == "room_delete":
+            room = Room.objects.filter(room_id=request.POST['room_id'])
+            room.delete()
+        # -------------------- # -------------------- # -------------------- # --------------------
+        elif request.POST['type'] == "branch":
             branch = Branch(name=request.POST['name'], address=request.POST['address'])
             branch.save()
-            return HttpResponseRedirect(reverse('page_venue'))
+        elif request.POST['type'] == "branch_edit":
+            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
+            branch.name=request.POST['name']
+            branch.address=request.POST['address']
+            branch.save()
+        elif request.POST['type'] == "branch_delete":
+            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
+            branch.delete()
+
+        return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm()})
 @csrf_exempt

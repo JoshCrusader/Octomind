@@ -133,13 +133,20 @@
                                           {% load static %}
                                             {% for room in rooms reversed%}
                                                 <tr>
-                                                    <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 50px;height: 50px"></td>
+                                                    <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 75px;height: 50px"></td>
                                                     <td>
                                                         <div uk-lightbox>
                                                             <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
                                                         </div>
                                                         <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
-                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+
+                                                        <form method="post" style="display: inline">
+
+                                                            <input type="hidden" name="type" value="room_delete">
+                                                            <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            {% csrf_token %}
+                                                        </form>
                                                     </td>
                                                     <td>{{ room.branch.name }}</td>
                                                 </tr>
@@ -207,6 +214,12 @@
             };
     
             reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function delete_room(room_id) {
+        let conf = confirm("Are you sure you want to delete?");
+        if (conf){
+            $('#room-'+room_id).click();
         }
     }
     function handleFile(file) {
