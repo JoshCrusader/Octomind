@@ -16,8 +16,6 @@ urlpatterns = [
     path('sensor/', views.page_sensor, name='page_sensor'),
     path('venue/', views.page_venue, name='page_venue'),
 
-    path('venue/delete', views.page_venue, name='page_venue'),
-    path('venue/', views.page_venue, name='page_venue'),
 
     path('api/upload_process/', views.upload_process,name='upload_process'),
     path('admin/', admin.site.urls),
