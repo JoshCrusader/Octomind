@@ -15,13 +15,13 @@
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
                         <div class="uk-form-controls">
-                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the branch" required>
                         </div>
                     </div>
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Address</label>
                         <div class="uk-form-controls">
-                            <input class="uk-input uk-display-inline" id="form-stacked-text" name="address" type="text" placeholder="Enter address">
+                            <input class="uk-input uk-display-inline" id="form-stacked-text" name="address" type="text" placeholder="Enter address" required>
                         </div>
                     </div>
             </div>
@@ -46,9 +46,100 @@
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Room name</label>
                         <div class="uk-form-controls">
+                            {{ room_form.room_name }}
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                        <div class="uk-form-controls">
+                        {{ room_form.branch_id }}
+                        <!--
+                            <select class="uk-select" name="branch_id" id="form-stacked-select">
+                                {% for branch in branches reversed %}
+                                <option value="{{ branch.branch_id }}">{{ branch.name }}</option>
+                                {% endfor %}
+                            </select>
+                        -->
+                        </div>
+                    </div>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                    <div class="js-upload uk-placeholder uk-text-center">
+                        <span uk-icon="icon: cloud-upload"></span>
+                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
+                        <div uk-form-custom>
                             <!--
-                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
                             -->
+                        </div>
+                    </div>
+
+                    <div class="uk-margin uk-text-center uk-align-center">
+                        <div class="upload-btn-wrapper">
+                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
+                            {{ room_form.header_img }}
+                        </div>
+                    </div>
+            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modal-room-edit" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">EDIT ROOM <span data-uk-icon="icon: pencil; ratio: 1.5"></span></h3>
+        </div>
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="room_edit">
+            <input type="hidden" name="room_id" id="edit-room_id" value="">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                        <div class="uk-form-controls">
+                            {{ edit_room_form.room_name }}
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                        <div class="uk-form-controls">
+                            {{ edit_room_form.branch_id }}
+                        </div>
+                    </div>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modal-room-edit" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD ROOM <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="room">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                        <div class="uk-form-controls">
                             {{ room_form.room_name }}
                         </div>
                     </div>
@@ -138,10 +229,8 @@
                                                         <div uk-lightbox>
                                                             <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
                                                         </div>
-                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
-
+                                                        <a class="uk-icon-link uk-text-success" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
-
                                                             <input type="hidden" name="type" value="room_delete">
                                                             <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                             <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
@@ -221,6 +310,11 @@
         if (conf){
             $('#room-'+room_id).click();
         }
+    }
+    function edit_room(obj) {
+        $("#edit-room_name").val($(obj).attr('room-name'));
+        $("#edit-room_id").val($(obj).attr('room-id'));
+        $("#edit-branch_id").val($(obj).attr('room-branch-id'));
     }
     function handleFile(file) {
         console.log("i here, handling file!");

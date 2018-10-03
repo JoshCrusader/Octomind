@@ -55,7 +55,7 @@ def page_venue(request):
                 room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'], header_img=request.FILES['header_img'])
                 room.save()
         elif request.POST['type'] == "room_edit":
-            room = Room.objects.filter(branch_id=request.POST['room_id'])
+            room = Room.objects.get(room_id=request.POST['room_id'])
             room.room_name = request.POST['room_name']
             room.branch_id = request.POST['branch_id']
             room.save()
@@ -67,8 +67,8 @@ def page_venue(request):
             branch = Branch(name=request.POST['name'], address=request.POST['address'])
             branch.save()
         elif request.POST['type'] == "branch_edit":
-            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
-            branch.name=request.POST['name']
+            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])[0]
+            branch.name = request.POST['name']
             branch.address=request.POST['address']
             branch.save()
         elif request.POST['type'] == "branch_delete":
@@ -77,7 +77,7 @@ def page_venue(request):
 
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
-                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm()})
+                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
 @csrf_exempt
 def upload_process(request):
     print("waw ngaleng")
