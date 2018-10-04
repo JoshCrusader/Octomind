@@ -13,12 +13,8 @@ import mysql.connector
 import sys
 from octo_site.db_conf import pull_data
 from django.contrib.auth.decorators import login_required
-
-from django.http import HttpResponse
 # Create your views here
 def log_in(request):
-
-    print("loging doging")
     user = None
     try:
         user = authenticate(username=request.POST['user'], password=request.POST['password'])
@@ -46,48 +42,6 @@ def register(request):
         messages.warning(request, 'Account Created.')
         return redirect('index')
     return render(request, 'octo_site/register.html')
-
-def add_sensor(request):
-    sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['rpi_id'],
-                sensor_type_id=request.POST['sensor_type_id'])
-    sensor.save()
-def add_sensor_type(request):
-    print("and2 me: ", request.POST['sensor_type_name'])
-    sensor_type = SensorType(sensor_type_name=request.POST['sensor_type_name'], val_name=request.POST['val_name'],
-                trigger_treshold=request.POST['trigger_treshold'])
-    sensor_type.save()
-def add_rpi(request):
-    try:
-        socket.inet_aton(request.POST['ip_address'])
-        rpi = Rpi(name=request.POST['name'], ip_address=request.POST['ip_address'],
-                  room_id=request.POST['room_id'])
-        rpi.save()
-    except socket.error:
-        print("warning, bitches")
-        messages.warning(request, 'IP Address is invalid, please enter another IP.')
-def edit_sensor(request):
-    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
-    sensor.sensor_name = request.POST['sensor_name']
-    sensor.sensor_type_id = request.POST['sensor_sensor_type_id']
-    sensor.rpi_id = request.POST['sensor_rpi_id']
-    sensor.save()
-def edit_sensor_type(request):
-    sensor_type = SensorType.objects.get(sensor_type_id=request.POST['sensor_type_id'])
-    sensor_type.sensor_type_name = request.POST['sensor_type_name']
-    sensor_type.val_name = request.POST['val_name']
-    sensor_type.trigger_treshold = request.POST['trigger_treshold']
-    sensor_type.save()
-def edit_rpi(request):
-
-    print(request.POST['rpi_id'])
-    rpi = Rpi.objects.get(rpi_id=request.POST['rpi_id'])
-    rpi.name = request.POST['name']
-    rpi.ip_address = request.POST['ip_address']
-    rpi.room_id = request.POST['room_id']
-    rpi.save()
-def delete_sensor(request):
-    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
-    sensor.delete()
 def page_sensor(request):
     if request.method == 'POST':
         print("posted, bitches",request.POST['type'])
@@ -110,29 +64,17 @@ def page_sensor(request):
 def page_venue(request):
     if request.method == 'POST':
         if request.POST['type'] == "room":
-            if RoomForm(request.POST, request.FILES).is_valid():
-                room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'], header_img=request.FILES['header_img'])
-                room.save()
+            add_room(request)
         elif request.POST['type'] == "room_edit":
-            room = Room.objects.get(room_id=request.POST['room_id'])
-            room.room_name = request.POST['room_name']
-            room.branch_id = request.POST['branch_id']
-            room.save()
+            edit_room(request)
         elif request.POST['type'] == "room_delete":
-            room = Room.objects.filter(room_id=request.POST['room_id'])
-            room.delete()
-        # -------------------- # -------------------- # -------------------- # --------------------
+            delete_room(request)
         elif request.POST['type'] == "branch":
-            branch = Branch(name=request.POST['name'], address=request.POST['address'])
-            branch.save()
+            add_branch(request)
         elif request.POST['type'] == "branch_edit":
-            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])[0]
-            branch.name = request.POST['name']
-            branch.address=request.POST['address']
-            branch.save()
+            edit_branch(request)
         elif request.POST['type'] == "branch_delete":
-            branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
-            branch.delete()
+            delete_branch(request)
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
@@ -150,4 +92,64 @@ def index(request):
     return render(request,'octo_site/dashboard.html')
 def sensor_data():
     return pull_data()
-
+def add_room(request):
+    if RoomForm(request.POST, request.FILES).is_valid():
+        room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],
+                    header_img=request.FILES['header_img'])
+        room.save()
+def add_branch(request):
+    branch = Branch(name=request.POST['name'], address=request.POST['address'])
+    branch.save()
+def add_sensor(request):
+    sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['rpi_id'],
+                sensor_type_id=request.POST['sensor_type_id'])
+    sensor.save()
+def add_sensor_type(request):
+    sensor_type = SensorType(sensor_type_name=request.POST['sensor_type_name'], val_name=request.POST['val_name'],
+                trigger_treshold=request.POST['trigger_treshold'])
+    sensor_type.save()
+def add_rpi(request):
+    try:
+        socket.inet_aton(request.POST['ip_address'])
+        rpi = Rpi(name=request.POST['name'], ip_address=request.POST['ip_address'],
+                  room_id=request.POST['room_id'])
+        rpi.save()
+    except socket.error:
+        messages.warning(request, 'IP Address is invalid, please enter another IP.')
+def edit_sensor(request):
+    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
+    sensor.sensor_name = request.POST['sensor_name']
+    sensor.sensor_type_id = request.POST['sensor_sensor_type_id']
+    sensor.rpi_id = request.POST['sensor_rpi_id']
+    sensor.save()
+def edit_room(request):
+    room = Room.objects.get(room_id=request.POST['room_id'])
+    room.room_name = request.POST['room_name']
+    room.branch_id = request.POST['branch_id']
+    room.save()
+def edit_branch(request):
+    branch = Branch.objects.filter(branch_id=request.POST['branch_id'])[0]
+    branch.name = request.POST['name']
+    branch.address = request.POST['address']
+    branch.save()
+def edit_sensor_type(request):
+    sensor_type = SensorType.objects.get(sensor_type_id=request.POST['sensor_type_id'])
+    sensor_type.sensor_type_name = request.POST['sensor_type_name']
+    sensor_type.val_name = request.POST['val_name']
+    sensor_type.trigger_treshold = request.POST['trigger_treshold']
+    sensor_type.save()
+def edit_rpi(request):
+    rpi = Rpi.objects.get(rpi_id=request.POST['rpi_id'])
+    rpi.name = request.POST['name']
+    rpi.ip_address = request.POST['ip_address']
+    rpi.room_id = request.POST['room_id']
+    rpi.save()
+def delete_sensor(request):
+    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
+    sensor.delete()
+def delete_room(request):
+    room = Room.objects.filter(room_id=request.POST['room_id'])
+    room.delete()
+def delete_branch(request):
+    branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
+    branch.delete()
