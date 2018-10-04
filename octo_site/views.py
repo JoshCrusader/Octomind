@@ -65,6 +65,29 @@ def add_rpi(request):
     except socket.error:
         print("warning, bitches")
         messages.warning(request, 'IP Address is invalid, please enter another IP.')
+def edit_sensor(request):
+    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
+    sensor.sensor_name = request.POST['sensor_name']
+    sensor.sensor_type_id = request.POST['sensor_sensor_type_id']
+    sensor.rpi_id = request.POST['sensor_rpi_id']
+    sensor.save()
+def edit_sensor_type(request):
+    sensor_type = SensorType.objects.get(sensor_type_id=request.POST['sensor_type_id'])
+    sensor_type.sensor_type_name = request.POST['sensor_type_name']
+    sensor_type.val_name = request.POST['val_name']
+    sensor_type.trigger_treshold = request.POST['trigger_treshold']
+    sensor_type.save()
+def edit_rpi(request):
+
+    print(request.POST['rpi_id'])
+    rpi = Rpi.objects.get(rpi_id=request.POST['rpi_id'])
+    rpi.name = request.POST['name']
+    rpi.ip_address = request.POST['ip_address']
+    rpi.room_id = request.POST['room_id']
+    rpi.save()
+def delete_sensor(request):
+    sensor = Sensor.objects.get(sensor_id=request.POST['sensor_id'])
+    sensor.delete()
 def page_sensor(request):
     if request.method == 'POST':
         print("posted, bitches",request.POST['type'])
@@ -73,8 +96,15 @@ def page_sensor(request):
         elif request.POST['type'] == "sensor_type":
             add_sensor_type(request)
         elif request.POST['type'] == "rpi":
-            print("rpi, bitches")
             add_rpi(request)
+        elif request.POST['type'] == "edit_sensor":
+            edit_sensor(request)
+        elif request.POST['type'] == "edit_sensor_type":
+            edit_sensor_type(request)
+        elif request.POST['type'] == "edit_rpi":
+            edit_rpi(request)
+        elif request.POST['type'] == "delete_sensor":
+            delete_sensor(request)
         return HttpResponseRedirect(reverse('page_sensor'))
     return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
 def page_venue(request):

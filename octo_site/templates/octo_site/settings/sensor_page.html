@@ -10,6 +10,7 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input id="sensor_post" type="hidden" name="type" value="sensor">
+            <input id="sensor_id" type="hidden" name="sensor_id" value="">
             <div class="uk-modal-body">
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Sensor name</label>
@@ -20,7 +21,7 @@
                    <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
                     <div class="uk-form-controls">
-                        <select class="uk-select" name="rpi_id" id="sensor_rpi_id">
+                        <select class="uk-select" name="sensor_rpi_id" id="sensor_rpi_id">
                             {% for r in rpi reversed %}
                                 <option value="{{ r.rpi_id }}">{{ r.name }}</option>
                             {% endfor %}
@@ -30,7 +31,7 @@
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
                         <div class="uk-form-controls">
-                            <select class="uk-select" name="sensor_type_id" id="sensor_sensor_type">
+                            <select class="uk-select" name="sensor_sensor_type_id" id="sensor_sensor_type">
                                 {% for st in sensor_type reversed %}
                                     <option value="{{ st.sensor_type_id }}">{{ st.sensor_type_name }}</option>
                                 {% endfor %}
@@ -55,6 +56,8 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input id="sensor_type_post" type="hidden" name="type" value="sensor_type">
+
+            <input id="sensor_type_id" type="hidden" name="sensor_type_id" value="">
             <div class="uk-modal-body">
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Sensor Type Name</label>
@@ -92,6 +95,7 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input id="rpi_post" type="hidden" name="type" value="rpi">
+            <input id="rpi_id" type="hidden" name="rpi_id" value="">
             <div class="uk-modal-body">
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">RPI Name</label>
@@ -173,11 +177,11 @@
                                                 <tr>
                                                     <td>
                                                         {{ sensor.sensor_name }}
-                                                        <a class="uk-icon-link uk-text-success" edit-type="sensor" onclick="edit(this)" sensor_name="{{ sensor.sensor_name }}" sensor_sensor_type="{{ sensor.sensor_type_id }}" sensor_rpi_id="{{ sensor.rpi_id }}" data-uk-icon="pencil" href="#modal-sensor" uk-toggle></a>
+                                                        <a class="uk-icon-link uk-text-success" edit-type="sensor" onclick="edit(this)" sensor_id="{{ sensor.sensor_id }}" sensor_name="{{ sensor.sensor_name }}" sensor_sensor_type="{{ sensor.sensor_type_id }}" sensor_rpi_id="{{ sensor.rpi_id }}" data-uk-icon="pencil" href="#modal-sensor" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="sensor_delete">
-                                                            <a href="#" onclick="delete({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            <a href="#" onclick="del({{ sensor.sensor_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="sensor_id" id="sensor-{{ sensor.sensor_id }}" value="{{ sensor.sensor_id }}" style="display: none"/>
                                                             {% csrf_token %}
                                                         </form>
                                                     </td>
@@ -206,13 +210,7 @@
                                                 <tr>
                                                     <td>
                                                         {{ st.sensor_type_name }}
-                                                        <a class="uk-icon-link uk-text-success" edit-type="sensor_type" onclick="edit(this)" sensor_type_name="{{ st.sensor_type_name }}" val_name="{{ st.val_name }}" trigger_treshold="{{ st.trigger_treshold }}"  data-uk-icon="pencil" href="#modal-sensor-type" uk-toggle></a>
-                                                        <form method="post" style="display: inline">
-                                                            <input type="hidden" name="type" value="room_delete">
-                                                            <a href="#" onclick="delete({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
-                                                            {% csrf_token %}
-                                                        </form>
+                                                        <a class="uk-icon-link uk-text-success" edit-type="sensor_type" sensor_type_id="{{ st.sensor_type_id }}" onclick="edit(this)" sensor_type_name="{{ st.sensor_type_name }}" val_name="{{ st.val_name }}" trigger_treshold="{{ st.trigger_treshold }}"  data-uk-icon="pencil" href="#modal-sensor-type" uk-toggle></a>
                                                     </td>
                                                     <td>{{ st.val_name }}</td>
                                                     <td>{{ st.trigger_treshold }}</td>
@@ -243,13 +241,7 @@
                                                 <tr>
                                                     <td>
                                                         {{ r.name }}
-                                                        <a class="uk-icon-link uk-text-success" edit-type="rpi" onclick="edit(this)" rpi_name="{{ r.name }}" ip_address="{{ r.ip_address }}" room_id="{{ r.room_id }}" data-uk-icon="pencil" href="#modal-rpi" uk-toggle></a>
-                                                        <form method="post" style="display: inline">
-                                                            <input type="hidden" name="type" value="room_delete">
-                                                            <a href="#" onclick="delete({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
-                                                            {% csrf_token %}
-                                                        </form>
+                                                        <a class="uk-icon-link uk-text-success" edit-type="rpi" onclick="edit(this)" rpi_id="{{ r.rpi_id }}" rpi_name="{{ r.name }}" ip_address="{{ r.ip_address }}" room_id="{{ r.room_id }}" data-uk-icon="pencil" href="#modal-rpi" uk-toggle></a>
                                                     </td>
                                                     <td>{{ r.ip_address }}</td>
                                                     <td>{{ r.room.room_name }}</td>
@@ -275,6 +267,12 @@
     $('#tbl2').DataTable();
     $('#tbl3').DataTable();
     });
+    function del(sensor_id) {
+        let conf = confirm("Are you sure you want to delete?");
+        if (conf){
+            $('#sensor-'+sensor_id).click();
+        }
+    }
     function edit(obj) {
         switch ($(obj).attr('edit-type')){
             case "sensor":
@@ -282,20 +280,25 @@
                 $("#sensor_sensor_type").val($(obj).attr('sensor_sensor_type'));
                 $("#sensor_rpi_id").val($(obj).attr('sensor_rpi_id'));
                 $("#sensor_post").val("edit_sensor");
+                $("#sensor_id").val($(obj).attr('sensor_id'));
                 break;
             case "sensor_type":
                 $("#sensor_type_name").val($(obj).attr('sensor_type_name'));
                 $("#val_name").val($(obj).attr('val_name'));
                 $("#trigger_treshold").val($(obj).attr('trigger_treshold'));
                 $("#sensor_type_post").val("edit_sensor_type");
+                $("#sensor_type_id").val($(obj).attr('sensor_type_id'));
                 break;
             case "rpi":
                 $("#rpi_name").val($(obj).attr('rpi_name'));
                 $("#ip_address").val($(obj).attr('ip_address'));
                 $("#room_id").val($(obj).attr('room_id'));
-                $("#rpi_post").val("rpi_post");
+                $("#rpi_post").val("edit_rpi");
+                $("#rpi_id").val($(obj).attr('rpi_id'));
                 break;
         }
+
+
     }
 </script>
 <!-- /CONTENT -->
