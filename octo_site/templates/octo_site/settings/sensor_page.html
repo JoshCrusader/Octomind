@@ -1,44 +1,48 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
-
 <div id="modal-sensor" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         <div class="uk-modal-header">
             <h3 class="uk-text-center">ADD SENSOR <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
         </div>
-        <div class="uk-modal-body">
-            <form class="uk-form">
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Sensor Name</label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="sensor">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Sensor name</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input uk-display-inline" name="sensor_name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor" required>
+                        </div>
                     </div>
-                </div>
-                <div class="uk-margin">
+                   <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
                     <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
+                        <select class="uk-select" name="rpi_id" id="form-stacked-select">
+                            {% for r in rpi reversed %}
+                                <option value="{{ r.rpi_id }}">{{ r.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
-                    <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
-        </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" name="sensor_type_id" id="form-stacked-select">
+                                {% for st in sensor_type reversed %}
+                                    <option value="{{ st.sensor_type_id }}">{{ st.sensor_type_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
     </div>
 </div>
 <div id="modal-sensor-type" uk-modal>
@@ -47,38 +51,35 @@
         <div class="uk-modal-header">
             <h3 class="uk-text-center">ADD SENSOR TYPE <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
         </div>
-        <div class="uk-modal-body">
-            <form class="uk-form">
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="sensor_type">
+            <div class="uk-modal-body">
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Sensor Name</label>
+                    <label class="uk-form-label" for="form-stacked-text">Sensor Type Name</label>
                     <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                        <input class="uk-input uk-display-inline" name="sensor_type_name" id="form-stacked-text" type="text" placeholder="Enter the type for the sensor" required>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
+                    <label class="uk-form-label" for="form-stacked-text">Value Name</label>
                     <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
+                        <input class="uk-input uk-display-inline" name="val_name" id="form-stacked-text" type="text" placeholder="Enter the variable name of the value (e.g status, light value, temperature, color)" required>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
+                    <label class="uk-form-label" for="form-stacked-text">Trigger Value Threshold</label>
                     <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
+                        <input class="uk-input uk-display-inline" name="trigger_treshold" id="form-stacked-text" type="number" placeholder="Enter a value where we determine if the sensor is triggered" required>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
-        </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
     </div>
 </div>
 <div id="modal-rpi" uk-modal>
@@ -87,42 +88,49 @@
         <div class="uk-modal-header">
             <h3 class="uk-text-center">ADD RPI <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
         </div>
-        <div class="uk-modal-body">
-            <form class="uk-form">
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="rpi">
+            <div class="uk-modal-body">
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Sensor Name</label>
+                    <label class="uk-form-label" for="form-stacked-text">RPI Name</label>
                     <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                        <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter the name of micro processor" required>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">IP Address</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input uk-display-inline" name="ip_address" id="form-stacked-text" type="text" placeholder="Enter the IP address" required>
                     </div>
                 </div>
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
                     <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
+                        <select class="uk-select" name="room_id" id="form-stacked-select">
+                            {% for room in rooms reversed %}
+                                <option value="{{ room.room_id }}">{{ room.room_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
-                    <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>Option 01</option>
-                            <option>Option 02</option>
-                        </select>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary bord_rad" type="button">Save</button>
-        </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
     </div>
 </div>
-
 <div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
+            <script>
+                {% if messages %}
+                    {% for message in messages %}
+                        UIkit.notification("{{ message }}", {pos: 'top-center'});
+                    {% endfor %}
+                {% endif %}
+            </script>
 			<section class="uk-section uk-article" style="background-color: white;padding: 10px" >
 				<div class="uk-container uk-container-medium" style="margin-top: 3vh">
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
@@ -150,85 +158,106 @@
                                 </div>
                                 <ul class="uk-switcher uk-margin">
                                     <li class="uk-width-1-1">
-									    <div class="uk-overflow-auto uk-width-1-1">
-                                            <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Name</th>
-                                                        <th>Description</th>
-                                                        <th>Last Updated</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                                        <td>Jerry Thomas</td>
-                                                        <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                                        <td>21/09/18</td>
-                                                        <td>
-                                                            <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                            <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-								        </div>
+                                     <div class="uk-overflow-auto">
+                                     <table id="tbl1" class="uk-table uk-table-hover uk-table-striped" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-medium">Sensor</th>
+                                                  <th class="uk-width-medium">RPI</th>
+                                                  <th class="uk-width-medium">Sensor Type</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                            {% for sensor in sensors reversed%}
+                                                <tr>
+                                                    <td>
+                                                        {{ sensor.sensor_name }}
+                                                        <a class="uk-icon-link uk-text-success" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <form method="post" style="display: inline">
+                                                            <input type="hidden" name="type" value="room_delete">
+                                                            <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            {% csrf_token %}
+                                                        </form>
+                                                    </td>
+                                                    <td>{{ sensor.rpi.name }}</td>
+                                                    <td>{{ sensor.sensor_type.sensor_type_name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                     </table>
+
+                                    </div>
                                     </li>
                                     <li>
-                                         <div class="uk-overflow-auto">
-                                            <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="uk-table-shrink"></th>
-                                                        <th>Name</th>
-                                                        <th>Description</th>
-                                                        <th>Last Updated</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                                        <td>MARK Thomas</td>
-                                                        <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                                        <td>21/09/18</td>
-                                                        <td>
-                                                            <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                            <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-								        </div>
+                                     <div class="uk-overflow-auto">
+                                     <table id="tbl2" class="uk-table uk-table-hover uk-table-striped" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-medium">Name</th>
+                                                  <th class="uk-width-medium">Value name</th>
+                                                  <th class="uk-width-medium">Trigger Threshold</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                            {% for st in sensor_type reversed%}
+                                                <tr>
+                                                    <td>
+                                                        {{ st.sensor_type_name }}
+                                                        <a class="uk-icon-link uk-text-success" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <form method="post" style="display: inline">
+                                                            <input type="hidden" name="type" value="room_delete">
+                                                            <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            {% csrf_token %}
+                                                        </form>
+                                                    </td>
+                                                    <td>{{ st.val_name }}</td>
+                                                    <td>{{ st.trigger_treshold }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                     </table>
+                                        <script>
+                                            $(document).ready(function() {
+                                            $('#example').DataTable();
+                                            } );
+                                        </script>
+                                    </div>
                                     </li>
                                     <li>
-                                         <div class="uk-overflow-auto">
-                                            <table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="uk-table-shrink"></th>
-                                                        <th>Name</th>
-                                                        <th>Description</th>
-                                                        <th>Last Updated</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                                        <td>CRUZD Thomas</td>
-                                                        <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                                        <td>21/09/18</td>
-                                                        <td>
-                                                            <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                            <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-								        </div>
+                                     <div class="uk-overflow-auto">
+                                     <table id="tbl3" class="uk-table uk-table-hover uk-table-striped" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-medium">Name</th>
+                                                  <th class="uk-width-medium">IP Address</th>
+                                                  <th class="uk-width-medium">Room Assigned</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                            {% for r in rpi reversed%}
+                                                <tr>
+                                                    <td>
+                                                        {{ r.name }}
+                                                        <a class="uk-icon-link uk-text-success" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <form method="post" style="display: inline">
+                                                            <input type="hidden" name="type" value="room_delete">
+                                                            <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            {% csrf_token %}
+                                                        </form>
+                                                    </td>
+                                                    <td>{{ r.ip_address }}</td>
+                                                    <td>{{ r.room.room_name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    </div>
                                     </li>
                                 </ul>
 								</div>
@@ -240,6 +269,14 @@
 				<!-- large image -->
 				<!-- /large image -->
 </div>
+<script>
+    $(document).ready(function() {
+    $('#tbl1').DataTable();
+    $('#tbl2').DataTable();
+    $('#tbl3').DataTable();
+
+    } );
+</script>
 <!-- /CONTENT -->
 {% include 'octo_site/includes/offcanvas.html' %}
 

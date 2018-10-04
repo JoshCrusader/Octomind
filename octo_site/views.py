@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from octo_site.models import *
 from django.http import HttpResponseRedirect
 from octo_site.forms import *
+import socket
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
@@ -45,11 +46,39 @@ def register(request):
         messages.warning(request, 'Account Created.')
         return redirect('index')
     return render(request, 'octo_site/register.html')
+
+def add_sensor(request):
+    sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['rpi_id'],
+                sensor_type_id=request.POST['sensor_type_id'])
+    sensor.save()
+def add_sensor_type(request):
+    print("and2 me: ", request.POST['sensor_type_name'])
+    sensor_type = SensorType(sensor_type_name=request.POST['sensor_type_name'], val_name=request.POST['val_name'],
+                trigger_treshold=request.POST['trigger_treshold'])
+    sensor_type.save()
+def add_rpi(request):
+    try:
+        socket.inet_aton(request.POST['ip_address'])
+        rpi = Rpi(name=request.POST['name'], ip_address=request.POST['ip_address'],
+                  room_id=request.POST['room_id'])
+        rpi.save()
+    except socket.error:
+        print("warning, bitches")
+        messages.warning(request, 'IP Address is invalid, please enter another IP.')
 def page_sensor(request):
-    return render(request, 'octo_site/settings/sensor_page.html')
+    if request.method == 'POST':
+        print("posted, bitches",request.POST['type'])
+        if request.POST['type'] == "sensor":
+            add_sensor(request)
+        elif request.POST['type'] == "sensor_type":
+            add_sensor_type(request)
+        elif request.POST['type'] == "rpi":
+            print("rpi, bitches")
+            add_rpi(request)
+        return HttpResponseRedirect(reverse('page_sensor'))
+    return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
 def page_venue(request):
     if request.method == 'POST':
-
         if request.POST['type'] == "room":
             if RoomForm(request.POST, request.FILES).is_valid():
                 room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'], header_img=request.FILES['header_img'])
@@ -74,7 +103,6 @@ def page_venue(request):
         elif request.POST['type'] == "branch_delete":
             branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
             branch.delete()
-
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
@@ -82,8 +110,6 @@ def page_venue(request):
 def upload_process(request):
     print("waw ngaleng")
     return JsonResponse({'filename':"kapiha"})
-def add_room(request):
-    return render(request, 'octo_site/settings/venue_page.html')
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
