@@ -60,6 +60,17 @@ def page_venue(request):
             return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm()})
+
+def control_panel(request):
+    if request.method == 'GET':
+        for i in Room.objects.all():
+            print((str)(i.header_img))
+        properties = {}
+        properties['h'] = 5
+        properties['rooms'] = Room.objects.all()
+        return render(request,'octo_site/control_panel.html', properties)
+        pass
+
 @csrf_exempt
 def upload_process(request):
     print("waw ngaleng")
@@ -74,9 +85,6 @@ def signout(request):
 def index(request):
     print("gago")
     return render(request,'octo_site/dashboard.html')
-def control_panel(request):
-    print("control panel")
-    return render(request,'octo_site/control_panel.html', {'h': 5})
 def sensor_data():
     return pull_data()
 
