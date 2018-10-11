@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect
 from octo_site.models import *
-from django.http import HttpResponseRedirect
+import json
+from django.http import HttpResponseRedirect, JsonResponse
 from octo_site.forms import *
+from django.core import serializers
 import socket
 from django.urls import reverse
 from django.http import JsonResponse
@@ -11,7 +13,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
-from octo_site.db_conf import pull_data
+from octo_site.db_conf import pull_data,pull_data_room
 from django.contrib.auth.decorators import login_required
 # Create your views here
 def log_in(request):
@@ -80,7 +82,6 @@ def page_venue(request):
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
 @csrf_exempt
 def upload_process(request):
-    print("waw ngaleng")
     return JsonResponse({'filename':"kapiha"})
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
@@ -90,8 +91,19 @@ def signout(request):
 def index(request):
     print("gago")
     return render(request,'octo_site/dashboard.html')
-def sensor_data():
-    return pull_data()
+@csrf_exempt
+def sensor_data(request,room_id):
+    print("room_id: ",room_id)
+    data = pull_data_room(room_id)
+    for d in data:
+        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
+        d['sensor_name'] = sensor.sensor_name
+        d['rpi_id'] = sensor.rpi_id
+        d['sensor_type_id'] = sensor.sensor_type_id
+    return JsonResponse({"data": data})
+def data_vis(request, room_id):
+    room = Room.objects.get(room_id=room_id)
+    return render(request,'octo_site/data_vis.html',{"room":room})
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
         room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],
