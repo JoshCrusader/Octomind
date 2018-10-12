@@ -1,0 +1,172 @@
+{% load staticfiles %}
+{% load templaterange %}
+{% load get_attr %}
+        {% include 'octo_site/includes/header.html' %}
+        <style>
+            .gameHead{
+                position: relative;
+                width: 100%;
+                height: 200px;
+                color: white;
+            }
+            .cardHeader{
+                background-color: rgba(0,0,0,0.7);
+                position: absolute;
+                width: 100%;
+                height: 200px;
+                color: white;
+                text-align: center;
+                line-height: 200px;
+            }
+            .timeLeft{
+                position: absolute;
+                right: 5px;
+                bottom: 5px;
+            }
+            .playerContainer{
+                width: 70%;
+                float:left;
+            }
+            .clueContainer{
+                width: 30%;
+                float:left;
+            }
+            .playerHeader{
+                color: white;
+            }
+            .clueContainer{
+                text-align: right;
+                color: white;
+            }
+            .div-lock{
+                float: right;
+                width: 15px;
+                height: 15px;
+                margin: 2px;
+            }
+            .personText{
+                width: 50%;
+                float:left;
+                color: white;
+                font-size: 8pt;
+            }
+            .panelCard{
+                background-color: #222;
+            }
+            .panelImage{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+            .div-lock-img{
+                width: 100%;
+                height: 100%;
+            }
+            .atag{
+                text-decoration: none;
+            }
+            .clue-button{
+                position: absolute;
+                right: 15px;
+                top: 5px;
+            }
+        </style>
+<!-- CONTENT -->
+<div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
+    <div class="uk-container uk-container-expand">
+        
+        <div class="uk-grid uk-grid-medium uk-grid-match" data-uk-grid>
+            <!-- panel -->
+            {% for i in rooms %}
+            <!-- panel -->
+            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
+                <a href = "#modal-example" uk-toggle class = "atag">
+                    <div class="panelCard">
+                        <div class = "gameHead">
+                            <img class = "panelImage" src = "{% static 'media/' %}{{ i.header_img }}">
+                            <div class = "cardHeader">{{ i.room_name }}</div>
+                            {% if games|attr:i.room_id != None %}
+                            <div class = "timeLeft">Time left: 12:40</div>
+                            {% endif %}
+                            <div class = "clue-button" onClick = "">?</div>
+                        </div>    
+                        <div class="uk-card-body">
+                            <div class = "playerContainer" style = "height: 70px;">
+                            {% if games|attr:i.room_id != None %}
+                                <div class = "playerHeader">Current Players</div>
+                                <div class = "personText">Joshua Cruzada</div>
+                                <div class = "personText">Mark Barraquias</div>
+                                <div class = "personText">Betlee Kyle</div>
+                                <div class = "personText">Person 4</div>
+                                <div class = "personText">Person 5</div>
+                                <div class = "personText">Person 6</div>
+                            
+                            </div>
+                            <div class = "clueContainer">
+                                <div class = "clueHeader">Clues Left</div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                            </div>
+                            {% else %}
+                            <div class = "playerHeader" style = "color: red">No Current Team</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            <!-- panel -->
+            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
+                <a href = "#" class = "atag">
+                    <div class="panelCard">
+                        <div class = "gameHead">
+                            <img class = "panelImage" src = "{% static 'octo_site/assets/img/rebeccas-room.jpg' %}">
+                            <div class = "cardHeader">Rebeccas room</div>
+                            <div class = "timeLeft">Time left: 12:40</div>
+                        </div>    
+                        <div class="uk-card-body">
+                            <div class = "playerContainer" style = "height: 70px;">
+                                <div class = "playerHeader" style = "color: red">No Current Team</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- /panel -->
+        <footer class="uk-section uk-section-small uk-text-center">
+            <hr>
+            <a href="https://github.com/zzseba78/Kick-Off">Created by KickOff</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a>
+        </footer>
+    </div>
+</div>
+<!-- /CONTENT -->
+
+<!-- MODALS -->
+<div id="modal-example" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">Headline</h2>
+        <div class="uk-inline uk-width-1-1">
+            <button class="uk-button uk-button-default uk-width-1-1" type="button">Bottom Justify</button>
+            <div uk-dropdown="pos: bottom-justify" class = "uk-width-1-1">
+                <ul class="uk-nav uk-dropdown-nav uk-width-1-1">
+                    <li class="uk-active "><a href="#">Active</a></li>
+                    <li><a href="#">Item</a></li>
+                    <li class="uk-nav-header">Header</li>
+                    <li><a href="#">Item</a></li>
+                    <li><a href="#">Item</a></li>
+                    <li class="uk-nav-divider"></li>
+                    <li><a href="#">Item</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+            <button class="uk-button uk-button-primary" type="button">Save</button>
+        </p>
+    </div>
+</div>
+<!-- /MODALS -->
+{% include 'octo_site/includes/offcanvas.html' %}

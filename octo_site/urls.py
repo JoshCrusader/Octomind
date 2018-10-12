@@ -9,6 +9,7 @@ from . import views
 urlpatterns = [
     #home and setup
     path('', views.index, name='index'),
+    path('control_panel/', views.control_panel, name='control_panel'),
     path('signout', views.signout, name='signout'),
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),
@@ -20,3 +21,5 @@ urlpatterns = [
     path('api/upload_process/', views.upload_process,name='upload_process'),
     path('admin/', admin.site.urls),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

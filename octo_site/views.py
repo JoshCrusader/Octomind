@@ -15,6 +15,11 @@ import mysql.connector
 import sys
 from octo_site.db_conf import pull_data,pull_data_room
 from django.contrib.auth.decorators import login_required
+
+import gspread
+##gc = gspread.authorize(credentials)
+
+from django.http import HttpResponse
 # Create your views here
 def log_in(request):
     user = None
@@ -79,7 +84,27 @@ def page_venue(request):
             delete_branch(request)
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
-                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
+                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm()})
+
+def control_panel(request):
+    if request.method == 'GET':
+        games = {}
+        for i in Game.objects.all():
+            games[i.room_id] = (Room.objects.get(room_id = i.room_id))
+        print(games)
+        properties = {}
+        properties['h'] = 5
+        properties['rooms'] = Room.objects.all()
+        properties['games'] = games
+        return render(request,'octo_site/control_panel.html', properties)
+        pass
+
+def access_room(request):
+    ## Add Room in the game room
+    if request.method == 'POST':
+        pass
+
+
 @csrf_exempt
 def upload_process(request):
     return JsonResponse({'filename':"kapiha"})
@@ -113,8 +138,8 @@ def add_branch(request):
     branch = Branch(name=request.POST['name'], address=request.POST['address'])
     branch.save()
 def add_sensor(request):
-    sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['rpi_id'],
-                sensor_type_id=request.POST['sensor_type_id'])
+    sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['sensor_rpi_id'],
+                sensor_type_id=request.POST['sensor_sensor_type_id'])
     sensor.save()
 def add_sensor_type(request):
     sensor_type = SensorType(sensor_type_name=request.POST['sensor_type_name'], val_name=request.POST['val_name'],

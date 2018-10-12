@@ -247,9 +247,7 @@
                                             $(document).ready(function() {
                                             $('#example').DataTable();
                                             } );
-
                                             $(document).ready(function() {
-
                                             $('#room_tbl').DataTable();
                                             });
                                         </script>
@@ -295,13 +293,12 @@
     function showImg(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
                 $('#hdr_img')
                     .attr('src', e.target.result).style="display: inline;"
                 ;
             };
-    
+
             reader.readAsDataURL(input.files[0]);
         }
     }
@@ -319,17 +316,14 @@
     function handleFile(file) {
         console.log("i here, handling file!");
         document.getElementById('hd_img').files[0] = file;
-
         var preview = document.getElementById('output');
         var img = document.createElement("img");
         img.classList.add("obj");
         img.file = file;
         preview.appendChild(img); // Assuming that "preview" is the div output where the content will be displayed.
-
         var reader = new FileReader();
         reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
         reader.readAsDataURL(file);
-
       }
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
@@ -343,7 +337,6 @@
             xhr.open("POST","/octo_site/api/upload_process/");
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             const csrfmiddlewaretoken = csrftoken;
-
         },
         beforeAll: function () {
             console.log('beforeAll', arguments);
@@ -359,40 +352,29 @@
         complete: function () {
             console.log('complete', arguments);
         },
-
         loadStart: function (e) {
-
-
             console.log('loadStart', arguments);
             bar.removeAttribute('hidden');
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         progress: function (e) {
             console.log('progress', arguments);
-
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         loadEnd: function (e) {
             console.log('loadEnd', arguments);
-
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         completeAll: function (arguments) {
             console.log('completeAll', arguments);
-
             setTimeout(function () {
                 bar.setAttribute('hidden', 'hidden');
             }, 1000);
-
             console.log('Upload Completed');
         }
-
     });
 </script>
 <!-- /CONTENT -->
