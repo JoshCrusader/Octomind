@@ -13,6 +13,10 @@ import sys
 from octo_site.db_conf import pull_data
 from django.contrib.auth.decorators import login_required
 
+import gspread
+##gc = gspread.authorize(credentials)
+
+print('sda')
 from django.http import HttpResponse
 # Create your views here
 def log_in(request):
@@ -63,13 +67,22 @@ def page_venue(request):
 
 def control_panel(request):
     if request.method == 'GET':
-        for i in Room.objects.all():
-            print((str)(i.header_img))
+        games = {}
+        for i in Game.objects.all():
+            games[i.room_id] = (Room.objects.get(room_id = i.room_id))
+        print(games)
         properties = {}
         properties['h'] = 5
         properties['rooms'] = Room.objects.all()
+        properties['games'] = games
         return render(request,'octo_site/control_panel.html', properties)
         pass
+
+def access_room(request):
+    ## Add Room in the game room
+    if request.method == 'POST':
+        pass
+
 
 @csrf_exempt
 def upload_process(request):
