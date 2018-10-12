@@ -185,7 +185,7 @@
                                                             {% csrf_token %}
                                                         </form>
                                                     </td>
-                                                    <td>{{ sensor.rpi.name }}</td>
+                                                    <td>{{ sensor.rpi.name }}, {{ sensor.rpi.room.room_name }}</td>
                                                     <td>{{ sensor.sensor_type.sensor_type_name }}</td>
                                                 </tr>
                                             {% endfor %}

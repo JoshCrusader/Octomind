@@ -84,7 +84,7 @@ def page_venue(request):
             delete_branch(request)
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
-                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm()})
+                  {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
 
 def control_panel(request):
     if request.method == 'GET':
