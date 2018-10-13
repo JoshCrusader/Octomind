@@ -42,6 +42,7 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
+            <input type="hidden" name="game_sequence" id="game_sequence" value="">
             <div class="uk-modal-body">
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Room name</label>
@@ -62,27 +63,49 @@
                         -->
                         </div>
                     </div>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                    <div class="js-upload uk-placeholder uk-text-center">
+                        <span uk-icon="icon: cloud-upload"></span>
+                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
+                        <div uk-form-custom>
+                            <!--
+                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
+                            -->
+                        </div>
+                    </div>
 
-                    <div class="uk-margin uk-text-center uk-align-center" >
-                        <div class="upload-btn-wrapper" style="width: 100%">
-                          <button class="btn_up" style="width: 100%;font-size: 16px"> <span uk-icon="icon: cloud-upload"></span> Upload Room Header Image</button>
+                    <div class="uk-margin uk-text-center uk-align-center">
+                        <div class="upload-btn-wrapper">
+                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
                             {{ room_form.header_img }}
                         </div>
                     </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="hdr_wrapper">
-                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+            <div class="uk-child-width-1-1@m" uk-grid>
+            <div>
+                <hr class="uk-divider-icon">
+                <dl class="uk-description-list">
+                    <dt><b>Sensor Sequence</b></dt>
+                    <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
+                </dl>
+                <div uk-sortable="group: sortable-group">
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
                     </div>
-                <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-                <div class="uk-child-width-1-1@m" uk-grid>
-                    <div>
-                        <hr class="uk-divider-icon">
-                        <dl class="uk-description-list">
-                            <dt><span data-uk-icon="icon: settings"></span> <b> Game Sequence</b></dt>
-                            <dd><small>Game sequences are automatically added when <b>Sensors</b> are assigned to the room at the <b>Sensors Settings</b>, it is enumerated at first input basis.
-                                You can always rearrange the sequence at the edit button for desired sequence of sensors that represents each room puzzle.</small></dd>
-                        </dl>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite2"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 2</div></li>
+                    </div>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite3"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 3</div></li>
+                    </div>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite4"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 4</div></li>
                     </div>
                 </div>
+            </div>
+            </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -102,55 +125,22 @@
             {% csrf_token %}
             <input type="hidden" name="type" value="room_edit">
             <input type="hidden" name="room_id" id="edit-room_id" value="">
-             <input type="hidden" name="game_sequence" id="game_sequence" value="">
-
             <div class="uk-modal-body">
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
-                    <div class="uk-form-controls">
-                        {{ edit_room_form.room_name }}
-                    </div>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Branch</label>
-                    <div class="uk-form-controls">
-                        {{ edit_room_form.branch_id }}
-                    </div>
-                </div>
-                <div class="uk-margin uk-text-center uk-align-center" id="output">
-                    <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
-                </div>
-
-                    <div class="uk-child-width-1-1@m" uk-grid id="has_seq">
-                    <div>
-                        <hr class="uk-divider-icon">
-                        <dl class="uk-description-list">
-                            <dt><b>Sensor Sequence</b></dt>
-                            <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
-                        </dl>
-                        <div uk-sortable="group: sortable-group">
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite2"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 2</div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite3"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 3</div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite4"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 4</div></li>
-                            </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                        <div class="uk-form-controls">
+                            {{ edit_room_form.room_name }}
                         </div>
                     </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                        <div class="uk-form-controls">
+                            {{ edit_room_form.branch_id }}
+                        </div>
                     </div>
-
-                    <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
-                            <dt> <span class="uk-text-danger" data-uk-icon="settings" href="" uk-toggle></span>
-                            <b class="uk-text-danger">No Sensors Added Yet</b></dt>
-                            <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
-                    </dl>
-
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -177,7 +167,39 @@
                         </div>
                     </div>
                     <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                        <div class="uk-form-controls">
+                        {{ room_form.branch_id }}
+                        <!--
+                            <select class="uk-select" name="branch_id" id="form-stacked-select">
+                                {% for branch in branches reversed %}
+                                <option value="{{ branch.branch_id }}">{{ branch.name }}</option>
+                                {% endfor %}
+                            </select>
+                        -->
+                        </div>
                     </div>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output">
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                    <div class="js-upload uk-placeholder uk-text-center">
+                        <span uk-icon="icon: cloud-upload"></span>
+                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
+                        <div uk-form-custom>
+                            <!--
+                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
+                            -->
+                        </div>
+                    </div>
+
+                    <div class="uk-margin uk-text-center uk-align-center">
+                        <div class="upload-btn-wrapper">
+                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
+                            {{ room_form.header_img }}
+                        </div>
+                    </div>
+            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -232,7 +254,8 @@
                                                         <div uk-lightbox>
                                                             <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
                                                         </div>
-                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <a class="uk-icon-link uk-text-{% if room.has_game_sequence %}success{% else %}warning{% endif %}" uk-tooltip="{% if room.has_game_sequence %}Modify{% else %}Add{% endif %} Game Sequence" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="settings" href="#modal-room-edit" uk-toggle></a>
+                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
                                                             <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
@@ -299,7 +322,6 @@
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $('#hdr_wrapper').css('display','block');
                 $('#hdr_img')
                     .attr('src', e.target.result).style="display: inline;"
                 ;
@@ -344,14 +366,6 @@
         $("#edit-room_name").val($(obj).attr('room-name'));
         $("#edit-room_id").val($(obj).attr('room-id'));
         $("#edit-branch_id").val($(obj).attr('room-branch-id'));
-        if($(obj).attr('has-sequence')==="True"){
-            $("#has_seq").css("display","block");
-            $("#has_no_seq").css("display","none");
-        }
-        else{
-            $("#has_seq").css("display","none");
-            $("#has_no_seq").css("display","block");
-        }
     }
     function handleFile(file) {
         console.log("i here, handling file!");
