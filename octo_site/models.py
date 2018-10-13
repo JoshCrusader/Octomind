@@ -76,6 +76,30 @@ class Room(models.Model):
     branch = models.ForeignKey(Branch, models.DO_NOTHING)
     header_img = models.ImageField(upload_to='imgs/')
 
+    @property
+    def has_game_sequence(self):
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                if rpi_sensor.sequence_number is not None:
+                    return True
+        return False
+    @property
+    def num_sensors(self):
+        sensors=[]
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            sensors.append(len(Sensor.objects.filter(rpi_id=r.rpi_id)))
+        return sum(sensors)
+
+    @property
+    def get_all_sensors(self):
+        sensors=[]
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                sensors.append(rpi_sensor)
+        return sensors
+
     class Meta:
         managed = False
         db_table = 'room'
@@ -97,7 +121,10 @@ class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=45, blank=True, null=True)
     rpi = models.ForeignKey(Rpi, models.DO_NOTHING)
+
+    sequence_number = models.IntegerField(blank=True, null=True)
     sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
+
 
     class Meta:
         managed = False
