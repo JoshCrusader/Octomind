@@ -42,6 +42,7 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
+            <input type="hidden" name="game_sequence" id="game_sequence" value="">
             <div class="uk-modal-body">
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Room name</label>
@@ -82,7 +83,25 @@
                         </div>
                     </div>
             <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-
+            <div class="uk-child-width-1-1@m" uk-grid>
+            <div>
+                <h4>Group 1</h4>
+                <div uk-sortable="group: sortable-group">
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 1</div></li>
+                    </div>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite2"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 2</div></li>
+                    </div>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite3"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 3</div></li>
+                    </div>
+                    <div class="uk-margin">
+                        <li class="draggable_list" data-sensor_id="tite4"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 4</div></li>
+                    </div>
+                </div>
+            </div>
+            </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -231,10 +250,11 @@
                                                         <div uk-lightbox>
                                                             <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
                                                         </div>
-                                                        <a class="uk-icon-link uk-text-success" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <a class="uk-icon-link uk-text-{% if room.has_game_sequence %}success{% else %}warning{% endif %}" uk-tooltip="{% if room.has_game_sequence %}Modify{% else %}Add{% endif %} Game Sequence" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="settings" href="#modal-room-edit" uk-toggle></a>
+                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
-                                                            <a href="#" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                             <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
                                                             {% csrf_token %}
                                                         </form>
@@ -306,6 +326,32 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+    var indexes = [];
+
+    let vals = [];
+    $(document).on('moved', '.uk-sortable', function(e) {
+      console.log("henlo");
+      var currentLi = e.originalEvent.parentNode;
+      indexes = [];
+      $(this).find('li').each(function() {
+        indexes.push($(this).data("index"));
+
+        vals.push($(this).data('sensor_id'));
+      });
+
+      $("#game_sequence").val(vals.toString());
+      console.log(indexes);
+      console.log(vals);
+
+    });
+
+    $('.uk-sortable').find('li').each(function(i) {
+      $(this).data("index", i);
+      indexes.push(i);
+    });
+
+    console.log(indexes);
+    console.log(vals);
     function delete_room(room_id) {
         let conf = confirm("Are you sure you want to delete?");
         if (conf){
