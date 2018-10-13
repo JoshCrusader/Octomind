@@ -108,6 +108,13 @@ def access_room(request):
 @csrf_exempt
 def upload_process(request):
     return JsonResponse({'filename':"kapiha"})
+
+@csrf_exempt
+def get_sensors_by_room_id(request,room_id):
+    data_return = []
+    for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
+        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+    return JsonResponse({"sensors":data_return})
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
@@ -140,6 +147,7 @@ def add_branch(request):
 def add_sensor(request):
     sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['sensor_rpi_id'],
                 sensor_type_id=request.POST['sensor_sensor_type_id'])
+    sensor.sequence_number = sensor.get_sequence_number
     sensor.save()
 def add_sensor_type(request):
     sensor_type = SensorType(sensor_type_name=request.POST['sensor_type_name'], val_name=request.POST['val_name'],
@@ -158,11 +166,21 @@ def edit_sensor(request):
     sensor.sensor_name = request.POST['sensor_name']
     sensor.sensor_type_id = request.POST['sensor_sensor_type_id']
     sensor.rpi_id = request.POST['sensor_rpi_id']
+
     sensor.save()
 def edit_room(request):
     room = Room.objects.get(room_id=request.POST['room_id'])
     room.room_name = request.POST['room_name']
     room.branch_id = request.POST['branch_id']
+    try:
+        sequences = request.POST['game_sequence'].split(",")
+        for i,s in enumerate(sequences,1):
+            change_sequence =  Sensor.objects.get(sensor_id=int(s))
+            print("sensor_id: ", s, "| ctr: ",i)
+            change_sequence.sequence_number = i
+            change_sequence.save()
+    except:
+        pass
     room.save()
 def edit_branch(request):
     branch = Branch.objects.filter(branch_id=request.POST['branch_id'])[0]

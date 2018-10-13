@@ -95,7 +95,7 @@ class Room(models.Model):
     def get_all_sensors(self):
         sensors=[]
         for r in Rpi.objects.filter(room_id=self.room_id):
-            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
             for rpi_sensor in rpi_sensors:
                 sensors.append(rpi_sensor)
         return sensors
@@ -125,6 +125,21 @@ class Sensor(models.Model):
     sequence_number = models.IntegerField(blank=True, null=True)
     sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
 
+    @property
+    def get_sequence_number(self):
+        highest = -1
+
+        room = Rpi.objects.get(rpi_id=self.rpi_id).room
+        flag = room.has_game_sequence
+        print("flag: ",flag)
+        if flag == True:
+            for r in Rpi.objects.filter(room_id=room.room_id):
+                for s in Sensor.objects.filter(rpi_id=r.rpi_id):
+                    if highest < s.sequence_number:
+                        highest = s.sequence_number
+            return highest+1
+        else:
+            return 1
 
     class Meta:
         managed = False

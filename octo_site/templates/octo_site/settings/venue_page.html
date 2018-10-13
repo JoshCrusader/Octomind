@@ -128,19 +128,10 @@
                             <dt><b>Sensor Sequence</b></dt>
                             <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
                         </dl>
-                        <div uk-sortable="group: sortable-group">
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite2"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 2</div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite3"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 3</div></li>
-                            </div>
-                            <div class="uk-margin">
-                                <li class="draggable_list" data-sensor_id="tite4"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 4</div></li>
-                            </div>
+                        <div uk-sortable="group: sortable-group" id="sensor_sequence">
+                        <div class="uk-margin">
+                            <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                        </div>
                         </div>
                     </div>
                     </div>
@@ -294,6 +285,7 @@
 <script>
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
+    let sensors;
     const csrftoken = '{{ csrf_token }}';
     function showImg(input) {
         if (input.files && input.files[0]) {
@@ -308,19 +300,18 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    var indexes = [];
-
-    let vals = [];
+    let indexes;
+    let vals;
+    indexes = [];
+    vals = [];
     $(document).on('moved', '.uk-sortable', function(e) {
-      console.log("henlo");
-      var currentLi = e.originalEvent.parentNode;
       indexes = [];
+      vals = [];
+      var currentLi = e.originalEvent.parentNode;
       $(this).find('li').each(function() {
         indexes.push($(this).data("index"));
-
         vals.push($(this).data('sensor_id'));
       });
-
       $("#game_sequence").val(vals.toString());
       console.log(indexes);
       console.log(vals);
@@ -345,6 +336,17 @@
         $("#edit-room_id").val($(obj).attr('room-id'));
         $("#edit-branch_id").val($(obj).attr('room-branch-id'));
         if($(obj).attr('has-sequence')==="True"){
+            $("#sensor_sequence").empty();
+            sensors =  $.get("/octo_site/api/get_sensor_by_room_id/"+$(obj).attr('room-id')+"/");
+            sensors.done(function(results){
+               console.log(results);
+               for(i in results.sensors){
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin">'+'<li class="draggable_list" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       str_append += '<div class="uk-card uk-card-default uk-card-body uk-card-small box_box">'+results.sensors[i].sensor_name+'</div></li></div>';
+                   $("#sensor_sequence").append(str_append);
+               }
+            });
             $("#has_seq").css("display","block");
             $("#has_no_seq").css("display","none");
         }

@@ -19,6 +19,8 @@ urlpatterns = [
     path('data_vis/<int:room_id>/',views.data_vis,name='data_vis'),
     path('sensor_data/<int:room_id>/',views.sensor_data, name='sensor_data'),
     path('api/upload_process/', views.upload_process,name='upload_process'),
+
+    path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
     path('admin/', admin.site.urls),
 ]
 
