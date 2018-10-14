@@ -209,3 +209,12 @@ def delete_room(request):
 def delete_branch(request):
     branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
     branch.delete()
+
+def room_analysis(request):
+
+    room = Room.objects.get(room_id=2)
+    return render(request, 'octo_site/reports/room_analysis.html',{"room":room})
+def sensor_analysis(request):
+    return render(request, 'octo_site/reports/sensor_analysis.html')
+def trend_analysis(request):
+    return render(request, 'octo_site/reports/trend_analysis.html')

@@ -39,7 +39,7 @@ def pull_data_room(room_id):
         rpi_ids.append(rpi.rpi_id)
 
     data_return = []
-    host = "192.168.43.225"
+    host = "192.168.1.3"
     connection = MySQLdb.connect(
         host=host,
         user="root",
