@@ -69,6 +69,7 @@ def page_sensor(request):
         return HttpResponseRedirect(reverse('page_sensor'))
     return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
 def page_venue(request):
+
     if request.method == 'POST':
         if request.POST['type'] == "room":
             add_room(request)

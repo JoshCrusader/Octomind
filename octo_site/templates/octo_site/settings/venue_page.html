@@ -137,7 +137,7 @@
                     </div>
 
                     <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
-                            <dt> <span class="uk-text-danger" data-uk-icon="settings" href="" uk-toggle></span>
+                            <dt> <span class="uk-text-danger" data-uk-icon="settings" href=""></span>
                             <b class="uk-text-danger">No Sensors Added Yet</b></dt>
                             <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
                     </dl>
@@ -219,9 +219,10 @@
                                                 <tr>
                                                     <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 75px;height: 50px"></td>
                                                     <td>
-                                                        <div uk-lightbox>
-                                                            <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
+                                                        <div  uk-lightbox>
+                                                            <a href="/static/media/{{ room.header_img }}" id="lightbox-{{ room.room_id }}" has-sequence="{{ room.has_game_sequence }}"  room-id="{{ room.room_id }}"  data-caption="{% for sensor_seq in room.get_all_sensors %}{{ sensor_seq.sensor_name }} > {% endfor %}">{{ room.room_name }}</a>
                                                         </div>
+                                                        <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}"" href=""></span>
                                                         <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
@@ -311,6 +312,10 @@
         vals.push($(this).data('sensor_id'));
       });
       $("#game_sequence").val(vals.toString());
+
+      $('.indexes').each(function(x) {
+          $(this).html(x+1);
+
       console.log(indexes);
       console.log(vals);
 
@@ -319,6 +324,8 @@
     $('.uk-sortable').find('li').each(function(i) {
       $(this).data("index", i);
       indexes.push(i);
+
+    });
     });
 
     console.log(indexes);
@@ -329,6 +336,7 @@
             $('#room-'+room_id).click();
         }
     }
+
     function edit_room(obj) {
         $("#edit-room_name").val($(obj).attr('room-name'));
         $("#edit-room_id").val($(obj).attr('room-id'));
@@ -339,9 +347,10 @@
             sensors.done(function(results){
                console.log(results);
                for(i in results.sensors){
+                   let ind = parseInt(i)+1;
                    console.log(results.sensors[i].sensor_id);
-                   let str_append = '<div class="uk-margin">'+'<li class="draggable_list" data-sensor_id="'+results.sensors[i].sensor_id+'">';
-                       str_append += '<div class="uk-card uk-card-default uk-card-body uk-card-small box_box">'+results.sensors[i].sensor_name+'</div></li></div>';
+                   let str_append = '<div class="uk-margin">'+'<li class="draggable_list" data-index="'+i+'" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       str_append += '<div class="uk-card uk-card-default uk-card-body uk-card-small box_box"> <span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'</div></li></div>';
                    $("#sensor_sequence").append(str_append);
                }
             });
