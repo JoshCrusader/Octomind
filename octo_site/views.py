@@ -212,8 +212,7 @@ def delete_branch(request):
 
 def room_analysis(request):
 
-    room = Room.objects.get(room_id=2)
-    return render(request, 'octo_site/reports/room_analysis.html',{"room":room})
+    return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
