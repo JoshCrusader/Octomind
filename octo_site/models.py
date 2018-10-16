@@ -74,13 +74,36 @@ class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=45, blank=True, null=True)
     branch = models.ForeignKey(Branch, models.DO_NOTHING)
-    header_img = models.CharField(max_length=100, blank=True, null=True)
+    header_img = models.ImageField(upload_to='imgs/')
+
+    @property
+    def has_game_sequence(self):
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                if rpi_sensor.sequence_number is not None:
+                    return True
+        return False
+    @property
+    def num_sensors(self):
+        sensors=[]
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            sensors.append(len(Sensor.objects.filter(rpi_id=r.rpi_id)))
+        return sum(sensors)
+
+    @property
+    def get_all_sensors(self):
+        sensors=[]
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
+            for rpi_sensor in rpi_sensors:
+                sensors.append(rpi_sensor)
+        return sensors
 
     class Meta:
         managed = False
         db_table = 'room'
         unique_together = (('room_id', 'branch'),)
-
 
 class Rpi(models.Model):
     rpi_id = models.AutoField(primary_key=True)
@@ -98,7 +121,25 @@ class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=45, blank=True, null=True)
     rpi = models.ForeignKey(Rpi, models.DO_NOTHING)
+
+    sequence_number = models.IntegerField(blank=True, null=True)
     sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
+
+    @property
+    def get_sequence_number(self):
+        highest = -1
+
+        room = Rpi.objects.get(rpi_id=self.rpi_id).room
+        flag = room.has_game_sequence
+        print("flag: ",flag)
+        if flag == True:
+            for r in Rpi.objects.filter(room_id=room.room_id):
+                for s in Sensor.objects.filter(rpi_id=r.rpi_id):
+                    if highest < s.sequence_number:
+                        highest = s.sequence_number
+            return highest+1
+        else:
+            return 1
 
     class Meta:
         managed = False

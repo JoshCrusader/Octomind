@@ -1,0 +1,152 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+<div id="content" style="padding: 0 0 0 0; margin-left: 200px;">
+			<section class="uk-section uk-article" style="background-color: white;padding: 0px" >
+				<div class="uk-container uk-container-medium" style="margin-top: 3vh ">
+                        <div class="uk-grid" >
+                                <div class="uk-width-auto" >
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics</h2>
+                                    <div class="uk-width-1-1 uk-text-center">
+                                        <form class="uk-form">
+                                            <div class="uk-margin" style="margin-top: 3vh">
+                                                <div uk-form-custom="target: true">
+                                                    <input class="uk-input uk-form-width-medium"  type="date" data-uk-datepicker="{format:'DD.MM.YYYY'}"> to
+                                                    <input class="uk-input uk-form-width-medium"  type="date" data-uk-datepicker="{format:'DD.MM.YYYY'}">
+                                                </div>
+                                                <button class="uk-button uk-button-default">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                        <div class=" uk-align-center uk-width-expand">
+                                            <div class="chart-container" style=" height:50vh;width:75vw">
+                                                <canvas id="canvas"></canvas>
+                                            </div>
+                                        <br>
+								    </div>
+                                </div>
+                            </div>
+                        </div>
+
+				</div>
+            </section>
+
+</div>
+
+	<script>
+        let to_add=[];
+        let sensor_data;
+		let MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		let config = {
+			type: 'line',
+			data: {
+				labels: [],
+				datasets: [{
+					label: 'Time Triggered at',
+					backgroundColor: window.chartColors.red,
+					borderColor: window.chartColors.red,
+					data: [],
+					fill: false,
+				}]
+			},
+			options: {
+				responsive: true,
+
+				title: {
+					display: true,
+					text: '{{ room.room_name }} Game #69'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Sensor Name'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'seconds'
+						}
+					}]
+				}
+			}
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+			//initData();
+            console.log("started");
+			//window.setInterval(reloadData, 1000);
+
+		};
+		function reloadData() {
+
+            sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+            sensor_data.done(function(results){
+                if (config.data.datasets[0].data.length < results.data.length){
+                    to_pop = results.data.length % config.data.datasets[0].data.length  ;
+                    for(let i=0;i<to_pop;i++){
+                        to_add.push(results.data.pop());
+                    }
+                    for (i in to_add){
+                        console.log(to_add[i].sensor_name+"-"+to_add[i].value);
+                        config.data.labels.push(to_add[i].sensor_name);
+                        config.data.datasets[0].data.push(to_add[i].value);
+                        window.myLine.update();
+                    }
+                    window.myLine.update();
+                }
+            });
+
+        }
+        function pullData() {
+           sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+           sensor_data.done(function(results){
+               // console.log(results.data);
+           });
+           //splice data
+        }
+        function initData() {
+           sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+           sensor_data.done(function(results){
+
+                obj = results.data;
+
+                for (i in obj)
+                {
+                   // console.log(obj[i]);
+                    config.data.labels.push(obj[i].sensor_name);
+			        config.data.datasets[0].data.push(obj[i].value);
+
+			    window.myLine.update()
+                }
+           });
+
+			window.myLine.update();
+        }
+
+	</script>
+{% include 'octo_site/includes/offcanvas.html' %}
+

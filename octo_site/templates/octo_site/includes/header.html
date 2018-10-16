@@ -59,6 +59,9 @@
       top: 0;
       opacity: 0;
     }
+    .draggable_list{
+        list-style: none;
+    }
     .shdw{
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
@@ -68,6 +71,11 @@
     }
     .bord_rad{
         border-radius: 25px;
+    }
+    .box_box{
+        padding: 0;
+        border-radius: 25px;
+        box-shadow: 1px 2px 2px 2px rgba(14, 11, 5, 0.29);
     }
     #hdr{
         z-index: 50;
@@ -110,7 +118,7 @@
                 <a href="#">Game Rooms</a>
                 <ul class="uk-nav-sub">
                     <li><a href="{% url 'control_panel' %}">Control Panel</a></li>
-                    <li><a href="#">Current game??</a></li>
+                    <li><a href="#">Previous Games</a></li>
                     <li><a href="#">Schedule</a></li>
                 </ul>
             </li>
@@ -118,22 +126,23 @@
             <li class="uk-parent">
                 <a href="#">Game Report</a>
                 <ul class="uk-nav-sub">
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    <li><a href="{% url 'room_analysis' %}">Room Analysis</a></li>
+                    <li><a href="{% url 'sensor_analysis' %}">Sensor Analysis</a></li>
+                    <li><a href="{% url 'trend_analysis' %}">Trends Analysis</a></li>
                 </ul>
             </li>
             <li class="uk-parent">
                 <a href="#">Exception Report</a>
                 <ul class="uk-nav-sub">
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Errors Report</a></li>
+                    <li><a href="#">Market Warnings</a></li>
                 </ul>
             </li>
             <li class="uk-parent">
                 <a href="#">Market Report</a>
                 <ul class="uk-nav-sub">
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Lead Generation</a></li>
+                    <li><a href="#">Market Segmentation</a></li>
                 </ul>
             </li>
     <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>

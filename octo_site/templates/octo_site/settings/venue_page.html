@@ -15,13 +15,13 @@
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Branch Name</label>
                         <div class="uk-form-controls">
-                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
+                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the branch" required>
                         </div>
                     </div>
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Address</label>
                         <div class="uk-form-controls">
-                            <input class="uk-input uk-display-inline" id="form-stacked-text" name="address" type="text" placeholder="Enter address">
+                            <input class="uk-input uk-display-inline" id="form-stacked-text" name="address" type="text" placeholder="Enter address" required>
                         </div>
                     </div>
             </div>
@@ -46,9 +46,6 @@
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Room name</label>
                         <div class="uk-form-controls">
-                            <!--
-                            <input class="uk-input uk-display-inline" name="name" id="form-stacked-text" type="text" placeholder="Enter a name for the sensor">
-                            -->
                             {{ room_form.room_name }}
                         </div>
                     </div>
@@ -65,27 +62,113 @@
                         -->
                         </div>
                     </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output">
-                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
-                    </div>
-                    <div class="js-upload uk-placeholder uk-text-center">
-                        <span uk-icon="icon: cloud-upload"></span>
-                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
-                        <div uk-form-custom>
-                            <!--
-                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
-                            -->
-                        </div>
-                    </div>
 
-                    <div class="uk-margin uk-text-center uk-align-center">
-                        <div class="upload-btn-wrapper">
-                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
+                    <div class="uk-margin uk-text-center uk-align-center" >
+                        <div class="upload-btn-wrapper" style="width: 100%">
+                          <button class="btn_up" style="width: 100%;font-size: 16px"> <span uk-icon="icon: cloud-upload"></span> Upload Room Header Image</button>
                             {{ room_form.header_img }}
                         </div>
                     </div>
-            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+                    <div class="uk-margin uk-text-center uk-align-center" id="output" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="hdr_wrapper">
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+                <div class="uk-child-width-1-1@m" uk-grid>
+                    <div>
+                        <hr class="uk-divider-icon">
+                        <dl class="uk-description-list">
+                            <dt><span data-uk-icon="icon: settings"></span> <b> Game Sequence</b></dt>
+                            <dd><small>Game sequences are automatically added when <b>Sensors</b> are assigned to the room at the <b>Sensors Settings</b>, it is enumerated at first input basis.
+                                You can always rearrange the sequence at the edit button for desired sequence of sensors that represents each room puzzle.</small></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modal-room-edit" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">EDIT ROOM <span data-uk-icon="icon: pencil; ratio: 1.5"></span></h3>
+        </div>
 
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="room_edit">
+            <input type="hidden" name="room_id" id="edit-room_id" value="">
+             <input type="hidden" name="game_sequence" id="game_sequence" value="">
+
+            <div class="uk-modal-body">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                    <div class="uk-form-controls">
+                        {{ edit_room_form.room_name }}
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                    <div class="uk-form-controls">
+                        {{ edit_room_form.branch_id }}
+                    </div>
+                </div>
+                <div class="uk-margin uk-text-center uk-align-center" id="output">
+                    <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                </div>
+
+                    <div class="uk-child-width-1-1@m" uk-grid id="has_seq">
+                    <div>
+                        <hr class="uk-divider-icon">
+                        <dl class="uk-description-list">
+                            <dt><b>Sensor Sequence</b></dt>
+                            <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
+                        </dl>
+                        <div uk-sortable="group: sortable-group" id="sensor_sequence">
+                        <div class="uk-margin">
+                            <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
+                            <dt> <span class="uk-text-danger" data-uk-icon="settings" href=""></span>
+                            <b class="uk-text-danger">No Sensors Added Yet</b></dt>
+                            <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
+                    </dl>
+
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modal-branch-edit" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD ROOM <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+
+        <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="room">
+            <div class="uk-modal-body">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                        <div class="uk-form-controls">
+                            {{ room_form.room_name }}
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                    </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -127,21 +210,29 @@
                                                   <th class="uk-table-shrink uk-text-nowrap"></th>
                                                   <th class="uk-width-medium">Name</th>
                                                   <th class="uk-width-medium">Branch</th>
+                                                  <th class="uk-table-shrink">Sensor Count</th>
                                               </tr>
                                           </thead>
                                           <tbody>
                                           {% load static %}
                                             {% for room in rooms reversed%}
                                                 <tr>
-                                                    <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 50px;height: 50px"></td>
+                                                    <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 75px;height: 50px"></td>
                                                     <td>
-                                                        <div uk-lightbox>
-                                                            <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
+                                                        <div  uk-lightbox>
+                                                            <a href="/static/media/{{ room.header_img }}" id="lightbox-{{ room.room_id }}" has-sequence="{{ room.has_game_sequence }}"  room-id="{{ room.room_id }}"  data-caption="{% for sensor_seq in room.get_all_sensors %}{{ sensor_seq.sensor_name }} > {% endfor %}">{{ room.room_name }}</a>
                                                         </div>
-                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
-                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                        <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}"" href=""></span>
+                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <form method="post" style="display: inline">
+                                                            <input type="hidden" name="type" value="room_delete">
+                                                            <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
+                                                            {% csrf_token %}
+                                                        </form>
                                                     </td>
                                                     <td>{{ room.branch.name }}</td>
+                                                    <td>{{ room.num_sensors }}</td>
                                                 </tr>
                                             {% endfor %}
                                           </tbody>
@@ -151,9 +242,7 @@
                                             $(document).ready(function() {
                                             $('#example').DataTable();
                                             } );
-
                                             $(document).ready(function() {
-
                                             $('#room_tbl').DataTable();
                                             });
                                         </script>
@@ -195,34 +284,95 @@
 <script>
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
+    let sensors;
     const csrftoken = '{{ csrf_token }}';
     function showImg(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
+                $('#hdr_wrapper').css('display','block');
                 $('#hdr_img')
                     .attr('src', e.target.result).style="display: inline;"
                 ;
             };
-    
+
             reader.readAsDataURL(input.files[0]);
+        }
+    }
+    let indexes;
+    let vals;
+    indexes = [];
+    vals = [];
+    $(document).on('moved', '.uk-sortable', function(e) {
+      indexes = [];
+      vals = [];
+      var currentLi = e.originalEvent.parentNode;
+      $(this).find('li').each(function() {
+        indexes.push($(this).data("index"));
+        vals.push($(this).data('sensor_id'));
+      });
+      $("#game_sequence").val(vals.toString());
+
+      $('.indexes').each(function(x) {
+          $(this).html(x+1);
+
+      console.log(indexes);
+      console.log(vals);
+
+    });
+
+    $('.uk-sortable').find('li').each(function(i) {
+      $(this).data("index", i);
+      indexes.push(i);
+
+    });
+    });
+
+    console.log(indexes);
+    console.log(vals);
+    function delete_room(room_id) {
+        let conf = confirm("Are you sure you want to delete?");
+        if (conf){
+            $('#room-'+room_id).click();
+        }
+    }
+
+    function edit_room(obj) {
+        $("#edit-room_name").val($(obj).attr('room-name'));
+        $("#edit-room_id").val($(obj).attr('room-id'));
+        $("#edit-branch_id").val($(obj).attr('room-branch-id'));
+        if($(obj).attr('has-sequence')==="True"){
+            $("#sensor_sequence").empty();
+            sensors =  $.get("/octo_site/api/get_sensor_by_room_id/"+$(obj).attr('room-id')+"/");
+            sensors.done(function(results){
+               console.log(results);
+               for(i in results.sensors){
+                   let ind = parseInt(i)+1;
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin">'+'<li class="draggable_list" data-index="'+i+'" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       str_append += '<div class="uk-card uk-card-default uk-card-body uk-card-small box_box"> <span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'</div></li></div>';
+                   $("#sensor_sequence").append(str_append);
+               }
+            });
+            $("#has_seq").css("display","block");
+            $("#has_no_seq").css("display","none");
+        }
+        else{
+            $("#has_seq").css("display","none");
+            $("#has_no_seq").css("display","block");
         }
     }
     function handleFile(file) {
         console.log("i here, handling file!");
         document.getElementById('hd_img').files[0] = file;
-
         var preview = document.getElementById('output');
         var img = document.createElement("img");
         img.classList.add("obj");
         img.file = file;
         preview.appendChild(img); // Assuming that "preview" is the div output where the content will be displayed.
-
         var reader = new FileReader();
         reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
         reader.readAsDataURL(file);
-
       }
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
@@ -236,7 +386,6 @@
             xhr.open("POST","/octo_site/api/upload_process/");
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             const csrfmiddlewaretoken = csrftoken;
-
         },
         beforeAll: function () {
             console.log('beforeAll', arguments);
@@ -252,40 +401,29 @@
         complete: function () {
             console.log('complete', arguments);
         },
-
         loadStart: function (e) {
-
-
             console.log('loadStart', arguments);
             bar.removeAttribute('hidden');
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         progress: function (e) {
             console.log('progress', arguments);
-
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         loadEnd: function (e) {
             console.log('loadEnd', arguments);
-
             bar.max = e.total;
             bar.value = e.loaded;
         },
-
         completeAll: function (arguments) {
             console.log('completeAll', arguments);
-
             setTimeout(function () {
                 bar.setAttribute('hidden', 'hidden');
             }, 1000);
-
             console.log('Upload Completed');
         }
-
     });
 </script>
 <!-- /CONTENT -->
