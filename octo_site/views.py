@@ -12,6 +12,7 @@ import mysql.connector
 import sys
 from octo_site.db_conf import pull_data
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 import gspread
 ##gc = gspread.authorize(credentials)
@@ -67,10 +68,17 @@ def page_venue(request):
 
 def control_panel(request):
     if request.method == 'GET':
+        games_id = []
+        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        print(now_datetime)
+        for i in GameDetails.objects.all().filter(timestart__lte = now_datetime).filter(timeend__gte = now_datetime):
+            games_id.append(i)
+        print(games_id)
         games = {}
-        for i in Game.objects.all():
+        for i in Game.objects.all().filter(game_details_id__in = games_id):
             games[i.room_id] = (Room.objects.get(room_id = i.room_id))
         print(games)
+
         properties = {}
         properties['h'] = 5
         properties['rooms'] = Room.objects.all()
@@ -78,11 +86,13 @@ def control_panel(request):
         return render(request,'octo_site/control_panel.html', properties)
         pass
 
+def view_room(request):
+    return render(request,'octo_site/control_panel.html')
+
 def access_room(request):
     ## Add Room in the game room
     if request.method == 'POST':
         pass
-
 
 @csrf_exempt
 def upload_process(request):
