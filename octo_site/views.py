@@ -222,3 +222,6 @@ def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
     return render(request, 'octo_site/reports/trend_analysis.html')
+
+def sample_marker(request):
+    return render(request, 'octo_site/sample_marker.html')
