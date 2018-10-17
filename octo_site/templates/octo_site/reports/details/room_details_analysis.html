@@ -16,18 +16,9 @@
 				<div class="uk-container uk-container-medium" style="margin-top: 3vh ">
                         <div class="uk-grid" >
                                 <div class="uk-width-auto" >
-                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics</h2>
-                                    <div class="uk-width-1-1 uk-text-center">
-                                        <form class="uk-form">
-                                            <div class="uk-margin" style="margin-top: 3vh">
-                                                <div uk-form-custom="target: true">
-                                                    <input class="uk-input uk-form-width-medium"  type="date" data-uk-datepicker="{format:'DD.MM.YYYY'}"> to
-                                                    <input class="uk-input uk-form-width-medium"  type="date" data-uk-datepicker="{format:'DD.MM.YYYY'}">
-                                                </div>
-                                                <button class="uk-button uk-button-default">Submit</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics for Room </h2>
+
+
                                         <div class=" uk-align-center uk-width-expand">
                                             <div class="chart-container" style=" height:50vh;width:75vw">
                                                 <canvas id="canvas"></canvas>
@@ -48,7 +39,7 @@
         let sensor_data;
 		let MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		let config = {
-			type: 'line',
+			type: 'bar',
 			data: {
 				labels: [],
 				datasets: [{
@@ -96,7 +87,7 @@
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new Chart(ctx, config);
-			//initData();
+			initData();
             console.log("started");
 			//window.setInterval(reloadData, 1000);
 
@@ -129,7 +120,7 @@
            //splice data
         }
         function initData() {
-           sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+           sensor_data =  $.get("/octo_site/sensor_data/2");
            sensor_data.done(function(results){
 
                 obj = results.data;

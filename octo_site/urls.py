@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
+    path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),
     path('reports/sensor_analysis', views.sensor_analysis,name='sensor_analysis'),
     path('reports/trend_analysis', views.trend_analysis, name='trend_analysis')
 ]

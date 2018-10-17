@@ -211,8 +211,13 @@ def delete_branch(request):
     branch.delete()
 
 def room_analysis(request):
-
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
+def room_details_analysis(request):
+    if request.method == 'POST':
+        print(request.POST['start'],"----", request.POST['end'])
+        for post in request.POST.getlist('room_to_analyze[]'):
+            print("room to analyze: ", post)
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"rooms":Room.objects.all()})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
