@@ -1,7 +1,37 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
     {% load staticfiles %}
-
+<div id="modal-full" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <div class="uk-column-1-2 uk-column-divider">
+            <div class="uk-padding-large" style="background-color: white"  uk-height-viewport>
+                <h3>Alien Assualt Room Sensors</h3>
+                <hr class="uk-divider-icon"/>
+                <div style="overflow-y: scroll; height:360px;">
+                    <div id="sensor_sequence_plot">
+                        <div class="uk-margin">
+                            <li class="draggable_list_plot" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-modal-footer uk-position-bottom uk-text-center">
+                    <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                    <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+                </div>
+            </div>
+            <div  uk-height-viewport>
+                <div class="uk-card-body uk-align-center uk-text-center uk-width-1-1">
+                    <div class="uk-inline uk-dark uk-align-center" style="border: dashed;border-width: 3px;"  id="layout_body">
+                        <img id="img_sensor_layout" ondrop="drop(event)" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 100%;height: 100%">
+                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 1"  style="left: 20%; top: 5%" href="#" uk-marker></a>
+                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 2"  style="left: 64%; top: 4%" href="#" uk-marker></a>
+                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 3"  style="left: 86%; top: 72%" href="#" uk-marker></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal-branch" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -139,6 +169,10 @@
                     <div class="uk-child-width-1-1@m" uk-grid id="has_seq">
                     <div>
                         <hr class="uk-divider-icon">
+                        <a href="#modal-full" uk-toggle>
+                            <button class="uk-button uk-button-primary uk-button-medium" onclick="sensor_layout(this)">Open Blue print<span data-uk-icon="icon: git-fork"></span></button>
+                        </a>
+
                         <dl class="uk-description-list">
                             <dt><b>Sensor Sequence</b></dt>
                             <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
@@ -150,13 +184,11 @@
                         </div>
                     </div>
                     </div>
-
                     <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
                             <dt> <span class="uk-text-danger" data-uk-icon="settings" href=""></span>
                             <b class="uk-text-danger">No Sensors Added Yet</b></dt>
                             <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
                     </dl>
-
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -175,15 +207,16 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
+
             <div class="uk-modal-body">
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
-                        <div class="uk-form-controls">
-                            {{ room_form.room_name }}
-                        </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                    <div class="uk-form-controls">
+                        {{ room_form.room_name }}
                     </div>
-                    <div class="uk-margin">
-                    </div>
+                </div>
+                <div class="uk-margin">
+                </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -298,6 +331,7 @@
     </section>
 </div>
 <script>
+    let img_sensor_layout = document.getElementById("img_sensor_layout");
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
     let sensors;
@@ -333,39 +367,105 @@
     indexes = [];
     vals = [];
     $(document).on('moved', '.uk-sortable', function(e) {
-      indexes = [];
-      vals = [];
-      var currentLi = e.originalEvent.parentNode;
-      $(this).find('li').each(function() {
-        indexes.push($(this).data("index"));
-        vals.push($(this).data('sensor_id'));
-      });
-      $("#game_sequence").val(vals.toString());
+          indexes = [];
+          vals = [];
+          var currentLi = e.originalEvent.parentNode;
+          $(this).find('li').each(function() {
+            indexes.push($(this).data("index"));
+            vals.push($(this).data('sensor_id'));
+          });
+          $("#game_sequence").val(vals.toString());
 
-      $('.indexes').each(function(x) {
-          $(this).html(x+1);
+          $('.indexes').each(function(x) {
+              $(this).html(x+1);
 
-      console.log(indexes);
-      console.log(vals);
+          console.log(indexes);
+          console.log(vals);
 
+        });
+        $('.uk-sortable').find('li').each(function(i) {
+          $(this).data("index", i);
+          indexes.push(i);
+        });
     });
 
-    $('.uk-sortable').find('li').each(function(i) {
-      $(this).data("index", i);
-      indexes.push(i);
-
-    });
-    });
-
-    console.log(indexes);
-    console.log(vals);
     function delete_room(room_id) {
         let conf = confirm("Are you sure you want to delete?");
         if (conf){
             $('#room-'+room_id).click();
         }
     }
+    function dragStart(event) {
+        event.dataTransfer.setData("Text", event.target.id);
+        event.dataTransfer.setData("sensor_id", event.target.nodeName);
+        event.dataTransfer.setData("ace", event.target.href);
+        //event.dataTransfer.setData("index", event.target.data-index);
+        console.log("drag started");
+    }
+    function allowDrop(event) {
+    event.preventDefault();
+    }
+    function getPosition(el) {
+      var xPosition = 0;
+      var yPosition = 0;
 
+      while (el) {
+        if (el.tagName == "BODY") {
+          // deal with browser quirks with body/window/document and page scroll
+          var xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
+          var yScrollPos = el.scrollTop || document.documentElement.scrollTop;
+
+          xPosition += (el.offsetLeft - xScrollPos + el.clientLeft);
+          yPosition += (el.offsetTop - yScrollPos + el.clientTop);
+        } else {
+          xPosition += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+          yPosition += (el.offsetTop - el.scrollTop + el.clientTop);
+        }
+
+        el = el.offsetParent;
+      }
+      return {
+        x: xPosition,
+        y: yPosition
+      };
+    }
+    function drop(event) {
+        event.preventDefault();
+        let parent_position = getPosition(event.currentTarget);
+        var data = event.dataTransfer.getData("Text");
+
+        var data2 = event.dataTransfer.getData("ace");
+        let xPos = parseFloat(event.clientX - parent_position.x)/$(event.currentTarget).width();
+        let yPos = parseFloat(event.clientY - parent_position.y)/$(event.currentTarget).height();
+        xPos*=100;
+        yPos*=100;
+        console.log(xPos , yPos);
+        let  str_append = '<a class="uk-position-absolute uk-transform-center" uk-tooltip="'+data+'"  style="left: '+xPos+'%; top: '+yPos+'%" href="#" uk-marker></a>';
+        $("#layout_body").append(str_append);
+
+        /*
+
+                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 3"  style="left: 86%; top: 72%" href="#" uk-marker></a>
+            event.target.appendChild(document.getElementById(data));
+            document.getElementById("demo").innerHTML = "The p element was dropped";
+        */
+    }
+    function sensor_layout(obj) {
+        $("#sensor_sequence_plot").empty();
+            let sensors =  $.get("/octo_site/api/get_sensor_by_room_id/2/");
+            sensors.done(function(results){
+               console.log(results);
+               for(i in results.sensors){
+                   let ind = parseInt(i)+1;
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin"' +
+                       '>'+'<li ondragstart="dragStart(event)" draggable="true" href="i wan dick" id="hellomark" nodeName="gago" style="list-style-type: none;" data-index="'+i+'" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       str_append += ' <a><span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'' +
+                           '</a></li></div>';
+                   $("#sensor_sequence_plot").append(str_append);
+               }
+            });
+    }
     function edit_room(obj) {
         $("#edit-room_name").val($(obj).attr('room-name'));
         $("#edit-room_id").val($(obj).attr('room-id'));
