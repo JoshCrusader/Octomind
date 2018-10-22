@@ -67,7 +67,7 @@ def page_sensor(request):
         elif request.POST['type'] == "delete_sensor":
             delete_sensor(request)
         return HttpResponseRedirect(reverse('page_sensor'))
-    return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
+    return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all().reverse(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
 def page_venue(request):
 
     if request.method == 'POST':
@@ -140,7 +140,7 @@ def data_vis(request, room_id):
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
         room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],
-                    header_img=request.FILES['header_img'])
+                    header_img=request.FILES['header_img'], blueprint_file=request.FILES['blueprint_file'])
         room.save()
 def add_branch(request):
     branch = Branch(name=request.POST['name'], address=request.POST['address'])
