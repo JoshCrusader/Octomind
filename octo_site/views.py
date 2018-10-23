@@ -119,8 +119,8 @@ def update_plot(request):
         tCoord = (float(dat['top_coordinate'].replace("px",""))/float(height))*100
         lCoord = (float(dat['left_coordinate'].replace("px",""))/float(width))*100
         sensor = Sensor.objects.get(sensor_id=dat['id'])
-        sensor.top_coordinate = round(tCoord, 2)
-        sensor.left_coordinate = round(lCoord, 2)
+        sensor.top_coordinate = round(tCoord, 3)
+        sensor.left_coordinate = round(lCoord, 3)
         sensor.save()
         print(sensor.top_coordinate,sensor.left_coordinate)
     return JsonResponse({'filename':"kapiha"})
