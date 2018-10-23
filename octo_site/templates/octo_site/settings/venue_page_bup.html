@@ -1,7 +1,45 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
     {% load staticfiles %}
+<div id="modal-full" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <div class="uk-column-1-2 uk-column-divider">
+            <div class="uk-padding-large" style="background-color: white"  uk-height-viewport>
+                <h3>Alien Assualt Room Sensors</h3>
+                <hr class="uk-divider-icon"/>
+                <div style="overflow-y: scroll; height:360px;">
+                    <div id="sensor_sequence_plot">
+                        <div class="uk-margin">
+                            <li class="draggable_list_plot" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-modal-footer uk-position-bottom uk-text-center">
+                    <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                    <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+                </div>
+            </div>
+            <div  uk-height-viewport>
+                <div class="uk-card-body uk-align-center uk-text-center uk-width-1-1" draggable="false">
+                    <div class="uk-inline uk-dark uk-align-center" draggable="false" style="border: dashed;border-width: 3px;"  id="layout_body">
+                        <img id="img_sensor_layout" ondrop="drop(event)" draggable="false" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 100%;height: 100%">
+                        <a class="uk-position-absolute uk-transform-center " id="" uk-tooltip="Sensor 1"  style="transform-origin:center;left: 20%; top: 5%" href="#" uk-marker></a>
+                        <a class="uk-position-absolute " uk-tooltip="Sensor 2"  style="left: 60%; top: 0%" href="#" uk-marker></a>
 
+                        <div class="div_drag" uk-tooltip="Sensor 3"  style="left: 82%; top: 68%">
+                            <span style="color: white" data-uk-icon="icon: nut"></span>
+                        </div>
+
+                        <div class="div_drag" uk-tooltip="Sensor 3"  style="left: 52%; top: 68%">
+                            <img src="{% static 'octo_site/sensor_device.png' %}"style="width: 90%;height: 90%">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal-branch" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -42,7 +80,6 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
-            <input type="hidden" name="game_sequence" id="game_sequence" value="">
             <div class="uk-modal-body">
                     <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Room name</label>
@@ -63,49 +100,42 @@
                         -->
                         </div>
                     </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output">
-                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
-                    </div>
-                    <div class="js-upload uk-placeholder uk-text-center">
-                        <span uk-icon="icon: cloud-upload"></span>
-                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
-                        <div uk-form-custom>
-                            <!--
-                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
-                            -->
-                        </div>
-                    </div>
 
-                    <div class="uk-margin uk-text-center uk-align-center">
-                        <div class="upload-btn-wrapper">
-                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
+                    <div class="uk-margin uk-text-center uk-align-center" >
+                        <div class="upload-btn-wrapper" style="width: 100%">
+                          <button class="btn_up" style="width: 100%;font-size: 16px"></span><span uk-icon="icon: image"></span> Upload Room Header Image <span uk-icon="icon: cloud-upload"></button>
                             {{ room_form.header_img }}
                         </div>
                     </div>
-            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-            <div class="uk-child-width-1-1@m" uk-grid>
-            <div>
-                <hr class="uk-divider-icon">
-                <dl class="uk-description-list">
-                    <dt><b>Sensor Sequence</b></dt>
-                    <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
-                </dl>
-                <div uk-sortable="group: sortable-group">
-                    <div class="uk-margin">
-                        <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                    <div class="uk-margin uk-text-center uk-align-center" >
+                        <div class="upload-btn-wrapper" style="width: 100%">
+                            <button class="btn_up" style="width: 100%;font-size: 16px"></span><span uk-icon="icon: grid"></span> Upload Blueprint File <small>(JPG/PNG)</small>  <span uk-icon="icon: cloud-upload"></button>
+                            {{ room_form.blueprint_file }}
+                        </div>
                     </div>
-                    <div class="uk-margin">
-                        <li class="draggable_list" data-sensor_id="tite2"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 2</div></li>
+                    <div class="uk-margin uk-text-center uk-align-center" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="hdr_wrapper">
+                        <label>Header Image Preview</label>
+                        <br>
+                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
                     </div>
-                    <div class="uk-margin">
-                        <li class="draggable_list" data-sensor_id="tite3"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 3</div></li>
+                    <div class="uk-margin uk-text-center uk-align-center" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="bp_wrapper">
+                        <label>Blueprint Preview</label>
+                        <br>
+                        <img id="bp_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: inline;" />
                     </div>
-                    <div class="uk-margin">
-                        <li class="draggable_list" data-sensor_id="tite4"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box">T 4</div></li>
+                <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+                <div class="uk-child-width-1-1@m" uk-grid>
+                    <div>
+                        <hr class="uk-divider-icon">
+                        <dl class="uk-description-list">
+                            <dt><span data-uk-icon="icon: settings"></span> <b> Game Sequence</b></dt>
+                            <dd><small>Game sequences are automatically added when <b>Sensors</b> are assigned to the room at the <b>Sensors Settings</b>, it is enumerated at first input basis.
+                                You can always rearrange the sequence at the edit button for desired sequence of sensors that represents each room puzzle.</small></dd>
+                            <dt><span data-uk-icon="icon: git-fork"></span> <b> Sensor Plotting</b></dt>
+                            <dd><small>Sensor Plots are <b class="uk-text-warning">not automatically added</b> by default. After adding this room, click on the <b>Edit room</b> and add/edit the <b>coordinates</b> of each sensor to let the system know the placement of sensors for Room analysis</small></dd>
+                        </dl>
                     </div>
                 </div>
-            </div>
-            </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -125,22 +155,48 @@
             {% csrf_token %}
             <input type="hidden" name="type" value="room_edit">
             <input type="hidden" name="room_id" id="edit-room_id" value="">
+             <input type="hidden" name="game_sequence" id="game_sequence" value="">
+
             <div class="uk-modal-body">
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
-                        <div class="uk-form-controls">
-                            {{ edit_room_form.room_name }}
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                    <div class="uk-form-controls">
+                        {{ edit_room_form.room_name }}
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-select">Branch</label>
+                    <div class="uk-form-controls">
+                        {{ edit_room_form.branch_id }}
+                    </div>
+                </div>
+                <div class="uk-margin uk-text-center uk-align-center" id="output">
+                    <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                </div>
+
+                    <div class="uk-child-width-1-1@m" uk-grid id="has_seq">
+                    <div>
+                        <hr class="uk-divider-icon">
+                        <a href="#modal-full" uk-toggle>
+                            <button class="uk-button uk-button-primary uk-button-medium" onclick="sensor_layout(this)">Open Blue print<span data-uk-icon="icon: git-fork"></span></button>
+                        </a>
+
+                        <dl class="uk-description-list">
+                            <dt><b>Sensor Sequence</b></dt>
+                            <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
+                        </dl>
+                        <div uk-sortable="group: sortable-group" id="sensor_sequence">
+                        <div class="uk-margin">
+                            <li class="draggable_list" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                        </div>
                         </div>
                     </div>
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
-                        <div class="uk-form-controls">
-                            {{ edit_room_form.branch_id }}
-                        </div>
                     </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output">
-                        <img id="edit_hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
-                    </div>
+                    <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
+                            <dt> <span class="uk-text-danger" data-uk-icon="settings" href=""></span>
+                            <b class="uk-text-danger">No Sensors Added Yet</b></dt>
+                            <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
+                    </dl>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -159,47 +215,16 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
+
             <div class="uk-modal-body">
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
-                        <div class="uk-form-controls">
-                            {{ room_form.room_name }}
-                        </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                    <div class="uk-form-controls">
+                        {{ room_form.room_name }}
                     </div>
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-select">Branch</label>
-                        <div class="uk-form-controls">
-                        {{ room_form.branch_id }}
-                        <!--
-                            <select class="uk-select" name="branch_id" id="form-stacked-select">
-                                {% for branch in branches reversed %}
-                                <option value="{{ branch.branch_id }}">{{ branch.name }}</option>
-                                {% endfor %}
-                            </select>
-                        -->
-                        </div>
-                    </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output">
-                        <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
-                    </div>
-                    <div class="js-upload uk-placeholder uk-text-center">
-                        <span uk-icon="icon: cloud-upload"></span>
-                        <span class="uk-text-middle">Upload header image by dropping or Manual Upload</span>
-                        <div uk-form-custom>
-                            <!--
-                            <input type="file" name="imgupload" id="hd_img" onchange="showImg(this)">
-                            -->
-                        </div>
-                    </div>
-
-                    <div class="uk-margin uk-text-center uk-align-center">
-                        <div class="upload-btn-wrapper">
-                          <button class="btn_up"> <span uk-icon="icon: cloud-upload"></span> Manual Upload</button>
-                            {{ room_form.header_img }}
-                        </div>
-                    </div>
-            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-
+                </div>
+                <div class="uk-margin">
+                </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -241,7 +266,6 @@
                                                   <th class="uk-table-shrink uk-text-nowrap"></th>
                                                   <th class="uk-width-medium">Name</th>
                                                   <th class="uk-width-medium">Branch</th>
-                                                  <th class="uk-table-shrink">Game Sequence</th>
                                                   <th class="uk-table-shrink">Sensor Count</th>
                                               </tr>
                                           </thead>
@@ -251,11 +275,12 @@
                                                 <tr>
                                                     <td class="uk-text-center"><img src="/static/media/{{ room.header_img }}" alt="Alt text" class="uk-border-circle" style="width: 75px;height: 50px"></td>
                                                     <td>
-                                                        <div uk-lightbox>
-                                                            <a href="/static/media/{{ room.header_img }}" data-caption="{{ room.room_name }} at {{ room.branch.name }} branch">{{ room.room_name }}</a>
+                                                        <div  uk-lightbox>
+                                                            <a href="/static/media/{{ room.header_img }}" id="lightbox-{{ room.room_id }}" has-sequence="{{ room.has_game_sequence }}"  room-id="{{ room.room_id }}"  data-caption="{% for sensor_seq in room.get_all_sensors %}{{ sensor_seq.sensor_name }} > {% endfor %}">{{ room.room_name }}</a>
                                                         </div>
-                                                        <a class="uk-icon-link uk-text-{% if room.has_game_sequence %}success{% else %}warning{% endif %}" uk-tooltip="{% if room.has_game_sequence %}Modify{% else %}Add{% endif %} Game Sequence" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="settings" href="#modal-room-edit" uk-toggle></a>
-                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <span data-uk-icon="icon: git-fork" class="uk-text-{%  if room.num_sensor_plotted != 0 %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{{ room.room_page_response }}" href=""></span>
+                                                        <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}" href=""></span>
+                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
                                                             <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
@@ -264,7 +289,6 @@
                                                         </form>
                                                     </td>
                                                     <td>{{ room.branch.name }}</td>
-                                                    <td>{{ room.has_game_sequence }}</td>
                                                     <td>{{ room.num_sensors }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -315,57 +339,203 @@
     </section>
 </div>
 <script>
+    let img_sensor_layout = document.getElementById("img_sensor_layout");
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
+    let sensors;
     const csrftoken = '{{ csrf_token }}';
     function showImg(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $('#hdr_img')
-                    .attr('src', e.target.result).style="display: inline;"
-                ;
-            };
 
+
+                if($(input).attr('id') === "hd_img"){
+                    console.log(e.target.result);
+
+                    $('#hdr_wrapper').css('display','block');
+                    $('#hdr_img')
+                        .attr('src', e.target.result).style="display: inline;"
+                    ;
+                }else{
+                    console.log($(input).attr('id'));
+                    $('#bp_wrapper').css('display','block');
+
+                    console.log($('#bp_img'));
+                    $('#bp_img')
+                        .attr('src', e.target.result).style="display: inline;"
+                    ;
+                }
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
-    var indexes = [];
-
-    let vals = [];
+    let indexes;
+    let vals;
+    indexes = [];
+    vals = [];
     $(document).on('moved', '.uk-sortable', function(e) {
-      console.log("henlo");
-      var currentLi = e.originalEvent.parentNode;
-      indexes = [];
-      $(this).find('li').each(function() {
-        indexes.push($(this).data("index"));
+          indexes = [];
+          vals = [];
+          var currentLi = e.originalEvent.parentNode;
+          $(this).find('li').each(function() {
+            indexes.push($(this).data("index"));
+            vals.push($(this).data('sensor_id'));
+          });
+          $("#game_sequence").val(vals.toString());
 
-        vals.push($(this).data('sensor_id'));
-      });
+          $('.indexes').each(function(x) {
+              $(this).html(x+1);
 
-      $("#game_sequence").val(vals.toString());
-      console.log(indexes);
-      console.log(vals);
+          console.log(indexes);
+          console.log(vals);
 
+        });
+        $('.uk-sortable').find('li').each(function(i) {
+          $(this).data("index", i);
+          indexes.push(i);
+        });
     });
+    $('.div_drag').on('mousedown', function (e) {
 
-    $('.uk-sortable').find('li').each(function(i) {
-      $(this).data("index", i);
-      indexes.push(i);
+        $(this).addClass('active');
+
+        var oTop = e.pageY - $('.active').offset().top;
+        var oLeft = e.pageX - $('.active').offset().left;
+
+        $(this).parents().on('mousemove', function (e) {
+
+            $('.active').offset({
+
+                top: e.pageY - oTop,
+                left: e.pageX - oLeft
+
+            }).on('mouseup', function () {
+
+                $(this).removeClass('active');
+
+            });
+
+        });
+
+        return false;
     });
-
-    console.log(indexes);
-    console.log(vals);
     function delete_room(room_id) {
         let conf = confirm("Are you sure you want to delete?");
         if (conf){
             $('#room-'+room_id).click();
         }
     }
+    function dragStart(event) {
+        event.dataTransfer.setData("Text", event.target.id);
+       // $(event.currentTarget).addClass('div_drag');
+        //event.dataTransfer.setData("index", event.target.data-index);
+        console.log("drag started");
+    }
+    function dragEnd(event) {
+        $(event.currentTarget).remove();
+    }
+    function allowDrop(event) {
+    event.preventDefault();
+    }
+    function getPosition(el) {
+      var xPosition = 0;
+      var yPosition = 0;
+
+      while (el) {
+        if (el.tagName == "BODY") {
+          // deal with browser quirks with body/window/document and page scroll
+          var xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
+          var yScrollPos = el.scrollTop || document.documentElement.scrollTop;
+
+          xPosition += (el.offsetLeft - xScrollPos + el.clientLeft);
+          yPosition += (el.offsetTop - yScrollPos + el.clientTop);
+        } else {
+          xPosition += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+          yPosition += (el.offsetTop - el.scrollTop + el.clientTop);
+        }
+
+        el = el.offsetParent;
+      }
+      return {
+        x: xPosition,
+        y: yPosition
+      };
+    }
+    function drop(event) {
+        event.preventDefault();
+        let parent_position = getPosition(event.currentTarget);
+        var data = event.dataTransfer.getData("Text");
+        var data2 = event.dataTransfer.getData("ace");
+        var id = $('#'+data).attr('sensor-id');
+        data = $('#'+data).attr('sensor-name');
+        let xPos = parseFloat(event.clientX - parent_position.x)/$(event.currentTarget).width() ;
+        let yPos = parseFloat(event.clientY - parent_position.y)/$(event.currentTarget).height() ;
+        xPos*=100;
+        yPos*=100;
+        xPos-=3;
+        yPos-=4;
+        console.log(xPos , yPos);
+        if (data.includes("plot")){
+            /*<div class="div_drag" uk-tooltip="Sensor 3"  style="left: 82%; top: 68%">
+                            <span style="color: white" data-uk-icon="icon: nut"></span>
+                        </div>
+            */
+            let  str_append = '<div class="div_drag" uk-tooltip="'+data+'" id="plotted_sensor_'+id+'" style="left: '+xPos+'%; top: '+yPos+'%">'+
+                            '<span style="color: white" data-uk-icon="icon: nut"></span></div>';
+            $("#layout_body").append(str_append);
+            //$('#plotted_sensor_'+id).addClass('div_drag');
+
+        }
+
+        /*
+
+                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 3"  style="left: 86%; top: 72%" href="#" uk-marker></a>
+            event.target.appendChild(document.getElementById(data));
+            document.getElementById("demo").innerHTML = "The p element was dropped";
+        */
+    }
+    function sensor_layout(obj) {
+        $("#sensor_sequence_plot").empty();
+            let sensors =  $.get("/octo_site/api/get_sensor_by_room_id/2/");
+            sensors.done(function(results){
+               console.log(results);
+               for(i in results.sensors){
+                   let ind = parseInt(i)+1;
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin"' +
+                       '>'+'<li ondragstart="dragStart(event)" ondragend="dragEnd(event)" draggable="true" id="plot_sensor_'+results.sensors[i].sensor_id+'" style="list-style-type: none;" sensor-name="'+results.sensors[i].sensor_name+'" sensor-id="'+results.sensors[i].sensor_id+'" data-index="'+i+'"' +
+                   '>';
+                       str_append += ' <a><span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'' +
+                           '</a></li></div>';
+                   $("#sensor_sequence_plot").append(str_append);
+               }
+            });
+    }
     function edit_room(obj) {
         $("#edit-room_name").val($(obj).attr('room-name'));
         $("#edit-room_id").val($(obj).attr('room-id'));
         $("#edit-branch_id").val($(obj).attr('room-branch-id'));
+        if($(obj).attr('has-sequence')==="True"){
+            $("#sensor_sequence").empty();
+            sensors =  $.get("/octo_site/api/get_sensor_by_room_id/"+$(obj).attr('room-id')+"/");
+            sensors.done(function(results){
+               console.log(results);
+               for(i in results.sensors){
+                   let ind = parseInt(i)+1;
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin">'+'<li class="draggable_list" data-index="'+i+'" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       str_append += '<div class="uk-card uk-card-default uk-card-body uk-card-small box_box"> <span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'</div></li></div>';
+                   $("#sensor_sequence").append(str_append);
+               }
+            });
+            $("#has_seq").css("display","block");
+            $("#has_no_seq").css("display","none");
+        }
+        else{
+            $("#has_seq").css("display","none");
+            $("#has_no_seq").css("display","block");
+        }
     }
     function handleFile(file) {
         console.log("i here, handling file!");

@@ -41,6 +41,17 @@
   overflow: hidden;
   display: inline-block;
     }
+    .div_drag {
+        position: absolute;
+        cursor: move;
+        width:30px;
+        height:30px;
+        border-radius: 40px;
+        background:black;
+        z-index: 1;
+        margin:1px;
+        float:left;
+    }
 
     .btn_up {
       border: 0.5px dashed gray;
@@ -64,6 +75,10 @@
     }
     .shdw{
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+    }
+    .active {
+        background: grey;
+        z-index: 2;
     }
     .hobor{
         color:#232b2b;

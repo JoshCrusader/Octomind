@@ -3,33 +3,43 @@
     {% load staticfiles %}
 <div id="modal-full" class="uk-modal-full" uk-modal>
     <div class="uk-modal-dialog">
-        <div class="uk-column-1-2 uk-column-divider">
-            <div class="uk-padding-large" style="background-color: white"  uk-height-viewport>
-                <h3>Alien Assualt Room Sensors</h3>
-                <hr class="uk-divider-icon"/>
-                <div style="overflow-y: scroll; height:360px;">
-                    <div id="sensor_sequence_plot">
-                        <div class="uk-margin">
-                            <li class="draggable_list_plot" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+
+            <div   uk-grid>
+                <div class="uk-width-auto uk-padding-large" style="background-color: whitesmoke"  uk-height-viewport>
+                    <h3>Alien Assualt Room Sensors</h3>
+                    <hr class="uk-divider-icon"/>
+                    <div style="overflow-y: scroll; height:360px;">
+                        <div id="sensor_sequence_plot">
+                            <div class="uk-margin">
+                                <li class="draggable_list_plot" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-modal-footer uk-position-bottom uk-text-center">
+                        <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
+                        <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
+                    </div>
+                </div>
+                <div class="uk-width-expand" uk-height-viewport>
+                    <div class="uk-card-body uk-align-center uk-text-center uk-width-1-1" draggable="false">
+                        <div class="uk-inline uk-dark uk-align-center" draggable="false" style="border: dashed;border-width: 3px;"  id="layout_body">
+                            <img id="img_sensor_layout" ondrop="drop(event)" draggable="false" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 100%;height: 100%">
+                            <a class="uk-position-absolute uk-transform-center " id="" uk-tooltip="Sensor 1"  style="transform-origin:center;left: 20%; top: 5%" href="#" uk-marker></a>
+                            <a class="uk-position-absolute " uk-tooltip="Sensor 2"  style="left: 60%; top: 0%" href="#" uk-marker></a>
+
+                            <div class="div_drag" uk-tooltip="Sensor 3"  style="left: 82%; top: 68%">
+                                <span style="color: white" data-uk-icon="icon: nut"></span>
+                            </div>
+
+                            <div class="div_drag" uk-tooltip="Sensor 3"  style="left: 52%; top: 68%">
+                                <img src="{% static 'octo_site/sensor_device.png' %}"style="width: 90%;height: 90%">
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="uk-modal-footer uk-position-bottom uk-text-center">
-                    <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
-                    <button class="uk-button uk-button-primary bord_rad" type="submit">Save</button>
-                </div>
             </div>
-            <div  uk-height-viewport>
-                <div class="uk-card-body uk-align-center uk-text-center uk-width-1-1">
-                    <div class="uk-inline uk-dark uk-align-center" style="border: dashed;border-width: 3px;"  id="layout_body">
-                        <img id="img_sensor_layout" ondrop="drop(event)" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 100%;height: 100%">
-                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 1"  style="left: 20%; top: 5%" href="#" uk-marker></a>
-                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 2"  style="left: 64%; top: 4%" href="#" uk-marker></a>
-                        <a class="uk-position-absolute uk-transform-center" uk-tooltip="Sensor 3"  style="left: 86%; top: 72%" href="#" uk-marker></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 <div id="modal-branch" uk-modal>
@@ -332,6 +342,8 @@
 </div>
 <script>
     let img_sensor_layout = document.getElementById("img_sensor_layout");
+    let initH = $("#img_sensor_layout").height();
+    let initW = $("#img_sensor_layout").width();
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
     let sensors;
@@ -388,6 +400,56 @@
           indexes.push(i);
         });
     });
+    $('.div_drag').on('mousedown', function (e) {
+        console.log("awat");
+        $(this).addClass('active');
+
+        var oTop = e.pageY - $('.active').offset().top;
+        var oLeft = e.pageX - $('.active').offset().left;
+
+        $(this).parents().on('mousemove', function (e) {
+
+            $('.active').offset({
+
+                top: e.pageY - oTop,
+                left: e.pageX - oLeft
+
+            }).on('mouseup', function () {
+
+                $(this).removeClass('active');
+                console.log("upped");
+            });
+
+        });
+
+        return false;
+    });
+
+    function mouseDown(obj,e) {
+        $(obj).addClass('active');
+
+        var oTop = e.pageY - $('.active').offset().top;
+        var oLeft = e.pageX - $('.active').offset().left;
+        console.log($("#img_sensor_layout").height(),$("#img_sensor_layout").width());
+        $(obj).parents().on('mousemove', function (e) {
+            let top= e.pageY - oTop;
+            let bot= e.pageX - oLeft;
+
+            $('.active').offset({
+
+                top: e.pageY - oTop ,
+                left: e.pageX - oLeft
+
+            }).on('mouseup', function () {
+
+                $(obj).removeClass('active');
+
+            });
+
+        });
+        //alert(top+" "+bot);
+        return false;
+    }
 
     function delete_room(room_id) {
         let conf = confirm("Are you sure you want to delete?");
@@ -397,10 +459,12 @@
     }
     function dragStart(event) {
         event.dataTransfer.setData("Text", event.target.id);
-        event.dataTransfer.setData("sensor_id", event.target.nodeName);
-        event.dataTransfer.setData("ace", event.target.href);
+       // $(event.currentTarget).addClass('div_drag');
         //event.dataTransfer.setData("index", event.target.data-index);
         console.log("drag started");
+    }
+    function dragEnd(event) {
+        $(event.currentTarget).remove();
     }
     function allowDrop(event) {
     event.preventDefault();
@@ -433,15 +497,33 @@
         event.preventDefault();
         let parent_position = getPosition(event.currentTarget);
         var data = event.dataTransfer.getData("Text");
-
         var data2 = event.dataTransfer.getData("ace");
-        let xPos = parseFloat(event.clientX - parent_position.x)/$(event.currentTarget).width();
-        let yPos = parseFloat(event.clientY - parent_position.y)/$(event.currentTarget).height();
+        var id = $('#'+data).attr('sensor-id');
+        let name=$('#'+data).attr('sensor-name');
+
+        console.log($(event.currentTarget).width());
+        console.log($("#img_sensor_layout").width());
+        console.log($("#layout_body").width());
+        console.log($(event.currentTarget).height());
+
+        let xPos = parseFloat(event.clientX - parent_position.x)/$(event.currentTarget).width() ;
+        let yPos = parseFloat(event.clientY - parent_position.y)/$(event.currentTarget).height() ;
         xPos*=100;
         yPos*=100;
+        xPos-=3;
+        yPos-=4;
         console.log(xPos , yPos);
-        let  str_append = '<a class="uk-position-absolute uk-transform-center" uk-tooltip="'+data+'"  style="left: '+xPos+'%; top: '+yPos+'%" href="#" uk-marker></a>';
-        $("#layout_body").append(str_append);
+        if (data.includes("plot")){
+            /*<div class="div_drag" uk-tooltip="Sensor 3"  style="left: 82%; top: 68%">
+                            <span style="color: white" data-uk-icon="icon: nut"></span>
+                        </div>
+            */
+            let  str_append = '<div class="" onmousedown="mouseDown(this,event)" uk-tooltip="'+name+'"  id="plotted_sensor_'+id+'" style="left: '+xPos+'%; top: '+yPos+'%">'+
+                            '</div>';
+            $("#layout_body").append(str_append);
+            $('#plotted_sensor_'+id).addClass('div_drag');
+
+        }
 
         /*
 
@@ -450,8 +532,16 @@
             document.getElementById("demo").innerHTML = "The p element was dropped";
         */
     }
+    function shout() {
+        alert('aaa');
+    }
     function sensor_layout(obj) {
         $("#sensor_sequence_plot").empty();
+        let initH = $("#layout_body").height();
+        let initW = $("#layout_body").width();
+
+        console.log("init: H="+initH);
+        console.log("init: W="+initW);
             let sensors =  $.get("/octo_site/api/get_sensor_by_room_id/2/");
             sensors.done(function(results){
                console.log(results);
@@ -459,7 +549,8 @@
                    let ind = parseInt(i)+1;
                    console.log(results.sensors[i].sensor_id);
                    let str_append = '<div class="uk-margin"' +
-                       '>'+'<li ondragstart="dragStart(event)" draggable="true" href="i wan dick" id="hellomark" nodeName="gago" style="list-style-type: none;" data-index="'+i+'" data-sensor_id="'+results.sensors[i].sensor_id+'">';
+                       '>'+'<li ondragstart="dragStart(event)" ondragend="dragEnd(event)" draggable="true" id="plot_sensor_'+results.sensors[i].sensor_id+'" style="list-style-type: none;" sensor-name="'+results.sensors[i].sensor_name+'" sensor-id="'+results.sensors[i].sensor_id+'" data-index="'+i+'"' +
+                   '>';
                        str_append += ' <a><span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'' +
                            '</a></li></div>';
                    $("#sensor_sequence_plot").append(str_append);
