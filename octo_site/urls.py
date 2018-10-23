@@ -20,7 +20,11 @@ urlpatterns = [
     path('sensor_data/<int:room_id>/',views.sensor_data, name='sensor_data'),
     #ajax functions
     path('api/upload_process/', views.upload_process,name='upload_process'),
+    path('api/update_plot/', views.update_plot, name='update_plot'),
+
     path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
+    path('api/get_room_by_room_id/<int:room_id>/', views.get_room_by_room_id, name='get_room_by_room_id'),
+
     path('admin/', admin.site.urls),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),

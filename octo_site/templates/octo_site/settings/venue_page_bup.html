@@ -603,4 +603,9 @@
 </script>
 <!-- /CONTENT -->
 {% include 'octo_site/includes/offcanvas.html' %}
-
+<img id="img_sensor_layout" ondrop="drop(event)" draggable="false" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 600px;height: 525pythoopx;min-width: 100%">
+<div class="div_drag" uk-tooltip="" onmousedown="mouseDown()"  style="left: 82%; top: 68%">
+    <span style="color: white" data-uk-icon="icon: nut"></span>
+    <input type="hidden" id="pl_sensor_id" name="sensor_names[]"/>
+    <input type="hidden" id="pl_sensor_coords" name="sensor_coords[]"/>
+</div>

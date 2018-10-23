@@ -107,14 +107,35 @@ def access_room(request):
 
 
 @csrf_exempt
+def update_plot(request):
+    width = request.POST['width']
+    height = request.POST['height']
+    data = request.POST['coords']
+    data = json.loads(data)
+    print(data)
+    print(height,width)
+    for dat in data:
+        print(dat['id'])
+        tCoord = (float(dat['top_coordinate'].replace("px",""))/float(height))*100
+        lCoord = (float(dat['left_coordinate'].replace("px",""))/float(width))*100
+        sensor = Sensor.objects.get(sensor_id=dat['id'])
+        sensor.top_coordinate = round(tCoord, 2)
+        sensor.left_coordinate = round(lCoord, 2)
+        sensor.save()
+        print(sensor.top_coordinate,sensor.left_coordinate)
+    return JsonResponse({'filename':"kapiha"})
+@csrf_exempt
 def upload_process(request):
     return JsonResponse({'filename':"kapiha"})
-
+@csrf_exempt
+def get_room_by_room_id(request,room_id):
+    room = Room.objects.get(room_id=room_id)
+    return JsonResponse({"room_id":room.room_id,"room_name":room.room_name,"header_img":str(room.header_img),"blueprint_file":str(room.blueprint_file)})
 @csrf_exempt
 def get_sensors_by_room_id(request,room_id):
     data_return = []
     for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
-        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
