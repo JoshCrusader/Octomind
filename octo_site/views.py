@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
-from octo_site.db_conf import pull_data,pull_data_room
+from octo_site.db_conf import pull_data,pull_data_room,pull_data_game
 from django.contrib.auth.decorators import login_required
 
 import gspread
@@ -155,9 +155,25 @@ def sensor_data(request,room_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+
+@csrf_exempt
+def game_cur_logs(request,game_id):
+    data = pull_data_game(game_id)
+    for d in data:
+        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
+        d['sensor_name'] = sensor.sensor_name
+        d['rpi_id'] = sensor.rpi_id
+        d['sensor_type_id'] = sensor.sensor_type_id
+    return JsonResponse({"data": data})
+
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
-    return render(request,'octo_site/data_vis.html',{"room":room})
+
+    return render(request,'octo_site/data_vis.html',{"room":room,"game":Game.objects.get(game_id=1)})
+def live_monitoring(request, room_id):
+    room = Room.objects.get(room_id=room_id)
+
+    return render(request,'octo_site/live_monitoring_data.html',{"room":room,"game":Game.objects.get(game_id=1)})
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
         room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],

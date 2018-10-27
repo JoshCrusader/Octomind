@@ -32,23 +32,19 @@
 	<script>
         let to_add=[];
         let sensor_data;
+		let colorNames = Object.keys(window.chartColors);
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
 		let config = {
-			type: 'bar',
+			type: 'line',
 			data: {
 			    start_time: start_time,
 				labels: [],
-				datasets: [{
-					label: 'Time Triggered at',
-					backgroundColor: window.chartColors.red,
-					borderColor: window.chartColors.red,
-					data: [],
-					fill: false,
-				}],
+				datasets: [],
                 statuses:[],
 			},
 			options: {
+			    spanGaps:true,
 				responsive: true,
                 legend: {
                     position: 'bottom',
@@ -60,77 +56,35 @@
 				tooltips: {
 					mode: 'index',
 					intersect: false,
-                    callbacks: {
-						// Use the footer callback to display the sum of the items showing in the tooltip
-						footer: function(tooltipItems, data) {
-							let val = null;
-							let min = null;
-							let sec = null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								sec = ((val % 1)*60).toFixed(2);
-								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.index];
-							});
-							if(stat){
-                                if (min !== 0 && sec !== 0){
-                                    if (parseInt(sec) === 0){
-                                        return 'Elapsed: ' + min + " min";
-                                    }
-                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
-                                }
-                            }
-                            return 'Not solved yet';
-						},
-                        beforeFooter: function(tooltipItems,data) {
-                            var multistringText = [''];
-							let start_time = data.start_time;
-							let time_solved= start_time;
-                            let d1=null;
-                            let d2=null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-
-							    stat = data.statuses[tooltipItem.index];
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								if(tooltipItem.index !== 0){
-                                    for(let i=0; i <= tooltipItem.index;i++){
-                                        time_solved = new Date(time_solved.getTime() + (data.datasets[tooltipItem.datasetIndex].data[i]*60000));
-								    }
-                                }
-                                else{
-								    time_solved = new Date(start_time.getTime() + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]*60000));
-								}
-							});
-
-							if(stat){
-                                multistringText.push("Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds());
-                            }
-
-                            return multistringText;
-                        }
-					},
 					footerFontStyle: 'normal'
 				},
 				hover: {
 					mode: 'nearest',
-					intersect: true
+					intersect: false
 				},
 				scales: {
 					xAxes: [{
 						display: true,
+                        type: 'time',
 						scaleLabel: {
 							display: true,
-							labelString: 'Sensor Names'
+							labelString: 'Time'
 						}
 					}],
 					yAxes: [{
+
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'time elapsed (in minutes)'
-						}
+							labelString: 'Activation Status'
+						},
+						ticks: {
+                                beginAtZero: true,
+                                steps: 0,
+                                min:0,
+                                stepValue: 5,
+                                max: 1.0001
+                            }
 					}]
 				}
 			}
@@ -168,23 +122,142 @@
            //splice data
         }
         function initData() {
+		   let time = start_time;
+		   let newDataset;
+		   let newXAxis;
+		   let colorName;
+		   let newColor;
+		   let sensors = [];
+
+
            sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data.done(function(results){
+              let obj = results.sensors;
+               for (i in obj)
+               {
+                   colorName = colorNames[config.data.datasets.length % colorNames.length];
+                   newColor = window.chartColors[colorName];
+                   newXAxis = {
+                        id: "id-"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   newDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name,
+                        xAxisID:"id-"+i,
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        data: [],
+                        dd:[],
+                        fill: false
+                   };
+
+                   config.data.datasets.push(newDataset);
+                   sensors.push(obj[i].sensor_id);
+                   config.options.scales.xAxes.push(newXAxis);
+                   window.myLine.update()
+               }
+
+           });
+		   sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+           sensor_data.done(function(results){
+
+                obj = results.data;
+               console.log(obj);
+                for (ob in obj)
+                {
+                  // if(start_time !== new Date(obj[i].timestamp)){
+                    config.data.labels.push(new Date(obj[ob].timestamp));
+                   //}
+                   // config.data.datasets[sensors.indexOf(obj[i].sensor_id)].data.push(obj[i].value);
+                    console.log("sid: "+obj[ob].sensor_id);
+                    for(let x =0; x < sensors.length;x++){
+                        console.log("sens_id&sen_id - ind: "+obj[ob].sensor_id+" "+sensors[x]+" "+x);
+                        if(obj[ob].sensor_id === sensors[x]){
+                            console.log(obj[ob]);
+                            config.data.datasets[x].dd.push(obj[ob].timestamp);
+                            config.data.datasets[x].data.push(obj[ob].value);
+
+                            console.log(config.data.datasets[x].dd);
+
+                            console.log(config.data.datasets[x].data);
+                        }
+                        else{
+                            config.data.datasets[x].data.push(null);
+                        }
+                    }
+			        window.myLine.update()
+                }
+
+                //console.log(sensors);
+                for( x in config.data.datasets){
+                    console.log(config.data.datasets[x].data);
+                }
+           });
+		   /*
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           //load lables
+            for (let index = 1; index <= 300; ++index) {
+                time = new Date(time.getTime() + (1000));
+
+				config.data.labels.push(time.getHours()+":"+time.getMinutes()+":"+time.getSeconds());
+			}
+
+            for (let index = 0; index < sensors.length; ++index) {
+                colorName = colorNames[config.data.datasets.length % colorNames.length];
+                newColor = window.chartColors[colorName];
+                newDataset = {
+                    label: sensors[index]+' Dataset ' + config.data.datasets.length,
+                    backgroundColor: newColor,
+                    borderColor: newColor,
+                    data: [],
+                    fill: false
+                };
+                for (let index = 0; index < config.data.labels.length; ++index) {
+                    if(index <= config.data.labels.length*0.2){
+
+                        newDataset.data.push(0);
+                    }else if((index >= config.data.labels.length*0.8)){
+
+                        newDataset.data.push(0);
+                    }
+                    else{
+                        newDataset.data.push(1);
+                    }
+
+                }
+                config.data.datasets.push(newDataset);
+			    window.myLine.update();
+            }
+			window.myLine.update();
+           /*
+           time_solved = new Date(time_solved.getTime() + (data.datasets[tooltipItem.datasetIndex].data[i]*60000));
            sensor_data.done(function(results){
                 console.log(results);
                 obj = results.sensors;
                 for (i in obj)
                 {
                     config.data.labels.push(obj[i].sensor_name);
+			        //config.data.datasets[0].data.push(obj[i].value);
 			        window.myLine.update()
                 }
            });
-
            let game_data =  $.get("/octo_site/api/game_cur_logs/1/");
            game_data.done(function(results){
                for (i in results.data){
+                   let colorName = colorNames[config.data.datasets.length % colorNames.length];
+                   let newColor = window.chartColors[colorName];
+
                    for(lab in config.data.labels){
                        if (config.data.labels[lab] === results.data[i].sensor_name){
-
                            config.data.datasets[0].data[lab] = results.data[i].time_solved.toFixed(2);
 			               if(parseInt(config.data.datasets[0].data[lab]) !== 0){
 			                   config.data.statuses[lab] = true;
@@ -197,6 +270,10 @@
                    }
                }
            });
+        */
+
+
+
 			window.myLine.update();
         }
 		document.getElementById('randomizeData').addEventListener('click', function() {
@@ -207,7 +284,6 @@
 			});
 			window.myLine.update();
 		});
-		var colorNames = Object.keys(window.chartColors);
 		document.getElementById('addDataset').addEventListener('click', function() {
 			var colorName = colorNames[config.data.datasets.length % colorNames.length];
 			var newColor = window.chartColors[colorName];

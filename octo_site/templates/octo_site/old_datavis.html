@@ -28,16 +28,28 @@
 	<button id="addData">Add Data</button>
 	<button id="removeData">Remove Data</button>
     <button id="pullData" onclick="pullData()">Pull Data</button>
-
+    <script>
+        const socket = new WebSocket('ws://localhost:8000/octo_site/');
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            socket.send('Hello Server!');
+        });
+        // Listen for messages
+        socket.addEventListener('message', function (event) {
+            console.log('Message from server ', event.data);
+        });
+        if(typeof(EventSource) !== "undefined") {
+            console.log("im zucc port");
+        } else {
+        }
+    </script>
 	<script>
         let to_add=[];
         let sensor_data;
-        let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
-        console.log(start_time);
+		let MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		let config = {
-			type: 'bar',
+			type: 'line',
 			data: {
-			    start_time: start_time,
 				labels: [],
 				datasets: [{
 					label: 'Time Triggered at',
@@ -45,14 +57,10 @@
 					borderColor: window.chartColors.red,
 					data: [],
 					fill: false,
-				}],
-                statuses:[],
+				}]
 			},
 			options: {
 				responsive: true,
-                legend: {
-                    position: 'bottom',
-                },
 				title: {
 					display: true,
 					text: '{{ room.room_name }} Game #69'
@@ -60,58 +68,6 @@
 				tooltips: {
 					mode: 'index',
 					intersect: false,
-                    callbacks: {
-						// Use the footer callback to display the sum of the items showing in the tooltip
-						footer: function(tooltipItems, data) {
-							let val = null;
-							let min = null;
-							let sec = null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								sec = ((val % 1)*60).toFixed(2);
-								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.index];
-							});
-							if(stat){
-                                if (min !== 0 && sec !== 0){
-                                    if (parseInt(sec) === 0){
-                                        return 'Elapsed: ' + min + " min";
-                                    }
-                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
-                                }
-                            }
-                            return 'Not solved yet';
-						},
-                        beforeFooter: function(tooltipItems,data) {
-                            var multistringText = [''];
-							let start_time = data.start_time;
-							let time_solved= start_time;
-                            let d1=null;
-                            let d2=null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-
-							    stat = data.statuses[tooltipItem.index];
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								if(tooltipItem.index !== 0){
-                                    for(let i=0; i <= tooltipItem.index;i++){
-                                        time_solved = new Date(time_solved.getTime() + (data.datasets[tooltipItem.datasetIndex].data[i]*60000));
-								    }
-                                }
-                                else{
-								    time_solved = new Date(start_time.getTime() + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]*60000));
-								}
-							});
-
-							if(stat){
-                                multistringText.push("Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds());
-                            }
-
-                            return multistringText;
-                        }
-					},
-					footerFontStyle: 'normal'
 				},
 				hover: {
 					mode: 'nearest',
@@ -122,14 +78,14 @@
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'Sensor Names'
+							labelString: 'Sensor Name'
 						}
 					}],
 					yAxes: [{
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'time elapsed (in minutes)'
+							labelString: 'seconds'
 						}
 					}]
 				}
@@ -140,7 +96,7 @@
 			window.myLine = new Chart(ctx, config);
 			initData();
             console.log("started");
-			//window.setInterval(reloadData, 1000);
+			window.setInterval(reloadData, 1000);
 		};
 		function reloadData() {
             sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
@@ -161,41 +117,23 @@
             });
         }
         function pullData() {
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
            sensor_data.done(function(results){
-                console.log(results.data);
+               // console.log(results.data);
            });
            //splice data
         }
         function initData() {
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
            sensor_data.done(function(results){
-                console.log(results);
-                obj = results.sensors;
+                obj = results.data;
                 for (i in obj)
                 {
+                   // console.log(obj[i]);
                     config.data.labels.push(obj[i].sensor_name);
-			        window.myLine.update()
+			        config.data.datasets[0].data.push(obj[i].value);
+			    window.myLine.update()
                 }
-           });
-
-           let game_data =  $.get("/octo_site/api/game_cur_logs/1/");
-           game_data.done(function(results){
-               for (i in results.data){
-                   for(lab in config.data.labels){
-                       if (config.data.labels[lab] === results.data[i].sensor_name){
-
-                           config.data.datasets[0].data[lab] = results.data[i].time_solved.toFixed(2);
-			               if(parseInt(config.data.datasets[0].data[lab]) !== 0){
-			                   config.data.statuses[lab] = true;
-                           }
-                           else{
-			                   config.data.statuses[lab] = false;
-                           }
-                           window.myLine.update();
-                       }
-                   }
-               }
            });
 			window.myLine.update();
         }
@@ -244,6 +182,117 @@
 				dataset.data.pop();
 			});
 			window.myLine.update();
+
+var chartColors = {
+  red: 'rgb(255, 99, 132)',
+  orange: 'rgb(255, 159, 64)',
+  yellow: 'rgb(255, 205, 86)',
+  green: 'rgb(75, 192, 192)',
+  blue: 'rgb(54, 162, 235)',
+  purple: 'rgb(153, 102, 255)',
+  grey: 'rgb(231,233,237)'
+};
+
+// returns a random integer between 0 and 10 inclusive
+var getRandomValue = function() {
+  min = Math.ceil(0);
+  max = Math.floor(50);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+// generates a value for each hour in a week
+var generateHourlyAvgData = function() {
+  var data = [];
+  for (var i = 0; i < 168; i++) {
+    data.push({
+      x: i,
+      y: getRandomValue()
+    });
+  }
+  return data;
+};
+
+// generates daily avg data by calculating the hourly
+// avg for each day
+var generateDailyAvgData = function(hourlyAvgData) {
+  var chunkSize = 24;
+  var data = [null];
+
+  for (var i = 0; i < hourlyAvgData.length / chunkSize; i++) {
+    var startIndex = i * chunkSize;
+    var slicedData = hourlyAvgData.slice(startIndex, startIndex + chunkSize);
+    var sum = slicedData.reduce(function(acc, val, index) {
+      return acc + slicedData[index].y;
+    }, slicedData[0].y);
+
+    data.push(sum / chunkSize);
+  }
+  return data;
+};
+
+var hourlyAvgData = generateHourlyAvgData();
+var dailyAvgData = generateDailyAvgData(hourlyAvgData);
+
+var ctx = document.getElementById("canvas").getContext("2d");
+var myChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['', "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    datasets: [{
+      type: 'line',
+      label: 'Daily Avg',
+      data: dailyAvgData,
+      borderColor: chartColors.red,
+      backgroundColor: chartColors.red,
+      borderWidth: 5,
+      fill: false,
+    }, {
+      type: 'line',
+      label: 'Hourly Avg',
+      borderColor: chartColors.green,
+      backgroundColor: chartColors.green,
+      borderWidth: 1,
+      fill: false,
+      pointRadius: 0,
+      xAxisID: 'x-axis-2',
+      data: hourlyAvgData
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Chart.js - Line Chart With Multiple X Scales (X Axes)'
+    },
+    tooltips: {
+      mode: 'nearest',
+      intersect: true,
+    },
+    scales: {
+      xAxes: [{
+        gridLines: {
+          offsetGridLines: false,
+        }
+      }, {
+        id: 'x-axis-2',
+        type: 'linear',
+        position: 'bottom',
+        display: false,
+        ticks: {
+          min: 0,
+          max: 168,
+          stepSize: 24
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          min: 0,
+          max: 50
+        }
+      }]
+    }
+  }
+});
 		});
 	</script>
 </body>
