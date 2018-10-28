@@ -97,6 +97,39 @@ def pull_data_game(game_id):
     print(new_data)
     return new_data
 
+def pull_data_live_control_panel(game_id):
+    # to_put_time_constraint here
+    f = '%Y-%m-%d %H:%M:%S'
+    game = Game.objects.get(game_id=game_id)
+    sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+    sensors_id = []
+    for s in sensors:
+        sensors_id.append(s.sensor_id)
+    str_sensor_ids = "(" + str(sensors_id).strip('[]') + ")"
+
+    data_return = []
+    host = "localhost"
+    connection = MySQLdb.connect(
+        host=host,
+        user="root",
+        passwd="root",
+        db="sensorDB")
+    # prepare a cursor object using cursor() method
+    cursor = connection.cursor()
+    print(str_sensor_ids)
+    # execute the SQL query using execute() method.
+    cursor.execute("select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
+            f) + "' and '" + game.game_details.timeend.strftime(f) + "';")
+    # fetch all of the rows from the query
+    data = cursor.fetchall()
+    # print the rows
+    for row in data:
+        data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
+        # close the cursor object
+    cursor.close()
+    # close the connection
+    connection.close()
+    return data_return
 def pull_data_room(room_id):
     #to_put_time_constraint here
     rpi_ids = []
@@ -131,24 +164,3 @@ def pull_data_room(room_id):
     connection.close()
     return data_return
 
-def manual_query(query):
-    data_return = []
-    host = "localhost"
-    connection = MySQLdb.connect(
-        host=host,
-        user="root",
-        passwd="root",
-        db="sensorDB")
-
-    # prepare a cursor object using cursor() method
-    cursor = connection.cursor()
-    # execute the SQL query using execute() method.
-    cursor.execute("select * from sensor_log")
-   # sql = "INSERT INTO `sensorDB`.`sensor_log` ( `timestamp`,`sensor_id`,`value`) VALUES (%s, %s, %s);"
-    cursor.execute(query)
-    # fetch all of the rows from the query
-    data = cursor.fetchall()
-    cursor.close()
-    # close the connection
-    connection.close()
-    return data
