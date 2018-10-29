@@ -51,7 +51,7 @@
                 font-size: 8pt;
             }
             .panelCard{
-                background-color: #222;
+                background-color: #2a2016;
             }
             .panelImage{
                 position: absolute;
@@ -85,33 +85,44 @@
                         <div class = "gameHead">
                             <img class = "panelImage" src = "{% static 'media/' %}{{ i.header_img }}">
                             <div class = "cardHeader">{{ i.room_name }}</div>
-                            {% if games|attr:i.room_id != None %}
-                            <div class = "timeLeft">Time left: 12:40</div>
-                            {% endif %}
+                            {% with specGame=games|attr:i.room_id%}
+                                {% with minutes=specGame|attr:"minutes" seconds=specGame|attr:"seconds" %}
+                                    {% if specGame != None %}
+                                        <div class = "timeLeft">Time left: 
+                                                <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                                                    {{ minutes }}:{{ seconds }}
+                                                </span>
+                                            </div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endwith %}
                             <div class = "clue-button" onClick = "">?</div>
                         </div>    
                         <div class="uk-card-body">
                             <div class = "playerContainer" style = "height: 70px;">
-                            {% if games|attr:i.room_id != None %}
-                                <div class = "playerHeader">Current Players</div>
-                                <div class = "personText">Joshua Cruzada</div>
-                                <div class = "personText">Mark Barraquias</div>
-                                <div class = "personText">Betlee Kyle</div>
-                                <div class = "personText">Person 4</div>
-                                <div class = "personText">Person 5</div>
-                                <div class = "personText">Person 6</div>
-                            
-                            </div>
-                            <div class = "clueContainer">
-                                <div class = "clueHeader">Clues Left</div>
-                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
-                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
-                                <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
-                            </div>
-                            {% else %}
-                            <div class = "playerHeader" style = "color: red">No Current Team</div>
-                            </div>
-                            {% endif %}
+                            {% with specGame=games|attr:i.room_id%}
+                                {% if specGame != None %}
+                                    <div class = "playerHeader">Current Players</div>
+                                    {% for player in specGame|attr:"players" %}
+                                    <div class = "personText">{{ player.firstname }} {{ player.lastname }}</div>
+                                    {% endfor %}
+                                
+                                </div>
+                                <div class = "clueContainer">
+                                    <div class = "clueHeader">Clues Left</div>
+
+                                    {% for clueLength in specGame|attr:"mystery" %}
+                                        <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
+                                    {% endfor %}
+                                    {% for clueLength in specGame|attr:"clues" %}
+                                        <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class = "playerHeader" style = "color: #696969">No Current Team</div>
+                                </div>
+                                {% endif %}
+                            {% endwith %}
                         </div>
                     </div>
                 </a>
@@ -169,4 +180,33 @@
     </div>
 </div>
 <!-- /MODALS -->
+
+
+<!-- SCRIPTS -->
+<script>
+
+var times = 0
+function loop(){
+    setInterval(() => {
+        var timestamps = document.getElementsByClassName("spanTimestamp");
+        for(var i = 0; i < timestamps.length; i++)
+        {
+            var ts = timestamps.item(i);
+            var tmins = ts.getAttribute("minutes");
+            var tsecs = Number(ts.getAttribute("seconds"));
+            var totalsecs =  tmins*60 + tsecs;
+            totalsecs = totalsecs - times;
+            tmins = Math.floor(totalsecs/60);
+            tsecs = totalsecs%60;
+            tmins = tmins < 10 ? "0"+tmins : tmins;
+            tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
+            ts.innerHTML = tmins+":"+tsecs;
+        }
+
+        times = times+1
+    }, 1000);
+}
+loop();
+</script>
+<!-- /SCRIPTS -->
 {% include 'octo_site/includes/offcanvas.html' %}
