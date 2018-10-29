@@ -3,21 +3,20 @@ from octo_site.models import *
 from datetime import datetime,timedelta
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
+host = "localhost"
+
+
 def pull_data():
-    data_return = []
-    host = "localhost"
     connection = MySQLdb.connect(
         host=host,
         user="root",
         passwd="root",
         db="sensorDB")
-
-    # prepare a cursor object using cursor() method
     cursor = connection.cursor()
-
+    data_return = []
+    # prepare a cursor object using cursor() method
     # execute the SQL query using execute() method.
     cursor.execute("select * from sensor_log")
-
     # fetch all of the rows from the query
     data = cursor.fetchall()
 
@@ -30,8 +29,14 @@ def pull_data():
     connection.close()
 
     return data_return
+
+## to write as summary function
 def pull_data_game(game_id):
     #to_put_time_constraint here
+
+    connection = MySQLdb.connect(host=host,user="root",passwd="root", db="sensorDB")
+
+    cursor = connection.cursor()
     f = '%Y-%m-%d %H:%M:%S'
     prev_stamp=None
     time_diff_in_min = None
@@ -45,15 +50,6 @@ def pull_data_game(game_id):
     str_sensor_ids = "("+str(sensors_id).strip('[]')+")"
 
     data_return = []
-    host = "localhost"
-    connection = MySQLdb.connect(
-        host=host,
-        user="root",
-        passwd="root",
-        db="sensorDB")
-
-    # prepare a cursor object using cursor() method
-    cursor = connection.cursor()
     print(str_sensor_ids)
     # execute the SQL query using execute() method.
     cursor.execute("select * from sensor_log where sensor_id in "+str_sensor_ids+" and "+" timestamp between '"+game.game_details.timestart.strftime(f)+"' and '"+game.game_details.timeend.strftime(f)+"';")
@@ -65,7 +61,7 @@ def pull_data_game(game_id):
     for row in data:
         data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
     # close the cursor object
-
+    # for summary data
     for s in sensors:
         for data in data_return:
             if s.sensor_id == data['sensor_id']:
@@ -96,9 +92,23 @@ def pull_data_game(game_id):
     connection.close()
     print(new_data)
     return new_data
-
+def transmogrify_data(dataset_logs):
+    for data in dataset_logs:
+        sensor = Sensor.objects.get(sensor_id=data["sensor_id"])
+        if int(data['value']) >= sensor.sensor_type.trigger_treshold:
+            data['value'] = '1'
+        else:
+            data['value'] = '0'
+    return dataset_logs
 def pull_data_live_control_panel(game_id):
-    # to_put_time_constraint here
+    game = Game.objects.get(game_id=game_id)
+    check_seq(game)
+
+    return pull_data_fr_game(game_id)
+def pull_data_fr_game(game_id):
+    
+    connection = MySQLdb.connect(host=host,user="root",passwd="root", db="sensorDB")
+    cursor = connection.cursor()
     f = '%Y-%m-%d %H:%M:%S'
     game = Game.objects.get(game_id=game_id)
     sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
@@ -108,17 +118,9 @@ def pull_data_live_control_panel(game_id):
     str_sensor_ids = "(" + str(sensors_id).strip('[]') + ")"
 
     data_return = []
-    host = "localhost"
-    connection = MySQLdb.connect(
-        host=host,
-        user="root",
-        passwd="root",
-        db="sensorDB")
-    # prepare a cursor object using cursor() method
-    cursor = connection.cursor()
-    print(str_sensor_ids)
     # execute the SQL query using execute() method.
-    cursor.execute("select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
+    cursor.execute(
+        "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
             f) + "' and '" + game.game_details.timeend.strftime(f) + "';")
     # fetch all of the rows from the query
     data = cursor.fetchall()
@@ -126,27 +128,20 @@ def pull_data_live_control_panel(game_id):
     for row in data:
         data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
         # close the cursor object
+
     cursor.close()
     # close the connection
     connection.close()
-    return data_return
+    return transmogrify_data(data_return)
 def pull_data_room(room_id):
-    #to_put_time_constraint here
+    connection = MySQLdb.connect(host=host,user="root",passwd="root", db="sensorDB")
+    cursor = connection.cursor()
     rpi_ids = []
     rpis = Rpi.objects.filter(room_id=room_id)
     for rpi in rpis:
         rpi_ids.append(rpi.rpi_id)
 
     data_return = []
-    host = "localhost"
-    connection = MySQLdb.connect(
-        host=host,
-        user="root",
-        passwd="root",
-        db="sensorDB")
-
-    # prepare a cursor object using cursor() method
-    cursor = connection.cursor()
 
     # execute the SQL query using execute() method.
     cursor.execute("select * from sensor_log")
@@ -163,4 +158,37 @@ def pull_data_room(room_id):
     # close the connection
     connection.close()
     return data_return
+
+def check_seq(game):
+    in_seq = True
+    sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+    seq = []
+    cur_seq = []
+    log_data = pull_data_fr_game(game.game_id)
+    trigger_seqs = {}
+    for s in sensors:
+        trigger_seqs[str(s.sensor_id)] = None
+        seq.append(s.sensor_id)
+    trigger_seq =1
+    skip_sensors =[]
+    for data in log_data:
+        s = Sensor.objects.get(sensor_id=data['sensor_id'])
+        if 1 == int(data['value']) and s.sensor_id not in skip_sensors:
+            skip_sensors.append(s.sensor_id)
+            trigger_seqs[str(s.sensor_id)] = trigger_seq
+            trigger_seq += 1
+
+    print(trigger_seqs)
+    for t in trigger_seqs:
+        if trigger_seqs[t] is not None:
+            s = Sensor.objects.get(sensor_id=t)
+            if s.sequence_number != trigger_seqs[t]:
+                print(str(s.sensor_name)+" not in sequence")
+                in_seq = False
+    if in_seq:
+        print("all is insequence so far")
+    else:
+        print("wew")
+    return in_seq
+
 
