@@ -18,23 +18,21 @@
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-medium" >
-
+                                <form action="{% url 'room_details_analysis' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
                                 <div class="uk-width-auto uk-text-center uk-align-center">
                                     <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics</h2>
-                                    <form action="" method="post" id="form">
                                     <div class="uk-width-1-1 uk-text-center" id="hdr">
                                         {% csrf_token %}
                                             <div class="uk-margin" style="margin-top: 3vh">
-
-                                                    <input class="uk-input uk-form-width-medium"   id="sd" type="date" required> to
-                                                    <input class="uk-input uk-form-width-medium"  id="ed" type="date" required>
-
+                                                    <input class="uk-input uk-form-width-medium"  name="start" id="sd" type="date" required> to
+                                                    <input class="uk-input uk-form-width-medium" name="end" id="ed" type="date" required>
                                                 <button class="uk-button uk-button-default" onclick="check_valid();" type="button">Submit</button>
                                             </div>
                                         <div class="uk-alert-danger" uk-alert id="alert" style="display: none">
                                             <p></p>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="uk-card-body uk-align-center uk-width-1-1" style="margin-top: 0px">
 									<div class="uk-overflow-auto">
@@ -51,7 +49,7 @@
                                           {% load static %}
                                             {% for room in rooms reversed%}
                                                 <tr class="tbl_toggle">
-                                                    <td class="uk-text-center"><input class="uk-checkbox" name="room_to_analyze[]" type="checkbox"></td>
+                                                    <td class="uk-text-center"><input class="uk-checkbox" value="{{ room.room_id }}" name="room_to_analyze[]" type="checkbox"></td>
 
                                                     <td><img class="uk-preserve-width uk-border-circle" src="/static/media/{{ room.header_img }}" style="height: 40px;width: 40px" alt=""></td>
                                                     <td>
@@ -63,7 +61,6 @@
                                             {% endfor %}
                                           </tbody>
                                      </table>
-                                        </form>
                                         <script>
                                             $(document).ready(function() {
                                             $('#example').DataTable();
@@ -74,7 +71,7 @@
                                         </script>
                                     </div>
 								</div>
-
+                                </form>
                         </div>
                         </div>
                     </div>

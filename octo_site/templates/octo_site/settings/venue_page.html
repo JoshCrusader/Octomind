@@ -1,7 +1,39 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
     {% load staticfiles %}
-
+<div id="modal-full" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <form method="post" action="">
+            <div uk-grid>
+                <div class="uk-width-auto uk-padding-large" style="background-color: whitesmoke"  uk-height-viewport>
+                    <h3>Alien Assualt Room Sensors</h3>
+                    <hr class="uk-divider-icon"/>
+                    <div style="overflow-y: scroll; height:360px;">
+                        <div id="sensor_sequence_plot">
+                            <div class="uk-margin">
+                                <li class="draggable_list_plot" data-sensor_id="tite1"><div class="uk-card uk-card-default uk-card-body uk-card-small box_box"></div></li>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-width-expand" uk-height-viewport>
+                    <div class="uk-card-body uk-align-center uk-text-center uk-width-1-1" draggable="false" style=" object-fit: none;">
+                        <div class="uk-inline uk-dark uk-align-center" draggable="false" style="width: 600px;height: 525px; object-fit: none;border: dashed;border-width: 3px;"  id="layout_body">
+                            <img id="img_sensor_layout" ondrop="drop(event)" draggable="false" ondragover="allowDrop(event)" src="{% static 'media/imgs/aa_blueprint.jpg' %}" alt="" style="width: 600px;height: 525pythoopx;min-width: 100%">
+                            <div class="div_drag" uk-tooltip="Sensor 3"  style="left: 82%; top: 68%">
+                                <span style="color: white" data-uk-icon="icon: nut"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="uk-modal-footer uk-position-bottom uk-text-center">
+            <button class="uk-button uk-button-default uk-modal-close bord_rad" id="full_modal_close" type="button">Cancel</button>
+            <button class="uk-button uk-button-primary bord_rad" type="button" onclick="submit_plot()">Save</button>
+        </div>
+    </div>
+</div>
 <div id="modal-branch" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -65,12 +97,25 @@
 
                     <div class="uk-margin uk-text-center uk-align-center" >
                         <div class="upload-btn-wrapper" style="width: 100%">
-                          <button class="btn_up" style="width: 100%;font-size: 16px"> <span uk-icon="icon: cloud-upload"></span> Upload Room Header Image</button>
+                          <button class="btn_up" style="width: 100%;font-size: 16px"></span><span uk-icon="icon: image"></span> Upload Room Header Image <span uk-icon="icon: cloud-upload"></button>
                             {{ room_form.header_img }}
                         </div>
                     </div>
-                    <div class="uk-margin uk-text-center uk-align-center" id="output" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="hdr_wrapper">
+                    <div class="uk-margin uk-text-center uk-align-center" >
+                        <div class="upload-btn-wrapper" style="width: 100%">
+                            <button class="btn_up" style="width: 100%;font-size: 16px"></span><span uk-icon="icon: grid"></span> Upload Blueprint File <small>(JPG/PNG)</small>  <span uk-icon="icon: cloud-upload"></button>
+                            {{ room_form.blueprint_file }}
+                        </div>
+                    </div>
+                    <div class="uk-margin uk-text-center uk-align-center" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="hdr_wrapper">
+                        <label>Header Image Preview</label>
+                        <br>
                         <img id="hdr_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" />
+                    </div>
+                    <div class="uk-margin uk-text-center uk-align-center" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: none" id="bp_wrapper">
+                        <label>Blueprint Preview</label>
+                        <br>
+                        <img id="bp_img" src="" alt="" max-width="300px" max-height="300px" min-width="0px" min-height="0px" style="display: inline;" />
                     </div>
                 <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
                 <div class="uk-child-width-1-1@m" uk-grid>
@@ -80,6 +125,8 @@
                             <dt><span data-uk-icon="icon: settings"></span> <b> Game Sequence</b></dt>
                             <dd><small>Game sequences are automatically added when <b>Sensors</b> are assigned to the room at the <b>Sensors Settings</b>, it is enumerated at first input basis.
                                 You can always rearrange the sequence at the edit button for desired sequence of sensors that represents each room puzzle.</small></dd>
+                            <dt><span data-uk-icon="icon: git-fork"></span> <b> Sensor Plotting</b></dt>
+                            <dd><small>Sensor Plots are <b class="uk-text-warning">not automatically added</b> by default. After adding this room, click on the <b>Edit room</b> and add/edit the <b>coordinates</b> of each sensor to let the system know the placement of sensors for Room analysis</small></dd>
                         </dl>
                     </div>
                 </div>
@@ -124,6 +171,10 @@
                     <div class="uk-child-width-1-1@m" uk-grid id="has_seq">
                     <div>
                         <hr class="uk-divider-icon">
+                        <a href="#modal-full" uk-toggle>
+                            <button class="uk-button uk-button-primary uk-button-medium" onclick="sensor_layout(this)">Open Blue print<span data-uk-icon="icon: git-fork"></span></button>
+                        </a>
+
                         <dl class="uk-description-list">
                             <dt><b>Sensor Sequence</b></dt>
                             <dd><small>Put the arrangement of sensors here for the system to know which sensors are expected to trigger in the expected sequence.</small></dd>
@@ -135,13 +186,11 @@
                         </div>
                     </div>
                     </div>
-
                     <dl class="uk-description-list uk-text-center uk-align-center" id="has_no_seq">
                             <dt> <span class="uk-text-danger" data-uk-icon="settings" href=""></span>
                             <b class="uk-text-danger">No Sensors Added Yet</b></dt>
                             <dd><small>Please add sensors in this room at the <a href="{% url 'page_sensor' %}">Sensor Settings </a>page.</small></dd>
                     </dl>
-
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -160,15 +209,16 @@
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="type" value="room">
+
             <div class="uk-modal-body">
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Room name</label>
-                        <div class="uk-form-controls">
-                            {{ room_form.room_name }}
-                        </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Room name</label>
+                    <div class="uk-form-controls">
+                        {{ room_form.room_name }}
                     </div>
-                    <div class="uk-margin">
-                    </div>
+                </div>
+                <div class="uk-margin">
+                </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Cancel</button>
@@ -222,8 +272,9 @@
                                                         <div  uk-lightbox>
                                                             <a href="/static/media/{{ room.header_img }}" id="lightbox-{{ room.room_id }}" has-sequence="{{ room.has_game_sequence }}"  room-id="{{ room.room_id }}"  data-caption="{% for sensor_seq in room.get_all_sensors %}{{ sensor_seq.sensor_name }} > {% endfor %}">{{ room.room_name }}</a>
                                                         </div>
-                                                        <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}"" href=""></span>
-                                                        <a class="uk-icon-link uk-text-success" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <span data-uk-icon="icon: git-fork" class="uk-text-{%  if room.num_sensor_plotted != 0 %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{{ room.room_page_response }}" href=""></span>
+                                                        <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}" href=""></span>
+                                                        <a class="uk-icon-link uk-text-success" id="edit-{{ room.room_id }}" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
                                                             <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
@@ -282,6 +333,9 @@
     </section>
 </div>
 <script>
+    let img_sensor_layout = document.getElementById("img_sensor_layout");
+    let initH = $("#img_sensor_layout").height();
+    let initW = $("#img_sensor_layout").width();
     var bar = document.getElementById('js-progressbar');
     var inp = document.getElementById('hd_img');
     let sensors;
@@ -290,12 +344,25 @@
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $('#hdr_wrapper').css('display','block');
-                $('#hdr_img')
-                    .attr('src', e.target.result).style="display: inline;"
-                ;
-            };
 
+
+                if($(input).attr('id') === "hd_img"){
+                    console.log(e.target.result);
+
+                    $('#hdr_wrapper').css('display','block');
+                    $('#hdr_img')
+                        .attr('src', e.target.result).style="display: inline;"
+                    ;
+                }else{
+                    console.log($(input).attr('id'));
+                    $('#bp_wrapper').css('display','block');
+
+                    console.log($('#bp_img'));
+                    $('#bp_img')
+                        .attr('src', e.target.result).style="display: inline;"
+                    ;
+                }
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
@@ -304,39 +371,206 @@
     indexes = [];
     vals = [];
     $(document).on('moved', '.uk-sortable', function(e) {
-      indexes = [];
-      vals = [];
-      var currentLi = e.originalEvent.parentNode;
-      $(this).find('li').each(function() {
-        indexes.push($(this).data("index"));
-        vals.push($(this).data('sensor_id'));
-      });
-      $("#game_sequence").val(vals.toString());
+          indexes = [];
+          vals = [];
+          var currentLi = e.originalEvent.parentNode;
+          $(this).find('li').each(function() {
+            indexes.push($(this).data("index"));
+            vals.push($(this).data('sensor_id'));
+          });
+          $("#game_sequence").val(vals.toString());
 
-      $('.indexes').each(function(x) {
-          $(this).html(x+1);
+          $('.indexes').each(function(x) {
+              $(this).html(x+1);
 
-      console.log(indexes);
-      console.log(vals);
+          console.log(indexes);
+          console.log(vals);
 
+        });
+        $('.uk-sortable').find('li').each(function(i) {
+          $(this).data("index", i);
+          indexes.push(i);
+        });
+    });
+    $('.div_drag').on('mousedown', function (e) {
+
+        $(this).addClass('active');
+
+        var oTop = e.pageY - $('.active').offset().top;
+        var oLeft = e.pageX - $('.active').offset().left;
+
+        $(this).parents().on('mousemove', function (e) {
+
+            $('.active').offset({
+
+                top: e.pageY - oTop,
+                left: e.pageX - oLeft
+
+            }).on('mouseup', function () {
+
+                $(this).removeClass('active');
+
+            });
+
+        });
+
+        return false;
     });
 
-    $('.uk-sortable').find('li').each(function(i) {
-      $(this).data("index", i);
-      indexes.push(i);
+    function mouseDown(obj,e) {
 
-    });
-    });
+        e.preventDefault();
+        $(obj).addClass('active');
 
-    console.log(indexes);
-    console.log(vals);
+        var oTop = e.pageY - $('.active').offset().top;
+        var oLeft = e.pageX - $('.active').offset().left;
+        $(obj).parents().on('mousemove', function (e) {
+            let top= e.pageY - oTop;
+            let bot= e.pageX - oLeft;
+
+            $('.active').offset({
+
+                top: e.pageY - oTop ,
+                left: e.pageX - oLeft
+
+            }).on('mouseup', function () {
+
+                $(obj).removeClass('active');
+
+            });
+
+        });
+        //alert(top+" "+bot);
+        return false;
+    }
+
     function delete_room(room_id) {
         let conf = confirm("Are you sure you want to delete?");
         if (conf){
             $('#room-'+room_id).click();
         }
     }
+    function dragStart(event) {
+        event.dataTransfer.setData("Text", event.target.id);
+       // $(event.currentTarget).addClass('div_drag');
+        //event.dataTransfer.setData("index", event.target.data-index);
+        console.log("drag started");
+    }
+    function dragEnd(event) {
+        $(event.currentTarget).remove();
+    }
+    function allowDrop(event) {
+    event.preventDefault();
+    }
+    function getPosition(el) {
+      var xPosition = 0;
+      var yPosition = 0;
 
+      while (el) {
+        if (el.tagName == "BODY") {
+          // deal with browser quirks with body/window/document and page scroll
+          var xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
+          var yScrollPos = el.scrollTop || document.documentElement.scrollTop;
+
+          xPosition += (el.offsetLeft - xScrollPos + el.clientLeft);
+          yPosition += (el.offsetTop - yScrollPos + el.clientTop);
+        } else {
+          xPosition += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+          yPosition += (el.offsetTop - el.scrollTop + el.clientTop);
+        }
+
+        el = el.offsetParent;
+      }
+      return {
+        x: xPosition,
+        y: yPosition
+      };
+    }
+    function drop(event) {
+        event.preventDefault();
+        let parent_position = getPosition(event.currentTarget);
+        var data = event.dataTransfer.getData("Text");
+        var data2 = event.dataTransfer.getData("ace");
+        var id = $('#'+data).attr('sensor-id');
+        let name=$('#'+data).attr('sensor-name');
+
+        console.log($(event.currentTarget).width());
+        console.log($("#img_sensor_layout").width());
+        console.log($("#layout_body").width());
+        console.log($(event.currentTarget).height());
+
+        let xPos = parseFloat(event.clientX - parent_position.x)/$(event.currentTarget).width() ;
+        let yPos = parseFloat(event.clientY - parent_position.y)/$(event.currentTarget).height() ;
+        xPos*=100;
+        yPos*=100;
+        xPos-=3;
+        yPos-=4;
+        console.log(xPos , yPos);
+        if (data.includes("plot")){
+            let str_plot = '<div class="div_drag" uk-tooltip="'+name+'" onmousedown="mouseDown(this,event)" sensor-id="'+id+'" style="left: '+xPos+'%; top: '+yPos+'%"> <span style="color: white" data-uk-icon="icon: nut"></span>';
+
+               str_plot += '</div>';
+            $('#layout_body').append(str_plot);
+            $('#plotted_sensor_'+id).addClass('div_drag');
+
+        }
+    }
+    function submit_plot() {
+        let data = [];
+        $( ".div_drag" ).each(function( index ) {
+          data.push({'id':$( this ).attr('sensor-id'),'top_coordinate':$( this ).css('top'),'left_coordinate':$(this).css('left')});
+        });
+        console.log(data);
+        $.ajax({
+             type:"POST",
+             url:"/octo_site/api/update_plot/",
+             data: {
+
+                'coords': JSON.stringify(data),
+                'width': $( '#layout_body' ).width(),
+                'height': $( '#layout_body' ).height()
+             },
+             success: function(){
+                 $('#full_modal_close').click();
+                 document.getElementById('edit-'+$("#edit-room_id").val()).click();
+
+             }
+        });
+        return false;
+
+    }
+    function sensor_layout(obj) {
+        $("#sensor_sequence_plot").empty();
+        $("#layout_body").empty();
+
+        let sensors =  $.get("/octo_site/api/get_sensor_by_room_id/"+$("#edit-room_id").val()+"/");
+        let room = $.get("/octo_site/api/get_room_by_room_id/"+$("#edit-room_id").val()+"/");
+        room.done(function(results){
+            console.log(results);
+            let str_img = '<img id="img_sensor_layout" ondrop="drop(event)" draggable="false" ondragover="allowDrop(event)" ';
+                str_img += 'src="/static/media/'+results.blueprint_file+'" alt="" style="width: 600px;height: 525px;min-width: 100%">';
+            $("#layout_body").append(str_img);
+        });
+        sensors.done(function(results){
+           console.log(results);
+           for(i in results.sensors){
+               if(results.sensors[i].top_coordinate === null && results.sensors[i].left_coordinate === null){
+                   let ind = parseInt(i)+1;
+                   console.log(results.sensors[i].sensor_id);
+                   let str_append = '<div class="uk-margin"' +
+                       '>'+'<li ondragstart="dragStart(event)" ondragend="dragEnd(event)" draggable="true" id="plot_sensor_'+results.sensors[i].sensor_id+'" style="list-style-type: none;" sensor-name="'+results.sensors[i].sensor_name+'" sensor-id="'+results.sensors[i].sensor_id+'" data-index="'+i+'"' +
+                   '>';
+                       str_append += ' <a><span class="uk-badge indexes">'+ind+'</span>  '+results.sensors[i].sensor_name+'' +
+                           '</a></li></div>';
+                   $("#sensor_sequence_plot").append(str_append);
+               }
+               else{
+                   let str_plot = '<div class="div_drag" uk-tooltip="'+results.sensors[i].sensor_name+'" sensor-id="'+results.sensors[i].sensor_id+'" onmousedown="mouseDown(this,event)"  style="left: '+results.sensors[i].left_coordinate+'%; top: '+results.sensors[i].top_coordinate+'%"> <span style="color: white" data-uk-icon="icon: nut"></span>';
+                       $('#layout_body').append(str_plot);
+               }
+           }
+        });
+    }
     function edit_room(obj) {
         $("#edit-room_name").val($(obj).attr('room-name'));
         $("#edit-room_id").val($(obj).attr('room-id'));

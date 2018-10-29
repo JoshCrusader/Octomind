@@ -31,24 +31,37 @@
 
 	<script>
         let to_add=[];
+        let sensors=[];
         let sensor_data;
+        let sensor_data_len;
+        let chartColors = {
+          red: 'rgb(255, 99, 132)',
+          orange: 'rgb(255, 159, 64)',
+          yellow: 'rgb(255, 205, 86)',
+          green: 'rgb(75, 192, 192)',
+          blue: 'rgb(54, 162, 235)',
+          purple: 'rgb(153, 102, 255)',
+          grey: 'rgb(231,233,237)',
+          black: 'rgb(0,0,0)',
+        };
+		let colorNames = Object.keys(window.chartColors);
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
 		let config = {
-			type: 'bar',
+			type: 'line',
 			data: {
 			    start_time: start_time,
 				labels: [],
-				datasets: [{
-					label: 'Time Triggered at',
-					backgroundColor: window.chartColors.red,
-					borderColor: window.chartColors.red,
-					data: [],
-					fill: false,
-				}],
+				datasets: [],
                 statuses:[],
 			},
 			options: {
+			    elements:{
+			        line: {
+			            tension: 0
+                    }
+                },
+			    spanGaps:true,
 				responsive: true,
                 legend: {
                     position: 'bottom',
@@ -60,77 +73,35 @@
 				tooltips: {
 					mode: 'index',
 					intersect: false,
-                    callbacks: {
-						// Use the footer callback to display the sum of the items showing in the tooltip
-						footer: function(tooltipItems, data) {
-							let val = null;
-							let min = null;
-							let sec = null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								sec = ((val % 1)*60).toFixed(2);
-								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.index];
-							});
-							if(stat){
-                                if (min !== 0 && sec !== 0){
-                                    if (parseInt(sec) === 0){
-                                        return 'Elapsed: ' + min + " min";
-                                    }
-                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
-                                }
-                            }
-                            return 'Not solved yet';
-						},
-                        beforeFooter: function(tooltipItems,data) {
-                            var multistringText = [''];
-							let start_time = data.start_time;
-							let time_solved= start_time;
-                            let d1=null;
-                            let d2=null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
-
-							    stat = data.statuses[tooltipItem.index];
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								if(tooltipItem.index !== 0){
-                                    for(let i=0; i <= tooltipItem.index;i++){
-                                        time_solved = new Date(time_solved.getTime() + (data.datasets[tooltipItem.datasetIndex].data[i]*60000));
-								    }
-                                }
-                                else{
-								    time_solved = new Date(start_time.getTime() + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]*60000));
-								}
-							});
-
-							if(stat){
-                                multistringText.push("Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds());
-                            }
-
-                            return multistringText;
-                        }
-					},
 					footerFontStyle: 'normal'
 				},
 				hover: {
 					mode: 'nearest',
-					intersect: true
+					intersect: false
 				},
 				scales: {
 					xAxes: [{
 						display: true,
+                        type: 'time',
 						scaleLabel: {
 							display: true,
-							labelString: 'Sensor Names'
+							labelString: 'Time'
 						}
 					}],
 					yAxes: [{
+
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'time elapsed (in minutes)'
-						}
+							labelString: 'Activation Status'
+						},
+						ticks: {
+                                beginAtZero: true,
+                                steps: 0,
+                                min:0,
+                                stepValue: 5,
+                                max: 1.0001
+                            }
 					}]
 				}
 			}
@@ -140,22 +111,30 @@
 			window.myLine = new Chart(ctx, config);
 			initData();
             console.log("started");
-			//window.setInterval(reloadData, 1000);
+			window.setInterval(reloadData, 1000);
 		};
 		function reloadData() {
-            sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
+		    console.log("reading");
+            sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
             sensor_data.done(function(results){
-                if (config.data.datasets[0].data.length < results.data.length){
-                    to_pop = results.data.length % config.data.datasets[0].data.length  ;
+                if (sensor_data_len < results.data.length){
+                    let to_pop = results.data.length % sensor_data_len;
                     for(let i=0;i<to_pop;i++){
                         to_add.push(results.data.pop());
                     }
                     for (i in to_add){
-                        console.log(to_add[i].sensor_name+"-"+to_add[i].value);
-                        config.data.labels.push(to_add[i].sensor_name);
-                        config.data.datasets[0].data.push(to_add[i].value);
+                        config.data.labels.push(new Date(to_add[i].timestamp));
+                        for(let x =0; x < sensors.length;x++){
+                            if(to_add[i].sensor_id === sensors[x]){
+                                config.data.datasets[x].data.push(to_add[i].value);
+                            }
+                            else{
+                                config.data.datasets[x].data.push(null);
+                            }
+                        }
                         window.myLine.update();
                     }
+                    sensor_data_len += to_pop;
                     window.myLine.update();
                 }
             });
@@ -168,35 +147,70 @@
            //splice data
         }
         function initData() {
+		   let time = start_time;
+		   let newDataset;
+		   let newXAxis;
+		   let colorName;
+		   let newColor;
+
+
            sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
            sensor_data.done(function(results){
-                console.log(results);
-                obj = results.sensors;
-                for (i in obj)
+              let obj = results.sensors;
+               for (i in obj)
+               {
+                   colorName = colorNames[config.data.datasets.length % colorNames.length];
+                   newColor = window.chartColors[colorName];
+                   newXAxis = {
+                        id: "id-"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   newDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name,
+                        xAxisID:"id-"+i,
+                        pointStyle: 'circle',
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        data: [],
+                        fill: false
+                   };
+
+                   config.data.datasets.push(newDataset);
+                   sensors.push(obj[i].sensor_id);
+                   config.options.scales.xAxes.push(newXAxis);
+                   window.myLine.update()
+               }
+
+           });
+		   sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
+           sensor_data.done(function(results){
+               sensor_data_len = results.data.length;
+               obj = results.data;
+                for (ob in obj)
                 {
-                    config.data.labels.push(obj[i].sensor_name);
+                    config.data.labels.push(new Date(obj[ob].timestamp));
+                    for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x]){
+                            config.data.datasets[x].data.push(obj[ob].value);
+                        }
+                        else{
+                            config.data.datasets[x].data.push(null);
+                        }
+                    }
 			        window.myLine.update()
                 }
+
            });
 
-           let game_data =  $.get("/octo_site/api/game_cur_logs/1/");
-           game_data.done(function(results){
-               for (i in results.data){
-                   for(lab in config.data.labels){
-                       if (config.data.labels[lab] === results.data[i].sensor_name){
-
-                           config.data.datasets[0].data[lab] = results.data[i].time_solved.toFixed(2);
-			               if(parseInt(config.data.datasets[0].data[lab]) !== 0){
-			                   config.data.statuses[lab] = true;
-                           }
-                           else{
-			                   config.data.statuses[lab] = false;
-                           }
-                           window.myLine.update();
-                       }
-                   }
-               }
-           });
 			window.myLine.update();
         }
 		document.getElementById('randomizeData').addEventListener('click', function() {
@@ -207,7 +221,6 @@
 			});
 			window.myLine.update();
 		});
-		var colorNames = Object.keys(window.chartColors);
 		document.getElementById('addDataset').addEventListener('click', function() {
 			var colorName = colorNames[config.data.datasets.length % colorNames.length];
 			var newColor = window.chartColors[colorName];

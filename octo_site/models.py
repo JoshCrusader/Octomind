@@ -75,6 +75,7 @@ class Room(models.Model):
     room_name = models.CharField(max_length=45, blank=True, null=True)
     branch = models.ForeignKey(Branch, models.DO_NOTHING)
     header_img = models.ImageField(upload_to='imgs/')
+    blueprint_file = models.ImageField(upload_to='imgs/')
 
     @property
     def has_game_sequence(self):
@@ -84,6 +85,43 @@ class Room(models.Model):
                 if rpi_sensor.sequence_number is not None:
                     return True
         return False
+
+    @property
+    def has_sensor_plot(self):
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                if rpi_sensor.top_coordinate is not None and rpi_sensor.left_coordinate is not None:
+                    return True
+        return False
+
+    @property
+    def num_sensor_plotted(self):
+        ctr = 0
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                if rpi_sensor.top_coordinate is not None and rpi_sensor.left_coordinate is not None:
+                    ctr+=1
+        return ctr
+
+    @property
+    def room_page_response(self):
+        ctr = 0
+        for r in Rpi.objects.filter(room_id=self.room_id):
+            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
+            for rpi_sensor in rpi_sensors:
+                if rpi_sensor.top_coordinate is not None and rpi_sensor.left_coordinate is not None:
+                    ctr += 1
+                    #{%  if room.num_sensor_plotted == room.num_sensors %} All Sensors plotted{% elif room.has_sensor_plot != 0 %}{{ room.num_sensor_plotted }} sensors plotted{% else %}Has no sensor plot yet{% endif %}
+        if self.num_sensors == 0:
+            return "No sensors added yet"
+        elif self.num_sensor_plotted == self.num_sensors:
+            return "All Sensors plotted"
+        elif self.num_sensor_plotted != 0:
+            return "{0} sensors plotted".format(self.num_sensor_plotted)
+        else:
+            return "No sensor plotted yet."
     @property
     def num_sensors(self):
         sensors=[]
@@ -124,6 +162,9 @@ class Sensor(models.Model):
 
     sequence_number = models.IntegerField(blank=True, null=True)
     sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
+
+    top_coordinate = models.IntegerField(blank=True, null=True)
+    left_coordinate = models.IntegerField(blank=True, null=True)
 
     @property
     def get_sequence_number(self):

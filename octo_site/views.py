@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
-from octo_site.db_conf import pull_data,pull_data_room
+from octo_site.db_conf import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from utils import federate
@@ -66,7 +66,7 @@ def page_sensor(request):
         elif request.POST['type'] == "delete_sensor":
             delete_sensor(request)
         return HttpResponseRedirect(reverse('page_sensor'))
-    return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
+    return render(request, 'octo_site/settings/sensor_page.html',{"sensors":Sensor.objects.all().reverse(),"rooms":Room.objects.all(),"sensor_type":SensorType.objects.all(),"rpi":Rpi.objects.all()})
 def page_venue(request):
 
     if request.method == 'POST':
@@ -135,14 +135,35 @@ def access_room(request):
         pass
 
 @csrf_exempt
+def update_plot(request):
+    width = request.POST['width']
+    height = request.POST['height']
+    data = request.POST['coords']
+    data = json.loads(data)
+    print(data)
+    print(height,width)
+    for dat in data:
+        print(dat['id'])
+        tCoord = (float(dat['top_coordinate'].replace("px",""))/float(height))*100
+        lCoord = (float(dat['left_coordinate'].replace("px",""))/float(width))*100
+        sensor = Sensor.objects.get(sensor_id=dat['id'])
+        sensor.top_coordinate = round(tCoord, 3)
+        sensor.left_coordinate = round(lCoord, 3)
+        sensor.save()
+        print(sensor.top_coordinate,sensor.left_coordinate)
+    return JsonResponse({'filename':"kapiha"})
+@csrf_exempt
 def upload_process(request):
     return JsonResponse({'filename':"kapiha"})
-
+@csrf_exempt
+def get_room_by_room_id(request,room_id):
+    room = Room.objects.get(room_id=room_id)
+    return JsonResponse({"room_id":room.room_id,"room_name":room.room_name,"header_img":str(room.header_img),"blueprint_file":str(room.blueprint_file)})
 @csrf_exempt
 def get_sensors_by_room_id(request,room_id):
     data_return = []
     for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
-        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
@@ -153,22 +174,35 @@ def index(request):
     print("gago")
     return render(request,'octo_site/dashboard.html')
 @csrf_exempt
-def sensor_data(request,room_id):
-    print("room_id: ",room_id)
-    data = pull_data_room(room_id)
+def sensor_data(request,game_id):
+    data = pull_data_live_control_panel(game_id)
     for d in data:
         sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
         d['sensor_name'] = sensor.sensor_name
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+
+@csrf_exempt
+def game_cur_logs(request,game_id):
+    data = pull_data_game(game_id)
+    for d in data:
+        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
+        d['sensor_name'] = sensor.sensor_name
+        d['rpi_id'] = sensor.rpi_id
+        d['sensor_type_id'] = sensor.sensor_type_id
+    return JsonResponse({"data": data})
+
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
-    return render(request,'octo_site/data_vis.html',{"room":room})
+    return render(request,'octo_site/data_vis.html',{"room":room,"game":Game.objects.get(game_id=1)})
+def live_monitoring(request, game_id):
+    room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
+    return render(request,'octo_site/live_monitoring_data.html',{"room":room,"game":Game.objects.get(game_id=game_id)})
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
         room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],
-                    header_img=request.FILES['header_img'])
+                    header_img=request.FILES['header_img'], blueprint_file=request.FILES['blueprint_file'])
         room.save()
 def add_branch(request):
     branch = Branch(name=request.POST['name'], address=request.POST['address'])
@@ -239,9 +273,17 @@ def delete_branch(request):
     branch.delete()
 
 def room_analysis(request):
-
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
+def room_details_analysis(request):
+    if request.method == 'POST':
+        print(request.POST['start'],"----", request.POST['end'])
+        for post in request.POST.getlist('room_to_analyze[]'):
+            print("room to analyze: ", post)
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"rooms":Room.objects.all()})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
     return render(request, 'octo_site/reports/trend_analysis.html')
+
+def sample_marker(request):
+    return render(request, 'octo_site/sample_marker.html')
