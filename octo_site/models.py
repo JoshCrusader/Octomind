@@ -8,6 +8,23 @@
 from django.db import models
 from django.conf import settings
 
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.IntegerField()
+    username = models.CharField(unique=True, max_length=150)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    date_joined = models.DateTimeField()
+    usertype = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
 
 class Branch(models.Model):
     branch_id = models.AutoField(primary_key=True)
@@ -207,3 +224,16 @@ class Teams(models.Model):
         managed = False
         db_table = 'teams'
         unique_together = (('game', 'players_players'),)
+
+class GameSequenceErrorLog(models.Model):
+    game_sequence_error_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING)
+    sensor = models.ForeignKey(Sensor, models.DO_NOTHING)
+    details = models.CharField(max_length=100, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    cur_sensor_seq = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game_sequence_error_log'
+        unique_together = (('game_sequence_error_id', 'game', 'sensor'),)

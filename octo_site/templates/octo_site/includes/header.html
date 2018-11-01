@@ -198,7 +198,7 @@
                         <a href="#">{{ request.user.first_name }} {{ request.user.last_name }}</a>
                     </li>
                     <li class="uk-active">
-                        <small>Gamekeeper{{ request.user.username }}</small>
+                        <small>{{ request.user.groups.all.0.name }}</small>
                     </li>
                 </div>
 
@@ -207,9 +207,6 @@
                     <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left">
                         <ul class="uk-nav uk-navbar-dropdown-nav">
                             <li class="uk-nav-header">{{ request.user.first_name }} {{ request.user.last_name }} </li>
-                            <li><a href="#"><span data-uk-icon="icon: info"></span> Summary</a></li>
-                            <li><a href="#"><span data-uk-icon="icon: refresh"></span> Edit</a></li>
-                            <li><a href="#"><span data-uk-icon="icon: settings"></span> Configuration</a></li>
                             <li class="uk-nav-divider"></li>
                             <li><a href="{% url 'signout' %}"><span data-uk-icon="icon: sign-out"  data-uk-tooltip="Sign out"></span> Logout</a></li>
 

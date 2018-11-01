@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
@@ -43,9 +43,22 @@ def register(request):
     if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('password')
-        user = User.objects.create_user(username=username, password=password)
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        usertype = request.POST.get('usertype')
+        user = User.objects.create_user(username=username, password=password, first_name=fname, last_name=lname)
+
+        if usertype == "os":
+            group = Group.objects.get(name="Operations Supervisor")
+            user.groups.add(group)
+        elif usertype == "gk":
+            group = Group.objects.get(name="Gamekeeper")
+            user.groups.add(group)
+        elif usertype == "own":
+            group = Group.objects.get(name="Owner")
+            user.groups.add(group)
+
         user.save()
-        print(user.username)
         messages.warning(request, 'Account Created.')
         return redirect('index')
     return render(request, 'octo_site/register.html')
