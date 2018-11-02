@@ -10,6 +10,7 @@ urlpatterns = [
     #home and setup
     path('', views.index, name='index'),
     path('control_panel/', views.control_panel, name='control_panel'),
+    path('view_room/<int:game_id>', views.view_room, name='view_room'),
     path('signout', views.signout, name='signout'),
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),

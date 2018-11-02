@@ -15,9 +15,8 @@ import mysql.connector
 import sys
 from octo_site.db_conf import *
 from django.contrib.auth.decorators import login_required
-
-import gspread
-##gc = gspread.authorize(credentials)
+from django.utils import timezone
+from utils import federate
 
 from django.http import HttpResponse
 # Create your views here
@@ -102,10 +101,35 @@ def page_venue(request):
 
 def control_panel(request):
     if request.method == 'GET':
+        federate.sync()
+        game_details = []
+        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        finish_time = now_datetime - timezone.timedelta(hours = 1)
+        print(now_datetime)
+        for i in GameDetails.objects.all().filter(timestart__gte = finish_time).filter(timeend__isnull = True):
+            game_details.append(i)
         games = {}
-        for i in Game.objects.all():
-            games[i.room_id] = (Room.objects.get(room_id = i.room_id))
-        print(games)
+        print(game_details)
+        for g_d in game_details:
+            i = Game.objects.get(game_details_id = g_d.game_details_id)
+            games[i.room_id] = {}
+            games[i.room_id]['game'] = (Room.objects.get(room_id = i.room_id))
+            ## GETTING TIME DETAILS
+            game_detail = GameDetails.objects.get(game_details_id = i.game_details_id)
+            games[i.room_id]['minutes'] = (game_detail.timestart + timezone.timedelta(hours = 1) - now_datetime).seconds//60
+            games[i.room_id]['seconds'] = (game_detail.timestart + timezone.timedelta(hours = 1) - now_datetime).seconds%60
+            ## GETTING PLAYERS DETAILS
+            teams = Teams.objects.filter(game_id = i.game_id)
+            games[i.room_id]['players'] = []
+            for team in teams:
+                games[i.room_id]['players'].append(Players.objects.get(players_id = team.players_players_id))
+            ## CLUES
+            clues = Clues.objects.filter(clues_id = game_detail.clues_clues_id)
+            games[i.room_id]['clues'] = range(0, 3-len(clues))
+            games[i.room_id]['mystery'] = range(0, len(clues))
+            print(len(clues))
+        #for i in games[3]['players']:
+        #    print(i.firstname)
         properties = {}
         properties['h'] = 5
         properties['rooms'] = Room.objects.all()
@@ -113,11 +137,15 @@ def control_panel(request):
         return render(request,'octo_site/control_panel.html', properties)
         pass
 
+def view_room(request, game_id):
+    print("GAME ID: ")
+    print(game_id)
+    return render(request,'octo_site/dashboard.html')
+
 def access_room(request):
     ## Add Room in the game room
     if request.method == 'POST':
         pass
-
 
 @csrf_exempt
 def update_plot(request):

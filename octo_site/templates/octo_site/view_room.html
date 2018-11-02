@@ -1,0 +1,24 @@
+{% load staticfiles %}
+{% load templaterange %}
+{% load get_attr %}
+        {% include 'octo_site/includes/header.html' %}
+        <style>
+            .room-banner{
+                background-color: red;
+                width: 100%;
+                height: 200px;
+                margin: 0
+            }
+        </style>
+<!-- CONTENT -->
+
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+
+        <div class = "room-banner">
+    <div class="uk-container uk-container-expand">
+        </div>
+    </div>
+</div>
+<!-- /CONTENT -->
+
+{% include 'octo_site/includes/offcanvas.html' %}
