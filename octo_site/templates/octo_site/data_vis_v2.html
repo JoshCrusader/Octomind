@@ -48,10 +48,18 @@
                 spanGaps:true,
                 legend: {
                     position: 'bottom',
+                    display: true,
+                    labels: {
+                        padding:20,
+                        fontSize: 16,
+                        usePointStyle:true,
+
+
+                    }
                 },
 				title: {
 					display: true,
-					text: '{{ room.room_name }} Game #69'
+					text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
 				},
 				tooltips: {
 					mode: 'index',
@@ -193,7 +201,7 @@
                         type: 'line',
                         label: obj[i].sensor_name,
                         xAxisID:"id-"+i,
-                        borderWidth: 5,
+                        borderWidth: 50,
                         pointStyle: 'dash',
                         backgroundColor: color(newColor).alpha(0.2).rgbString(),
                         borderColor: newColor,
