@@ -52,7 +52,7 @@ def pull_data_game(game_id):
     data_return = []
     print(str_sensor_ids)
     # execute the SQL query using execute() method.
-    cursor.execute("select * from sensor_log where sensor_id in "+str_sensor_ids+" and "+" timestamp between '"+game.game_details.timestart.strftime(f)+"' and '"+game.game_details.timeend.strftime(f)+"';")
+    cursor.execute("select * from sensor_log where sensor_id in "+str_sensor_ids+" and "+" timestamp between '"+game.game_details.timestart.strftime(f)+"' and DATE_ADD('"+game.game_details.timestart.strftime(f)+"', INTERVAL 1 HOUR);")
 
     # fetch all of the rows from the query
     data = cursor.fetchall()
@@ -124,9 +124,8 @@ def pull_data_fr_game(game_id):
 
     data_return = []
     # execute the SQL query using execute() method.
-    cursor.execute(
-        "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
-            f) + "' and '" + game.game_details.timeend.strftime(f) + "';")
+    cursor.execute("select * from sensor_log where sensor_id in "+str_sensor_ids+" and "+" timestamp between '"+game.game_details.timestart.strftime(f)+"' and DATE_ADD('"+game.game_details.timestart.strftime(f)+"', INTERVAL 1 HOUR);")
+
     # fetch all of the rows from the query
     data = cursor.fetchall()
     # print the rows
