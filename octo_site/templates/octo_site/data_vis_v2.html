@@ -31,10 +31,79 @@
 	<script>
         let to_add=[];
         let sensor_data;
+        let new_obj = [];
         let sensors=[];
         let color = Chart.helpers.color;
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
+        let customTooltips = function(tooltip) {
+			// Tooltip Element
+			var tooltipEl = document.getElementById('chartjs-tooltip');
+
+			if (!tooltipEl) {
+				tooltipEl = document.createElement('div');
+				tooltipEl.id = 'chartjs-tooltip';
+				tooltipEl.innerHTML = '<table></table>';
+				this._chart.canvas.parentNode.appendChild(tooltipEl);
+			}
+
+			// Hide if no tooltip
+			if (tooltip.opacity === 0) {
+				tooltipEl.style.opacity = 0;
+				return;
+			}
+
+			// Set caret Position
+			tooltipEl.classList.remove('above', 'below', 'no-transform');
+			if (tooltip.yAlign) {
+				tooltipEl.classList.add(tooltip.yAlign);
+			} else {
+				tooltipEl.classList.add('no-transform');
+			}
+
+			function getBody(bodyItem) {
+				return bodyItem.lines;
+			}
+
+			// Set Text
+			if (tooltip.body) {
+				var titleLines = tooltip.title || [];
+				var bodyLines = tooltip.body.map(getBody);
+
+				var innerHtml = '<thead>';
+
+				titleLines.forEach(function(title) {
+					innerHtml += '<tr><th>' + title + '</th></tr>';
+				});
+				innerHtml += '</thead><tbody>';
+
+				bodyLines.forEach(function(body, i) {
+					var colors = tooltip.labelColors[i];
+					var style = 'background:' + colors.backgroundColor;
+					style += '; border-color:' + colors.borderColor;
+					style += '; border-width: 2px';
+					var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+					innerHtml += '<tr><td>' + span + body + '</td></tr>';
+				});
+				innerHtml += '</tbody>';
+
+				var tableRoot = tooltipEl.querySelector('table');
+				tableRoot.innerHTML = innerHtml;
+			}
+
+			var positionY = this._chart.canvas.offsetTop;
+			var positionX = this._chart.canvas.offsetLeft;
+
+			// Display, position, and set styles for font
+			tooltipEl.style.opacity = 1;
+			tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+			tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+			tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
+			tooltipEl.style.fontSize = tooltip.bodyFontSize + 'px';
+			tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
+			tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+		};
+
 		let config = {
 			type: 'line',
 			data: {
@@ -42,6 +111,7 @@
 				labels: [],
 				datasets: [],
                 statuses:[],
+                data_objs:[],
 			},
 			options: {
 				responsive: true,
@@ -53,8 +123,6 @@
                         padding:20,
                         fontSize: 16,
                         usePointStyle:true,
-
-
                     }
                 },
 				title: {
@@ -64,19 +132,35 @@
 				tooltips: {
 					mode: 'index',
 					intersect: false,
-                    /*
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = true;
+                    },
                     callbacks: {
-						// Use the footer callback to display the sum of the items showing in the tooltip
-						footer: function(tooltipItems, data) {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                         // console.log(tooltipItem);
+                          let time_solved = new Date(tooltipItem.xLabel);
+                          let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+                          if (comp_time) {return "Start time";}
+                          let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
+                          return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
+                        },
+                        title: function(tooltipItem, data) {
+                            return tooltipItem[0].xLabel;
+                        },
+                        footer: function(tooltipItems, data) {
 							let val = null;
 							let min = null;
 							let sec = null;
 							let stat = null;
+							console.log(data.statuses);
 							tooltipItems.forEach(function(tooltipItem) {
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+								val = data.data_objs[tooltipItem.datasetIndex].time_solved;
 								sec = ((val % 1)*60).toFixed(2);
 								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.index];
+								stat = data.statuses[tooltipItem.datasetIndex];
 							});
 							if(stat){
                                 if (min !== 0 && sec !== 0){
@@ -88,35 +172,15 @@
                             }
                             return 'Not solved yet';
 						},
-                        beforeFooter: function(tooltipItems,data) {
-                            var multistringText = [''];
-							let start_time = data.start_time;
-							let time_solved= start_time;
-                            let d1=null;
-                            let d2=null;
-							let stat = null;
-							tooltipItems.forEach(function(tooltipItem) {
 
-							    stat = data.statuses[tooltipItem.index];
-								val = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-								if(tooltipItem.index !== 0){
-                                    for(let i=0; i <= tooltipItem.index;i++){
-                                        time_solved = new Date(time_solved.getTime() + (data.datasets[tooltipItem.datasetIndex].data[i]*60000));
-								    }
-                                }
-                                else{
-								    time_solved = new Date(start_time.getTime() + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]*60000));
-								}
-							});
+                        // Use the footer callback to display the sum of the items showing in the tooltip
 
-							if(stat){
-                                multistringText.push("Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds());
-                            }
+                      },
+                    /*
+                    callbacks: {
 
-                            return multistringText;
-                        }
 					},
-					*/
+                    */
 					footerFontStyle: 'normal'
 				},
 				hover: {
@@ -202,7 +266,7 @@
                         label: obj[i].sensor_name,
                         xAxisID:"id-"+i,
                         borderWidth: 50,
-                        pointStyle: 'dash',
+                        pointStyle: 'line',
                         backgroundColor: color(newColor).alpha(0.2).rgbString(),
                         borderColor: newColor,
                         data: [],
@@ -218,7 +282,7 @@
            let game_data =  $.get("/octo_site/api/game_cur_logs/1/");
            game_data.done(function(results){
                let obj = results.data;
-               let new_obj = [];
+
                let ctr = 0;
                let prev_ts=null;
                console.log(obj);
@@ -236,18 +300,18 @@
                    }
                    ctr+=1;
                 }
-                for (n in new_obj){
-                    console.log(new_obj[n]);
-                }
-
+                //config.data.data_objs = new_obj.splice(0);
                 for (ob in obj)
                 {
+
+                   config.data.data_objs.push(obj[ob]) ;
                    let ind = sensors.indexOf(obj[ob].sensor_id);
                    if(ind !== 0){
                        config.data.labels.push(new_obj[ob]);
                        config.data.labels.push(new Date(obj[ob].timestamp));
                        for(let x =0; x < sensors.length;x++){
                             if(obj[ob].sensor_id === sensors[x]){
+                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
                             }
@@ -262,6 +326,7 @@
                        config.data.labels.push(new Date(obj[ob].timestamp));
                        for(let x =0; x < sensors.length;x++){
                             if(obj[ob].sensor_id === sensors[x]){
+                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
                             }
