@@ -19,6 +19,7 @@ urlpatterns = [
     path('sensor_data/<int:game_id>/',views.sensor_data, name='sensor_data'),
     #test_urls
     path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
+    path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
     path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
     #ajax functions
     path('api/upload_process/', views.upload_process,name='upload_process'),

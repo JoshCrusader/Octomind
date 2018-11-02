@@ -181,6 +181,10 @@ def game_cur_logs(request,game_id):
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
     return render(request,'octo_site/data_vis.html',{"room":room,"game":Game.objects.get(game_id=1)})
+
+def data_vis_v2(request, game_id):
+    room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room_id)
+    return render(request,'octo_site/data_vis_v2.html',{"room":room,"game":Game.objects.get(game_id=1)})
 def live_monitoring(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
     return render(request,'octo_site/live_monitoring_data.html',{"room":room,"game":Game.objects.get(game_id=game_id)})

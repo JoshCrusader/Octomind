@@ -32,6 +32,8 @@
 	<script>
         let to_add=[];
         let sensors=[];
+
+        let color = Chart.helpers.color;
         let sensor_data;
         let sensor_data_len;
         let chartColors = {
@@ -167,6 +169,7 @@
                         position: 'bottom',
                         display: false,
                         ticks: {
+
                         min: 0,
                         max: 168,
                         stepSize: 1000
@@ -177,11 +180,12 @@
                         type: 'line',
                         label: obj[i].sensor_name,
                         xAxisID:"id-"+i,
+                       steppedLine: true,
                         pointStyle: 'circle',
-                        backgroundColor: newColor,
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
                         borderColor: newColor,
                         data: [],
-                        fill: false
+                        fill: true
                    };
 
                    config.data.datasets.push(newDataset);

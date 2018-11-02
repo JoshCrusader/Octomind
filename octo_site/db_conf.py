@@ -80,13 +80,18 @@ def pull_data_game(game_id):
                         time_diff_in_min = time_diff / timedelta(minutes=1)
                         print(round(time_diff_in_min,1))
                         prev_stamp = data['timestamp']
-                    new_data.append({"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, })
+                    new_data.append({"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, "timestamp": data['timestamp']})
                     break
     for nd in new_data:
         sensors_id_included.append(nd['sensor_id'])
+
     for s in sensors:
         if s.sensor_id not in sensors_id_included:
-            new_data.append({"sensor_id": s.sensor_id, "time_solved": 0 })
+            new_data.append({"sensor_id": s.sensor_id, "time_solved": 0, "timestamp": None})
+
+    for d in new_data:
+        print(d["timestamp"], "bb")
+
     cursor.close()
     # close the connection
     connection.close()
