@@ -20,7 +20,7 @@ class Branch(models.Model):
 
 
 class ClueDetails(models.Model):
-    clue_details_id = models.IntegerField(primary_key=True)
+    clue_details_id = models.AutoField(primary_key=True)
     detail = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
@@ -29,8 +29,8 @@ class ClueDetails(models.Model):
 
 
 class Clues(models.Model):
-    clues_id = models.IntegerField(primary_key=True)
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
+    games = models.ForeignKey('Game', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -38,7 +38,7 @@ class Clues(models.Model):
 
 
 class Game(models.Model):
-    game_id = models.IntegerField(primary_key=True)
+    game_id = models.AutoField(primary_key=True)
     game_keeper = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     room = models.ForeignKey('Room', models.DO_NOTHING)
     game_details = models.ForeignKey('GameDetails', models.DO_NOTHING)
@@ -50,10 +50,10 @@ class Game(models.Model):
 
 
 class GameDetails(models.Model):
-    game_details_id = models.IntegerField(primary_key=True)
+    game_details_id = models.AutoField(primary_key=True)
     timestart = models.DateTimeField(blank=True, null=True)
     timeend = models.DateTimeField(blank=True, null=True)
-    clues_clues = models.ForeignKey(Clues, models.DO_NOTHING, blank=True, null=True)
+    teamname = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -61,9 +61,12 @@ class GameDetails(models.Model):
 
 
 class Players(models.Model):
-    players_id = models.IntegerField(primary_key=True)
+    players_id = models.AutoField(primary_key=True)
     firstname = models.CharField(max_length=45, blank=True, null=True)
     lastname = models.CharField(max_length=45, blank=True, null=True)
+    contact = models.CharField(max_length=45, blank=True, null=True)
+    gender = models.IntegerField(blank=True, null=True)
+    email = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -200,7 +203,7 @@ class SensorType(models.Model):
 
 
 class Teams(models.Model):
-    game = models.ForeignKey(Game, models.DO_NOTHING, primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING)
     players_players = models.ForeignKey(Players, models.DO_NOTHING)
 
     class Meta:
