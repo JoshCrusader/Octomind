@@ -128,30 +128,30 @@
     </div>
     <div class="bar-content uk-position-relative">
         <ul class="uk-nav-default uk-nav-parent-icon" data-uk-nav>
+
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
-            <li><a href="#">Previous Games</a></li>
-            <li><a href="#">Schedule</a></li>
-
+        {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
 
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Reports</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}">Room Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'sensor_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'sensor_analysis' %}">Sensor Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'trend_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'trend_analysis' %}">Trends Analysis</a></li>
+        {% endif %}
+        {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner"%}
 
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span>Exception Report</li>
             <li><a href="#">Errors Report</a></li>
             <li><a href="#">Market Warnings</a></li>
 
-
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: world"></span>Market Report</li>
             <li><a href="#">Lead Generation</a></li>
             <li><a href="#">Market Segmentation</a></li>
-
-            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings(Owner)</li>
+            <li class="uk-nav-divider"></li>
+            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings</li>
             <li class="{% if request.resolver_match.view_name ==  'page_sensor' %}uk-active{% endif %}"><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
             <li class="{% if request.resolver_match.view_name ==  'page_venue' %}uk-active{% endif %}"><a href="{% url 'page_venue' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Venues</a></li>
-            <li class="uk-nav-divider"></li>
+        {% endif %}
         </ul>
     </div>
     <div class="uk-position-bottom bar-bottom">
@@ -162,7 +162,6 @@
             <li>
                 <a class="uk-icon-link"></a>
             </li>
-
         </ul>
     </div>
 </aside>
