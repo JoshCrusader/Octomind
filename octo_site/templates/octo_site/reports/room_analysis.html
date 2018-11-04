@@ -1,9 +1,6 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
 {% load staticfiles %}
-	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
-	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
-
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -11,30 +8,14 @@
 		-ms-user-select: none;
 	}
 	</style>
+<div id="modal-branch" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">Select Room <span data-uk-icon="icon: list; ratio: 1.5"></span></h3>
+        </div>
 
-<div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
-			<section class="uk-section uk-article" style="background-color: white;padding: 10px" >
-				<div class="uk-container uk-container-medium" style="margin-top: 3vh">
-                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-medium" >
-                                <form action="{% url 'room_details_analysis' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
-                                <div class="uk-width-auto uk-text-center uk-align-center">
-                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics</h2>
-                                    <div class="uk-width-1-1 uk-text-center" id="hdr">
-                                        {% csrf_token %}
-                                            <div class="uk-margin" style="margin-top: 3vh">
-                                                    <input class="uk-input uk-form-width-medium"  name="start" id="sd" type="date" required> to
-                                                    <input class="uk-input uk-form-width-medium" name="end" id="ed" type="date" required>
-                                                <button class="uk-button uk-button-default" onclick="check_valid();" type="button">Submit</button>
-                                            </div>
-                                        <div class="uk-alert-danger" uk-alert id="alert" style="display: none">
-                                            <p></p>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="uk-card-body uk-align-center uk-width-1-1" style="margin-top: 0px">
+        <div class="uk-card-body uk-align-center uk-width-1-1" style="margin-top: 0px">
 									<div class="uk-overflow-auto">
                                      <table id="room_tbl" class="uk-table uk-table-hover uk-table-divider uk-width-1-1" style="width:100%">
                                           <thead>
@@ -71,6 +52,58 @@
                                         </script>
                                     </div>
 								</div>
+    </div>
+</div>
+<div id="content" style="padding: 0 0 0 0; background-color:#3e4042; margin-left: 240px;" class="uk-height-1-1" uk-height-viewport>
+			<section class="uk-section uk-article " style="padding: 10px" >
+				<div class="uk-container uk-container-xsmall uk-align-bottom" style="margin-top: 15vh">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-medium" >
+                                <form action="{% url 'room_details_analysis' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
+                                {% csrf_token %}
+                                <div class="uk-width-auto uk-text-center uk-align-center">
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room <b class="uk-text-primary">Analytics</b></h2>
+                                    <div class="uk-width-1-1 uk-text-center" id="hdr">
+
+                                        <div class="uk-margin" style="margin-top: 3vh">
+                                                <button class="uk-button uk-button-secondary" type="button"  uk-tooltip="Select room" href="#modal-branch" style="padding-left: 8px;padding-right: 8px"uk-toggle><span data-uk-icon="icon: search"></span></button>
+                                                <input class="uk-input uk-form-width-medium" id="room_name_holder" name="room_name" uk-tooltip="Click the search button on the left to select a room"  placeholder="Select Room" type="text" readonly>
+                                                <input type="hidden" id="room_id_holder" name="room_id" value="">
+                                                <input type="hidden" id="report_cat_holder" name="report_cat" value="range">
+                                            <div class="uk-inline">
+                                                <button class="uk-button uk-button-secondary" type="button" id="btn_report_cat">Ranged Report</button>
+                                                <div uk-dropdown="pos: right-center">
+                                                    <ul class="uk-nav uk-dropdown-nav">
+                                                        <li class="uk-nav-header">Report Categories</li>
+                                                        <li class="uk-active rep_cats" onclick="change_cat(this)" value="ranged"><a href="#">Ranged Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="daily"><a href="#">Daily Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="monthly"><a href="#">Monthly Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="yearly"><a href="#">Yearly Report</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-alert-danger" uk-alert id="alert" style="display: none">
+                                            <p></p>
+                                        </div>
+                                        <hr class="uk-divider-icon">
+                                        <div class="uk-margin" style="margin-top: 3vh">
+                                                <input class="datepicker-here uk-input" id="dp" style="width: 45%"  type="text"
+                                                                data-auto-close="true"
+                                                                data-range="true"
+                                                                data-multiple-dates-separator=" to "
+                                                                data-language="en"
+                                                                data-min-view="days"
+                                                                data-view="days"
+                                                                data-date-format="yyyy-mm-dd"
+                                                                required readonly>
+                                                <button class="uk-button uk-button-primary" onclick="check_valid();" type="button">Submit</button>
+                                            </div>
+                                        <hr class="uk-divider-small">
+                                    </div>
+
+                                </div>
                                 </form>
                         </div>
                         </div>
@@ -82,6 +115,58 @@
 </div>
 
 	<script>
+
+        function change_cat(obj) {
+            $( ".rep_cats" ).each(function(index, element) {
+                $(this).removeClass('uk-active');
+            });
+            $(obj).addClass('uk-active');
+
+            $('#dp').datepicker().data('datepicker').clear();
+            switch ($(obj).attr("value")){
+                case "daily":
+                    console.log("dd");
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Daily Report");
+                    break;
+                case "monthly":
+
+                    $('#dp').datepicker().data('datepicker').view= 'months';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"months",
+                        view:"months",
+                        dateFormat:"yyyy-mm"
+                    });
+                    $("#btn_report_cat").html("Monthly Report");
+                    break;
+                case "yearly":
+                    $('#dp').datepicker().data('datepicker').view= 'years';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"years",
+                        view:"years",
+                        dateFormat:"yyyy"
+                    });
+                    $("#btn_report_cat").html("Yearly Report");
+                    break;
+                default:
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:true,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Ranged Report");
+            }
+        }
         $(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
             console.log("clicked");

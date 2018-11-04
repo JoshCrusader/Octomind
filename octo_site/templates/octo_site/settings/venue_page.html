@@ -394,21 +394,21 @@
     });
     $('.div_drag').on('mousedown', function (e) {
 
-        $(this).addClass('active');
+        $(this).addClass('active_drag');
 
         var oTop = e.pageY - $('.active').offset().top;
         var oLeft = e.pageX - $('.active').offset().left;
 
         $(this).parents().on('mousemove', function (e) {
 
-            $('.active').offset({
+            $('.active_drag').offset({
 
                 top: e.pageY - oTop,
                 left: e.pageX - oLeft
 
             }).on('mouseup', function () {
 
-                $(this).removeClass('active');
+                $(this).removeClass('active_drag');
 
             });
 
@@ -420,22 +420,22 @@
     function mouseDown(obj,e) {
 
         e.preventDefault();
-        $(obj).addClass('active');
+        $(obj).addClass('active_drag');
 
-        var oTop = e.pageY - $('.active').offset().top;
-        var oLeft = e.pageX - $('.active').offset().left;
+        var oTop = e.pageY - $('.active_drag').offset().top;
+        var oLeft = e.pageX - $('.active_drag').offset().left;
         $(obj).parents().on('mousemove', function (e) {
             let top= e.pageY - oTop;
             let bot= e.pageX - oLeft;
 
-            $('.active').offset({
+            $('.active_drag').offset({
 
                 top: e.pageY - oTop ,
                 left: e.pageX - oLeft
 
             }).on('mouseup', function () {
 
-                $(obj).removeClass('active');
+                $(obj).removeClass('active_drag');
 
             });
 

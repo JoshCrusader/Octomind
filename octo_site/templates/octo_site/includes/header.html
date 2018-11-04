@@ -6,7 +6,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Mystery Manila - Octomind </title>
 		<link rel="icon" href="{% static 'octomindlogo_white.png' %}">
+
 		<!-- CSS FILES -->
+
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/uikit.min.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/dashboard.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/genstyles.css' %}">
@@ -77,6 +79,10 @@
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
     .active {
+        background: white;
+        z-index: 2;
+    }
+    .active_drag {
         background: grey;
         z-index: 2;
     }
@@ -113,7 +119,11 @@
     #hdr [class*="uk-navbar-dropdown-bottom"] {
 	    margin-top: 0;
     }
-</style>
+</style><link href="{% static 'octo_site/res/air-datepicker/dist/css/datepicker.min.css'  %}" rel="stylesheet" type="text/css">
+
+        <script src="{% static 'octo_site/res/air-datepicker/dist/js/datepicker.min.js' %}"></script>
+        <!-- Include English language -->
+        <script src="{% static 'octo_site/res/air-datepicker/dist/js/i18n/datepicker.en.js' %}"></script>
 <!--HEADER-->
 <!-- LEFT BAR -->
 <aside id="lft" class="uk-light uk-visible@m">
@@ -131,9 +141,9 @@
 
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Game Logs</a></li>
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
-
-            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Reports</li>
+            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}">Room Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'sensor_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'sensor_analysis' %}">Sensor Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'trend_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'trend_analysis' %}">Trends Analysis</a></li>
