@@ -185,7 +185,7 @@
                         backgroundColor: color(newColor).alpha(0.2).rgbString(),
                         borderColor: newColor,
                         data: [],
-                        fill: true
+                        fill: false
                    };
 
                    config.data.datasets.push(newDataset);
@@ -214,7 +214,10 @@
                 }
 
            });
-
+        let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+            summary_data.done(function(results){
+                console.log(results.data);
+           });
 			window.myLine.update();
         }
 		document.getElementById('randomizeData').addEventListener('click', function() {

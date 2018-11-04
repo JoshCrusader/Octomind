@@ -27,7 +27,14 @@
 	<button id="removeDataset">Remove Dataset</button>
 	<button id="addData">Add Data</button>
 	<button id="removeData">Remove Data</button>
-
+    <div>
+        <p>time finished: </p><b id="time_finished"></b><br>
+        <p>skill bracket: </p><b id="skill_bracket"></b><br>
+        <p>average time sensors accomplished: </p><b id="avg_time"></b><br>
+    </div>
+    <hr>
+    <div id="sensor_list">
+    </div>
 	<script>
         let to_add=[];
         let sensor_data;
@@ -342,6 +349,21 @@
                 console.log(config.data.datasets);
            });
 			window.myLine.update();
+		    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+            summary_data.done(function(results){
+                console.log(results.data);
+                $("#time_finished").html(results.data.general_info.time_finished_duration);
+                $("#skill_bracket").html(results.data.general_info.skill_bracket);
+                $("#avg_time").html(results.data.general_info.average_time);
+                for(ind in results.data.sensor_info)
+                {
+                    console.log(results.data.sensor_info[ind].sensor_name);
+                    let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
+                    str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].times_triggered+"</p><br>";
+                    str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
+                    $("#sensor_list").append(str);
+                }
+            });
         }
 		document.getElementById('randomizeData').addEventListener('click', function() {
 			config.data.datasets.forEach(function(dataset) {

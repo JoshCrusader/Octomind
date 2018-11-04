@@ -1,5 +1,6 @@
 import MySQLdb
 from octo_site.models import *
+import math
 from datetime import datetime,timedelta
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
@@ -30,12 +31,87 @@ def pull_data():
 
     return data_return
 
+def pull_game_tally(game_id):
+    data_return = []
+    data = pull_data_fr_game(game_id)
+    game = Game.objects.get(game_id=game_id)
+    sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+    for s in sensors:
+        data_return.append({
+            "sensor_id": s.sensor_id,
+            "sensor_name": s.sensor_name,
+            "times_triggered": 0,
+            "times_down": 0})
+    for d in data:
+        for dr in data_return:
+            if dr["sensor_id"] == d["sensor_id"]:
+                print(d["log_id"],d["sensor_id"],d["value"])
+                if d["value"] == '1':
+                    dr["times_triggered"] += 1
+                else:
+                    dr["times_down"] += 1
+
+    return data_return
+
+def pull_game_summary(game_id):
+    '''
+    *Match Overview*
+    Skill Bracket: Normal Skill(finished 31-45mins), High Skill(finished less than 30/mins), Low Skill(46-60mins)
+    Type: Walk-in/Scheduled
+    Game: Alien/Rebeca/Aztec Assault
+    Branch: CCM/31/Jupiter
+    Duration:
+    Match Ended: 24 minutes ago.
+    '''
+
+    game = Game.objects.get(game_id=game_id)
+    f = '%Y-%m-%d %H:%M:%S'
+    data_tally = pull_game_tally(game_id)
+    data_sum_game = pull_data_game(game_id)
+    time_finished = None
+    skill_bracket = None
+    average_times_bet_sensors = None
+    ctr_avg = 0
+    avg_sum = 0.0
+
+    for data_sum in data_sum_game:
+        if data_sum["time_solved"] != 0:
+            avg_sum += float(data_sum["time_solved"])
+            ctr_avg += 1
+
+    data_return = {"sensor_info": None, "general_info": None}
+    clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
+    try:
+        datetime_object = datetime.strptime(game.game_details.timeend.strftime(f), f)
+        time_diff = datetime_object - clean_date
+        time_diff_in_min = time_diff / timedelta(minutes=1)
+        time_finished = time_diff_in_min
+    except:
+        time_finished = clean_date + timedelta(minutes=math.floor(avg_sum),seconds=(avg_sum % 1))
+        time_diff = time_finished - clean_date
+        time_finished = round(time_diff / timedelta(minutes=1), 2)
+
+
+    average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
+
+    if time_finished >= 31 and time_finished <= 45:
+        skill_bracket = "Normal"
+    elif time_finished >= 46 and time_finished <= 60:
+        skill_bracket = "Low"
+    elif time_finished <= 30:
+        skill_bracket = "High"
+    data_return["sensor_info"] = data_tally
+    data_return["general_info"] = {
+        "time_finished_duration": time_finished,
+        "average_time": average_times_bet_sensors,
+        "skill_bracket": skill_bracket
+    }
+    return data_return
+
 ## to write as summary function
 def pull_data_game(game_id):
     #to_put_time_constraint here
-
     connection = MySQLdb.connect(host=host,user="root",passwd="root", db="sensorDB")
-
     cursor = connection.cursor()
     f = '%Y-%m-%d %H:%M:%S'
     prev_stamp=None
@@ -72,7 +148,7 @@ def pull_data_game(game_id):
                         clean_date =datetime.strptime(game.game_details.timestart.strftime(f), f)
                         time_diff = datetime_object - clean_date
                         time_diff_in_min = time_diff / timedelta(minutes=1)
-                        print(time_diff_in_min)
+                        print(round(time_diff_in_min,1))
                         prev_stamp = data['timestamp']
                     else:
                         datetime_object = data['timestamp']
@@ -88,10 +164,6 @@ def pull_data_game(game_id):
     for s in sensors:
         if s.sensor_id not in sensors_id_included:
             new_data.append({"sensor_id": s.sensor_id, "time_solved": 0, "timestamp": None})
-
-    for d in new_data:
-        print(d["timestamp"], "bb")
-
     cursor.close()
     # close the connection
     connection.close()
@@ -111,7 +183,6 @@ def pull_data_live_control_panel(game_id):
 
     return pull_data_fr_game(game_id)
 def pull_data_fr_game(game_id):
-    
     connection = MySQLdb.connect(host=host,user="root",passwd="root", db="sensorDB")
     cursor = connection.cursor()
     f = '%Y-%m-%d %H:%M:%S'

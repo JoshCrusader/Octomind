@@ -146,7 +146,7 @@ def access_room(request):
     ## Add Room in the game room
     if request.method == 'POST':
         pass
-
+# AJAX FUNCTIONS
 @csrf_exempt
 def update_plot(request):
     width = request.POST['width']
@@ -178,14 +178,6 @@ def get_sensors_by_room_id(request,room_id):
     for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
-def dashboard(request):
-    return render(request,'octo_site/dashboard.html')
-def signout(request):
-    logout(request)
-    return redirect('index')
-def index(request):
-    print("gago")
-    return render(request,'octo_site/dashboard.html')
 @csrf_exempt
 def sensor_data(request,game_id):
     data = pull_data_live_control_panel(game_id)
@@ -195,7 +187,6 @@ def sensor_data(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
-
 @csrf_exempt
 def game_cur_logs(request,game_id):
     data = pull_data_game(game_id)
@@ -205,6 +196,23 @@ def game_cur_logs(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+@csrf_exempt
+def game_summary(request,game_id):
+    data = pull_game_summary(game_id)
+    return JsonResponse({"data": data})
+@csrf_exempt
+def game_tally(request,game_id):
+    data = pull_game_tally(game_id)
+    return JsonResponse({"data": data})
+
+def dashboard(request):
+    return render(request,'octo_site/dashboard.html')
+def signout(request):
+    logout(request)
+    return redirect('index')
+def index(request):
+    print("gago")
+    return render(request,'octo_site/dashboard.html')
 
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
