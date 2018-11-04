@@ -1,0 +1,125 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+
+<div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
+			<section class="uk-section uk-article" style="background-color: white;padding: 10px" >
+				<div class="uk-container uk-container-medium" style="margin-top: 3vh">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-medium" >
+                                <form action="{% url 'room_details_analysis' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
+                                <div class="uk-width-auto uk-text-center uk-align-center">
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room Analytics</h2>
+                                    <div class="uk-width-1-1 uk-text-center" id="hdr">
+                                        {% csrf_token %}
+                                            <div class="uk-margin" style="margin-top: 3vh">
+                                                    <input class="uk-input uk-form-width-medium"  name="start" id="sd" type="date" required> to
+                                                    <input class="uk-input uk-form-width-medium" name="end" id="ed" type="date" required>
+                                                <button class="uk-button uk-button-default" onclick="check_valid();" type="button">Submit</button>
+                                            </div>
+                                        <div class="uk-alert-danger" uk-alert id="alert" style="display: none">
+                                            <p></p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="uk-card-body uk-align-center uk-width-1-1" style="margin-top: 0px">
+									<div class="uk-overflow-auto">
+                                     <table id="room_tbl" class="uk-table uk-table-hover uk-table-divider uk-width-1-1" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-table-shrink uk-text-nowrap"></th>
+                                                  <th class="uk-table-shrink uk-text-nowrap"></th>
+                                                  <th class="uk-table-expand">Name</th>
+                                                  <th class="uk-table-expand">Branch</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                            {% for room in rooms reversed%}
+                                                <tr class="tbl_toggle">
+                                                    <td class="uk-text-center"><input class="uk-checkbox" value="{{ room.room_id }}" name="room_to_analyze[]" type="checkbox"></td>
+
+                                                    <td><img class="uk-preserve-width uk-border-circle" src="/static/media/{{ room.header_img }}" style="height: 40px;width: 40px" alt=""></td>
+                                                    <td>
+                                                        <b>{{ room.room_name }}</b>
+                                                    </td>
+                                                    <td>{{ room.branch.name }}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                          </tbody>
+                                     </table>
+                                        <script>
+                                            $(document).ready(function() {
+                                            $('#example').DataTable();
+                                            } );
+                                            $(document).ready(function() {
+                                            $('#room_tbl').DataTable();
+                                            });
+                                        </script>
+                                    </div>
+								</div>
+                                </form>
+                        </div>
+                        </div>
+                    </div>
+				</div>
+            </section>
+				<!-- large image -->
+				<!-- /large image -->
+</div>
+
+	<script>
+        $(".tbl_toggle").click(function(e) {
+            var chk = $(this).find("input:checkbox").get(0);
+            console.log("clicked");
+            if(e.target !== chk)
+            {
+                chk.checked = !chk.checked;
+            }
+        });
+        function check_dates() {
+            let sd = new Date($("#sd").val());
+            let ed = new Date($("#ed").val());
+            if (ed>sd){
+                console.log("valid");
+                return true
+            }
+                console.log("invalid");
+            return false
+        }
+        function check_valid() {;
+            if ($("#sd").val() !== "" && $("#ed") !== ""){
+                if(check_dates()){
+                    if($('.uk-checkbox').is(':checked')){
+                        $('#form').submit();
+                        return true;
+                    }else{
+                        $('#alert').html('No Room is selected. Please select a room to be analyzed');
+                        $('#alert').css('display','block');
+                    }
+                }
+                else{
+                    $('#alert').html('Start date cannot be greater than end date. Please pick a valid date');
+                    $('#alert').css('display','block');
+                }
+            }else{
+                $('#alert').html('Please select a start date and an end date.');
+                $('#alert').css('display','block');
+            }
+            return false;
+        }
+	</script>
+{% include 'octo_site/includes/offcanvas.html' %}
