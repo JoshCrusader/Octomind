@@ -14,6 +14,8 @@ from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
 from octo_site.db_conf import *
+
+from octo_site.reports_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from utils import federate
@@ -296,15 +298,48 @@ def delete_room(request):
 def delete_branch(request):
     branch = Branch.objects.filter(branch_id=request.POST['branch_id'])
     branch.delete()
-
 def room_analysis(request):
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
 def room_details_analysis(request):
+    report_data=""
+    room=""
+    msg = ""
     if request.method == 'POST':
-        print(request.POST['start'],"----", request.POST['end'])
-        for post in request.POST.getlist('room_to_analyze[]'):
-            print("room to analyze: ", post)
-    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"rooms":Room.objects.all()})
+        room = Room.objects.get(room_id=request.POST['room_id'])
+        if request.POST['report_cat'] == "range":
+            sd = datetime.strptime(request.POST['sd']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(request.POST['ed']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
+            report_data = get_range_report(
+                start_date=sd.date,
+                end_date=ed.date,
+                room=room
+            )
+            msg = "from " + str(sd.strftime("%B %d, %Y")) + " to " + str(ed.strftime("%B %d, %Y"))
+        elif request.POST['report_cat'] == "monthly":
+            month = datetime.strptime(request.POST['date']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
+            report_data = get_monthly_report(
+                month=month.month,
+                room=room
+            )
+            msg = "month of " + month.strftime("%b") + " " + str(month.year)
+        elif request.POST['report_cat'] == "yearly":
+            year = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            report_data = get_yearly_report(
+                year=year.year,
+                room=room
+            )
+            msg = "year of" + str(year.year)
+        elif request.POST['report_cat'] == "daily":
+            print("henlo xd")
+            date = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            report_data = get_daily_report(
+                date=date.date,
+                room=room
+            )
+            msg = "for " + str(date.strftime("%B %d, %Y"))
+        else:
+            print("what")
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":Room.objects.all()})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
