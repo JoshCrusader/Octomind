@@ -2,23 +2,122 @@
 {% load templaterange %}
 {% load get_attr %}
         {% include 'octo_site/includes/header.html' %}
-        <style>
-            .room-banner{
-                background-color: red;
-                width: 100%;
-                height: 200px;
-                margin: 0
-            }
-        </style>
+        <link rel="stylesheet" href = "{% static 'styles/view_room.css' %}" type = "text/css">
 <!-- CONTENT -->
 
 <div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
 
-        <div class = "room-banner">
-    <div class="uk-container uk-container-expand">
+    <div class = "room-banner">
+        <div class = "header-wrapper">
+            <div class = "pic-container">
+                <!-- <div class = "room-pic"> </div> -->
+                <img class = "room-pic" src = "{% static 'media/' %}{{ img   }}">
+            </div>
+
+            <div class = "m-info-box">
+                <div class = "m-time-left">
+                    <div class = "timeLeft">
+                        {% if done == False %}
+                        Time Left: 
+                        <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                            {{ minutes }}:{{ seconds }}
+                        </span>
+                        {% else %}
+                        Game is Finished
+                        {% endif %}
+                    </div>
+                </div>
+                <div class = "m-team-name"> {{ details.teamname }} </div>
+                <div class = "m-team-mems">
+                    <div class = "m-mem-title">Members:</div>
+                    {% for i in players %}
+                    <div class = "m-member">{{i.firstname}} {{i.lastname}}</div>
+                    {% endfor %}
+                </div>
+                <div class = "m-clues">
+                    <div class = "m-clue-title">Clues: </div>
+                </div>
+            </div>
+
+            <div class = "m-options-box">
+                {% if done == False %}
+                <div id = "endgameb">
+                <div class = "m-opt-button" gameid = "{{details.game_details_id}}" onClick = "endGame(this)"> End Game</div>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class = "m-opt-button"> Add Clue</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class = "m-content-wrapper">
+        
+        <div class = "m-sensor-content">
+            <div class = "m-sensor-div">
+            </div>
+            <div class = "m-filter-content">
+                <input type = "checkbox" name = "sens1">Sensor 1
+                <input type = "checkbox" name = "sens2">Sensor 2
+                <input type = "checkbox" name = "sens3">Sensor 3
+                <input type = "checkbox" name = "sens4">Sensor 4
+            </div>
+        </div>
+
+        <div class = "m-sandbox-content">
+            <div class = "m-sandbox-frame">
+            </div>
+
+            <div class = "m-sandbox-controller">
+            </div>
+
         </div>
     </div>
 </div>
 <!-- /CONTENT -->
 
+<!-- SCRIPTS -->
+<script>
+
+function endGame(target){
+    var gid = target.getAttribute("gameid");
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/api/end_game/",
+            data: {
+                'game_id': gid,
+            },
+            success: function(data){
+                location.reload();
+            }
+    });
+}
+var times = 0
+function loop(){
+    setInterval(() => {
+        var timestamps = document.getElementsByClassName("spanTimestamp");
+        for(var i = 0; i < timestamps.length; i++)
+        {
+            var ts = timestamps.item(i);
+            var tmins = ts.getAttribute("minutes");
+            var tsecs = Number(ts.getAttribute("seconds"));
+            var totalsecs =  tmins*60 + tsecs;
+            totalsecs = totalsecs - times;
+            if(totalsecs < 0){
+                location.reload();
+            }
+            tmins = Math.floor(totalsecs/60);
+            tsecs = totalsecs%60;
+            tmins = tmins < 10 ? "0"+tmins : tmins;
+            tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
+            ts.innerHTML = tmins+":"+tsecs;
+        }
+
+        times = times+1
+    }, 1000);
+}
+loop();
+</script>
+<!-- /SCRIPTS -->
 {% include 'octo_site/includes/offcanvas.html' %}

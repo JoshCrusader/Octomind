@@ -16,7 +16,7 @@ import sys
 from octo_site.db_conf import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from utils import federate
+from utils import federate, ajax_helper
 
 from django.http import HttpResponse
 # Create your views here
@@ -96,10 +96,10 @@ def control_panel(request):
         for i in GameDetails.objects.all().filter(timestart__gte = finish_time).filter(timeend__isnull = True):
             game_details.append(i)
         games = {}
-        print(game_details)
         for g_d in game_details:
             i = Game.objects.get(game_details_id = g_d.game_details_id)
             games[i.room_id] = {}
+            games[i.room_id]['game_id'] = i.game_id
             games[i.room_id]['game'] = (Room.objects.get(room_id = i.room_id))
             ## GETTING TIME DETAILS
             game_detail = GameDetails.objects.get(game_details_id = i.game_details_id)
@@ -111,7 +111,7 @@ def control_panel(request):
             for team in teams:
                 games[i.room_id]['players'].append(Players.objects.get(players_id = team.players_players_id))
             ## CLUES
-            clues = Clues.objects.filter(clues_id = game_detail.clues_clues_id)
+            clues = Clues.objects.filter(games_id = i.game_id)
             games[i.room_id]['clues'] = range(0, 3-len(clues))
             games[i.room_id]['mystery'] = range(0, len(clues))
             print(len(clues))
@@ -125,9 +125,40 @@ def control_panel(request):
         pass
 
 def view_room(request, game_id):
-    print("GAME ID: ")
-    print(game_id)
-    return render(request,'octo_site/dashboard.html')
+    try:
+        game = Game.objects.get(game_id = game_id)
+        if(game is not None):
+            details = GameDetails.objects.get(game_details_id = game.game_details_id)
+            team = Teams.objects.filter(game_id = game.game_id)
+            players = []
+            for i in team:
+                pass
+                players.append(Players.objects.get(players_id = i.players_players_id))
+            clues = Clues.objects.filter(games_id = game.game_id)
+            properties = {}
+            properties['details'] = details
+            properties['players'] = players
+            properties['clues'] = clues
+            properties['img'] = Room.objects.get(room_id = game.room_id).header_img
+            now_datetime = timezone.now() + timezone.timedelta(hours=8)
+            if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
+                properties['done'] = False
+                properties['minutes'] = (details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60
+                properties['seconds'] = (details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds % 60
+            else:
+                properties['done'] = True
+
+            if(details.timeend is not None):
+                properties['done'] = True
+            print('MINUTES: ')
+            print((details.timestart + timezone.timedelta(hours=1)- now_datetime))
+            print((details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60)
+            return render(request,'octo_site/view_room.html', properties)
+        else:
+            pass
+    except Exception as e:
+        print(e)
+        return render(request,'octo_site/dashboard.html')
 
 def access_room(request):
     ## Add Room in the game room
@@ -192,6 +223,22 @@ def game_cur_logs(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+
+@csrf_exempt
+def get_cur_games(request):
+    return ajax_helper.get_cur_games(request)
+
+@csrf_exempt
+def get_player_list(request):
+    return ajax_helper.get_player_list(request)
+
+@csrf_exempt
+def start_game(request):
+    return ajax_helper.start_game(request)
+
+@csrf_exempt
+def end_game(request):
+    return ajax_helper.end_game(request)
 
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
