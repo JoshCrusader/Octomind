@@ -1,0 +1,106 @@
+.room-banner{
+    background-color: #2a2016;
+    width: 100%;
+    margin: 0
+}
+
+/* Media query wrapper */
+.header-wrapper{
+    height: 200px;
+    width: 800px;
+    margin-left: 220px;
+    
+}
+.pic-container{
+    position: relative;
+}
+.room-pic{
+    position: relative;
+    top: 20px;
+    width: 160px;
+    height: 160px;
+    background-color: #808080;
+    float: left;
+}
+
+.m-info-box{
+    position: relative;
+    height: 200px;
+    width: 200px;
+    padding: 20px;
+    margin-left: 15px;
+    float: left;
+}
+
+.m-time-left{
+    font-size: 22px;
+}
+
+.m-options-box{
+    float: right;
+    height: 200px;
+    width: 250px;
+    padding: 20px;
+}
+
+.m-opt-button{
+    background-color: white;
+    border-color: blue;
+    text-align: center;
+    border-style: solid;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+/* Media query wrapper */
+.m-content-wrapper{
+    padding: 20px;
+}
+
+.m-sensor-content{
+    height: 500px;
+    width: 700px;
+    background-color: red;
+    float: left;
+}
+
+.m-sensor-div{
+    height: 400px;
+    width: 700px;
+    background-color: green;
+}
+
+.m-filter-content{
+    width: 650px;
+    height: 50px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+    background-color: white;
+}
+
+.m-sandbox-content{
+    background-color: blue;
+    width: 400px;
+    height: 500px;
+    float: right;
+}
+
+.m-sandbox-frame{
+    background-color: white;
+    width: 360px;
+    height: 360px;
+    margin: 20px;
+}
+
+.m-sandbox-controller{
+    height: 40px;
+    width: 360px;
+    margin: 20px;
+    background-color: white;
+}
+
+/* Media query wrapper */
+#content{
+
+}

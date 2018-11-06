@@ -24,3 +24,9 @@ then restart the service
 ```
 sudo nano /etc/init.d/mysql restart
 ```
+
+gspread library installation
+```
+pip install gspread
+pip install --upgrade google-api-python-client --ignore-installed pyasn1
+```

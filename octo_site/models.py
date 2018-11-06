@@ -31,7 +31,8 @@ class ClueDetails(models.Model):
 class Clues(models.Model):
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
     games = models.ForeignKey('Game', models.DO_NOTHING)
-
+    clue_id = models.AutoField(primary_key=True)
+    
     class Meta:
         managed = False
         db_table = 'clues'
@@ -205,7 +206,7 @@ class SensorType(models.Model):
 class Teams(models.Model):
     game = models.ForeignKey(Game, models.DO_NOTHING)
     players_players = models.ForeignKey(Players, models.DO_NOTHING)
-
+    team_id = models.AutoField(primary_key=True)
     class Meta:
         managed = False
         db_table = 'teams'

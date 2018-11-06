@@ -80,7 +80,13 @@
             {% for i in rooms %}
             <!-- panel -->
             <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
-                <a href = "#modal-example" uk-toggle class = "atag">
+                {% with specGame=games|attr:i.room_id%}
+                {% if specGame != None %}
+                <a href = "{% url 'view_room' specGame|attr:'game_id' %}" uk-toggle class = "atag" >
+                {% else %}
+                <a href = "#modal-example" uk-toggle class = "atag" roomid = "{{ i.room_id }}" onClick ="setModal(this)" >
+                {% endif %}
+                {% endwith %}
                     <div class="panelCard">
                         <div class = "gameHead">
                             <img class = "panelImage" src = "{% static 'media/' %}{{ i.header_img }}">
@@ -158,11 +164,14 @@
 <!-- MODALS -->
 <div id="modal-example" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
-        <h2 class="uk-modal-title">Headline</h2>
+        <h2 class="uk-modal-title">Assign Team</h2>
         <div class="uk-inline uk-width-1-1">
-            <button class="uk-button uk-button-default uk-width-1-1" type="button">Bottom Justify</button>
+            <button class="uk-button uk-button-default uk-width-1-1" type="button">Select team</button>
             <div uk-dropdown="pos: bottom-justify" class = "uk-width-1-1">
-                <ul class="uk-nav uk-dropdown-nav uk-width-1-1">
+                <ul class="uk-nav uk-dropdown-nav uk-width-1-1" id = "teamitem">
+
+                    <li><a href="#">Team Solothes</a></li>
+                    <!--
                     <li class="uk-active "><a href="#">Active</a></li>
                     <li><a href="#">Item</a></li>
                     <li class="uk-nav-header">Header</li>
@@ -170,12 +179,19 @@
                     <li><a href="#">Item</a></li>
                     <li class="uk-nav-divider"></li>
                     <li><a href="#">Item</a></li>
+                    -->
                 </ul>
+            </div>
+            <div>
+                Members:
+                <div id = "memberlist">
+                    <div>None</div>
+                </div>
             </div>
         </div>
         <p class="uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary" type="button">Save</button>
+            <button class="uk-button uk-button-primary" type="button" onClick = "test()">Save</button>
         </p>
     </div>
 </div>
@@ -184,6 +200,90 @@
 
 <!-- SCRIPTS -->
 <script>
+var selectedg = null;
+var selectedgd = null;
+function setModal(target){
+    var rid = target.getAttribute("roomid");
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/api/get_cur_games/",
+            data: {
+                'room_id': rid,
+            },
+            success: function(data){
+                games = data.data;
+                if(games.length > 0){
+                    $("#teamitem").empty();
+                    for(var i = 0; i < games.length; i++){
+                        $("#teamitem").append('<li><a href="#" gid = "'+games[i].game+'"" gdid = "'+games[i].gamedetail+'" onClick = "addInfo(this)" > Team: '+games[i].teamname+'</a></li>');
+                    }
+                }
+                else{
+                    $("#teamitem").empty();
+                    selectedg = null;
+                    $("#memberlist").empty();
+                    $("#memberlist").append('<div>None</div>');
+                    $("#teamitem").append('<li><a href="#">No games scheduled in the room</a></li>');
+                }
+                //alert("DONE")
+
+            }
+    });
+}
+
+function addInfo(target){
+    selectedg = target.getAttribute("gid");
+    selectedgd = target.getAttribute("gdid");
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/api/get_player_list/",
+            data: {
+                'game_id': selectedg,
+            },
+            success: function(data){
+                var players = data.data;
+                if(players.length == 0){
+                    $("#memberlist").empty();
+                    $("#memberlist").append('<div>None</div>');
+                }
+                else{
+
+                    $("#memberlist").empty();
+                    for(var i = 0; i < players.length; i++){
+                        $("#memberlist").append('<div>'+players[i].name+'</div>');
+                    }
+                }
+
+            }
+    });
+}
+function test(){
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/api/start_game/",
+            data: {
+                'game_id': selectedg,
+            },
+            success: function(data){
+                location.reload();
+            }
+    });
+}
+
+/* 
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/api/get_cur_games/",
+            data: {
+                'room_id': 1,
+            },
+            success: function(data){
+                console.log(data);
+                alert("DONE")
+
+            }
+    });
+*/
 
 var times = 0
 function loop(){
@@ -195,12 +295,18 @@ function loop(){
             var tmins = ts.getAttribute("minutes");
             var tsecs = Number(ts.getAttribute("seconds"));
             var totalsecs =  tmins*60 + tsecs;
+            
             totalsecs = totalsecs - times;
-            tmins = Math.floor(totalsecs/60);
-            tsecs = totalsecs%60;
-            tmins = tmins < 10 ? "0"+tmins : tmins;
-            tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
-            ts.innerHTML = tmins+":"+tsecs;
+            if(totalsecs >= 0){
+                tmins = Math.floor(totalsecs/60);
+                tsecs = totalsecs%60;
+                tmins = tmins < 10 ? "0"+tmins : tmins;
+                tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
+                ts.innerHTML = tmins+":"+tsecs;
+            }
+            else{
+                location.reload();
+            }
         }
 
         times = times+1
