@@ -343,31 +343,18 @@ class Room(models.Model):
         return sensors
 
     @property
-    def get_duration(self):
-        sensors = []
-        for r in Rpi.objects.filter(room_id=self.room_id):
-            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
-            for rpi_sensor in rpi_sensors:
-                sensors.append(rpi_sensor)
-        return sensors
+    def get_sensor_sequence(self):
+        '''
+        :return: 
+            Returns an array of sensor ids of sequence of the
+            expected sensor triggers as prescribed by the user an embedded in each sensors 
+        '''
+        seq = []
+        sensors = self.get_all_sensors
+        for s in sensors:
+            seq.append(s.sensor_id)
+        return seq
 
-    @property
-    def get_num_clues_asked(self):
-        sensors = []
-        for r in Rpi.objects.filter(room_id=self.room_id):
-            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
-            for rpi_sensor in rpi_sensors:
-                sensors.append(rpi_sensor)
-        return sensors
-
-    @property
-    def is_solved(self):
-        sensors = []
-        for r in Rpi.objects.filter(room_id=self.room_id):
-            rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
-            for rpi_sensor in rpi_sensors:
-                sensors.append(rpi_sensor)
-        return sensors
 
     class Meta:
         managed = False
