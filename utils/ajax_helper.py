@@ -50,3 +50,14 @@ def end_game(request):
         game_detail.timeend = now_datetime
         game_detail.save()
     return JsonResponse({"data": "done"})
+
+def add_clue(request):
+    if(request.method == 'POST'):
+        cval = request.POST['clue_desc']
+        gid = request.POST['gameid']
+        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        cdetail = ClueDetails(detail = cval, timestamp = now_datetime)
+        cdetail.save()
+        clue = Clues(clue_details_id = cdetail.clue_details_id, games_id = gid)
+        clue.save()
+    return JsonResponse({"data": "done"})
