@@ -222,22 +222,23 @@ def sensor_data(request,game_id):
     return JsonResponse({"data": data})
 @csrf_exempt
 def game_cur_logs(request,game_id):
-    data = pull_data_game(game_id)
-    for d in data:
-        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
-        d['sensor_name'] = sensor.sensor_name
-        d['rpi_id'] = sensor.rpi_id
-        d['sensor_type_id'] = sensor.sensor_type_id
+    g = Game.objects.get(game_id=game_id)
+    data = g.pull_data_game(g)
     return JsonResponse({"data": data})
 @csrf_exempt
 def game_summary(request,game_id):
-    data = pull_game_summary(game_id)
+    g = Game.objects.get(game_id=game_id)
+    data = g.pull_game_summary(g)
+    print("duration",g.get_duration)
+    print("clues asked",g.get_num_clues_asked)
+    print("is solved",g.is_solved)
+    print("has error",g.has_error)
     return JsonResponse({"data": data})
 @csrf_exempt
 def game_tally(request,game_id):
-    data = pull_game_tally(game_id)
+    g = Game.objects.get(game_id=game_id)
+    data = g.pull_game_tally(g)
     return JsonResponse({"data": data})
-
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 def signout(request):
@@ -351,42 +352,22 @@ def room_details_analysis(request):
     report_data=""
     room=""
     msg = ""
+    gamedet=""
+    games=None
     if request.method == 'POST':
         room = Room.objects.get(room_id=request.POST['room_id'])
         if request.POST['report_cat'] == "range":
-            sd = datetime.strptime(request.POST['sd']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
-            ed = datetime.strptime(request.POST['ed']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
-            report_data = get_range_report(
-                start_date=sd.date,
-                end_date=ed.date,
-                room=room
-            )
-            msg = "from " + str(sd.strftime("%B %d, %Y")) + " to " + str(ed.strftime("%B %d, %Y"))
+            report_data,msg,games = get_range_report(request,room)
         elif request.POST['report_cat'] == "monthly":
-            month = datetime.strptime(request.POST['date']+" 00:00:00", '%Y-%m-%d %H:%M:%S')
-            report_data = get_monthly_report(
-                month=month.month,
-                room=room
-            )
-            msg = "month of " + month.strftime("%b") + " " + str(month.year)
+            report_data, msg, games = get_monthly_report(request,room)
         elif request.POST['report_cat'] == "yearly":
-            year = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
-            report_data = get_yearly_report(
-                year=year.year,
-                room=room
-            )
-            msg = "year of" + str(year.year)
+            report_data, msg, games = get_yearly_report(request,room)
         elif request.POST['report_cat'] == "daily":
-            print("henlo xd")
-            date = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
-            report_data = get_daily_report(
-                date=date.date,
-                room=room
-            )
-            msg = "for " + str(date.strftime("%B %d, %Y"))
+            report_data, msg, games = get_daily_report(request,room)
         else:
             print("what")
-    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":Room.objects.all()})
+        print("rep_data", report_data)
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"records_len":len(games)})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):

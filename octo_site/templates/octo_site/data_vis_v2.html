@@ -226,24 +226,6 @@
             console.log("started");
 			//window.setInterval(reloadData, 1000);
 		};
-		function reloadData() {
-            sensor_data =  $.get("/octo_site/sensor_data/{{ room.room_id }}");
-            sensor_data.done(function(results){
-                if (config.data.datasets[0].data.length < results.data.length){
-                    to_pop = results.data.length % config.data.datasets[0].data.length  ;
-                    for(let i=0;i<to_pop;i++){
-                        to_add.push(results.data.pop());
-                    }
-                    for (i in to_add){
-                        console.log(to_add[i].sensor_name+"-"+to_add[i].value);
-                        config.data.labels.push(to_add[i].sensor_name);
-                        config.data.datasets[0].data.push(to_add[i].value);
-                        window.myLine.update();
-                    }
-                    window.myLine.update();
-                }
-            });
-        }
         function initData() {
 
            sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
