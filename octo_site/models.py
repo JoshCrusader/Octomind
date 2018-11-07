@@ -355,7 +355,6 @@ class Room(models.Model):
             seq.append(s.sensor_id)
         return seq
 
-
     class Meta:
         managed = False
         db_table = 'room'
