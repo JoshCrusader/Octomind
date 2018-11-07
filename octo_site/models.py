@@ -56,6 +56,15 @@ class Game(models.Model):
         unique_together = (('game_id', 'game_details'),)
 
     @property
+    def get_sensor_trigger_sequence(self):
+        trigger_seq = []
+        data = self.pull_data_fr_game(self)
+        for d in data:
+            if d["value"] == 1:
+                if d["sensor_id"] not in trigger_seq:
+                    trigger_seq.append(d["sensor_id"])
+        return trigger_seq
+    @property
     def get_duration(self):
         data = self.pull_game_summary(self)
         return data["general_info"]["time_finished_duration"]
