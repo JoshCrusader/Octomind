@@ -14,7 +14,8 @@ def compute_report_data(games):
                    "avg_clues_asked":0,
                    "avg_duration":0,
                    "has_errors":0,
-                   "warnings":0
+                   "warnings":0,
+                   "has_result": True
                    }
     for g in games:
         if g.is_solved:
@@ -29,14 +30,20 @@ def compute_report_data(games):
         report_data["avg_clues_asked"] += g.get_num_clues_asked
         report_data["avg_duration"] += g.get_duration
 
-
-    report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
-    report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
-    report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
-
-    report_data["has_errors"] = round((report_data["has_errors"]/float(len(games)))*100, 2)
-    report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
-
+    try:
+        report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
+        report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
+        report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
+        report_data["has_errors"] = round((report_data["has_errors"]/float(len(games)))*100, 2)
+        report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
+    except:
+        report_data["completion_rate"] = None
+        report_data["avg_clues_asked"] = None
+        report_data["avg_duration"] = None
+        report_data["has_errors"] = None
+        report_data["warnings"] = None
+        report_data["has_result"] = False
+        print("no results found")
     return report_data
 def get_range_report(request,room):
     games=[]
@@ -44,30 +51,24 @@ def get_range_report(request,room):
     ed = datetime.strptime(request.POST['ed'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
     gamedet = GameDetails.objects.filter(timestart__gte=sd, timestart__lte=ed)
     for det in gamedet:
-        games.append(Game.objects.get(game_id=det.game_details_id))
+        g = Game.objects.get(game_id=det.game_details_id)
+        if g.room_id == room.room_id:
+            games.append(g)
     print("games len", len(games))
-    for g in games:
-        if g.room_id != room.room_id:
-            games.remove(g)
     msg = "from " + str(sd.strftime("%B %d, %Y")) + " to " + str(ed.strftime("%B %d, %Y"))
     return compute_report_data(games),msg,games
 def get_monthly_report(request,room):
     games = []
     month = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
-    print("MONTH", month.date())
-    print("MONTH",month.month)
     gamedet = GameDetails.objects.filter(timestart__year=month.year)
 
-    print("det len", gamedet)
     for det in gamedet:
         if det.timestart.month == month.month:
-            games.append(Game.objects.get(game_id=det.game_details_id))
+            g = Game.objects.get(game_id=det.game_details_id)
+            if g.room_id == room.room_id:
+                games.append(g)
         else:
             print("removed!" , det.timestart.month)
-    for g in games:
-        if g.room_id != room.room_id:
-            games.remove(g)
-    print("games len", len(games))
     msg = "month of " + month.strftime("%b") + " " + str(month.year)
     return compute_report_data(games), msg, games
 def get_yearly_report(request,room):
@@ -75,11 +76,9 @@ def get_yearly_report(request,room):
     year = datetime.strptime(request.POST['date'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
     gamedet = GameDetails.objects.filter(timestart__year=year.year)
     for det in gamedet:
-        games.append(Game.objects.get(game_id=det.game_details_id))
-
-    for g in games:
-        if g.room_id != room.room_id:
-            games.remove(g)
+        g = Game.objects.get(game_id=det.game_details_id)
+        if g.room_id == room.room_id:
+            games.append(g)
 
     print("games len", len(games))
     msg = "year of" + str(year.year)
@@ -92,10 +91,8 @@ def get_daily_report(request,room):
     gamedet = GameDetails.objects.filter(timestart__gte=sd, timestart__lte=ed)
     print("det len", gamedet)
     for det in gamedet:
-        games.append(Game.objects.get(game_id=det.game_details_id))
-    print("games len",len(games))
-    for g in games:
-        if g.room_id != room.room_id:
-            games.remove(g)
+        g = Game.objects.get(game_id=det.game_details_id)
+        if g.room_id == room.room_id:
+            games.append(g)
     msg = "for " + str(date.strftime("%B %d, %Y"))
     return compute_report_data(games), msg, games

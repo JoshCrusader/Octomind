@@ -21,7 +21,7 @@
 	</style>
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
-
+        {% if report_data.has_result %}
         <div class="uk-container-expand" id="chart_container" style="display:none;height: 63vh">
             <div class="chart-container" style="margin-left: 15vw;height:20vh;width:70%" >
                 <canvas class="uk-align-center" id="canvas" ></canvas>
@@ -175,6 +175,14 @@
                 </div>
             </div>
         </div>
+        {% else %}
+            <div class="uk-width-1-1 uk-text-center uk-position-center">
+                <h1><i class="fa fa-frown-o uk-text-muted fa-3x"></i></h1>
+                <h1 class="uk-text-muted">No Results found.</h1>
+
+                <h1 class="uk-text-muted"><a href="{% url 'room_analysis' %}">Create another report.</a></h1>
+            </div>
+        {% endif %}
     </section>
 </div>
 

@@ -354,6 +354,8 @@ def room_details_analysis(request):
     msg = ""
     gamedet=""
     games=None
+
+    print("heyout", report_data)
     if request.method == 'POST':
         room = Room.objects.get(room_id=request.POST['room_id'])
         if request.POST['report_cat'] == "range":
@@ -367,6 +369,9 @@ def room_details_analysis(request):
         else:
             print("what")
         print("rep_data", report_data)
+
+    print("bro wtf")
+    print("rep_data", report_data)
     return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"records_len":len(games)})
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')

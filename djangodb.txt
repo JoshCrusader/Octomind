@@ -27,7 +27,7 @@ CREATE TABLE `auth_group` (
   `name` varchar(80) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `auth_group` (
 
 LOCK TABLES `auth_group` WRITE;
 /*!40000 ALTER TABLE `auth_group` DISABLE KEYS */;
-INSERT INTO `auth_group` VALUES (1,'Gamekeeper'),(2,'Operations Supervisor'),(3,'Owner');
+INSERT INTO `auth_group` VALUES (1,'Administrator'),(2,'Gamekeeper'),(3,'Operations Supervisor'),(4,'Owner');
 /*!40000 ALTER TABLE `auth_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,7 +56,7 @@ CREATE TABLE `auth_group_permissions` (
   KEY `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` (`permission_id`),
   CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
   CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=232 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,6 @@ CREATE TABLE `auth_group_permissions` (
 
 LOCK TABLES `auth_group_permissions` WRITE;
 /*!40000 ALTER TABLE `auth_group_permissions` DISABLE KEYS */;
-INSERT INTO `auth_group_permissions` VALUES (1,1,1),(2,1,2),(3,1,3),(4,1,4),(5,1,5),(6,1,6),(7,1,7),(8,1,8),(9,1,9),(10,1,10),(11,1,11),(12,1,12),(13,1,13),(14,1,14),(15,1,15),(16,1,16),(17,1,17),(18,1,18),(19,1,19),(20,1,20),(21,1,21),(22,1,22),(23,1,23),(24,1,24),(25,1,25),(26,1,26),(27,1,27),(28,1,28),(29,1,29),(30,1,30),(31,1,31),(32,1,32),(33,1,33),(34,1,34),(35,1,35),(36,1,36),(37,1,37),(38,1,38),(39,1,39),(40,1,40),(41,1,41),(42,1,42),(43,1,43),(44,1,44),(45,1,45),(46,1,46),(47,1,47),(48,1,48),(49,1,49),(50,1,50),(51,1,51),(52,1,52),(53,1,53),(54,1,54),(55,1,55),(56,1,56),(57,1,57),(58,1,58),(59,1,59),(60,1,60),(61,1,61),(62,1,62),(63,1,63),(64,1,64),(65,1,65),(66,1,66),(67,1,67),(68,1,68),(69,1,69),(70,1,70),(71,1,71),(72,1,72),(73,1,73),(74,1,74),(75,1,75),(76,1,76),(77,1,77),(78,2,1),(79,2,2),(80,2,3),(81,2,4),(82,2,5),(83,2,6),(84,2,7),(85,2,8),(86,2,9),(87,2,10),(88,2,11),(89,2,12),(90,2,13),(91,2,14),(92,2,15),(93,2,16),(94,2,17),(95,2,18),(96,2,19),(97,2,20),(98,2,21),(99,2,22),(100,2,23),(101,2,24),(102,2,25),(103,2,26),(104,2,27),(105,2,28),(106,2,29),(107,2,30),(108,2,31),(109,2,32),(110,2,33),(111,2,34),(112,2,35),(113,2,36),(114,2,37),(115,2,38),(116,2,39),(117,2,40),(118,2,41),(119,2,42),(120,2,43),(121,2,44),(122,2,45),(123,2,46),(124,2,47),(125,2,48),(126,2,49),(127,2,50),(128,2,51),(129,2,52),(130,2,53),(131,2,54),(132,2,55),(133,2,56),(134,2,57),(135,2,58),(136,2,59),(137,2,60),(138,2,61),(139,2,62),(140,2,63),(141,2,64),(142,2,65),(143,2,66),(144,2,67),(145,2,68),(146,2,69),(147,2,70),(148,2,71),(149,2,72),(150,2,73),(151,2,74),(152,2,75),(153,2,76),(154,2,77),(155,3,1),(156,3,2),(157,3,3),(158,3,4),(159,3,5),(160,3,6),(161,3,7),(162,3,8),(163,3,9),(164,3,10),(165,3,11),(166,3,12),(167,3,13),(168,3,14),(169,3,15),(170,3,16),(171,3,17),(172,3,18),(173,3,19),(174,3,20),(175,3,21),(176,3,22),(177,3,23),(178,3,24),(179,3,25),(180,3,26),(181,3,27),(182,3,28),(183,3,29),(184,3,30),(185,3,31),(186,3,32),(187,3,33),(188,3,34),(189,3,35),(190,3,36),(191,3,37),(192,3,38),(193,3,39),(194,3,40),(195,3,41),(196,3,42),(197,3,43),(198,3,44),(199,3,45),(200,3,46),(201,3,47),(202,3,48),(203,3,49),(204,3,50),(205,3,51),(206,3,52),(207,3,53),(208,3,54),(209,3,55),(210,3,56),(211,3,57),(212,3,58),(213,3,59),(214,3,60),(215,3,61),(216,3,62),(217,3,63),(218,3,64),(219,3,65),(220,3,66),(221,3,67),(222,3,68),(223,3,69),(224,3,70),(225,3,71),(226,3,72),(227,3,73),(228,3,74),(229,3,75),(230,3,76),(231,3,77);
 /*!40000 ALTER TABLE `auth_group_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +117,7 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +126,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$2Mv0hQ7gWqLY$72CUDAYF6xSufXOfInIPIkhBFxVBcuOs06COoa+tqN0=','2018-11-01 06:10:20.321042',1,'admin','Arianna','Grande','p@gmail.com',1,1,'2018-09-18 17:09:01.940340'),(9,'pbkdf2_sha256$100000$9Hysy5tXuiBv$/2t8oub7kboaoqf+B5iX0wHuSFByUWkkETMDVfgkVx4=','2018-11-01 06:10:08.469339',0,'gk','Jude','Chong','',0,1,'2018-11-01 06:00:20.101093'),(10,'pbkdf2_sha256$100000$5P0IrXdcx6HY$wOz1phie7I4UatshCMia3OeeOHHIP+qJ6bM60EDUm8g=','2018-11-01 06:13:32.545858',0,'os','Vasquez','Peter','',0,1,'2018-11-01 06:09:05.956569'),(11,'pbkdf2_sha256$100000$CHLY5jv6yxir$H3hjuOha1/T7+/7SRBPpSCDyVtRAcV1ZRrL8uqWkzZw=','2018-11-01 06:13:45.698864',0,'owner','Chucky','Chuck ','',0,1,'2018-11-01 06:09:24.321600');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$CBpLuO09uO7V$NPiv8XEhP3FH7jXG8JEPSH7w5F2Yo2rkTfBX720z6yI=','2018-11-06 07:18:20.740162',1,'admin','Arianna','Grande','p@gmail.com',1,1,'2018-09-18 17:09:01.940340'),(2,'pbkdf2_sha256$100000$Cgkjr65RD4n4$/O0TDYveDHO/ND1PilFlpKfaMoc/if5mL7vq3Nr9z60=','2018-11-06 07:17:31.369059',0,'gk','Dede','Deds','',0,1,'2018-09-24 16:19:25.705940'),(3,'pbkdf2_sha256$100000$YWpxN7OyOnKP$sDlkXHRrm4vUpdO2G2df4PnHhoh7MoKaSEJS4bdvRv8=','2018-11-06 07:17:41.195733',0,'os','Jcrux','Lazada','',0,1,'2018-09-25 08:05:57.788519'),(4,'pbkdf2_sha256$100000$ewT3cwGs7SKS$mO3QDlc5SMwTYNDxlnYNjZ3M8vxrwhbpKVQyXQ1yjKE=','2018-11-03 04:52:00.457218',0,'own','Chuck','Tang\n','',0,1,'2018-10-03 01:12:13.170811');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +146,7 @@ CREATE TABLE `auth_user_groups` (
   KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`),
   CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
   CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -156,7 +155,7 @@ CREATE TABLE `auth_user_groups` (
 
 LOCK TABLES `auth_user_groups` WRITE;
 /*!40000 ALTER TABLE `auth_user_groups` DISABLE KEYS */;
-INSERT INTO `auth_user_groups` VALUES (1,9,1),(2,10,2),(3,11,3);
+INSERT INTO `auth_user_groups` VALUES (1,1,1),(2,2,2),(3,3,3),(4,4,4);
 /*!40000 ALTER TABLE `auth_user_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -221,7 +220,7 @@ DROP TABLE IF EXISTS `clue_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clue_details` (
-  `clue_details_id` int(11) NOT NULL,
+  `clue_details_id` int(11) NOT NULL AUTO_INCREMENT,
   `detail` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`clue_details_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -244,11 +243,12 @@ DROP TABLE IF EXISTS `clues`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clues` (
-  `clues_id` int(11) NOT NULL,
   `clue_details_id` int(11) NOT NULL,
-  PRIMARY KEY (`clues_id`),
-  KEY `fk_clues_clue_details1_idx` (`clue_details_id`),
-  CONSTRAINT `fk_clues_clue_details1` FOREIGN KEY (`clue_details_id`) REFERENCES `clue_details` (`clue_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `games_id` int(11) NOT NULL,
+  KEY `clues_details_id1_idx` (`clue_details_id`),
+  KEY `game_id1_idx` (`games_id`),
+  CONSTRAINT `clues_details_id1` FOREIGN KEY (`clue_details_id`) REFERENCES `clue_details` (`clue_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `game_id1` FOREIGN KEY (`games_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -282,7 +282,7 @@ CREATE TABLE `django_admin_log` (
   KEY `django_admin_log_user_id_c564eba6_fk` (`user_id`),
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -291,7 +291,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
-INSERT INTO `django_admin_log` VALUES (1,'2018-11-01 05:51:28.989507','1','gk',1,'[{\"added\": {}}]',3,1),(2,'2018-11-01 05:51:39.203265','2','os',1,'[{\"added\": {}}]',3,1),(3,'2018-11-01 05:51:48.672086','3','own',1,'[{\"added\": {}}]',3,1),(4,'2018-11-01 05:51:50.476580','3','own',2,'[]',3,1),(5,'2018-11-01 05:51:57.996909','1','gk',2,'[]',3,1),(6,'2018-11-01 06:02:39.110515','1','Gamekeeper',2,'[{\"changed\": {\"fields\": [\"name\"]}}]',3,1),(7,'2018-11-01 06:02:50.646280','2','Operations Supervisor',2,'[{\"changed\": {\"fields\": [\"name\"]}}]',3,1),(8,'2018-11-01 06:02:56.309444','3','Owner',2,'[{\"changed\": {\"fields\": [\"name\"]}}]',3,1);
+INSERT INTO `django_admin_log` VALUES (1,'2018-11-03 04:50:46.363799','2','gk',2,'[{\"changed\": {\"fields\": [\"password\"]}}]',4,1),(2,'2018-11-03 04:51:10.388617','3','os',2,'[{\"changed\": {\"fields\": [\"password\"]}}]',4,1),(3,'2018-11-03 04:51:24.419720','4','own',2,'[{\"changed\": {\"fields\": [\"password\"]}}]',4,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -343,7 +343,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2018-09-18 17:08:20.042279'),(2,'auth','0001_initial','2018-09-18 17:08:20.813057'),(3,'admin','0001_initial','2018-09-18 17:08:20.981176'),(4,'admin','0002_logentry_remove_auto_add','2018-09-18 17:08:21.000814'),(5,'contenttypes','0002_remove_content_type_name','2018-09-18 17:08:21.132816'),(6,'auth','0002_alter_permission_name_max_length','2018-09-18 17:08:21.168449'),(7,'auth','0003_alter_user_email_max_length','2018-09-18 17:08:21.199045'),(8,'auth','0004_alter_user_username_opts','2018-09-18 17:08:21.218330'),(9,'auth','0005_alter_user_last_login_null','2018-09-18 17:08:21.290300'),(10,'auth','0006_require_contenttypes_0002','2018-09-18 17:08:21.295159'),(11,'auth','0007_alter_validators_add_error_messages','2018-09-18 17:08:21.312015'),(12,'auth','0008_alter_user_username_max_length','2018-09-18 17:08:21.430124'),(13,'auth','0009_alter_user_last_name_max_length','2018-09-18 17:08:21.463514'),(14,'octo_site','0001_initial','2018-09-18 17:08:21.477965'),(15,'sessions','0001_initial','2018-09-18 17:08:21.539053'),(16,'octo_site','0002_room_rpi_sensortype','2018-10-01 07:57:06.765876'),(17,'admin','0003_logentry_add_action_flag_choices','2018-10-03 01:11:26.310754'),(18,'octo_site','0003_cluedetails_clues_game_gamedetails_players_teams','2018-10-12 06:00:49.709163'),(19,'octo_site','0004_gamesequenceerrorlog','2018-10-30 03:59:48.375730'),(20,'octo_site','0005_authuser','2018-11-01 06:11:18.632628');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2018-09-18 17:08:20.042279'),(2,'auth','0001_initial','2018-09-18 17:08:20.813057'),(3,'admin','0001_initial','2018-09-18 17:08:20.981176'),(4,'admin','0002_logentry_remove_auto_add','2018-09-18 17:08:21.000814'),(5,'contenttypes','0002_remove_content_type_name','2018-09-18 17:08:21.132816'),(6,'auth','0002_alter_permission_name_max_length','2018-09-18 17:08:21.168449'),(7,'auth','0003_alter_user_email_max_length','2018-09-18 17:08:21.199045'),(8,'auth','0004_alter_user_username_opts','2018-09-18 17:08:21.218330'),(9,'auth','0005_alter_user_last_login_null','2018-09-18 17:08:21.290300'),(10,'auth','0006_require_contenttypes_0002','2018-09-18 17:08:21.295159'),(11,'auth','0007_alter_validators_add_error_messages','2018-09-18 17:08:21.312015'),(12,'auth','0008_alter_user_username_max_length','2018-09-18 17:08:21.430124'),(13,'auth','0009_alter_user_last_name_max_length','2018-09-18 17:08:21.463514'),(14,'octo_site','0001_initial','2018-09-18 17:08:21.477965'),(15,'sessions','0001_initial','2018-09-18 17:08:21.539053'),(16,'octo_site','0002_room_rpi_sensortype','2018-10-01 07:57:06.765876'),(17,'admin','0003_logentry_add_action_flag_choices','2018-10-03 01:11:26.310754'),(18,'octo_site','0003_cluedetails_clues_game_gamedetails_players_teams','2018-10-12 06:00:49.709163'),(19,'octo_site','0004_gamesequenceerrorlog','2018-11-02 16:41:41.037779'),(20,'octo_site','0005_authuser','2018-11-02 16:41:41.046824');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,7 +369,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('1su8efsntktbveggqppy3btd3wj17551','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-07 15:40:20.366977'),('3fn9f0t20fjdlnsllswtxd8nvs39u8fh','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:35:39.240225'),('58bgiowy964uix50e97l8cpsc2ar75a5','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:25:26.452038'),('6zj3s26cddxkuura6pkzbhuqzvzy02v7','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-03 07:33:25.001681'),('9tow3ectc0szb473oll9sm7zyk9zpy94','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-15 07:36:06.017212'),('bi6l6x2yceqf8gnltt3skqnn7sja9mas','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:12:18.022597'),('r45mjn75g3cux6589a8ilvi5akxtafai','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:32:28.568515'),('zkmh1sowk3iit9ui9t3qfdqqk82uibdu','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-06 13:41:13.539922');
+INSERT INTO `django_session` VALUES ('1su8efsntktbveggqppy3btd3wj17551','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-07 15:40:20.366977'),('3fn9f0t20fjdlnsllswtxd8nvs39u8fh','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:35:39.240225'),('58bgiowy964uix50e97l8cpsc2ar75a5','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:25:26.452038'),('5l3z0dtrp2bjdv7t7yahh08sput85q9c','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-08 23:50:25.911558'),('6zj3s26cddxkuura6pkzbhuqzvzy02v7','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-03 07:33:25.001681'),('9tow3ectc0szb473oll9sm7zyk9zpy94','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-15 07:36:06.017212'),('bi6l6x2yceqf8gnltt3skqnn7sja9mas','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:12:18.022597'),('ex62q3287ycvw1erp6f5r8iqqlrdlxo9','MWI3MWZkNjk1ZDk4OWY0MjQ3NmExNzVlOTY5ZjEwOTIzYzdlMjZiOTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiNDYwMTYwMzMwYzlkMzE0MGQ1YjhhNzM2YWU5YTZiZGFlYjA4ZWJiZCJ9','2018-11-20 07:18:20.744791'),('r45mjn75g3cux6589a8ilvi5akxtafai','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:32:28.568515'),('shlcjblt0a94oxagl1yyy8hvnqga9elx','YjdjNWNiMmJhNjU1ZDk0N2YzYjQ1N2YwYmUwODBmZjc4Zjg4M2ViMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzc3MGE5YzExZGJkMjQ1YTgyMTk4NmE3ODJiMDI2NzZmZjQ3MTljMCJ9','2018-11-14 11:08:59.131083'),('zkmh1sowk3iit9ui9t3qfdqqk82uibdu','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-06 13:41:13.539922');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -381,18 +381,19 @@ DROP TABLE IF EXISTS `game`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game` (
-  `game_id` int(11) NOT NULL,
+  `game_id` int(11) NOT NULL AUTO_INCREMENT,
   `game_keeper_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   `game_details_id` int(11) NOT NULL,
-  PRIMARY KEY (`game_id`,`game_details_id`),
+  `match_id` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`game_id`),
   KEY `fk_game_auth_user1_idx` (`game_keeper_id`),
   KEY `fk_game_room1_idx` (`room_id`),
-  KEY `fk_game_game_details1_idx` (`game_details_id`),
+  KEY `fk_game_details1_idx` (`game_details_id`),
   CONSTRAINT `fk_game_auth_user1` FOREIGN KEY (`game_keeper_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_game_game_details1` FOREIGN KEY (`game_details_id`) REFERENCES `game_details` (`game_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_game_details1` FOREIGN KEY (`game_details_id`) REFERENCES `game_details` (`game_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_room1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -401,9 +402,29 @@ CREATE TABLE `game` (
 
 LOCK TABLES `game` WRITE;
 /*!40000 ALTER TABLE `game` DISABLE KEYS */;
-INSERT INTO `game` VALUES (1,1,2,1),(2,1,2,2);
+INSERT INTO `game` VALUES (1,1,2,1,'1000000001\n'),(2,1,2,2,'1000000005'),(3,1,2,3,'1000000003'),(4,1,2,4,'1000000000');
 /*!40000 ALTER TABLE `game` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `djangodb`.`game_BEFORE_INSERT` BEFORE INSERT ON `game` FOR EACH ROW
+BEGIN
+	 declare id int(11);
+	 select last_insert_id()into id;
+	 set new.match_id = (1000000000)+ id;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `game_details`
@@ -413,14 +434,12 @@ DROP TABLE IF EXISTS `game_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_details` (
-  `game_details_id` int(11) NOT NULL,
+  `game_details_id` int(11) NOT NULL AUTO_INCREMENT,
   `timestart` datetime DEFAULT NULL,
   `timeend` datetime DEFAULT NULL,
-  `clues_clues_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`game_details_id`),
-  KEY `fk_game_details_clues1_idx` (`clues_clues_id`),
-  CONSTRAINT `fk_game_details_clues1` FOREIGN KEY (`clues_clues_id`) REFERENCES `clues` (`clues_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `teamname` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`game_details_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,7 +448,7 @@ CREATE TABLE `game_details` (
 
 LOCK TABLES `game_details` WRITE;
 /*!40000 ALTER TABLE `game_details` DISABLE KEYS */;
-INSERT INTO `game_details` VALUES (1,'2018-10-24 12:00:00','2018-10-24 13:00:00',NULL),(2,'2018-10-29 21:02:00','2018-10-29 22:02:00',NULL);
+INSERT INTO `game_details` VALUES (1,'2018-10-24 12:00:00','2018-10-24 12:59:00','Team Yes'),(2,'2018-10-24 14:00:30','2018-10-24 14:45:30','Team Tite\n'),(3,'2018-10-24 16:00:30',NULL,'Gamolgasaurs\n'),(4,'2020-11-24 16:00:30',NULL,'Yikes');
 /*!40000 ALTER TABLE `game_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -452,7 +471,7 @@ CREATE TABLE `game_sequence_error_log` (
   KEY `sensor_id_idx` (`sensor_id`),
   CONSTRAINT `game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,6 +480,7 @@ CREATE TABLE `game_sequence_error_log` (
 
 LOCK TABLES `game_sequence_error_log` WRITE;
 /*!40000 ALTER TABLE `game_sequence_error_log` DISABLE KEYS */;
+INSERT INTO `game_sequence_error_log` VALUES (2,1,2,'titem','2018-11-07 17:37:00','123');
 /*!40000 ALTER TABLE `game_sequence_error_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -472,11 +492,14 @@ DROP TABLE IF EXISTS `players`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `players` (
-  `players_id` int(11) NOT NULL,
+  `players_id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(45) DEFAULT NULL,
   `lastname` varchar(45) DEFAULT NULL,
+  `contact` varchar(45) DEFAULT NULL,
+  `gender` int(1) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`players_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -485,7 +508,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'Joshua','Cruzada'),(2,'Betlee-Kyle','Barraquias');
+INSERT INTO `players` VALUES (1,'Joshua','Cruzada',NULL,NULL,NULL),(2,'Betlee-Kyle','Barraquias',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -615,10 +638,10 @@ DROP TABLE IF EXISTS `teams`;
 CREATE TABLE `teams` (
   `game_id` int(11) NOT NULL,
   `players_players_id` int(11) NOT NULL,
-  PRIMARY KEY (`game_id`,`players_players_id`),
-  KEY `fk_teams_players1_idx` (`players_players_id`),
-  CONSTRAINT `fk_teams_game1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_teams_players1` FOREIGN KEY (`players_players_id`) REFERENCES `players` (`players_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_game_id1_idx` (`game_id`),
+  KEY `fk_players_id1_idx` (`players_players_id`),
+  CONSTRAINT `fk_game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_players_id1` FOREIGN KEY (`players_players_id`) REFERENCES `players` (`players_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -628,8 +651,44 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
+INSERT INTO `teams` VALUES (1,1),(1,2);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `warning_log`
+--
+
+DROP TABLE IF EXISTS `warning_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `warning_log` (
+  `warning_id` int(11) NOT NULL AUTO_INCREMENT,
+  `game_id` int(11) DEFAULT NULL,
+  `sensor_id` int(11) DEFAULT NULL,
+  `details` varchar(45) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `time_solved` float DEFAULT NULL,
+  PRIMARY KEY (`warning_id`),
+  KEY `sensor_id_idx` (`sensor_id`),
+  KEY `game_id_idx` (`game_id`),
+  CONSTRAINT `log_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `log_sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `warning_log`
+--
+
+LOCK TABLES `warning_log` WRITE;
+/*!40000 ALTER TABLE `warning_log` DISABLE KEYS */;
+/*!40000 ALTER TABLE `warning_log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'djangodb'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -640,4 +699,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-01 14:15:53
+-- Dump completed on 2018-11-07 17:43:46
