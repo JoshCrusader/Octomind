@@ -100,6 +100,21 @@
     background-color: white;
 }
 
+.path-container{
+
+    position: absolute;
+    margin-left: 15px;
+    width: 500px;
+    height: 30px;
+    background-color: rgba(0,255,0,0.5);
+    position: fixed;
+
+    -webkit-transform-origin: 0% 15px;
+}
+
+.arw{
+    float: left;
+}
 /* Media query wrapper */
 #content{
 

@@ -103,7 +103,7 @@ def page_venue(request):
 
 def control_panel(request):
     if request.method == 'GET':
-        federate.sync()
+        # federate.sync()
         game_details = []
         now_datetime = timezone.now() + timezone.timedelta(hours=8)
         finish_time = now_datetime - timezone.timedelta(hours = 1)
@@ -151,10 +151,21 @@ def view_room(request, game_id):
                 players.append(Players.objects.get(players_id = i.players_players_id))
             clues = Clues.objects.filter(games_id = game.game_id)
             properties = {}
+            properties['gameid'] = game.game_id
             properties['details'] = details
             properties['players'] = players
             properties['clues'] = clues
-            properties['img'] = Room.objects.get(room_id = game.room_id).header_img
+            room_obj = Room.objects.get(room_id = game.room_id)
+            properties['roomid'] = room_obj.room_id
+            properties['img'] = room_obj.header_img
+            properties['blueprint'] = room_obj.blueprint_file
+            properties['sensors'] = []
+            for sensor in room_obj.get_all_sensors:
+                properties['sensors'].append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+            
+            # sensors = Sensor.objects.get(room_id = room_obj.room_id)
+            # for i in sensors:
+            #     pass
             now_datetime = timezone.now() + timezone.timedelta(hours=8)
             if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
                 properties['done'] = False
@@ -263,6 +274,10 @@ def start_game(request):
 @csrf_exempt
 def end_game(request):
     return ajax_helper.end_game(request)
+
+@csrf_exempt
+def add_clue(request):
+    return ajax_helper.add_clue(request)
 
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
