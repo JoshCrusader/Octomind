@@ -48,20 +48,21 @@ class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
     game_keeper = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     room = models.ForeignKey('Room', models.DO_NOTHING)
-    match_id = models.CharField(max_length=150, blank=True, null=True)
     game_details = models.ForeignKey('GameDetails', models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'game'
         unique_together = (('game_id', 'game_details'),)
-
+    @property
+    def match_id(self):
+        return self.game_id + 100000
     @property
     def get_sensor_trigger_sequence(self):
         trigger_seq = []
         data = self.pull_data_fr_game(self)
         for d in data:
-            if d["value"] == 1:
+            if d["value"] == '1':
                 if d["sensor_id"] not in trigger_seq:
                     trigger_seq.append(d["sensor_id"])
         return trigger_seq
@@ -81,9 +82,38 @@ class Game(models.Model):
         return True
     @property
     def has_error(self):
-        for r in GameSequenceErrorLog.objects.filter(game_id=self.game_id):
-            return True
-        return False
+        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
+        my_seq = self.get_sensor_trigger_sequence
+        print("real seqeunce: ", real_seq)
+        print("init my seqeunce: ", my_seq)
+        index_add = len(real_seq) - len(my_seq)
+        if index_add != 0:
+            index_add = real_seq[-1*index_add:]
+            for i in index_add:
+                my_seq.append(i)
+
+        print("my seqeunce: ", my_seq)
+        if str(my_seq) == str(real_seq):
+            return False
+        return True
+    @property
+    def get_error_points_sensors(self):
+        problem_sensors =[]
+        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
+        my_seq = self.get_sensor_trigger_sequence
+
+        index_add = len(real_seq) - len(my_seq)
+        if index_add != 0:
+            index_add = real_seq[-1*index_add:]
+            for i in index_add:
+                my_seq.append(i)
+
+        print("e-real seqeunce: ", real_seq)
+        print("e-my seqeunce: ", my_seq)
+        for i, val in enumerate(real_seq):
+            if real_seq[i] != my_seq[i]:
+                problem_sensors.append(Sensor.objects.get(sensor_id=my_seq[i]))
+        return problem_sensors
     @property
     def has_warning(self):
         return False
@@ -425,16 +455,3 @@ class Teams(models.Model):
         managed = False
         db_table = 'teams'
         unique_together = (('game', 'players_players'),)
-
-class GameSequenceErrorLog(models.Model):
-    game_sequence_error_id = models.AutoField(primary_key=True)
-    game = models.ForeignKey(Game, models.DO_NOTHING)
-    sensor = models.ForeignKey(Sensor, models.DO_NOTHING)
-    details = models.CharField(max_length=100, blank=True, null=True)
-    timestamp = models.DateTimeField(blank=True, null=True)
-    cur_sensor_seq = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'game_sequence_error_log'
-        unique_together = (('game_sequence_error_id', 'game', 'sensor'),)
