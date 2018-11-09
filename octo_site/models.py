@@ -264,8 +264,13 @@ class Game(models.Model):
             time_finished = clean_date + timedelta(minutes=math.floor(avg_sum), seconds=(avg_sum % 1))
             time_diff = time_finished - clean_date
             time_finished = round(time_diff / timedelta(minutes=1), 2)
+        if avg_sum == 0:
 
-        average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
+            average_times_bet_sensors = 0
+        else:
+            average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
+
+
 
         if time_finished >= 31 and time_finished <= 45:
             skill_bracket = "Normal"

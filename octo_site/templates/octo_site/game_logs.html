@@ -1,0 +1,291 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+    .myProgress {
+      width: 80px;
+    }
+    .myBar {
+      width: 100%;
+      height: 15px;
+      background-color: white;
+    }
+        .tbl_inp{
+            background-color: #3e4042;
+            color:white;
+        }
+        .tbl_sel{
+            background-color: #3e4042;
+            color:white;
+        }
+	</style>
+<div id="content" style="padding: 0 0 0 0; background-color:#818487; margin-left: 220px;" class="uk-height-1-1" uk-height-viewport>
+    <section class="uk-section uk-article " style="padding: 10px;" >
+        <div class="uk-container uk-align-bottom" style="margin-top: 2vh;">
+            <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #3e4042">
+                <div class="uk-card-header">
+                    <div class="uk-grid uk-grid-medium" >
+                        <div class="uk-width-auto" >
+                            <h3 class="uk-margin-remove-bottom uk-text-warning"><span class="uk-text-primary" data-uk-icon="icon: album;ratio: 1"></span> Game Log </h3>
+                        </div>
+                        <div class="uk-width-expand uk-text-right">
+                            <button class="uk-button uk-button-default uk-button-small " disabled> Discard <span data-uk-icon="icon: trash"></span></button>
+                        </div>
+                        <div class="uk-card-body uk-align-center uk-width-1-1">
+                            <div class="uk-overflow-auto">
+                                    <table id="room_tbl" class="uk-table uk-table-divider" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-table-shrink uk-text-nowrap"></th>
+                                                  <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-small">Team name</th>
+                                                  <th class="uk-width-large">Time Start & End</th>
+                                                  <th class="uk-width-medium">Duration</th>
+                                                  <th class="uk-width-large">Anomaly Detection</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                          {% for game in cur_games reversed%}
+                                                <tr class="tbl_toggle">
+                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
+                                                    <td>
+                                                        {% if game.is_solved %}
+                                                            <a class="uk-text-success" style="color: limegreen"><b>{{ game.match_id }}</b></a>
+                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Solved</p>
+                                                        {% else %}
+                                                            <a class="uk-text-success" style="color: orange;"><b style="color: orange;">{{ game.match_id }}</b></a>
+                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Unsolved</p>
+                                                        {% endif %}
+                                                    </td>
+
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.teamname }}</b></p>
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_num_clues_asked }} clues asked</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
+                                                            {% if game.is_solved %}
+                                                                to
+                                                                <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
+                                                            {% endif %}
+                                                        <p class="uk-text-small txt_light_gray" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
+
+                                                    </td>
+                                                    <td>
+                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">game on going .. </b></p>
+
+                                                    </td>
+                                                    <td>
+                                                        {% if game.has_error %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_warning %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_error == False and game.has_warning == False %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                          {% endfor %}
+                                          {% for game in games reversed%}
+                                                <tr class="tbl_toggle">
+                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
+                                                    <td>
+                                                        {% if game.is_solved %}
+                                                            <a class="uk-text-success" style="color: limegreen"><b>{{ game.match_id }}</b></a>
+                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Solved</p>
+                                                        {% else %}
+                                                            <a class="uk-text-success" style="color: orange;"><b style="color: orange;">{{ game.match_id }}</b></a>
+                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Unsolved</p>
+                                                        {% endif %}
+                                                    </td>
+
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.teamname }}</b></p>
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_num_clues_asked }} clues asked</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
+                                                            {% if game.is_solved %}
+                                                                to
+                                                                <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
+                                                            {% endif %}
+                                                        <p class="uk-text-small txt_light_gray" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
+
+                                                    </td>
+                                                    <td>
+                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
+                                                        <div class="myProgress">
+                                                          <div class="myBar" style="width: {{ game.get_duration }}px"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if game.has_error %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_warning %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_error == False and game.has_warning == False %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                          {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#example').DataTable();
+                                        } );
+                                        $(document).ready(function() {
+                                            $('#room_tbl').DataTable();
+                                            $(".dataTables_length select").addClass("uk-input tbl_inp");
+                                            $(".dataTables_filter input").addClass("uk-select tbl_sel");
+                                        });
+                                    </script>
+                                    </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+	<script>
+
+        function change_cat(obj) {
+            $( ".rep_cats" ).each(function(index, element) {
+                $(this).removeClass('uk-active');
+            });
+            $(obj).addClass('uk-active');
+
+            $('#dp').datepicker().data('datepicker').clear();
+            switch ($(obj).attr("value")){
+                case "daily":
+                    console.log("dd");
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Daily Report");
+                    $("#report_cat_holder").val("daily");
+                    break;
+                case "monthly":
+                    $('#dp').datepicker().data('datepicker').view= 'months';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"months",
+                        view:"months",
+                        dateFormat:"yyyy-mm"
+                    });
+                    $("#btn_report_cat").html("Monthly Report");
+                    $("#report_cat_holder").val("monthly");
+                    break;
+                case "yearly":
+                    $('#dp').datepicker().data('datepicker').view= 'years';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"years",
+                        view:"years",
+                        dateFormat:"yyyy"
+                    });
+                    $("#btn_report_cat").html("Yearly Report");
+                    $("#report_cat_holder").val("yearly");
+                    break;
+                default:
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:true,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Ranged Report");
+                    $("#report_cat_holder").val("range");
+
+            }
+        }
+        $(".tbl_toggle").click(function(e) {
+            console.log($(this).attr("room_name"));
+
+            $("#room_name_holder").val($(this).attr("room_name"));
+            $("#room_id_holder").val($(this).attr("room_id"));
+
+            UIkit.modal($("#modal-select")).hide();
+        });
+        function check_dates() {
+            let sd = new Date($("#sd").val());
+            let ed = new Date($("#ed").val());
+            if (ed>sd){
+                console.log("valid");
+                return true
+            }
+                console.log("invalid");
+            return false
+        }
+        function check_valid() {
+            let new_val;
+            if ($("#room_name_holder").val() !== ""){
+                if ($("#dp").val().search("to") !== -1 || $("#report_cat_holder").val() !== "range" ) {
+                    if ($("#dp").val() !== "") {
+                        switch ($("#report_cat_holder").val()) {
+                            case "monthly":
+                                $("#dp").val($("#dp").val() + "-01");
+                                break;
+                            case "yearly":
+                                $("#dp").val($("#dp").val() + "-01-01");
+                                break;
+                            case "range":
+                                new_val = $("#dp").val();
+                                new_val = new_val.split(" to ");
+                                //console.log(new_val);
+                                $("#sd").val(new_val[0]);
+                                $("#ed").val(new_val[1]);
+                                break;
+                        }
+                        console.log($("#room_id_holder").val());
+                        console.log($("#dp").val());
+                        console.log($("#sd").val());
+                        console.log($("#ed").val());
+
+                        $('#form_elem').animate({opacity:0});
+                        $('#spinner').fadeIn();
+                        $('#load_text').fadeIn();
+                        $('#grid').css('background-image', 'url("{% static 'octo_puz.png' %}")');
+                        setTimeout(() => {
+                            $('#form').submit();
+                        }, 1500);
+                    }
+                    else {
+                        $("#dp").addClass("uk-form-danger");
+                        $('#alert').html(' Please select a valid date');
+                        $('#alert').css('display', 'block');
+                    }
+                }
+                else{
+                    $("#dp").addClass("uk-form-danger");
+                    $('#alert').html('Invalid or incomplete date range');
+                    $('#alert').css('display', 'block');
+                }
+            }else{
+                $("#room_name_holder").addClass("uk-form-danger");
+                $('#alert').html('No Room is selected. Please select a room to be analyzed');
+                $('#alert').css('display','block');
+            }
+        }
+
+	</script>
+{% include 'octo_site/includes/offcanvas.html' %}
+

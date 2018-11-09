@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from octo_site.forms import *
 from django.core import serializers
 import socket
+import pytz
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
@@ -392,6 +393,26 @@ def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
     return render(request, 'octo_site/reports/trend_analysis.html')
-
 def sample_marker(request):
     return render(request, 'octo_site/sample_marker.html')
+def game_logs(request):
+    utc = pytz.UTC
+    cur_games = []
+    cur_inds = []
+    all_g = Game.objects.all()
+    gd = GameDetails.objects.filter(timeend__isnull=True)
+    for g in gd:
+        diff = datetime.now().replace(tzinfo=utc) - g.timestart.replace(tzinfo=utc)
+        days = diff.days
+        days_to_hours = days * 24
+        diff_btw_two_times = diff.seconds / 3600
+        overall_hours = days_to_hours + diff_btw_two_times
+        print(str(overall_hours) + ' hours')
+        #difference between time and now is less than 1 hour, then it is a past game.
+        if diff_btw_two_times < 1:
+            cur_games.append(Game.objects.get(game_id=g.game_details_id))
+            cur_inds.append(g.game_details_id)
+    for ag in all_g:
+        if ag.game_id in cur_inds:
+            all_g.remove(ag)
+    return render(request,'octo_site/game_logs.html',{'games': all_g,'cur_games': cur_games})
