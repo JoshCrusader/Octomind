@@ -43,10 +43,10 @@
                                               <tr>
                                                   <th class="uk-table-shrink uk-text-nowrap"></th>
                                                   <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-medium">Result</th>
                                                   <th class="uk-width-small">Team name</th>
                                                   <th class="uk-width-large">Time Start & End</th>
                                                   <th class="uk-width-medium">Duration</th>
-                                                  <th class="uk-width-large">Anomaly Detection</th>
                                               </tr>
                                           </thead>
                                           <tbody>
@@ -55,15 +55,13 @@
                                                 <tr class="tbl_toggle">
                                                     <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
-                                                        {% if game.is_solved %}
-                                                            <a class="uk-text-success" style="color: limegreen"><b>{{ game.match_id }}</b></a>
-                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Solved</p>
-                                                        {% else %}
-                                                            <a class="uk-text-success" style="color: orange;"><b style="color: orange;">{{ game.match_id }}</b></a>
-                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Unsolved</p>
-                                                        {% endif %}
+                                                        <b style="color: cornflowerblue">{{ game.match_id }}</b>
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">started {{ game.get_time_ago }}</p>
                                                     </td>
-
+                                                    <td>
+                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">Ongoing</b></p>
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">started {{ game.room.room_name }}</p>
+                                                    </td>
                                                     <td>
                                                         <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.teamname }}</b></p>
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_num_clues_asked }} clues asked</p>
@@ -75,38 +73,50 @@
                                                                 <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
                                                             {% endif %}
                                                         <p class="uk-text-small txt_light_gray" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
-
                                                     </td>
                                                     <td>
                                                         <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">game on going .. </b></p>
-
-                                                    </td>
-                                                    <td>
-                                                        {% if game.has_error %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_warning %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_error == False and game.has_warning == False %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
-                                                        {% endif %}
                                                     </td>
                                                 </tr>
                                           {% endfor %}
-                                          {% for game in games reversed%}
+                                          {% for game in games reversed%}{% if game.has_error %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
+                                                        {% endif %}
+
                                                 <tr class="tbl_toggle">
                                                     <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
-                                                        {% if game.is_solved %}
-                                                            <a class="uk-text-success" style="color: limegreen"><b>{{ game.match_id }}</b></a>
-                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Solved</p>
-                                                        {% else %}
-                                                            <a class="uk-text-success" style="color: orange;"><b style="color: orange;">{{ game.match_id }}</b></a>
-                                                            <p class="uk-text-small txt_light_gray" style="margin-top: 0px">Unsolved</p>
-                                                        {% endif %}
+                                                        <a style="color: white"><b>{{ game.match_id }}</b></a>
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
                                                     </td>
-
+                                                    <td>
+                                                        {% if game.is_solved %}
+                                                            <p class="uk-margin-remove"><b style="color: limegreen">Solved</b>
+                                                                {% if game.has_error %}
+                                                                    <span class="uk-text-danger" uk-tooltip="Sequence anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                                {% if game.has_warning %}
+                                                                    <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                                {% if game.has_error == False and game.has_warning == False %}
+                                                                    <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                            </p>
+                                                        {% else %}
+                                                            <p class="uk-margin-remove"><b style="color: #ffb843">Unsolved</b>
+                                                            {% if game.has_error %}
+                                                                    <span class="uk-text-danger" uk-tooltip="Sequence anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                                {% if game.has_warning %}
+                                                                    <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                                {% if game.has_error == False and game.has_warning == False %}
+                                                                    <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.room.room_name }}</p>
+                                                    </td>
                                                     <td>
                                                         <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.teamname }}</b></p>
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_num_clues_asked }} clues asked</p>
@@ -126,17 +136,7 @@
                                                           <div class="myBar" style="width: {{ game.get_duration }}px"></div>
                                                         </div>
                                                     </td>
-                                                    <td>
-                                                        {% if game.has_error %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_warning %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_error == False and game.has_warning == False %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
-                                                        {% endif %}
-                                                    </td>
+
                                                 </tr>
                                           {% endfor %}
                                           </tbody>
