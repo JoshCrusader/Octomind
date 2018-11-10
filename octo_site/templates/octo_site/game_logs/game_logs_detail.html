@@ -15,10 +15,33 @@
     .myProgress {
       width: 80px;
     }
+    .m-sandbox-content{
+        background-color: blue;
+        width: 400px;
+        height: 500px;
+        float: right;
+    }
+
+    .m-sandbox-frame{
+        background-color: white;
+        width: 360px;
+        height: 360px;
+        margin: 20px;
+    }
     .myBar {
       width: 100%;
       height: 15px;
       background-color: white;
+    }
+    .box_shdw{
+
+    margin: 0.5vw;
+    box-shadow: 5px 5px 2.5px #aaaaaa;
+    }
+    .dark_box_shdw{
+        background-color: #3e4042;
+    margin: 0.5vw;
+    box-shadow: 5px 5px 2.5px #aaaaaa;
     }
         .tbl_inp{
             background-color: #3e4042;
@@ -72,9 +95,10 @@
                             <div style="margin-top: 2vh" uk-grid>
 
                                 <div class="uk-width-auto@m uk-flex-last@m">
-                                    <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation: uk-animation-fade">
-                                        <li><a href="#">Summary</a></li>
-                                        <li><a href="#">Line Plots</a></li>
+                                    <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-top-medium, uk-animation-slide-bottom-medium">
+                                        <li><a href="#">Summary Data</a></li>
+                                        <li><a href="#">Log Digital Signals</a></li>
+                                        <li><a href="#">Sensor Plot Simulation</a></li>
                                     </ul>
                                 </div>
                                 <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
@@ -91,8 +115,25 @@
                                                 <canvas class="uk-align-center" id="canvas" ></canvas>
                                             </div>
                                         </li>
+                                        <li style="height: auto">
+                                            <div class="chart-container" style="height:20vh;width:100%" >
+                                                <canvas class="uk-align-center" id="live_monitor" ></canvas>
+                                            </div>
+                                            <div style="margin-top: 35vh;margin-left: 1vw" id="sensor_list" class="uk-child-width-expand@s uk-text-center" uk-grid>
+                                            </div>
+                                        </li>
+
                                         <li>
-                                            <div id="sensor_list"></div>
+                                            <div class = "m-sandbox-frame">
+                                            <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                                                <!-- Things get appended here thru setSandBox() -->
+                                            </div>
+                                            <div id="sensor_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                                                <!-- Things get appended here thru setSandBox() -->
+                                            </div>
+                                            <img id="img_sensor_layout"  src="{% static 'media/' %}{{ game.room.blueprint_file }}" alt="" style="width: 100%;height: 100%;">
+
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -124,16 +165,25 @@
         </div>
     </section>
 </div>
-
 	<script>
         let to_add=[];
         let sensor_data;
         let new_obj = [];
         let sensors=[];
+        let chartColors = {
+  red: 'rgb(255, 99, 132)',
+  orange: 'rgb(255, 159, 64)',
+  yellow: 'rgb(255, 205, 86)',
+  green: 'rgb(75, 192, 192)',
+  blue: 'rgb(54, 162, 235)',
+  purple: 'rgb(153, 102, 255)',
+  grey: 'rgb(231,233,237)',
+  black: 'rgb(0,0,0)',
+};
         let color = Chart.helpers.color;
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
-		var colorNames = Object.keys(window.chartColors);
+		let colorNames = Object.keys(window.chartColors);
         let customTooltips = function(tooltip) {
 			// Tooltip Element
 			var tooltipEl = document.getElementById('chartjs-tooltip');
@@ -201,6 +251,65 @@
 			tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
 			tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
 		};
+        let live_config = {
+    type: 'line',
+    data: {
+        start_time: start_time,
+        labels: [],
+        datasets: [],
+        statuses:[],
+    },
+    options: {
+        elements:{
+            line: {
+                tension: 0
+            }
+        },
+        spanGaps:true,
+        responsive: true,
+        legend: {
+            position: 'bottom',
+        },
+        title: {
+            display: true,
+            text: '{{ room.room_name }} Game #69'
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: false,
+            footerFontStyle: 'normal'
+        },
+        hover: {
+            mode: 'nearest',
+            intersect: false
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                type: 'time',
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Time'
+                }
+            }],
+            yAxes: [{
+
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Activation Status'
+                },
+                ticks: {
+                        beginAtZero: true,
+                        steps: 0,
+                        min:0,
+                        stepValue: 5,
+                        max: 1.0001
+                    }
+            }]
+        }
+    }
+};
 		let config = {
 			type: 'line',
 			data: {
@@ -217,8 +326,8 @@
                     position: 'bottom',
                     display: true,
                     labels: {
-                        padding:20,
-                        fontSize: 16,
+                        padding:15,
+                        fontSize: 13,
                         usePointStyle:true,
                     }
                 },
@@ -311,10 +420,13 @@
 		};
         window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
-			initData();
-            console.log("started");
-			//window.setInterval(reloadData, 1000);
+            let live_ctx = document.getElementById('live_monitor').getContext('2d');
+            window.LiveLine = new Chart(live_ctx, live_config);
+            window.myLine = new Chart(ctx, config);
+            initMonData();
+            initData();
+            console.log("started live_data");
+            console.log("started summary");
 		};
         function initData() {
 
@@ -429,15 +541,92 @@
                 $("#avg_time").html(results.data.general_info.average_time);
                 for(ind in results.data.sensor_info)
                 {
-                    console.log(results.data.sensor_info[ind].sensor_name);
-                    let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
-                    str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].times_triggered+"</p><br>";
-                    str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
+                    //<div class="uk-card uk-card-default uk-card-body">Item 1</div>
+                    let str='<div class="uk-width-1-3 uk-card uk-card-default uk-card-body box_shdw"><dl class="uk-description-list">';
+                    str+="<dt>"+results.data.sensor_info[ind].sensor_name+"</dt>";
+                    str+="<dd>trigger count: "+results.data.sensor_info[ind].times_triggered+"</dd>";
+                    str+="<dd>down count: "+results.data.sensor_info[ind].times_down+"<dd>";
+                    str+='</dl></div>';
                     $("#sensor_list").append(str);
                 }
             });
         }
-
 	</script>
+<script>
+function initMonData() {
+let to_add_live=[];
+let sensors=[];
+let sensor_data=[];
+let sensor_data_len;
+		   let time = start_time;
+		   let newDataset;
+		   let newXAxis;
+		   let colorName;
+		   let newColor;
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
+           sensor_data.done(function(results){
+              let obj = results.sensors;
+               for (i in obj)
+               {
+                   colorName = colorNames[live_config.data.datasets.length % colorNames.length];
+                   newColor = window.chartColors[colorName];
+                   newXAxis = {
+                        id: "id-"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   newDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name,
+                        xAxisID:"id-"+i,
+                        steppedLine: true,
+                        pointStyle: 'circle',
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        fill: false
+                   };
+
+                   live_config.data.datasets.push(newDataset);
+                   sensors.push(obj[i].sensor_id);
+                   live_config.options.scales.xAxes.push(newXAxis);
+                   window.LiveLine.update()
+               }
+
+           });
+		   sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
+           sensor_data.done(function(results){
+               sensor_data_len = results.data.length;
+               obj = results.data;
+                for (ob in obj)
+                {
+                    live_config.data.labels.push(new Date(obj[ob].timestamp));
+                    for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x]){
+                            live_config.data.datasets[x].data.push(obj[ob].value);
+                        }
+                        else{
+                            live_config.data.datasets[x].data.push(null);
+                        }
+                    }
+			        window.LiveLine.update()
+                }
+
+           });
+        let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+            summary_data.done(function(results){
+                console.log(results.data);
+           });
+			window.LiveLine.update();
+        }
+    </script>
 {% include 'octo_site/includes/offcanvas.html' %}
 

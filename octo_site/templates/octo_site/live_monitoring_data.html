@@ -141,13 +141,6 @@
                 }
             });
         }
-        function pullData() {
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
-           sensor_data.done(function(results){
-                console.log(results.data);
-           });
-           //splice data
-        }
         function initData() {
 		   let time = start_time;
 		   let newDataset;
