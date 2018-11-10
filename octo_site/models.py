@@ -12,6 +12,7 @@ import MySQLdb
 import math
 from dateutil.relativedelta import relativedelta
 import pytz
+from utils.numToWords import int_to_en as numToWords
 from datetime import datetime,timedelta
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
@@ -76,6 +77,11 @@ class Game(models.Model):
     @property
     def match_id(self):
         return self.game_id + 100000
+
+    @property
+    def get_team_size(self):
+        sz = Teams.objects.filter(game_id=self.game_id).count()
+        return numToWords(int(sz))
     @property
     def get_sensor_trigger_sequence(self):
         trigger_seq = []
@@ -284,7 +290,6 @@ class Game(models.Model):
             average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
 
 
-
         if time_finished >= 31 and time_finished <= 45:
             skill_bracket = "Normal"
         elif time_finished >= 46 and time_finished <= 60:
@@ -308,7 +313,9 @@ class GameDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'game_details'
-
+    @property
+    def get_max_endtime(self):
+        return self.timestart + timedelta(hours=1)
 
 class Players(models.Model):
     players_id = models.AutoField(primary_key=True)

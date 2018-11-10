@@ -26,7 +26,7 @@
 	</style>
 <div id="content" style="padding: 0 0 0 0; background-color:#818487; margin-left: 220px;" class="uk-height-1-1" uk-height-viewport>
     <section class="uk-section uk-article " style="padding: 10px;" >
-        <div class="uk-container uk-align-bottom" style="margin-top: 2vh;">
+        <div class="uk-container uk-align-bottom" style="margin-top: 0vh;">
             <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #3e4042">
                 <div class="uk-card-header">
                     <div class="uk-grid uk-grid-medium" >
@@ -86,7 +86,7 @@
                                                 <tr class="tbl_toggle">
                                                     <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
-                                                        <a style="color: white"><b>{{ game.match_id }}</b></a>
+                                                        <a href="game/{{ game.game_id }}/" style="color: white"><b>{{ game.match_id }}</b></a>
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
                                                     </td>
                                                     <td>

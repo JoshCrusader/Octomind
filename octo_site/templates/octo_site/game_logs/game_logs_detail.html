@@ -1,40 +1,130 @@
-<!doctype html>
-<html>
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
 {% load staticfiles %}
-<head>
-	<title>Line Chart</title>
-	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+    <script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
 	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
     <script src="{% static 'octo_site/res/jquery.js' %}"></script>
     <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+
 	<style>
 	canvas{
 		-moz-user-select: none;
 		-webkit-user-select: none;
 		-ms-user-select: none;
 	}
+    .myProgress {
+      width: 80px;
+    }
+    .myBar {
+      width: 100%;
+      height: 15px;
+      background-color: white;
+    }
+        .tbl_inp{
+            background-color: #3e4042;
+            color:white;
+        }
+        .tbl_sel{
+            background-color: #3e4042;
+            color:white;
+        }
+        .pad{
+            margin: 3vh;
+        }
 	</style>
-</head>
+<div id="content" style="padding: 0 0 0 0; background-color:#818487; margin-left: 220px;" class="uk-height-1-1" uk-height-viewport>
+    <section class="uk-section uk-article " style="padding: 10px;" >
+        <div class="uk-container uk-align-bottom" style="margin-top: 0vh;">
+            <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #3e4042; ">
+                <div class="uk-card-header" style="padding: 0px 0px 0px 0px; margin: 0">
+                    <div class="uk-grid uk-grid-medium" >
+                        <div class="uk-width-auto pad" >
+                            <h3 class="uk-margin-remove-bottom uk-text-warning"> MATCH {{ game.match_id }} <p class="txt_white" style="display: inline"> {{ game.room.room_name }}</p> </h3>
+                            <p class="uk-text-muted uk-text-small uk-margin-remove">{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %} </p>
+                        </div>
+                        <div class="uk-width-expand uk-text-right pad">
+                            <button class="uk-button uk-button-default uk-button-small " disabled> COMPARE <span data-uk-icon="icon: gitter"></span></button>
+                        </div>
+                        <div class="uk-width-1-1 uk-child-width-1-5 uk-grid-divider uk-column-1-2@s uk-column-1-5@m uk-column-1-8@l uk-child-width-1-5@xl" style="" id="summary_container" data-uk-grid >
+                            <div class="uk-text-center">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Skill Bracket</span>
+                                <h3 class="uk-margin-remove txt_white">{{ general_info.skill_bracket }}</h3>
+                            </div>
+                            <div class="uk-text-left">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span># of Players</span>
+                                <h3 class="uk-margin-remove txt_white">{{ game.get_team_size }}</h3>
 
-<body>
-	<div style="width:75%;">
-		<canvas id="canvas"></canvas>
-	</div>
-	<br>
-	<br>
-	<button id="randomizeData">Randomize Data</button>
-	<button id="addDataset">Add Dataset</button>
-	<button id="removeDataset">Remove Dataset</button>
-	<button id="addData">Add Data</button>
-	<button id="removeData">Remove Data</button>
-    <div>
-        <p>time finished: </p><b id="time_finished"></b><br>
-        <p>skill bracket: </p><b id="skill_bracket"></b><br>
-        <p>average time sensors accomplished: </p><b id="avg_time"></b><br>
-    </div>
-    <hr>
-    <div id="sensor_list">
-    </div>
+                            </div>
+                            <div class="uk-text-left">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
+                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3>
+                            </div>
+                            <div class="uk-text-left">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Avg. Time Solve </span>
+                                <h3 class="uk-margin-remove txt_white">{{ general_info.average_time }}<small class="uk-text-small">/sensor</small></h3></h3>
+                            </div>
+                            <div class="uk-text-left">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Clues Asked </span>
+                                <h3 class="uk-margin-remove  txt_white">{{ game.get_num_clues_asked }}</h3>
+                            </div>
+                        </div>
+                        <div class="uk-width-1-1" style="margin-left: 30px;background-color: white;margin-top: 2vh" >
+                            <div style="margin-top: 2vh" uk-grid>
+
+                                <div class="uk-width-auto@m uk-flex-last@m">
+                                    <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation: uk-animation-fade">
+                                        <li><a href="#">Summary</a></li>
+                                        <li><a href="#">Line Plots</a></li>
+                                    </ul>
+                                </div>
+                                <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
+                                    <h2 class="uk-text-center">Mystery
+                                    {% if game.is_solved == True %}
+                                        <p class="uk-text-success" style="display: inline">Solved</p>  <span class="uk-text-success" data-uk-icon="icon: question;ratio: 1.25"></span>
+                                    {% else %}
+                                        <p class="uk-text-success" style="display: inline">Unsolved</p><span class="uk-text-warning" data-uk-icon="icon: question;ratio: 1.25"></span>
+                                    {% endif %}
+                                    </h2>
+                                    <ul id="component-tab-right" class="uk-switcher">
+                                        <li style="height: 60vh">
+                                            <div class="chart-container" style="height:20vh;width:100%" >
+                                                <canvas class="uk-align-center" id="canvas" ></canvas>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div id="sensor_list"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                                <!--
+                                <div class="uk-width-auto@m uk-flex-last@m">
+                                    <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation: uk-animation-fade">
+                                        <li><a href="#">Summary</a></li>
+                                        <li><a href="#">Line Plots</a></li>
+                                    </ul>
+                                </div>
+                                <div class="uk-width-expand@m">
+                                    <ul id="component-tab-right" class="uk-switcher">
+                                        <li>
+                                            <div style="width:20%;">
+                                                <canvas id="canvas"></canvas>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div id="sensor_list"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
 	<script>
         let to_add=[];
         let sensor_data;
@@ -43,6 +133,7 @@
         let color = Chart.helpers.color;
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
+		var colorNames = Object.keys(window.chartColors);
         let customTooltips = function(tooltip) {
 			// Tooltip Element
 			var tooltipEl = document.getElementById('chartjs-tooltip');
@@ -218,7 +309,7 @@
 				}
 			}
 		};
-		window.onload = function() {
+        window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
 			window.myLine = new Chart(ctx, config);
 			initData();
@@ -227,7 +318,7 @@
 		};
         function initData() {
 
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
            sensor_data.done(function(results){
                 console.log(results);
                 obj = results.sensors;
@@ -346,53 +437,7 @@
                 }
             });
         }
-		document.getElementById('randomizeData').addEventListener('click', function() {
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {
-					return randomScalingFactor();
-				});
-			});
-			window.myLine.update();
-		});
-		var colorNames = Object.keys(window.chartColors);
-		document.getElementById('addDataset').addEventListener('click', function() {
-			var colorName = colorNames[config.data.datasets.length % colorNames.length];
-			var newColor = window.chartColors[colorName];
-			var newDataset = {
-				label: 'Dataset ' + config.data.datasets.length,
-				backgroundColor: color(newColor).alpha(0.5).rgbString(),
-				borderColor: newColor,
-				data: [],
-				fill: false
-			};
-			for (var index = 0; index < config.data.labels.length; ++index) {
-				newDataset.data.push(randomScalingFactor());
-			}
-			config.data.datasets.push(newDataset);
-			window.myLine.update();
-		});
-		document.getElementById('addData').addEventListener('click', function() {
-			if (config.data.datasets.length > 0) {
-				var month = MONTHS[config.data.labels.length % MONTHS.length];
-				config.data.labels.push(month);
-				config.data.datasets.forEach(function(dataset) {
-					dataset.data.push(randomScalingFactor());
-				});
-				window.myLine.update();
-			}
-		});
-		document.getElementById('removeDataset').addEventListener('click', function() {
-			config.data.datasets.splice(0, 1);
-			window.myLine.update();
-		});
-		document.getElementById('removeData').addEventListener('click', function() {
-			config.data.labels.splice(-1, 1); // remove the label first
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();
-			});
-			window.myLine.update();
-		});
-	</script>
-</body>
 
-</html>
+	</script>
+{% include 'octo_site/includes/offcanvas.html' %}
+

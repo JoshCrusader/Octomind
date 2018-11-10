@@ -415,4 +415,9 @@ def game_logs(request):
     for ag in all_g:
         if ag.game_id in cur_inds:
             all_g.remove(ag)
-    return render(request,'octo_site/game_logs.html',{'games': all_g,'cur_games': cur_games})
+    return render(request, 'octo_site/game_logs/game_logs.html', {'games': all_g, 'cur_games': cur_games})
+def game_logs_detail(request,game_id):
+    g = Game.objects.get(game_id=game_id)
+    summary = g.pull_game_summary(g)
+    return render(request, 'octo_site/game_logs/game_logs_detail.html',
+                  {'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info']})
