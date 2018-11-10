@@ -115,7 +115,7 @@
                                 
                                 </div>
                                 <div class = "clueContainer">
-                                    <div class = "clueHeader">Clues Left</div>
+                                    <div class = "clueHeader">Clues:</div>
 
                                     {% for clueLength in specGame|attr:"mystery" %}
                                         <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
@@ -135,7 +135,7 @@
             </div>
             {% endfor %}
             <!-- panel -->
-            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl">
+            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-3@xl" style = "visibility: hidden;">
                 <a href = "#" class = "atag">
                     <div class="panelCard">
                         <div class = "gameHead">
@@ -153,10 +153,7 @@
             </div>
             
             <!-- /panel -->
-        <footer class="uk-section uk-section-small uk-text-center">
-            <hr>
-            <a href="https://github.com/zzseba78/Kick-Off">Created by KickOff</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a>
-        </footer>
+        
     </div>
 </div>
 <!-- /CONTENT -->

@@ -158,6 +158,7 @@ def view_room(request, game_id):
             room_obj = Room.objects.get(room_id = game.room_id)
             properties['roomid'] = room_obj.room_id
             properties['img'] = room_obj.header_img
+            properties['roomname'] = room_obj.room_name
             properties['blueprint'] = room_obj.blueprint_file
             properties['sensors'] = []
             for sensor in room_obj.get_all_sensors:
