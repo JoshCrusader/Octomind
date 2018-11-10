@@ -103,15 +103,13 @@ class Game(models.Model):
     def has_error(self):
         real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
         my_seq = self.get_sensor_trigger_sequence
-        print("real seqeunce: ", real_seq)
-        print("init my seqeunce: ", my_seq)
+
         index_add = len(real_seq) - len(my_seq)
         if index_add != 0:
             index_add = real_seq[-1*index_add:]
             for i in index_add:
                 my_seq.append(i)
 
-        print("my seqeunce: ", my_seq)
         if str(my_seq) == str(real_seq):
             return False
         return True
@@ -127,8 +125,6 @@ class Game(models.Model):
             for i in index_add:
                 my_seq.append(i)
 
-        print("e-real seqeunce: ", real_seq)
-        print("e-my seqeunce: ", my_seq)
         for i, val in enumerate(real_seq):
             if real_seq[i] != my_seq[i]:
                 problem_sensors.append(Sensor.objects.get(sensor_id=my_seq[i]))
@@ -177,13 +173,11 @@ class Game(models.Model):
                             clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
                             time_diff = datetime_object - clean_date
                             time_diff_in_min = time_diff / timedelta(minutes=1)
-                            print(round(time_diff_in_min, 1))
                             prev_stamp = data['timestamp']
                         else:
                             datetime_object = data['timestamp']
                             time_diff = datetime_object - prev_stamp
                             time_diff_in_min = time_diff / timedelta(minutes=1)
-                            print(round(time_diff_in_min, 1))
                             prev_stamp = data['timestamp']
                         new_data.append(
                             {"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, "timestamp": data['timestamp']})
@@ -197,7 +191,7 @@ class Game(models.Model):
         cursor.close()
         # close the connection
         connection.close()
-        print(new_data)
+        #print(new_data)
         return new_data
     @staticmethod
     def pull_game_tally(self):
@@ -214,7 +208,7 @@ class Game(models.Model):
         for d in data:
             for dr in data_return:
                 if dr["sensor_id"] == d["sensor_id"]:
-                    print(d["log_id"], d["sensor_id"], d["value"])
+                    #print(d["log_id"], d["sensor_id"], d["value"])
                     if d["value"] == '1':
                         dr["times_triggered"] += 1
                     else:
@@ -226,7 +220,7 @@ class Game(models.Model):
         cursor = connection.cursor()
         f = '%Y-%m-%d %H:%M:%S'
         game = self
-        print("xxxxxxxxxxx",self)
+        #print("xxxxxxxxxxx",self)
         sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
         sensors_id = []
         for s in sensors:
@@ -444,7 +438,6 @@ class Sensor(models.Model):
 
         room = Rpi.objects.get(rpi_id=self.rpi_id).room
         flag = room.has_game_sequence
-        print("flag: ",flag)
         if flag == True:
             for r in Rpi.objects.filter(room_id=room.room_id):
                 for s in Sensor.objects.filter(rpi_id=r.rpi_id):

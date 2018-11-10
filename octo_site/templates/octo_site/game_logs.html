@@ -34,7 +34,7 @@
                             <h3 class="uk-margin-remove-bottom uk-text-warning"><span class="uk-text-primary" data-uk-icon="icon: album;ratio: 1"></span> Game Log </h3>
                         </div>
                         <div class="uk-width-expand uk-text-right">
-                            <button class="uk-button uk-button-default uk-button-small " disabled> Discard <span data-uk-icon="icon: trash"></span></button>
+                            <button class="uk-button uk-button-default uk-button-small " disabled> Analyze <span data-uk-icon="icon: gitter"></span></button>
                         </div>
                         <div class="uk-card-body uk-align-center uk-width-1-1">
                             <div class="uk-overflow-auto">
@@ -218,12 +218,12 @@
             }
         }
         $(".tbl_toggle").click(function(e) {
-            console.log($(this).attr("room_name"));
-
-            $("#room_name_holder").val($(this).attr("room_name"));
-            $("#room_id_holder").val($(this).attr("room_id"));
-
-            UIkit.modal($("#modal-select")).hide();
+            var chk = $(this).find("input:checkbox").get(0);
+            console.log("clicked");
+            if(e.target !== chk)
+            {
+                chk.checked = !chk.checked;
+            }
         });
         function check_dates() {
             let sd = new Date($("#sd").val());
