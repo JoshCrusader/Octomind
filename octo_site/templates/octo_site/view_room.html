@@ -42,11 +42,11 @@
             <div class = "m-options-box">
                 {% if done == False %}
                 <div id = "endgameb">
-                <div class = "m-opt-button" gameid = "{{details.game_details_id}}" onClick = "endGame(this)"> End Game</div>
+                <div class = "uk-button uk-button-secondary" gameid = "{{details.game_details_id}}" onClick = "endGame(this)"> End Game</div>
                 </div>
                 {% else %}
                 {% endif %}
-                <a href ="#modal-example"  uk-toggle class = "atag"><div class = "m-opt-button"> Add Clue</div></a>
+                <a href ="#modal-example"  uk-toggle class = "atag"><div class = "uk-button uk-button-secondary"> Add Clue</div></a>
             </div>
 
         </div>
@@ -55,17 +55,20 @@
     <div class = "m-content-wrapper">
         
         <div class = "m-sensor-content">
-            <div class = "m-sensor-div">
+            <div class = "m-sensor-div card-lite uk-card-hover">
+            <canvas id="canvas"></canvas>
             </div>
+            <!--
             <div class = "m-filter-content">
                 <input type = "checkbox" name = "sens1">Sensor 1
                 <input type = "checkbox" name = "sens2">Sensor 2
                 <input type = "checkbox" name = "sens3">Sensor 3
                 <input type = "checkbox" name = "sens4">Sensor 4
             </div>
+            -->
         </div>
 
-        <div class = "m-sandbox-content">
+        <div class = "m-sandbox-content card-lite uk-card-hover">
             <div class = "m-sandbox-frame">
             <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
                 <!-- Things get appended here thru setSandBox() -->
@@ -78,6 +81,7 @@
             </div>
 
             <div class = "m-sandbox-controller">
+            This is a controller lmao
             </div>
 
         </div>
@@ -97,7 +101,7 @@
         </div>
         <p class="uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary" type="button" onClick = "addClue(this)" gameid = "{{ gameid }}" roomid = "{{ roomid }}" id = "mainInfo">Save</button>
+            <button class="uk-button uk-button-secondary" type="button" onClick = "addClue(this)" gameid = "{{ gameid }}" roomid = "{{ roomid }}" id = "mainInfo">Save</button>
         </p>
     </div>
 </div>
@@ -195,7 +199,7 @@ loop();
         str = "";
         for(i in sensors){
             if(i != 0){
-                str_append = '<div class = "path-container" id = "laser" target1 = "'+(i-1)+'" target2 = "'+i+'"></div>'
+                str_append = '<div class = "path-container" id = "laser" target1 = "'+(i-1)+'" target2 = "'+i+'" arw_target = 1></div>'
                 str += str_append+"\n";
             }
         }
@@ -208,6 +212,8 @@ loop();
         for(var i = 0; i < items.length; i++){
             setPathF(items[i]);
         }
+
+        animatePath(items);
     }
     function setPathF(pathdom){
             var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
@@ -229,21 +235,63 @@ loop();
             delta_y = y2 - y1;
 
             theta_radians = Math.atan2(delta_y, delta_x)*57.2958;
-            hypotenuse = Math.sqrt(Math.abs(delta_x)*Math.abs(delta_x) + Math.abs(delta_y)*Math.abs(delta_y));
+
+            delta_a = Math.abs(delta_x)*Math.abs(delta_x);
+            delta_b = Math.abs(delta_y)*Math.abs(delta_y);
+            hypotenuse = Math.sqrt(delta_a + delta_b);
             var l = pathdom;
             l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;")
             l.style.top = p1.offsetTop+"px";
             l.style.left = p1.offsetLeft+"px";
             l.style.width = hypotenuse+"px";
             str = "";
-            rep = Math.floor((hypotenuse)/30);
+            rep = Math.floor((hypotenuse)/20);
             for(var i = 0; i < rep; i++){
-                str += '<img class = "arw" src="{% static "media/imgs/arrow.png" %}" width = "30px" height = "100%">\n';
+                str += '<img class = "arw" src="{% static "media/imgs/arrow.png" %}" width = "20px" height = "100%" style = "visibility: hidden;">\n';
             }
             l.innerHTML = str;
         }
+        function animatePath(paths){
+            const animate_arrows = (elements, elem_index, this_interval) => {
+                var arrows = elements[elem_index].children;
+                var target  = parseInt(elements[elem_index].getAttribute("arw_target"));
+                var arrowLength = arrows.length;
+                arrows[target].setAttribute("style", "visibility: visible;");
+                if(target == 0){
+                    arrows[arrowLength-1].setAttribute("style", "visibility: hidden;");
+                }
+                else{
+                    arrows[target-1].setAttribute("style", "visibility: hidden;");
+                }
+                elements[elem_index].setAttribute("arw_target", parseInt(target) + 1 < arrowLength ? parseInt(target)+1: 0);
+                if(target == arrowLength-1){
+
+                    clearInterval(this_interval);
+                    setTimeout(()=> {
+
+                        arrows[target].setAttribute("style", "visibility: hidden;");
+                        if(!(elem_index < arrowLength-2)){
+                            elem_index = -1;
+                        }
+                        var new_interv = setInterval(() => {
+                            animate_arrows(elements, elem_index+1, new_interv);
+                        }, 80);
+                    }, 80)
+                }
+            }
+            var interv = setInterval(() => {
+                animate_arrows(paths, 0, interv);
+            }, 80);
+
+        }
     sendSensorRequet();
 </script>
+
+<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+<script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+{% include 'octo_site/includes/live_monitor.html' %}
 <!-- /SCRIPTS -->
 {% include 'octo_site/includes/offcanvas.html' %}
 

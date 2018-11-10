@@ -1,7 +1,11 @@
+html {
+    background-color: #f3f3f3ff;
+}
+
 .room-banner{
-    background-color: #2a2016;
+    background-color: #fff;
     width: 100%;
-    margin: 0
+    margin: 0;
 }
 
 /* Media query wrapper */
@@ -59,14 +63,18 @@
 .m-sensor-content{
     height: 500px;
     width: 700px;
-    background-color: red;
     float: left;
 }
 
+.card-lite{
+
+    transition: box-shadow 0.5s ease-out;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
 .m-sensor-div{
     height: 400px;
     width: 700px;
-    background-color: green;
 }
 
 .m-filter-content{
@@ -80,7 +88,6 @@
 }
 
 .m-sandbox-content{
-    background-color: blue;
     width: 400px;
     height: 500px;
     float: right;
@@ -97,19 +104,20 @@
     height: 40px;
     width: 360px;
     margin: 20px;
-    background-color: white;
+    background-color: red;
 }
 
 .path-container{
 
     position: absolute;
-    margin-left: 15px;
+    margin-left: 10px;
+    margin-top: 2.5px;
     width: 500px;
-    height: 30px;
+    height: 20px;
     background-color: rgba(0,255,0,0.5);
     position: fixed;
 
-    -webkit-transform-origin: 0% 15px;
+    -webkit-transform-origin: 0% 10px;
 }
 
 .arw{
