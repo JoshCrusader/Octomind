@@ -6,6 +6,8 @@
     <script src="{% static 'octo_site/res/jquery.js' %}"></script>
     <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
 
+        <link rel="stylesheet" href = "{% static 'styles/view_room.css' %}" type = "text/css">
+
 	<style>
 	canvas{
 		-moz-user-select: none;
@@ -15,19 +17,7 @@
     .myProgress {
       width: 80px;
     }
-    .m-sandbox-content{
-        background-color: blue;
-        width: 400px;
-        height: 500px;
-        float: right;
-    }
 
-    .m-sandbox-frame{
-        background-color: white;
-        width: 360px;
-        height: 360px;
-        margin: 20px;
-    }
     .myBar {
       width: 100%;
       height: 15px;
@@ -124,40 +114,41 @@
                                         </li>
 
                                         <li>
-                                            <div class = "m-sandbox-frame">
-                                            <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
-                                                <!-- Things get appended here thru setSandBox() -->
-                                            </div>
-                                            <div id="sensor_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
-                                                <!-- Things get appended here thru setSandBox() -->
-                                            </div>
-                                            <img id="img_sensor_layout"  src="{% static 'media/' %}{{ game.room.blueprint_file }}" alt="" style="width: 100%;height: 100%;">
+                                            <div class="uk-align-center uk-text-center uk-width-1-1">
 
+                                                <div class = "m-content-wrapper">
+
+
+        <div class = "m-sandbox-content card-lite uk-card-hover">
+            <div class = "m-sandbox-frame">
+            <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                <!-- Things get appended here thru setSandBox() -->
+            </div>
+            <div id="sensor_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                <!-- Things get appended here thru setSandBox() -->
+            </div>
+            <img id="img_sensor_layout"  src="{% static 'media/' %}{{ game.room.blueprint_file }}" alt="" style="width: 100%;height: 100%;">
+
+            </div>
+
+            <div class = "m-sandbox-controller">
+            This is a controller lmao
+            </div>
+
+        </div>
+    </div>
+
+                                                <h3>room blueprint</h3>
                                             </div>
+
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                                <!--
-                                <div class="uk-width-auto@m uk-flex-last@m">
-                                    <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation: uk-animation-fade">
-                                        <li><a href="#">Summary</a></li>
-                                        <li><a href="#">Line Plots</a></li>
-                                    </ul>
-                                </div>
-                                <div class="uk-width-expand@m">
-                                    <ul id="component-tab-right" class="uk-switcher">
-                                        <li>
-                                            <div style="width:20%;">
-                                                <canvas id="canvas"></canvas>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div id="sensor_list"></div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                -->
+
+            <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = "" gameid = "{{ game.gameid }}" roomid = "{{ game.room_id }}" id = "mainInfo">Save</button>
+
+                                                        <!--  Things get appended here thru setSandBox() -->
                         </div>
                     </div>
                 </div>
@@ -165,404 +156,407 @@
         </div>
     </section>
 </div>
-	<script>
-        let to_add=[];
-        let sensor_data;
-        let new_obj = [];
-        let sensors=[];
-        let chartColors = {
-  red: 'rgb(255, 99, 132)',
-  orange: 'rgb(255, 159, 64)',
-  yellow: 'rgb(255, 205, 86)',
-  green: 'rgb(75, 192, 192)',
-  blue: 'rgb(54, 162, 235)',
-  purple: 'rgb(153, 102, 255)',
-  grey: 'rgb(231,233,237)',
-  black: 'rgb(0,0,0)',
-};
-        let color = Chart.helpers.color;
-        let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
-        console.log(start_time);
-		let colorNames = Object.keys(window.chartColors);
-        let customTooltips = function(tooltip) {
-			// Tooltip Element
-			var tooltipEl = document.getElementById('chartjs-tooltip');
 
-			if (!tooltipEl) {
-				tooltipEl = document.createElement('div');
-				tooltipEl.id = 'chartjs-tooltip';
-				tooltipEl.innerHTML = '<table></table>';
-				this._chart.canvas.parentNode.appendChild(tooltipEl);
-			}
 
-			// Hide if no tooltip
-			if (tooltip.opacity === 0) {
-				tooltipEl.style.opacity = 0;
-				return;
-			}
-
-			// Set caret Position
-			tooltipEl.classList.remove('above', 'below', 'no-transform');
-			if (tooltip.yAlign) {
-				tooltipEl.classList.add(tooltip.yAlign);
-			} else {
-				tooltipEl.classList.add('no-transform');
-			}
-
-			function getBody(bodyItem) {
-				return bodyItem.lines;
-			}
-
-			// Set Text
-			if (tooltip.body) {
-				var titleLines = tooltip.title || [];
-				var bodyLines = tooltip.body.map(getBody);
-
-				var innerHtml = '<thead>';
-
-				titleLines.forEach(function(title) {
-					innerHtml += '<tr><th>' + title + '</th></tr>';
-				});
-				innerHtml += '</thead><tbody>';
-
-				bodyLines.forEach(function(body, i) {
-					var colors = tooltip.labelColors[i];
-					var style = 'background:' + colors.backgroundColor;
-					style += '; border-color:' + colors.borderColor;
-					style += '; border-width: 2px';
-					var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-					innerHtml += '<tr><td>' + span + body + '</td></tr>';
-				});
-				innerHtml += '</tbody>';
-
-				var tableRoot = tooltipEl.querySelector('table');
-				tableRoot.innerHTML = innerHtml;
-			}
-
-			var positionY = this._chart.canvas.offsetTop;
-			var positionX = this._chart.canvas.offsetLeft;
-
-			// Display, position, and set styles for font
-			tooltipEl.style.opacity = 1;
-			tooltipEl.style.left = positionX + tooltip.caretX + 'px';
-			tooltipEl.style.top = positionY + tooltip.caretY + 'px';
-			tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
-			tooltipEl.style.fontSize = tooltip.bodyFontSize + 'px';
-			tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
-			tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
-		};
-        let live_config = {
-    type: 'line',
-    data: {
-        start_time: start_time,
-        labels: [],
-        datasets: [],
-        statuses:[],
-    },
-    options: {
-        elements:{
-            line: {
-                tension: 0
-            }
-        },
-        spanGaps:true,
-        responsive: true,
-        legend: {
-            position: 'bottom',
-        },
-        title: {
-            display: true,
-            text: '{{ room.room_name }} Game #69'
-        },
-        tooltips: {
-            mode: 'index',
-            intersect: false,
-            footerFontStyle: 'normal'
-        },
-        hover: {
-            mode: 'nearest',
-            intersect: false
-        },
-        scales: {
-            xAxes: [{
-                display: true,
-                type: 'time',
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Time'
-                }
-            }],
-            yAxes: [{
-
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Activation Status'
-                },
-                ticks: {
-                        beginAtZero: true,
-                        steps: 0,
-                        min:0,
-                        stepValue: 5,
-                        max: 1.0001
-                    }
-            }]
-        }
-    }
-};
-		let config = {
-			type: 'line',
-			data: {
-			    start_time: start_time,
-				labels: [],
-				datasets: [],
-                statuses:[],
-                data_objs:[],
-			},
-			options: {
-				responsive: true,
-                spanGaps:true,
-                legend: {
-                    position: 'bottom',
-                    display: true,
-                    labels: {
-                        padding:15,
-                        fontSize: 13,
-                        usePointStyle:true,
-                    }
-                },
-				title: {
-					display: true,
-					text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
-				},
-				tooltips: {
-					mode: 'index',
-					intersect: false,
-                    custom: function(tooltip) {
-                    if (!tooltip) return;
-                    // disable displaying the color box;
-                    tooltip.displayColors = true;
-                    },
-                    callbacks: {
-                        // use label callback to return the desired label
-                        label: function(tooltipItem, data) {
-                         // console.log(tooltipItem);
-                          let time_solved = new Date(tooltipItem.xLabel);
-                          let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
-                          if (comp_time) {return "Start time";}
-                          let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
-                          return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
-                        },
-                        title: function(tooltipItem, data) {
-                            return tooltipItem[0].xLabel;
-                        },
-                        footer: function(tooltipItems, data) {
-							let val = null;
-							let min = null;
-							let sec = null;
-							let stat = null;
-							console.log(data.statuses);
-							tooltipItems.forEach(function(tooltipItem) {
-								val = data.data_objs[tooltipItem.datasetIndex].time_solved;
-								sec = ((val % 1)*60).toFixed(2);
-								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.datasetIndex];
-							});
-							if(stat){
-                                if (min !== 0 && sec !== 0){
-                                    if (parseInt(sec) === 0){
-                                        return 'Elapsed: ' + min + " min";
-                                    }
-                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
-                                }
-                            }
-                            return 'Not solved yet';
-						},
-
-                        // Use the footer callback to display the sum of the items showing in the tooltip
-
-                      },
-                    /*
-                    callbacks: {
-
-					},
-                    */
-					footerFontStyle: 'normal'
-				},
-				hover: {
-					mode: 'index',
-					intersect: true
-				},
-				scales: {
-					xAxes: [{
-						display: true,
-                        type: 'time',
-						scaleLabel: {
-							display: true,
-							labelString: 'time triggered'
-						}
-					}],
-					yAxes: [{
-						display: false,
-						scaleLabel: {
-							display: true,
-						},
-						ticks: {
-                                beginAtZero: true,
-                                steps: 0,
-                                min:0,
-                                stepValue: 5,
-                                max: 4.00001
-                            }
-					}]
-				}
-			}
-		};
-        window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-            let live_ctx = document.getElementById('live_monitor').getContext('2d');
-            window.LiveLine = new Chart(live_ctx, live_config);
-            window.myLine = new Chart(ctx, config);
-            initMonData();
-            initData();
-            console.log("started live_data");
-            console.log("started summary");
-		};
-        function initData() {
-
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
-           sensor_data.done(function(results){
-                console.log(results);
-                obj = results.sensors;
-                newYAxis = null;
-
-                for (i in obj)
-                {
-                   colorName = colorNames[config.data.datasets.length % colorNames.length];
-                   newColor = window.chartColors[colorName];
-                   newXAxis = {
-                        id: "id-"+i,
-                        type: 'time',
-                        position: 'bottom',
-                        display: false,
-                        ticks: {
-                        min: 0,
-                        max: 168,
-                        stepSize: 1000
-                        }
-
-                   };
-                   newDataset = {
-                        type: 'line',
-                        label: obj[i].sensor_name,
-                        xAxisID:"id-"+i,
-                        borderWidth: 50,
-                        pointStyle: 'line',
-                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
-                        borderColor: newColor,
-                        data: [],
-                        fill: false
-                   };
-
-                   config.data.datasets.push(newDataset);
-                   sensors.push(obj[i].sensor_id);
-                   config.options.scales.xAxes.push(newXAxis);
-                   window.myLine.update()
-                }
-           });
-           let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
-           game_data.done(function(results){
-               let obj = results.data;
-
-               let ctr = 0;
-               let prev_ts=null;
-               console.log(obj);
-                for (obx in obj)
-                {
-                   let ind = sensors.indexOf(obj[obx].sensor_id);
-                   if(ind !== 0){
-                       let time_stamp = new Date(obj[obx].timestamp);
-                       new_obj.push(prev_ts);
-                       prev_ts=obj[obx].timestamp;
-                   }
-                   else{
-                       new_obj.push(start_time);
-                       prev_ts=obj[obx].timestamp;
-                   }
-                   ctr+=1;
-                }
-                //config.data.data_objs = new_obj.splice(0);
-                for (ob in obj)
-                {
-
-                   config.data.data_objs.push(obj[ob]) ;
-                   let ind = sensors.indexOf(obj[ob].sensor_id);
-                   if(ind !== 0){
-                       config.data.labels.push(new_obj[ob]);
-                       config.data.labels.push(new Date(obj[ob].timestamp));
-                       for(let x =0; x < sensors.length;x++){
-                            if(obj[ob].sensor_id === sensors[x]){
-                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
-                                config.data.datasets[x].data.push(sensors.length-0.75-ob);
-                                config.data.datasets[x].data.push(sensors.length-0.75-ob);
-                            }
-                            else{
-                                config.data.datasets[x].data.push(null);
-                                config.data.datasets[x].data.push(null);
-                            }
-                        }
-                   }
-                   else{
-                       config.data.labels.push(start_time);
-                       config.data.labels.push(new Date(obj[ob].timestamp));
-                       for(let x =0; x < sensors.length;x++){
-                            if(obj[ob].sensor_id === sensors[x]){
-                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
-                                config.data.datasets[x].data.push(sensors.length-0.75);
-                                config.data.datasets[x].data.push(sensors.length-0.75);
-                            }
-                            else{
-                                config.data.datasets[x].data.push(null);
-                                config.data.datasets[x].data.push(null);
-                            }
-                        }
-                   }
-                   window.myLine.update()
-                }
-                console.log(config.data.labels);
-                console.log(config.data.datasets);
-           });
-			window.myLine.update();
-		    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
-            summary_data.done(function(results){
-                console.log(results.data);
-                $("#time_finished").html(results.data.general_info.time_finished_duration);
-                $("#skill_bracket").html(results.data.general_info.skill_bracket);
-                $("#avg_time").html(results.data.general_info.average_time);
-                for(ind in results.data.sensor_info)
-                {
-                    //<div class="uk-card uk-card-default uk-card-body">Item 1</div>
-                    let str='<div class="uk-width-1-3 uk-card uk-card-default uk-card-body box_shdw"><dl class="uk-description-list">';
-                    str+="<dt>"+results.data.sensor_info[ind].sensor_name+"</dt>";
-                    str+="<dd>trigger count: "+results.data.sensor_info[ind].times_triggered+"</dd>";
-                    str+="<dd>down count: "+results.data.sensor_info[ind].times_down+"<dd>";
-                    str+='</dl></div>';
-                    $("#sensor_list").append(str);
-                }
-            });
-        }
-	</script>
 <script>
-function initMonData() {
+    let to_add=[];
+    let sensor_data;
+    let new_obj = [];
+    let sensors=[];
+    let times =0;
+    let chartColors = {
+red: 'rgb(255, 99, 132)',
+orange: 'rgb(255, 159, 64)',
+yellow: 'rgb(255, 205, 86)',
+green: 'rgb(75, 192, 192)',
+blue: 'rgb(54, 162, 235)',
+purple: 'rgb(153, 102, 255)',
+grey: 'rgb(231,233,237)',
+black: 'rgb(0,0,0)',
+};
+    let color = Chart.helpers.color;
+    let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
+    console.log(start_time);
+    let colorNames = Object.keys(window.chartColors);
+    let customTooltips = function(tooltip) {
+        // Tooltip Element
+        var tooltipEl = document.getElementById('chartjs-tooltip');
+
+        if (!tooltipEl) {
+            tooltipEl = document.createElement('div');
+            tooltipEl.id = 'chartjs-tooltip';
+            tooltipEl.innerHTML = '<table></table>';
+            this._chart.canvas.parentNode.appendChild(tooltipEl);
+        }
+
+        // Hide if no tooltip
+        if (tooltip.opacity === 0) {
+            tooltipEl.style.opacity = 0;
+            return;
+        }
+
+        // Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform');
+        if (tooltip.yAlign) {
+            tooltipEl.classList.add(tooltip.yAlign);
+        } else {
+            tooltipEl.classList.add('no-transform');
+        }
+
+        function getBody(bodyItem) {
+            return bodyItem.lines;
+        }
+
+        // Set Text
+        if (tooltip.body) {
+            var titleLines = tooltip.title || [];
+            var bodyLines = tooltip.body.map(getBody);
+
+            var innerHtml = '<thead>';
+
+            titleLines.forEach(function(title) {
+                innerHtml += '<tr><th>' + title + '</th></tr>';
+            });
+            innerHtml += '</thead><tbody>';
+
+            bodyLines.forEach(function(body, i) {
+                var colors = tooltip.labelColors[i];
+                var style = 'background:' + colors.backgroundColor;
+                style += '; border-color:' + colors.borderColor;
+                style += '; border-width: 2px';
+                var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+                innerHtml += '<tr><td>' + span + body + '</td></tr>';
+            });
+            innerHtml += '</tbody>';
+
+            var tableRoot = tooltipEl.querySelector('table');
+            tableRoot.innerHTML = innerHtml;
+        }
+
+        var positionY = this._chart.canvas.offsetTop;
+        var positionX = this._chart.canvas.offsetLeft;
+
+        // Display, position, and set styles for font
+        tooltipEl.style.opacity = 1;
+        tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+        tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
+        tooltipEl.style.fontSize = tooltip.bodyFontSize + 'px';
+        tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
+        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+    };
+    let live_config = {
+type: 'line',
+data: {
+    start_time: start_time,
+    labels: [],
+    datasets: [],
+    statuses:[],
+},
+options: {
+    elements:{
+        line: {
+            tension: 0
+        }
+    },
+    spanGaps:true,
+    responsive: true,
+    legend: {
+        position: 'bottom',
+    },
+    title: {
+        display: true,
+        text: '{{ room.room_name }} Game #69'
+    },
+    tooltips: {
+        mode: 'index',
+        intersect: false,
+        footerFontStyle: 'normal'
+    },
+    hover: {
+        mode: 'nearest',
+        intersect: false
+    },
+    scales: {
+        xAxes: [{
+            display: true,
+            type: 'time',
+            scaleLabel: {
+                display: true,
+                labelString: 'Time'
+            }
+        }],
+        yAxes: [{
+
+            display: true,
+            scaleLabel: {
+                display: true,
+                labelString: 'Activation Status'
+            },
+            ticks: {
+                    beginAtZero: true,
+                    steps: 0,
+                    min:0,
+                    stepValue: 5,
+                    max: 1.0001
+                }
+        }]
+    }
+}
+};
+    let config = {
+        type: 'line',
+        data: {
+            start_time: start_time,
+            labels: [],
+            datasets: [],
+            statuses:[],
+            data_objs:[],
+        },
+        options: {
+            responsive: true,
+            spanGaps:true,
+            legend: {
+                position: 'bottom',
+                display: true,
+                labels: {
+                    padding:15,
+                    fontSize: 13,
+                    usePointStyle:true,
+                }
+            },
+            title: {
+                display: true,
+                text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                custom: function(tooltip) {
+                if (!tooltip) return;
+                // disable displaying the color box;
+                tooltip.displayColors = true;
+                },
+                callbacks: {
+                    // use label callback to return the desired label
+                    label: function(tooltipItem, data) {
+                     // console.log(tooltipItem);
+                      let time_solved = new Date(tooltipItem.xLabel);
+                      let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+                      if (comp_time) {return "Start time";}
+                      let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
+                      return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
+                    },
+                    title: function(tooltipItem, data) {
+                        return tooltipItem[0].xLabel;
+                    },
+                    footer: function(tooltipItems, data) {
+                        let val = null;
+                        let min = null;
+                        let sec = null;
+                        let stat = null;
+                        console.log(data.statuses);
+                        tooltipItems.forEach(function(tooltipItem) {
+                            val = data.data_objs[tooltipItem.datasetIndex].time_solved;
+                            sec = ((val % 1)*60).toFixed(2);
+                            min = Math.floor(val);
+                            stat = data.statuses[tooltipItem.datasetIndex];
+                        });
+                        if(stat){
+                            if (min !== 0 && sec !== 0){
+                                if (parseInt(sec) === 0){
+                                    return 'Elapsed: ' + min + " min";
+                                }
+                                return 'Elapsed: ' + min + " min and " + sec +" sec" ;
+                            }
+                        }
+                        return 'Not solved yet';
+                    },
+
+                    // Use the footer callback to display the sum of the items showing in the tooltip
+
+                  },
+                /*
+                callbacks: {
+
+                },
+                */
+                footerFontStyle: 'normal'
+            },
+            hover: {
+                mode: 'index',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    type: 'time',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'time triggered'
+                    }
+                }],
+                yAxes: [{
+                    display: false,
+                    scaleLabel: {
+                        display: true,
+                    },
+                    ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min:0,
+                            stepValue: 5,
+                            max: 4.00001
+                        }
+                }]
+            }
+        }
+    };
+    window.onload = function() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+        let live_ctx = document.getElementById('live_monitor').getContext('2d');
+        window.LiveLine = new Chart(live_ctx, live_config);
+        window.myLine = new Chart(ctx, config);
+        initMonData();
+        initData();
+        console.log("started live_data");
+        console.log("started summary");
+    };
+    function initData() {
+
+       sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
+       sensor_data.done(function(results){
+            console.log(results);
+            obj = results.sensors;
+            newYAxis = null;
+
+            for (i in obj)
+            {
+               colorName = colorNames[config.data.datasets.length % colorNames.length];
+               newColor = window.chartColors[colorName];
+               newXAxis = {
+                    id: "id-"+i,
+                    type: 'time',
+                    position: 'bottom',
+                    display: false,
+                    ticks: {
+                    min: 0,
+                    max: 168,
+                    stepSize: 1000
+                    }
+
+               };
+               newDataset = {
+                    type: 'line',
+                    label: obj[i].sensor_name,
+                    xAxisID:"id-"+i,
+                    borderWidth: 50,
+                    pointStyle: 'line',
+                    backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                    borderColor: newColor,
+                    data: [],
+                    fill: false
+               };
+
+               config.data.datasets.push(newDataset);
+               sensors.push(obj[i].sensor_id);
+               config.options.scales.xAxes.push(newXAxis);
+               window.myLine.update()
+            }
+       });
+       let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+       game_data.done(function(results){
+           let obj = results.data;
+
+           let ctr = 0;
+           let prev_ts=null;
+           console.log(obj);
+            for (obx in obj)
+            {
+               let ind = sensors.indexOf(obj[obx].sensor_id);
+               if(ind !== 0){
+                   let time_stamp = new Date(obj[obx].timestamp);
+                   new_obj.push(prev_ts);
+                   prev_ts=obj[obx].timestamp;
+               }
+               else{
+                   new_obj.push(start_time);
+                   prev_ts=obj[obx].timestamp;
+               }
+               ctr+=1;
+            }
+            //config.data.data_objs = new_obj.splice(0);
+            for (ob in obj)
+            {
+
+               config.data.data_objs.push(obj[ob]) ;
+               let ind = sensors.indexOf(obj[ob].sensor_id);
+               if(ind !== 0){
+                   config.data.labels.push(new_obj[ob]);
+                   config.data.labels.push(new Date(obj[ob].timestamp));
+                   for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x]){
+                            config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                            config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                            config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                        }
+                        else{
+                            config.data.datasets[x].data.push(null);
+                            config.data.datasets[x].data.push(null);
+                        }
+                    }
+               }
+               else{
+                   config.data.labels.push(start_time);
+                   config.data.labels.push(new Date(obj[ob].timestamp));
+                   for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x]){
+                            config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                            config.data.datasets[x].data.push(sensors.length-0.75);
+                            config.data.datasets[x].data.push(sensors.length-0.75);
+                        }
+                        else{
+                            config.data.datasets[x].data.push(null);
+                            config.data.datasets[x].data.push(null);
+                        }
+                    }
+               }
+               window.myLine.update()
+            }
+            console.log(config.data.labels);
+            console.log(config.data.datasets);
+       });
+        window.myLine.update();
+        let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+        summary_data.done(function(results){
+            console.log(results.data);
+            $("#time_finished").html(results.data.general_info.time_finished_duration);
+            $("#skill_bracket").html(results.data.general_info.skill_bracket);
+            $("#avg_time").html(results.data.general_info.average_time);
+            for(ind in results.data.sensor_info)
+            {
+                //<div class="uk-card uk-card-default uk-card-body">Item 1</div>
+                let str='<div class="uk-width-1-3 uk-card uk-card-default uk-card-body box_shdw"><dl class="uk-description-list">';
+                str+="<dt>"+results.data.sensor_info[ind].sensor_name+"</dt>";
+                str+="<dd>trigger count: "+results.data.sensor_info[ind].times_triggered+"</dd>";
+                str+="<dd>down count: "+results.data.sensor_info[ind].times_down+"<dd>";
+                str+='</dl></div>';
+                $("#sensor_list").append(str);
+            }
+        });
+    }
+</script>
+<script>
+    function initMonData() {
 let to_add_live=[];
 let sensors=[];
 let sensor_data=[];
 let sensor_data_len;
-		   let time = start_time;
-		   let newDataset;
-		   let newXAxis;
-		   let colorName;
-		   let newColor;
+           let time = start_time;
+           let newDataset;
+           let newXAxis;
+           let colorName;
+           let newColor;
            sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
            sensor_data.done(function(results){
               let obj = results.sensors;
@@ -602,7 +596,7 @@ let sensor_data_len;
                }
 
            });
-		   sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
+           sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
            sensor_data.done(function(results){
                sensor_data_len = results.data.length;
                obj = results.data;
@@ -617,7 +611,7 @@ let sensor_data_len;
                             live_config.data.datasets[x].data.push(null);
                         }
                     }
-			        window.LiveLine.update()
+                    window.LiveLine.update()
                 }
 
            });
@@ -625,8 +619,148 @@ let sensor_data_len;
             summary_data.done(function(results){
                 console.log(results.data);
            });
-			window.LiveLine.update();
+            window.LiveLine.update();
         }
-    </script>
+</script>
+
+<script>
+    function sendSensorRequet(){
+        var rid = document.getElementById("mainInfo").getAttribute("roomid");
+        $.ajax({
+            type:"POST",
+            url:"/octo_site/api/get_sensor_by_room_id/"+rid+"/",
+            data: {
+                'game_id': rid,
+            },
+            success: function(data){
+                setSandBox(data.sensors);
+            }
+        });
+    }
+
+    function setSandBox(sensors){
+        //console.log(sensors);
+        dom = document.getElementById("sensor_sequence_plot");
+        str = ""
+        for(i in sensors){
+            str_append = '<div id = "sensor-tip-'+i+'" class="div_drag" uk-tooltip="'+sensors[i].sensor_name+'" sensor-id="'+sensors[i].sensor_id+'" onmousedown=""  style="left: '+sensors[i].left_coordinate+'%; top: '+sensors[i].top_coordinate+'%;width: 25px; height: 25px;text-align: center;position: absolute;"> <span style="color: white;width: 25px; height: 25px;" data-uk-icon="icon: nut"></span></div>';
+            str += str_append+"\n";
+        }
+
+        dom.innerHTML = str;
+        setPathContent(sensors);
+    }
+
+    function setPathContent(sensors){
+        let dom = document.getElementById("path_sequence_plot");
+       let  str = "";
+        for(i in sensors){
+            if(i != 0){
+                let str_append = '<div class = "path-container" id = "laser" target1 = "'+(i-1)+'" target2 = "'+i+'" arw_target = 1></div>';
+                str += str_append+"\n";
+            }
+        }
+        dom.innerHTML = str;
+        produceConnections();
+    }
+
+    function produceConnections(){
+        items = document.getElementsByClassName("path-container");
+        console.log(items.length);
+
+       console.log("henlo");
+        for(var i = 0; i < items.length; i++){
+            setPathF(items[i]);
+        }
+        animatePath(items);
+    }
+    function setPathF(pathdom){
+            var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
+            var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
+
+            var p1 = document.getElementById(t1n);
+            var p2 = document.getElementById(t2n);
+
+            var s1 = window.getComputedStyle(p1);
+            var s2 = window.getComputedStyle(p2);
+
+            var y1 = parseInt(p1.offsetTop);
+            var y2 = parseInt(p2.offsetTop);
+
+            var x1 = parseInt(p1.offsetLeft);
+            var x2 = parseInt(p2.offsetLeft);
+
+            delta_x = x2 - x1;
+            delta_y = y2 - y1;
+
+            theta_radians = Math.atan2(delta_y, delta_x)*57.2958;
+
+
+            delta_a = Math.abs(delta_x)*Math.abs(delta_x);
+            delta_b = Math.abs(delta_y)*Math.abs(delta_y);
+            hypotenuse = Math.sqrt(delta_a + delta_b);
+
+            console.log(p1, p2);
+
+            console.log(y1, y2);
+
+            console.log(x1, x2);
+            console.log("d_x "+delta_x);
+            console.log("d_y "+delta_y);
+            console.log("d_a "+delta_a);
+            console.log("d_b "+delta_b);
+            console.log("radian "+theta_radians);
+
+            var l = pathdom;
+            l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;");
+            l.style.top = p1.offsetTop+"px";
+            l.style.left = p1.offsetLeft+"px";
+            l.style.width = hypotenuse+"px";
+            str = "";
+            rep = Math.floor((hypotenuse)/20);
+
+            for(var i = 0; i < rep; i++){
+
+                console.log("setting path ");
+                str += '<img class = "arw" src="{% static "media/imgs/arrow.png" %}" width = "20px" height = "100%" style = "visibility: hidden;">\n';
+            }
+            l.innerHTML = str;
+        }
+        function animatePath(paths){
+            const animate_arrows = (elements, elem_index, this_interval) => {
+                var arrows = elements[elem_index].children;
+                var target  = parseInt(elements[elem_index].getAttribute("arw_target"));
+                var arrowLength = arrows.length;
+                arrows[target].setAttribute("style", "visibility: visible;");
+                if(target === 0){
+                    arrows[arrowLength-1].setAttribute("style", "visibility: hidden;");
+                }
+                else{
+                    arrows[target-1].setAttribute("style", "visibility: hidden;");
+                }
+                elements[elem_index].setAttribute("arw_target", parseInt(target) + 1 < arrowLength ? parseInt(target)+1: 0);
+                if(target === arrowLength-1){
+
+                    clearInterval(this_interval);
+                    setTimeout(()=> {
+
+                        arrows[target].setAttribute("style", "visibility: hidden;");
+                        if(!(elem_index < arrowLength-2)){
+                            elem_index = -1;
+                        }
+                        var new_interv = setInterval(() => {
+                            animate_arrows(elements, elem_index+1, new_interv);
+                        }, 80);
+                    }, 80)
+                }
+            }
+            var interv = setInterval(() => {
+                animate_arrows(paths, 0, interv);
+            }, 80);
+        }
+
+       sendSensorRequet();
+</script>
+
 {% include 'octo_site/includes/offcanvas.html' %}
 

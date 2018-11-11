@@ -216,9 +216,10 @@ loop();
         animatePath(items);
     }
     function setPathF(pathdom){
+
             var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
             var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
-            
+
             var p1 = document.getElementById(t1n);
             var p2 = document.getElementById(t2n);
 
@@ -239,6 +240,17 @@ loop();
             delta_a = Math.abs(delta_x)*Math.abs(delta_x);
             delta_b = Math.abs(delta_y)*Math.abs(delta_y);
             hypotenuse = Math.sqrt(delta_a + delta_b);
+
+            console.log(p1, p2);
+
+            console.log(y1, y2);
+
+            console.log(x1, x2);
+                console.log("d_x "+delta_x);
+                console.log("d_y "+delta_y);
+                console.log("d_a "+delta_a);
+                console.log("d_b "+delta_b);
+                console.log("radian "+theta_radians);
             var l = pathdom;
             l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;")
             l.style.top = p1.offsetTop+"px";
@@ -246,6 +258,8 @@ loop();
             l.style.width = hypotenuse+"px";
             str = "";
             rep = Math.floor((hypotenuse)/20);
+
+                console.log("rep path "+hypotenuse);
             for(var i = 0; i < rep; i++){
                 str += '<img class = "arw" src="{% static "media/imgs/arrow.png" %}" width = "20px" height = "100%" style = "visibility: hidden;">\n';
             }
