@@ -341,7 +341,10 @@ class GameErrorLog(models.Model):
         managed = False
         db_table = 'game_error_log'
         unique_together = (('game_error_id', 'game', 'sensor'),)
-
+    @staticmethod
+    def error_not_log_existing(game_id, sensor_id):
+        ct = GameErrorLog.objects.filter(game_id=game_id,sensor_id=sensor_id).count()
+        return False if ct > 0 else True
 
 class GameWarningLog(models.Model):
     game_warning_id = models.AutoField(primary_key=True)

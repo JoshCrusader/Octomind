@@ -26,17 +26,18 @@ def check_seq(game):
     in_seq = True
     sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
     seq = []
-    cur_seq = []
-    log_data = pull_data_fr_game(game.game_id)
+    log_data = game.pull_data_fr_game(game)
     trigger_seqs = {}
     for s in sensors:
         trigger_seqs[str(s.sensor_id)] = None
         seq.append(s.sensor_id)
     trigger_seq = 1
     skip_sensors = []
+
     for data in log_data:
         s = Sensor.objects.get(sensor_id=data['sensor_id'])
         if 1 == int(data['value']) and s.sensor_id not in skip_sensors:
+
             skip_sensors.append(s.sensor_id)
             trigger_seqs[str(s.sensor_id)] = trigger_seq
             trigger_seq += 1
@@ -46,12 +47,20 @@ def check_seq(game):
         if trigger_seqs[t] is not None:
             s = Sensor.objects.get(sensor_id=t)
             if s.sequence_number != trigger_seqs[t]:
+                if GameErrorLog.error_not_log_existing(game.game_id, s.sensor_id):
+                    game_error_log = GameErrorLog(
+                        game_id=game.game_id,
+                        sensor_id=s.sensor_id,
+                        details=str(s.sensor_name) + " not in sequence",
+                        timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                        cur_sensor_seq=game.get_sensor_trigger_sequence
+                    )
+                    game_error_log.save()
+                    print("error inserted")
                 print(str(s.sensor_name) + " not in sequence")
                 in_seq = False
     if in_seq:
         print("all is insequence so far")
-    else:
-        print("wew")
     return in_seq
 # UNUSED FUNCTIONS
 def pull_data():
