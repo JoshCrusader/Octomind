@@ -20,7 +20,24 @@ def pull_data_game(game_id):
 def pull_data_live_control_panel(game_id):
     g = Game.objects.get(game_id=game_id)
     check_seq(g)
+    #check_anomaly(g)
     return g.pull_data_fr_game(g)
+
+# CAN THEY CHANGE TIME SOLVED?
+def check_anomaly(game):
+    data = game.pull_data_game(game)
+    for s in data:
+        if s.time_solved != 0 and s.time_solved <5:
+            if GameWarningLog.warning_log_not_existing(game.game_id, s.sensor_id):
+                game_warning_log = GameWarningLog(
+                    game_id=game.game_id,
+                    sensor_id=s.sensor_id,
+                    details=str(s.sensor_name) + " solved super fast",
+                    timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                    time_solved=s.time_solved
+                )
+                game_warning_log.save()
+    return "no anomaly in solving times detected"
 
 def check_seq(game):
     in_seq = True
@@ -47,7 +64,7 @@ def check_seq(game):
         if trigger_seqs[t] is not None:
             s = Sensor.objects.get(sensor_id=t)
             if s.sequence_number != trigger_seqs[t]:
-                if GameErrorLog.error_not_log_existing(game.game_id, s.sensor_id):
+                if GameErrorLog.error_log_not_existing(game.game_id, s.sensor_id):
                     game_error_log = GameErrorLog(
                         game_id=game.game_id,
                         sensor_id=s.sensor_id,

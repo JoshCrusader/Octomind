@@ -121,17 +121,7 @@ class Game(models.Model):
         return True
     @property
     def has_error(self):
-        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
-        my_seq = self.get_sensor_trigger_sequence
-        index_add = len(real_seq) - len(my_seq)
-        if index_add != 0:
-            index_add = real_seq[-1*index_add:]
-            for i in index_add:
-                my_seq.append(i)
-
-        if str(my_seq) == str(real_seq):
-            return False
-        return True
+        return True if GameErrorLog.objects.filter(game_id=self).count() > 0 else False
     @property
     def get_error_points_sensors(self):
         problem_sensors =[]
@@ -150,7 +140,7 @@ class Game(models.Model):
         return problem_sensors
     @property
     def has_warning(self):
-        return False
+        return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
     @staticmethod
     def pull_data_game(self):
         # to_put_time_constraint here
@@ -342,7 +332,7 @@ class GameErrorLog(models.Model):
         db_table = 'game_error_log'
         unique_together = (('game_error_id', 'game', 'sensor'),)
     @staticmethod
-    def error_not_log_existing(game_id, sensor_id):
+    def error_log_not_existing(game_id, sensor_id):
         ct = GameErrorLog.objects.filter(game_id=game_id,sensor_id=sensor_id).count()
         return False if ct > 0 else True
 
@@ -357,6 +347,10 @@ class GameWarningLog(models.Model):
     class Meta:
         managed = False
         db_table = 'game_warning_log'
+    @staticmethod
+    def warning_log_not_existing(game_id, sensor_id):
+        ct = GameWarningLog.objects.filter(game_id=game_id, sensor_id=sensor_id).count()
+        return False if ct > 0 else True
 
 class Players(models.Model):
     players_id = models.AutoField(primary_key=True)
