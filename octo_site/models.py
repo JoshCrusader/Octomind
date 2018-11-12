@@ -10,6 +10,9 @@ from django.db import models
 from django.conf import settings
 import MySQLdb
 import math
+from dateutil.relativedelta import relativedelta
+import pytz
+from utils.numToWords import int_to_en as numToWords
 from datetime import datetime,timedelta
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
@@ -54,9 +57,45 @@ class Game(models.Model):
         managed = False
         db_table = 'game'
         unique_together = (('game_id', 'game_details'),)
+
+    @property
+    def get_time_ago(self):
+        utc = pytz.UTC
+        diff = relativedelta(datetime.now().replace(tzinfo=utc),self.game_details.timestart.replace(tzinfo=utc),)
+        if diff.months == 0:
+            if diff.days == 0:
+                if diff.hours == 0:
+                    if diff.minutes == 0:
+                        return "moments ago"
+                    return str(diff.minutes)+" minutes ago"
+                else:
+                    return str(diff.hours)+" hours ago"
+            else:
+                return str(diff.days)+" days ago"
+        else:
+            return str(diff.months)+" months ago"
     @property
     def match_id(self):
         return self.game_id + 100000
+
+    @property
+    def get_team_size(self):
+        sz = Teams.objects.filter(game_id=self.game_id).count()
+        return numToWords(int(sz))
+    @property
+    def get_sensors_on_trigger_sequence(self):
+        sensors = []
+        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
+        my_seq = self.get_sensor_trigger_sequence
+        index_add = len(real_seq) - len(my_seq)
+        if index_add != 0:
+            index_add = real_seq[-1 * index_add:]
+            for i in index_add:
+                my_seq.append(i)
+        for s in my_seq:
+            sensors.append(Sensor.objects.get(sensor_id=s))
+        print(sensors)
+        return sensors
     @property
     def get_sensor_trigger_sequence(self):
         trigger_seq = []
@@ -128,7 +167,7 @@ class Game(models.Model):
         time_diff_in_min = None
         new_data = []
         game = self
-        sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+        sensors = Game.objects.get(game_id=game.game_id).get_sensors_on_trigger_sequence
         sensors_id = []
         sensors_id_included = []
         for s in sensors:
@@ -180,6 +219,7 @@ class Game(models.Model):
         # close the connection
         connection.close()
         # print(new_data)
+        #print(new_data)
         return new_data
     @staticmethod
     def pull_game_tally(self):
@@ -265,8 +305,12 @@ class Game(models.Model):
             time_finished = clean_date + timedelta(minutes=math.floor(avg_sum), seconds=(avg_sum % 1))
             time_diff = time_finished - clean_date
             time_finished = round(time_diff / timedelta(minutes=1), 2)
+        if avg_sum == 0:
 
-        average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
+            average_times_bet_sensors = 0
+        else:
+            average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
+
 
         if time_finished >= 31 and time_finished <= 45:
             skill_bracket = "Normal"
@@ -291,7 +335,37 @@ class GameDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'game_details'
+    @property
+    def get_max_endtime(self):
+        return self.timestart + timedelta(hours=1)
+class GameErrorLog(models.Model):
+    game_error_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING)
+    sensor = models.ForeignKey('Sensor', models.DO_NOTHING)
+    details = models.CharField(max_length=100, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    cur_sensor_seq = models.CharField(max_length=50, blank=True, null=True)
 
+    class Meta:
+        managed = False
+        db_table = 'game_error_log'
+        unique_together = (('game_error_id', 'game', 'sensor'),)
+    @staticmethod
+    def error_not_log_existing(game_id, sensor_id):
+        ct = GameErrorLog.objects.filter(game_id=game_id,sensor_id=sensor_id).count()
+        return False if ct > 0 else True
+
+class GameWarningLog(models.Model):
+    game_warning_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING, blank=True, null=True)
+    sensor = models.ForeignKey('Sensor', models.DO_NOTHING, blank=True, null=True)
+    details = models.CharField(max_length=45, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    time_solved = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game_warning_log'
 
 class Players(models.Model):
     players_id = models.AutoField(primary_key=True)
@@ -372,6 +446,7 @@ class Room(models.Model):
             rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
             for rpi_sensor in rpi_sensors:
                 sensors.append(rpi_sensor)
+        print(sensors)
         return sensors
 
     @property

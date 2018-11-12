@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from octo_site.forms import *
 from django.core import serializers
 import socket
+import pytz
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
@@ -220,7 +221,13 @@ def get_room_by_room_id(request,room_id):
 @csrf_exempt
 def get_sensors_by_room_id(request,room_id):
     data_return = []
-    for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
+    for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
+        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+    return JsonResponse({"sensors":data_return})
+@csrf_exempt
+def get_sensor_by_game(request, game_id):
+    data_return = []
+    for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt
@@ -393,6 +400,31 @@ def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
     return render(request, 'octo_site/reports/trend_analysis.html')
-
 def sample_marker(request):
     return render(request, 'octo_site/sample_marker.html')
+def game_logs(request):
+    utc = pytz.UTC
+    cur_games = []
+    cur_inds = []
+    all_g = Game.objects.all()
+    gd = GameDetails.objects.filter(timeend__isnull=True)
+    for g in gd:
+        diff = datetime.now().replace(tzinfo=utc) - g.timestart.replace(tzinfo=utc)
+        days = diff.days
+        days_to_hours = days * 24
+        diff_btw_two_times = diff.seconds / 3600
+        overall_hours = days_to_hours + diff_btw_two_times
+        print(str(overall_hours) + ' hours')
+        #difference between time and now is less than 1 hour, then it is a past game.
+        if diff_btw_two_times < 1:
+            cur_games.append(Game.objects.get(game_id=g.game_details_id))
+            cur_inds.append(g.game_details_id)
+    for ag in all_g:
+        if ag.game_id in cur_inds:
+            all_g.remove(ag)
+    return render(request, 'octo_site/game_logs/game_logs.html', {'games': all_g, 'cur_games': cur_games})
+def game_logs_detail(request,game_id):
+    g = Game.objects.get(game_id=game_id)
+    summary = g.pull_game_summary(g)
+    return render(request, 'octo_site/game_logs/game_logs_detail.html',
+                  {'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info']})

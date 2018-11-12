@@ -110,7 +110,6 @@
 			tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
 			tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
 		};
-
 		let config = {
 			type: 'line',
 			data: {
@@ -228,12 +227,10 @@
 		};
         function initData() {
 
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
            sensor_data.done(function(results){
-                console.log(results);
                 obj = results.sensors;
                 newYAxis = null;
-
                 for (i in obj)
                 {
                    colorName = colorNames[config.data.datasets.length % colorNames.length];
@@ -267,31 +264,30 @@
                    config.options.scales.xAxes.push(newXAxis);
                    window.myLine.update()
                 }
+                console.log("sensors array",sensors);
            });
            let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
            game_data.done(function(results){
                let obj = results.data;
-
-               let ctr = 0;
                let prev_ts=null;
-               console.log(obj);
                 for (obx in obj)
                 {
                    let ind = sensors.indexOf(obj[obx].sensor_id);
-                   if(ind !== 0){
-                       let time_stamp = new Date(obj[obx].timestamp);
-                       new_obj.push(prev_ts);
-                       prev_ts=obj[obx].timestamp;
+                   if(parseInt(obj[obx].time_solved.toFixed(2)) !== 0){
+                       if(prev_ts !== null){
+                           let time_stamp = new Date(obj[obx].timestamp);
+                           new_obj.push(prev_ts);
+                           prev_ts=obj[obx].timestamp;
+                       }
+                       else{
+                           new_obj.push(start_time);
+                           prev_ts=obj[obx].timestamp;
+                       }
                    }
-                   else{
-                       new_obj.push(start_time);
-                       prev_ts=obj[obx].timestamp;
-                   }
-                   ctr+=1;
                 }
-                //config.data.data_objs = new_obj.splice(0);
                 for (ob in obj)
                 {
+                   if(parseInt(obj[ob].time_solved.toFixed(2)) !== 0){
 
                    config.data.data_objs.push(obj[ob]) ;
                    let ind = sensors.indexOf(obj[ob].sensor_id);
@@ -299,7 +295,7 @@
                        config.data.labels.push(new_obj[ob]);
                        config.data.labels.push(new Date(obj[ob].timestamp));
                        for(let x =0; x < sensors.length;x++){
-                            if(obj[ob].sensor_id === sensors[x]){
+                            if(obj[ob].sensor_id === sensors[x] &&  (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
                                 config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
@@ -314,7 +310,7 @@
                        config.data.labels.push(start_time);
                        config.data.labels.push(new Date(obj[ob].timestamp));
                        for(let x =0; x < sensors.length;x++){
-                            if(obj[ob].sensor_id === sensors[x]){
+                            if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
                                 config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
@@ -325,10 +321,11 @@
                             }
                         }
                    }
+                   }
                    window.myLine.update()
                 }
-                console.log(config.data.labels);
-                console.log(config.data.datasets);
+                console.log("lbl",config.data.labels);
+                console.log("datset",config.data.datasets);
            });
 			window.myLine.update();
 		    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");

@@ -77,6 +77,12 @@
     .draggable_list{
         list-style: none;
     }
+    .txt_white{
+        color: white;
+    }
+    .txt_light_gray{
+        color: #cdcdcd;
+    }
     .shdw{
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
@@ -142,7 +148,7 @@
         <ul class="uk-nav-default uk-nav-parent-icon" data-uk-nav>
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
-            <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Game Logs</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'game_logs' %}uk-active uk-open{% endif %}"><a href="{% url 'game_logs' %}">Game Logs</a></li>
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}">Room Analysis</a></li>

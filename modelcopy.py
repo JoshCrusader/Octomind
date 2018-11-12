@@ -85,8 +85,9 @@ class Branch(models.Model):
 
 
 class ClueDetails(models.Model):
-    clue_details_id = models.IntegerField(primary_key=True)
+    clue_details_id = models.AutoField(primary_key=True)
     detail = models.CharField(max_length=45, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -94,8 +95,9 @@ class ClueDetails(models.Model):
 
 
 class Clues(models.Model):
-    clues_id = models.IntegerField(primary_key=True)
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
+    games = models.ForeignKey('Game', models.DO_NOTHING)
+    clue_id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = False
@@ -147,7 +149,7 @@ class DjangoSession(models.Model):
 
 
 class Game(models.Model):
-    game_id = models.IntegerField(primary_key=True)
+    game_id = models.AutoField(primary_key=True)
     game_keeper = models.ForeignKey(AuthUser, models.DO_NOTHING)
     room = models.ForeignKey('Room', models.DO_NOTHING)
     game_details = models.ForeignKey('GameDetails', models.DO_NOTHING)
@@ -155,24 +157,53 @@ class Game(models.Model):
     class Meta:
         managed = False
         db_table = 'game'
-        unique_together = (('game_id', 'game_details'),)
 
 
 class GameDetails(models.Model):
-    game_details_id = models.IntegerField(primary_key=True)
+    game_details_id = models.AutoField(primary_key=True)
     timestart = models.DateTimeField(blank=True, null=True)
     timeend = models.DateTimeField(blank=True, null=True)
-    clues_clues = models.ForeignKey(Clues, models.DO_NOTHING, blank=True, null=True)
+    teamname = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'game_details'
 
 
+class GameErrorLog(models.Model):
+    game_error_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING)
+    sensor = models.ForeignKey('Sensor', models.DO_NOTHING)
+    details = models.CharField(max_length=100, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    cur_sensor_seq = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game_error_log'
+        unique_together = (('game_error_id', 'game', 'sensor'),)
+
+
+class GameWarningLog(models.Model):
+    game_warning_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING, blank=True, null=True)
+    sensor = models.ForeignKey('Sensor', models.DO_NOTHING, blank=True, null=True)
+    details = models.CharField(max_length=45, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    time_solved = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'game_warning_log'
+
+
 class Players(models.Model):
-    players_id = models.IntegerField(primary_key=True)
+    players_id = models.AutoField(primary_key=True)
     firstname = models.CharField(max_length=45, blank=True, null=True)
     lastname = models.CharField(max_length=45, blank=True, null=True)
+    contact = models.CharField(max_length=45, blank=True, null=True)
+    gender = models.IntegerField(blank=True, null=True)
+    email = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -184,6 +215,7 @@ class Room(models.Model):
     room_name = models.CharField(max_length=45, blank=True, null=True)
     branch = models.ForeignKey(Branch, models.DO_NOTHING)
     header_img = models.CharField(max_length=100, blank=True, null=True)
+    blueprint_file = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -208,6 +240,9 @@ class Sensor(models.Model):
     sensor_name = models.CharField(max_length=45, blank=True, null=True)
     rpi = models.ForeignKey(Rpi, models.DO_NOTHING)
     sensor_type = models.ForeignKey('SensorType', models.DO_NOTHING)
+    sequence_number = models.IntegerField(blank=True, null=True)
+    top_coordinate = models.FloatField(blank=True, null=True)
+    left_coordinate = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -227,10 +262,10 @@ class SensorType(models.Model):
 
 
 class Teams(models.Model):
-    game = models.ForeignKey(Game, models.DO_NOTHING, primary_key=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING)
     players_players = models.ForeignKey(Players, models.DO_NOTHING)
+    team_id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = False
         db_table = 'teams'
-        unique_together = (('game', 'players_players'),)
