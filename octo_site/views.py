@@ -177,9 +177,9 @@ def view_room(request, game_id):
 
             if(details.timeend is not None):
                 properties['done'] = True
-            print('MINUTES: ')
-            print((details.timestart + timezone.timedelta(hours=1)- now_datetime))
-            print((details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60)
+            # print('MINUTES: ')
+            # print((details.timestart + timezone.timedelta(hours=1)- now_datetime))
+            # print((details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60)
             return render(request,'octo_site/view_room.html', properties)
         else:
             pass

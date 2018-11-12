@@ -23,7 +23,7 @@ def pull_data_live_control_panel(game_id):
     return g.pull_data_fr_game(g)
 
 def check_seq(game):
-    print("checking_seq")
+    # print("checking_seq")
     if game.has_error:
         error_sensor = game.get_error_points_sensors
         print("has error")

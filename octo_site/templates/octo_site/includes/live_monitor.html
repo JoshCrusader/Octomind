@@ -85,7 +85,7 @@
 			window.setInterval(reloadData, 1000);
 		};
 		function reloadData() {
-		    console.log("reading");
+		    //console.log("reading");
             sensor_data =  $.get("/octo_site/sensor_data/{{ gameid }}");
             sensor_data.done(function(results){
                 if (sensor_data_len < results.data.length){
@@ -166,6 +166,8 @@
            });
 		   sensor_data =  $.get("/octo_site/sensor_data/{{ gameid }}");
            sensor_data.done(function(results){
+               console.log("RESULTS");
+               console.log(results);
                sensor_data_len = results.data.length;
                obj = results.data;
                 for (ob in obj)
@@ -181,11 +183,11 @@
                     }
 			        window.myLine.update()
                 }
-
+                console.log(config.data);
            });
         let summary_data =  $.get("/octo_site/api/game_summary/{{ gameid }}/");
             summary_data.done(function(results){
-                console.log(results.data);
+                //console.log(results.data);
            });
 			window.myLine.update();
         }
