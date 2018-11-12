@@ -23,14 +23,36 @@ def pull_data_live_control_panel(game_id):
     return g.pull_data_fr_game(g)
 
 def check_seq(game):
-    print("checking_seq")
-    if game.has_error:
-        error_sensor = game.get_error_points_sensors
-        print("has error")
-        for s in error_sensor:
-            print(s.sensor_name, "not in sequence")
+    in_seq = True
+    sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+    seq = []
+    cur_seq = []
+    log_data = pull_data_fr_game(game.game_id)
+    trigger_seqs = {}
+    for s in sensors:
+        trigger_seqs[str(s.sensor_id)] = None
+        seq.append(s.sensor_id)
+    trigger_seq = 1
+    skip_sensors = []
+    for data in log_data:
+        s = Sensor.objects.get(sensor_id=data['sensor_id'])
+        if 1 == int(data['value']) and s.sensor_id not in skip_sensors:
+            skip_sensors.append(s.sensor_id)
+            trigger_seqs[str(s.sensor_id)] = trigger_seq
+            trigger_seq += 1
 
-    return game.has_error
+    print(trigger_seqs)
+    for t in trigger_seqs:
+        if trigger_seqs[t] is not None:
+            s = Sensor.objects.get(sensor_id=t)
+            if s.sequence_number != trigger_seqs[t]:
+                print(str(s.sensor_name) + " not in sequence")
+                in_seq = False
+    if in_seq:
+        print("all is insequence so far")
+    else:
+        print("wew")
+    return in_seq
 # UNUSED FUNCTIONS
 def pull_data():
     connection = MySQLdb.connect(
