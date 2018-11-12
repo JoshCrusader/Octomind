@@ -158,7 +158,6 @@
 </div>
 
 	<script>
-
         $(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
             console.log("clicked");
@@ -167,12 +166,6 @@
                 chk.checked = !chk.checked;
             }
         });
-        /*
-                function filter(){
-                    let tbl = $('#room_tbl').DataTable();
-                    tbl.search("17").draw();
-                }
-        */
 	</script>
 {% include 'octo_site/includes/offcanvas.html' %}
 

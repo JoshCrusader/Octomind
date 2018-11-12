@@ -83,6 +83,20 @@ class Game(models.Model):
         sz = Teams.objects.filter(game_id=self.game_id).count()
         return numToWords(int(sz))
     @property
+    def get_sensors_on_trigger_sequence(self):
+        sensors = []
+        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
+        my_seq = self.get_sensor_trigger_sequence
+        index_add = len(real_seq) - len(my_seq)
+        if index_add != 0:
+            index_add = real_seq[-1 * index_add:]
+            for i in index_add:
+                my_seq.append(i)
+        for s in my_seq:
+            sensors.append(Sensor.objects.get(sensor_id=s))
+        print(sensors)
+        return sensors
+    @property
     def get_sensor_trigger_sequence(self):
         trigger_seq = []
         data = self.pull_data_fr_game(self)
@@ -109,7 +123,6 @@ class Game(models.Model):
     def has_error(self):
         real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
         my_seq = self.get_sensor_trigger_sequence
-
         index_add = len(real_seq) - len(my_seq)
         if index_add != 0:
             index_add = real_seq[-1*index_add:]
@@ -148,7 +161,7 @@ class Game(models.Model):
         time_diff_in_min = None
         new_data = []
         game = self
-        sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
+        sensors = Game.objects.get(game_id=game.game_id).get_sensors_on_trigger_sequence
         sensors_id = []
         sensors_id_included = []
         for s in sensors:
@@ -396,6 +409,7 @@ class Room(models.Model):
             rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
             for rpi_sensor in rpi_sensors:
                 sensors.append(rpi_sensor)
+        print(sensors)
         return sensors
 
     @property

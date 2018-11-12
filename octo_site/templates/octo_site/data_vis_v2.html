@@ -227,9 +227,8 @@
 		};
         function initData() {
 
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
            sensor_data.done(function(results){
-                console.log(results);
                 obj = results.sensors;
                 newYAxis = null;
                 for (i in obj)
@@ -265,6 +264,7 @@
                    config.options.scales.xAxes.push(newXAxis);
                    window.myLine.update()
                 }
+                console.log("sensors array",sensors);
            });
            let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
            game_data.done(function(results){
@@ -274,7 +274,7 @@
                 {
                    let ind = sensors.indexOf(obj[obx].sensor_id);
                    if(parseInt(obj[obx].time_solved.toFixed(2)) !== 0){
-                       if(ind !== 0){
+                       if(prev_ts !== null){
                            let time_stamp = new Date(obj[obx].timestamp);
                            new_obj.push(prev_ts);
                            prev_ts=obj[obx].timestamp;
@@ -324,8 +324,8 @@
                    }
                    window.myLine.update()
                 }
-                console.log(config.data.labels);
-                console.log(config.data.datasets);
+                console.log("lbl",config.data.labels);
+                console.log("datset",config.data.datasets);
            });
 			window.myLine.update();
 		    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
