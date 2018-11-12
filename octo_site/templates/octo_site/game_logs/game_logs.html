@@ -143,9 +143,6 @@
                                      </table>
                                     <script>
                                         $(document).ready(function() {
-                                            $('#example').DataTable();
-                                        } );
-                                        $(document).ready(function() {
                                             $('#room_tbl').DataTable();
                                             $(".dataTables_length select").addClass("uk-input tbl_inp");
                                             $(".dataTables_filter input").addClass("uk-select tbl_sel");
@@ -162,61 +159,6 @@
 
 	<script>
 
-        function change_cat(obj) {
-            $( ".rep_cats" ).each(function(index, element) {
-                $(this).removeClass('uk-active');
-            });
-            $(obj).addClass('uk-active');
-
-            $('#dp').datepicker().data('datepicker').clear();
-            switch ($(obj).attr("value")){
-                case "daily":
-                    console.log("dd");
-                    $('#dp').datepicker().data('datepicker').view= 'days';
-                    $('#dp').datepicker().data('datepicker').update({
-                        range:false,
-                        minView:"days",
-                        view:"days",
-                        dateFormat:"yyyy-mm-dd"
-                    });
-                    $("#btn_report_cat").html("Daily Report");
-                    $("#report_cat_holder").val("daily");
-                    break;
-                case "monthly":
-                    $('#dp').datepicker().data('datepicker').view= 'months';
-                    $('#dp').datepicker().data('datepicker').update({
-                        range:false,
-                        minView:"months",
-                        view:"months",
-                        dateFormat:"yyyy-mm"
-                    });
-                    $("#btn_report_cat").html("Monthly Report");
-                    $("#report_cat_holder").val("monthly");
-                    break;
-                case "yearly":
-                    $('#dp').datepicker().data('datepicker').view= 'years';
-                    $('#dp').datepicker().data('datepicker').update({
-                        range:false,
-                        minView:"years",
-                        view:"years",
-                        dateFormat:"yyyy"
-                    });
-                    $("#btn_report_cat").html("Yearly Report");
-                    $("#report_cat_holder").val("yearly");
-                    break;
-                default:
-                    $('#dp').datepicker().data('datepicker').view= 'days';
-                    $('#dp').datepicker().data('datepicker').update({
-                        range:true,
-                        minView:"days",
-                        view:"days",
-                        dateFormat:"yyyy-mm-dd"
-                    });
-                    $("#btn_report_cat").html("Ranged Report");
-                    $("#report_cat_holder").val("range");
-
-            }
-        }
         $(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
             console.log("clicked");
@@ -225,67 +167,12 @@
                 chk.checked = !chk.checked;
             }
         });
-        function check_dates() {
-            let sd = new Date($("#sd").val());
-            let ed = new Date($("#ed").val());
-            if (ed>sd){
-                console.log("valid");
-                return true
-            }
-                console.log("invalid");
-            return false
-        }
-        function check_valid() {
-            let new_val;
-            if ($("#room_name_holder").val() !== ""){
-                if ($("#dp").val().search("to") !== -1 || $("#report_cat_holder").val() !== "range" ) {
-                    if ($("#dp").val() !== "") {
-                        switch ($("#report_cat_holder").val()) {
-                            case "monthly":
-                                $("#dp").val($("#dp").val() + "-01");
-                                break;
-                            case "yearly":
-                                $("#dp").val($("#dp").val() + "-01-01");
-                                break;
-                            case "range":
-                                new_val = $("#dp").val();
-                                new_val = new_val.split(" to ");
-                                //console.log(new_val);
-                                $("#sd").val(new_val[0]);
-                                $("#ed").val(new_val[1]);
-                                break;
-                        }
-                        console.log($("#room_id_holder").val());
-                        console.log($("#dp").val());
-                        console.log($("#sd").val());
-                        console.log($("#ed").val());
-
-                        $('#form_elem').animate({opacity:0});
-                        $('#spinner').fadeIn();
-                        $('#load_text').fadeIn();
-                        $('#grid').css('background-image', 'url("{% static 'octo_puz.png' %}")');
-                        setTimeout(() => {
-                            $('#form').submit();
-                        }, 1500);
-                    }
-                    else {
-                        $("#dp").addClass("uk-form-danger");
-                        $('#alert').html(' Please select a valid date');
-                        $('#alert').css('display', 'block');
-                    }
+        /*
+                function filter(){
+                    let tbl = $('#room_tbl').DataTable();
+                    tbl.search("17").draw();
                 }
-                else{
-                    $("#dp").addClass("uk-form-danger");
-                    $('#alert').html('Invalid or incomplete date range');
-                    $('#alert').css('display', 'block');
-                }
-            }else{
-                $("#room_name_holder").addClass("uk-form-danger");
-                $('#alert').html('No Room is selected. Please select a room to be analyzed');
-                $('#alert').css('display','block');
-            }
-        }
-
+        */
 	</script>
 {% include 'octo_site/includes/offcanvas.html' %}
 
