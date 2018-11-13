@@ -26,9 +26,17 @@
 		var log_dist_sensors=[];
 		let distribution_data = null;
 		var colorNames = Object.keys(window.chartColors);
+
 		var scatterChartData = {
-			datasets: []
+			datasets: [],
+            game_ids:[],
 		};
+		var yLbl = {
+        {% for game in games %}
+            {{ forloop.counter }} : 'Game #'+(100000 + {{ game.game_id }}),
+        {% endfor %}
+        };
+
 
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
@@ -40,6 +48,49 @@
 						display: true,
 						text: 'Sensor Log Distribution for Game/s {{ game_ids|join:", " }}'
 					},
+
+				    tooltips: {
+					mode: 'nearest',
+					intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                            val = tooltipItem.xLabel;
+                            sec = ((val % 1)*60).toFixed(2);
+
+                            min = Math.floor(val);
+                            if (min !== 0 && sec !== 0){
+                            if (parseInt(sec) === 0){
+                                    return 'Elapsed: ' + min + " min";
+                                }
+                                return min + " min and " + sec +" sec" ;
+                            }
+                            return 'Ano daw';
+                        },
+                        title: function(tooltipItem, data) {
+                            return data.datasets[tooltipItem[0].datasetIndex].label
+
+                        },
+                        afterTitle: function(tooltipItem, data) {
+                            return "Game "+(parseInt(tooltipItem[0].yLabel)+100000);
+
+                        },
+
+                        // Use the footer callback to display the sum of the items showing in the tooltip
+
+                      },
+                    /*
+                    callbacks: {
+
+					},
+                    */
+					footerFontStyle: 'normal'
+				},
                     scales: {
                         xAxes: [{
                             display: true,
@@ -50,7 +101,7 @@
                             }
                         }],
                         yAxes: [{
-                            display: false,
+                            display: true,
                             scaleLabel: {
                                 display: true,
                             },
@@ -59,7 +110,10 @@
                                 steps: 0,
                                 min: 0,
                                 stepValue: 5,
-                                max: 6.00001
+                                max: {{ games|length }}.00001,
+                                callback: function(value, index, values){
+                                    return yLbl[value];
+                                }
                             }
                         }]
                     }
@@ -70,6 +124,7 @@
 		};
 
         function initData() {
+            console.log("ylabels",yLbl);
             // Populate the datasets
          let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
              sensor_data.done(function(results){
@@ -83,9 +138,8 @@
                         backgroundColor: color(newColor).alpha(0.2).rgbString(),
                         borderColor: newColor,
                         data: [],
-                        pointRadius: 10,
-                        pointHoverRadius: 10,
-                        fill: false
+                        pointRadius: 8,
+                        pointHoverRadius: 14,
                    };
                    scatterChartData.datasets.push(newDataset);
                    log_dist_sensors.push(obj[i].sensor_id);
@@ -94,6 +148,7 @@
            });
            // Populate data in the datasets
          {% for game in games %}
+             scatterChartData.game_ids.push({{ forloop.counter }});
              distribution_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}/");
              distribution_data.done(function(results){
                 obj = results.data;
