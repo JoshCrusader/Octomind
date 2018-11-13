@@ -36,11 +36,34 @@ class ClueDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'clue_details'
-
+    @property
+    def get_minute_asked(self):
+        f = '%Y-%m-%d %H:%M:%S'
+        game_details = Clues.objects.get(clue_details_id=self.clue_details_id).game.game_details
+        datetime_object = self.timestamp
+        clean_date = datetime.strptime(game_details.timestart.strftime(f), f)
+        time_diff = datetime_object - clean_date
+        return time_diff / timedelta(minutes=1)
+    @property
+    def get_sensor_asked(self):
+        g = Clues.objects.get(clue_details_id=self.clue_details_id).game
+        data = g.pull_data_game(g)
+        minute_asked = self.get_minute_asked
+        sum_minutes =0
+        for d in data:
+            if float(d.timesolved) == 0.0:
+                data.remove(d)
+        if len(data) != 0:
+            for i in range(len(data),0):
+                sum_minutes += data[i].time_solved
+                if sum_minutes > minute_asked:
+                    return Sensor.objects.get(sensor_id=data[0].sensor_id) if i == 0 else Sensor.objects.get(sensor_id=data[i].sensor_id)
+        else:
+            return g.get_sensors_on_trigger_sequence[0]
 
 class Clues(models.Model):
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
-    games = models.ForeignKey('Game', models.DO_NOTHING)
+    game = models.ForeignKey('Game', models.DO_NOTHING)
     clue_id = models.AutoField(primary_key=True)
     
     class Meta:
@@ -172,12 +195,11 @@ class Game(models.Model):
             data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
         # close the cursor object
         # for summary data
-        for s in sensors:
+        for idx,s in enumerate(sensors):
             for data in data_return:
                 if s.sensor_id == data['sensor_id']:
                     if s.sensor_type.trigger_treshold <= data['value']:
-                        #print(s.sensor_name + " triggered " + str(s.sensor_id) + "| log_id: " + str(data['log_id']))
-                        if s.sequence_number == 1:
+                        if idx == 0:
                             datetime_object = data['timestamp']
                             clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
                             time_diff = datetime_object - clean_date

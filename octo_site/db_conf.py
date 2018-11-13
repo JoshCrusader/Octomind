@@ -20,15 +20,17 @@ def pull_data_game(game_id):
 def pull_data_live_control_panel(game_id):
     g = Game.objects.get(game_id=game_id)
     check_seq(g)
-    #check_anomaly(g)
+    check_anomaly(g)
     return g.pull_data_fr_game(g)
 
 # CAN THEY CHANGE TIME SOLVED?
 def check_anomaly(game):
     data = game.pull_data_game(game)
     for s in data:
-        if s.time_solved != 0 and s.time_solved <5:
+        #if lesser than 5 minutes you uhhh label it as warning[ hey u solved it too fast! r u G0D ]
+        if float(s.time_solved) != 0.0 and float(s.time_solved) < 5.0:
             if GameWarningLog.warning_log_not_existing(game.game_id, s.sensor_id):
+                print("game anomaly inserted")
                 game_warning_log = GameWarningLog(
                     game_id=game.game_id,
                     sensor_id=s.sensor_id,
@@ -59,7 +61,6 @@ def check_seq(game):
             trigger_seqs[str(s.sensor_id)] = trigger_seq
             trigger_seq += 1
 
-    print(trigger_seqs)
     for t in trigger_seqs:
         if trigger_seqs[t] is not None:
             s = Sensor.objects.get(sensor_id=t)
@@ -74,7 +75,7 @@ def check_seq(game):
                     )
                     game_error_log.save()
                     print("error inserted")
-                print(str(s.sensor_name) + " not in sequence")
+                    print(str(s.sensor_name) + " not in sequence")
                 in_seq = False
     if in_seq:
         print("all is insequence so far")
