@@ -25,6 +25,13 @@ urlpatterns = [
     path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
     path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
     path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
+
+    path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
+    path('log_summary/<slug:game_ids/', views.log_summary, name='log_summary'),
+
+    path('api/get_log_distribution/<slug:game_ids>/', views.get_log_distribution, name='get_log_distribution'),
+    path('api/get_log_summary/<slug:game_ids>/', views.get_log_summary, name='get_log_summary'),
+
     path('api/game_summary/<int:game_id>/', views.game_summary, name='game_summary'),
     path('api/game_tally/<int:game_id>/', views.game_tally, name='game_tally'),
     #ajax functions

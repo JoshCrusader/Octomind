@@ -221,7 +221,7 @@ def get_room_by_room_id(request,room_id):
 @csrf_exempt
 def get_sensors_by_room_id(request,room_id):
     data_return = []
-    for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
+    for sensor in Room.objects.get(room_id=room_id).get_all_sensors:
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt
@@ -291,16 +291,65 @@ def add_clue(request):
 def get_clues_by_game(request,game_id):
     return ajax_helper.get_clues_by_game(game_id)
 
+@csrf_exempt
+def get_log_distribution(request, game_ids):
+    #must get all logs of each game to plot the sensor distribution between games
+    data_return = {}
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(id=int(g)))
+        data_return[str(g)] = None
+    for game in games:
+        data = game.pull_data_fr_game(game)
+
+        for d in data:
+            if int(d["value"]) == 1:
+                data_return[str(game.game_id)].append(d)
+    return JsonResponse({"data": data_return})
+
+@csrf_exempt
+def get_log_summary(request,game_ids):
+    data_return = {}
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(id=int(g)))
+        data_return[str(g)] = None
+    for game in games:
+        data = game.pull_data_game(game)
+        for d in data:
+            if int(d["value"]) == 1:
+                data_return[str(game.game_id)].append(d)
+    return JsonResponse({"data": data_return})
+
+#TEST URLS
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
-    return render(request,'octo_site/data_vis.html',{"room":room,"game":Game.objects.get(game_id=1)})
+    return render(request, 'octo_site/test_files/data_vis.html', {"room":room, "game":Game.objects.get(game_id=1)})
 
 def data_vis_v2(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room_id)
-    return render(request,'octo_site/data_vis_v2.html',{"room":room,"game":Game.objects.get(game_id=game_id)})
+    return render(request, 'octo_site/test_files/data_vis_v2.html', {"room":room, "game":Game.objects.get(game_id=game_id)})
+
 def live_monitoring(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
-    return render(request,'octo_site/live_monitoring_data.html',{"room":room,"game":Game.objects.get(game_id=game_id)})
+    return render(request, 'octo_site/test_files/live_monitoring_data.html', {"room":room, "game":Game.objects.get(game_id=game_id)})
+
+def log_distribution(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_distribution.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
+
+def log_summary(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_summary.html', {"games": games})
+
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
         room = Room(room_name=request.POST['room_name'], branch_id=request.POST['branch_id'],

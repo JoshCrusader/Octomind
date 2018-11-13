@@ -61,6 +61,7 @@ def add_clue(request):
         clue = Clues(clue_details_id = cdetail.clue_details_id, games_id = gid)
         clue.save()
     return JsonResponse({"data": "done"})
+
 def get_clues_by_game(game_id):
     data_return=[]
     clues = Clues.objects.filter(game_id=game_id)

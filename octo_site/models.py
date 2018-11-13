@@ -177,6 +177,7 @@ class Game(models.Model):
         connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
         cursor = connection.cursor()
         f = '%Y-%m-%d %H:%M:%S'
+        utc = pytz.UTC
         prev_stamp = None
         time_diff_in_min = None
         new_data = []
@@ -217,8 +218,13 @@ class Game(models.Model):
                             time_diff = datetime_object - prev_stamp
                             time_diff_in_min = time_diff / timedelta(minutes=1)
                             prev_stamp = data['timestamp']
+
+                        clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
+                        min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+
                         new_data.append(
-                            {"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, "timestamp": data['timestamp']})
+                            {"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, "timestamp": data['timestamp'], "min_stamped":round(min_stamped / timedelta(minutes=1),2)})
+
                         break
         for nd in new_data:
             sensors_id_included.append(nd['sensor_id'])
@@ -274,7 +280,12 @@ class Game(models.Model):
         data = cursor.fetchall()
         # print the rows
         for row in data:
-            data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
+            f = '%Y-%m-%d %H:%M:%S'
+            utc = pytz.UTC
+            clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
+            datetime_object = row[1]
+            min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+            data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3], "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
             # close the cursor object
         cursor.close()
         # close the connection

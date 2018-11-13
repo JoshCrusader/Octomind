@@ -26,17 +26,18 @@ def pull_data_live_control_panel(game_id):
 # CAN THEY CHANGE TIME SOLVED?
 def check_anomaly(game):
     data = game.pull_data_game(game)
+    print(data)
     for s in data:
         #if lesser than 5 minutes you uhhh label it as warning[ hey u solved it too fast! r u G0D ]
-        if float(s.time_solved) != 0.0 and float(s.time_solved) < 5.0:
-            if GameWarningLog.warning_log_not_existing(game.game_id, s.sensor_id):
+        if float(s['time_solved']) != 0.0 and float(s['time_solved']) < 5.0:
+            if GameWarningLog.warning_log_not_existing(game.game_id, s['sensor_id']):
                 print("game anomaly inserted")
                 game_warning_log = GameWarningLog(
                     game_id=game.game_id,
-                    sensor_id=s.sensor_id,
-                    details=str(s.sensor_name) + " solved super fast",
+                    sensor_id=s['sensor_id'],
+                    details=str(s['sensor_id']) + " solved super fast",
                     timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                    time_solved=s.time_solved
+                    time_solved=s['time_solved']
                 )
                 game_warning_log.save()
     return "no anomaly in solving times detected"

@@ -1,0 +1,404 @@
+<!doctype html>
+<html>
+{% load staticfiles %}
+<head>
+	<title>Line Chart</title>
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<br>
+	<br>
+	<button id="randomizeData">Randomize Data</button>
+	<button id="addDataset">Add Dataset</button>
+	<button id="removeDataset">Remove Dataset</button>
+	<button id="addData">Add Data</button>
+	<button id="removeData">Remove Data</button>
+    <div>
+        <p>time finished: </p><b id="time_finished"></b><br>
+        <p>skill bracket: </p><b id="skill_bracket"></b><br>
+        <p>average time sensors accomplished: </p><b id="avg_time"></b><br>
+    </div>
+    <hr>
+    <div id="sensor_list">
+    </div>
+	<script>
+        let to_add=[];
+        let sensor_data;
+        let new_obj = [];
+        let sensors=[];
+        let color = Chart.helpers.color;
+        let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
+        console.log(start_time);
+        let customTooltips = function(tooltip) {
+			// Tooltip Element
+			var tooltipEl = document.getElementById('chartjs-tooltip');
+
+			if (!tooltipEl) {
+				tooltipEl = document.createElement('div');
+				tooltipEl.id = 'chartjs-tooltip';
+				tooltipEl.innerHTML = '<table></table>';
+				this._chart.canvas.parentNode.appendChild(tooltipEl);
+			}
+
+			// Hide if no tooltip
+			if (tooltip.opacity === 0) {
+				tooltipEl.style.opacity = 0;
+				return;
+			}
+
+			// Set caret Position
+			tooltipEl.classList.remove('above', 'below', 'no-transform');
+			if (tooltip.yAlign) {
+				tooltipEl.classList.add(tooltip.yAlign);
+			} else {
+				tooltipEl.classList.add('no-transform');
+			}
+
+			function getBody(bodyItem) {
+				return bodyItem.lines;
+			}
+
+			// Set Text
+			if (tooltip.body) {
+				var titleLines = tooltip.title || [];
+				var bodyLines = tooltip.body.map(getBody);
+
+				var innerHtml = '<thead>';
+
+				titleLines.forEach(function(title) {
+					innerHtml += '<tr><th>' + title + '</th></tr>';
+				});
+				innerHtml += '</thead><tbody>';
+
+				bodyLines.forEach(function(body, i) {
+					var colors = tooltip.labelColors[i];
+					var style = 'background:' + colors.backgroundColor;
+					style += '; border-color:' + colors.borderColor;
+					style += '; border-width: 2px';
+					var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+					innerHtml += '<tr><td>' + span + body + '</td></tr>';
+				});
+				innerHtml += '</tbody>';
+
+				var tableRoot = tooltipEl.querySelector('table');
+				tableRoot.innerHTML = innerHtml;
+			}
+
+			var positionY = this._chart.canvas.offsetTop;
+			var positionX = this._chart.canvas.offsetLeft;
+
+			// Display, position, and set styles for font
+			tooltipEl.style.opacity = 1;
+			tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+			tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+			tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
+			tooltipEl.style.fontSize = tooltip.bodyFontSize + 'px';
+			tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
+			tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+		};
+		let config = {
+			type: 'line',
+			data: {
+			    start_time: start_time,
+				labels: [],
+				datasets: [],
+                statuses:[],
+                data_objs:[],
+			},
+			options: {
+				responsive: true,
+                spanGaps:true,
+                legend: {
+                    position: 'bottom',
+                    display: true,
+                    labels: {
+                        padding:20,
+                        fontSize: 16,
+                        usePointStyle:true,
+                    }
+                },
+				title: {
+					display: true,
+					text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                         // console.log(tooltipItem);
+                          let time_solved = new Date(tooltipItem.xLabel);
+                          let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+                          if (comp_time) {return "Start time";}
+                          let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
+                          return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
+                        },
+                        title: function(tooltipItem, data) {
+                            return tooltipItem[0].xLabel;
+                        },
+                        footer: function(tooltipItems, data) {
+							let val = null;
+							let min = null;
+							let sec = null;
+							let stat = null;
+							console.log(data.statuses);
+							tooltipItems.forEach(function(tooltipItem) {
+								val = data.data_objs[tooltipItem.datasetIndex].time_solved;
+								sec = ((val % 1)*60).toFixed(2);
+								min = Math.floor(val);
+								stat = data.statuses[tooltipItem.datasetIndex];
+							});
+							if(stat){
+                                if (min !== 0 && sec !== 0){
+                                    if (parseInt(sec) === 0){
+                                        return 'Elapsed: ' + min + " min";
+                                    }
+                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
+                                }
+                            }
+                            return 'Not solved yet';
+						},
+
+                        // Use the footer callback to display the sum of the items showing in the tooltip
+
+                      },
+                    /*
+                    callbacks: {
+
+					},
+                    */
+					footerFontStyle: 'normal'
+				},
+				hover: {
+					mode: 'index',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+                        type: 'time',
+						scaleLabel: {
+							display: true,
+							labelString: 'time triggered'
+						}
+					}],
+					yAxes: [{
+						display: false,
+						scaleLabel: {
+							display: true,
+						},
+						ticks: {
+                                beginAtZero: true,
+                                steps: 0,
+                                min:0,
+                                stepValue: 5,
+                                max: 4.00001
+                            }
+					}]
+				}
+			}
+		};
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+			initData();
+            console.log("started");
+			//window.setInterval(reloadData, 1000);
+		};
+        function initData() {
+
+            sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
+            sensor_data.done(function(results){
+                obj = results.sensors;
+                newYAxis = null;
+                for (i in obj)
+                {
+                   colorName = colorNames[config.data.datasets.length % colorNames.length];
+                   newColor = window.chartColors[colorName];
+                   newXAxis = {
+                        id: "id-"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   newDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name,
+                        xAxisID:"id-"+i,
+                        borderWidth: 50,
+                        pointStyle: 'line',
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        fill: false
+                   };
+
+                   config.data.datasets.push(newDataset);
+                   sensors.push(obj[i].sensor_id);
+                   config.options.scales.xAxes.push(newXAxis);
+                   window.myLine.update()
+                }
+                console.log("sensors array",sensors);
+           });
+
+            let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+            game_data.done(function(results){
+               let obj = results.data;
+               let prev_ts=null;
+                for (obx in obj)
+                {
+                   let ind = sensors.indexOf(obj[obx].sensor_id);
+                   if(parseInt(obj[obx].time_solved.toFixed(2)) !== 0){
+                       if(prev_ts !== null){
+                           let time_stamp = new Date(obj[obx].timestamp);
+                           new_obj.push(prev_ts);
+                           prev_ts=obj[obx].timestamp;
+                       }
+                       else{
+                           new_obj.push(start_time);
+                           prev_ts=obj[obx].timestamp;
+                       }
+                   }
+                }
+                for (ob in obj)
+                {
+                   if(parseInt(obj[ob].time_solved.toFixed(2)) !== 0){
+
+                   config.data.data_objs.push(obj[ob]) ;
+                   let ind = sensors.indexOf(obj[ob].sensor_id);
+                   if(ind !== 0){
+                       config.data.labels.push(new_obj[ob]);
+                       config.data.labels.push(new Date(obj[ob].timestamp));
+                       for(let x =0; x < sensors.length;x++){
+                            if(obj[ob].sensor_id === sensors[x] &&  (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
+                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                                config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                                config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                            }
+                            else{
+                                config.data.datasets[x].data.push(null);
+                                config.data.datasets[x].data.push(null);
+                            }
+                        }
+                   }
+                   else{
+                       config.data.labels.push(start_time);
+                       config.data.labels.push(new Date(obj[ob].timestamp));
+                       for(let x =0; x < sensors.length;x++){
+                            if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
+                                config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                                config.data.datasets[x].data.push(sensors.length-0.75);
+                                config.data.datasets[x].data.push(sensors.length-0.75);
+                            }
+                            else{
+                                config.data.datasets[x].data.push(null);
+                                config.data.datasets[x].data.push(null);
+                            }
+                        }
+                   }
+                   }
+                   window.myLine.update()
+                }
+                console.log("lbl",config.data.labels);
+                console.log("datset",config.data.datasets);
+           });
+
+            window.myLine.update();
+
+            let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+            summary_data.done(function(results){
+                console.log(results.data);
+                $("#time_finished").html(results.data.general_info.time_finished_duration);
+                $("#skill_bracket").html(results.data.general_info.skill_bracket);
+                $("#avg_time").html(results.data.general_info.average_time);
+                for(ind in results.data.sensor_info)
+                {
+                    console.log(results.data.sensor_info[ind].sensor_name);
+                    let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
+                    str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].times_triggered+"</p><br>";
+                    str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
+                    $("#sensor_list").append(str);
+                }
+            });
+            let clues_data = $.get("/octo_site/api/get_clues_by_game/{{ game.game_id }}/");
+            clues_data.done(function(results){
+
+                console.log("_clues = ",results);
+            });
+        }
+		document.getElementById('randomizeData').addEventListener('click', function() {
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data = dataset.data.map(function() {
+					return randomScalingFactor();
+				});
+			});
+			window.myLine.update();
+		});
+		var colorNames = Object.keys(window.chartColors);
+		document.getElementById('addDataset').addEventListener('click', function() {
+			var colorName = colorNames[config.data.datasets.length % colorNames.length];
+			var newColor = window.chartColors[colorName];
+			var newDataset = {
+				label: 'Dataset ' + config.data.datasets.length,
+				backgroundColor: color(newColor).alpha(0.5).rgbString(),
+				borderColor: newColor,
+				data: [],
+				fill: false
+			};
+			for (var index = 0; index < config.data.labels.length; ++index) {
+				newDataset.data.push(randomScalingFactor());
+			}
+			config.data.datasets.push(newDataset);
+			window.myLine.update();
+		});
+		document.getElementById('addData').addEventListener('click', function() {
+			if (config.data.datasets.length > 0) {
+				var month = MONTHS[config.data.labels.length % MONTHS.length];
+				config.data.labels.push(month);
+				config.data.datasets.forEach(function(dataset) {
+					dataset.data.push(randomScalingFactor());
+				});
+				window.myLine.update();
+			}
+		});
+		document.getElementById('removeDataset').addEventListener('click', function() {
+			config.data.datasets.splice(0, 1);
+			window.myLine.update();
+		});
+		document.getElementById('removeData').addEventListener('click', function() {
+			config.data.labels.splice(-1, 1); // remove the label first
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data.pop();
+			});
+			window.myLine.update();
+		});
+	</script>
+</body>
+
+</html>
