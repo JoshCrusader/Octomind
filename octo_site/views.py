@@ -287,6 +287,10 @@ def end_game(request):
 def add_clue(request):
     return ajax_helper.add_clue(request)
 
+@csrf_exempt
+def get_clues_by_game(request,game_id):
+    return ajax_helper.get_clues_by_game(game_id)
+
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
     return render(request,'octo_site/data_vis.html',{"room":room,"game":Game.objects.get(game_id=1)})

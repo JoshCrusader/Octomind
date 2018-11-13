@@ -61,3 +61,14 @@ def add_clue(request):
         clue = Clues(clue_details_id = cdetail.clue_details_id, games_id = gid)
         clue.save()
     return JsonResponse({"data": "done"})
+def get_clues_by_game(game_id):
+    data_return=[]
+    clues = Clues.objects.filter(game_id=game_id)
+    for c in clues:
+        data_return.append({
+            "clue_id": c.clue_id,
+            "sensor_asked": c.clue_details.get_sensor_asked,
+            "minute_asked": c.clue_details.get_minute_asked,
+            "detail": c.clue_details.detail,
+            "timestamp": c.clue_details.timestamp})
+    return JsonResponse({"data": data_return})

@@ -227,8 +227,8 @@
 		};
         function initData() {
 
-           sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
-           sensor_data.done(function(results){
+            sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
+            sensor_data.done(function(results){
                 obj = results.sensors;
                 newYAxis = null;
                 for (i in obj)
@@ -266,8 +266,9 @@
                 }
                 console.log("sensors array",sensors);
            });
-           let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
-           game_data.done(function(results){
+
+            let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+            game_data.done(function(results){
                let obj = results.data;
                let prev_ts=null;
                 for (obx in obj)
@@ -327,8 +328,10 @@
                 console.log("lbl",config.data.labels);
                 console.log("datset",config.data.datasets);
            });
-			window.myLine.update();
-		    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+
+            window.myLine.update();
+
+            let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
             summary_data.done(function(results){
                 console.log(results.data);
                 $("#time_finished").html(results.data.general_info.time_finished_duration);
@@ -342,6 +345,11 @@
                     str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
                     $("#sensor_list").append(str);
                 }
+            });
+            let clues_data = $.get("/octo_site/api/get_clues_by_game/{{ game.game_id }}/");
+            clues_data.done(function(results){
+
+                console.log("_clues = ",results);
             });
         }
 		document.getElementById('randomizeData').addEventListener('click', function() {

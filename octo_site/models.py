@@ -39,11 +39,12 @@ class ClueDetails(models.Model):
     @property
     def get_minute_asked(self):
         f = '%Y-%m-%d %H:%M:%S'
+        utc = pytz.UTC
         game_details = Clues.objects.get(clue_details_id=self.clue_details_id).game.game_details
         datetime_object = self.timestamp
         clean_date = datetime.strptime(game_details.timestart.strftime(f), f)
-        time_diff = datetime_object - clean_date
-        return time_diff / timedelta(minutes=1)
+        time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+        return round(time_diff / timedelta(minutes=1),2)
     @property
     def get_sensor_asked(self):
         g = Clues.objects.get(clue_details_id=self.clue_details_id).game
@@ -51,18 +52,21 @@ class ClueDetails(models.Model):
         minute_asked = self.get_minute_asked
         sum_minutes =0
         sensors_by_trigger = g.get_sensors_on_trigger_sequence
+
         for d in data:
-            if float(d.timesolved) == 0.0:
+            if float(d["time_solved"]) == 0.0:
                 data.remove(d)
+        print("data length",len(data))
         if len(data) != 0:
-            for i in range(len(data),0):
-                sum_minutes += data[i].time_solved
+            for i,d in enumerate(data):
+                sum_minutes += d["time_solved"]
+                print("min_sum", sum_minutes)
                 if sum_minutes > minute_asked:
-                    return Sensor.objects.get(sensor_id=data[0].sensor_id) if i == 0 else Sensor.objects.get(sensor_id=data[i].sensor_id)
-                if i+1 == len(data):
-                    return Sensor.objects.get(sensor_id=sensors_by_trigger[i+1].sensor_id)
+                    return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
+                if i == len(data)-1:
+                    return sensors_by_trigger[i+1].sensor_id
         else:
-            return sensors_by_trigger[0]
+            return sensors_by_trigger[0].sensor_id
 
 class Clues(models.Model):
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
@@ -137,7 +141,7 @@ class Game(models.Model):
         return data["general_info"]["time_finished_duration"]
     @property
     def get_num_clues_asked(self):
-        return Clues.objects.filter(games_id=self.game_id).count()
+        return Clues.objects.filter(game_id=self.game_id).count()
     @property
     def is_solved(self):
         data = self.pull_data_game(self)

@@ -39,6 +39,7 @@ urlpatterns = [
     path('api/start_game/', views.start_game, name = 'start_game'),
     path('api/end_game/', views.end_game, name = 'end_game'),
     path('api/add_clue/', views.add_clue, name = 'add_clue'),
+    path('api/get_clues_by_game/<int:game_id>/', views.get_clues_by_game, name = 'get_clues_by_game'),
     path('admin/', admin.site.urls),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
