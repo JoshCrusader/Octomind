@@ -50,6 +50,7 @@ class ClueDetails(models.Model):
         data = g.pull_data_game(g)
         minute_asked = self.get_minute_asked
         sum_minutes =0
+        sensors_by_trigger = g.get_sensors_on_trigger_sequence
         for d in data:
             if float(d.timesolved) == 0.0:
                 data.remove(d)
@@ -58,8 +59,10 @@ class ClueDetails(models.Model):
                 sum_minutes += data[i].time_solved
                 if sum_minutes > minute_asked:
                     return Sensor.objects.get(sensor_id=data[0].sensor_id) if i == 0 else Sensor.objects.get(sensor_id=data[i].sensor_id)
+                if i+1 == len(data):
+                    return Sensor.objects.get(sensor_id=sensors_by_trigger[i+1].sensor_id)
         else:
-            return g.get_sensors_on_trigger_sequence[0]
+            return sensors_by_trigger[0]
 
 class Clues(models.Model):
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
