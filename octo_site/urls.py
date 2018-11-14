@@ -27,7 +27,7 @@ urlpatterns = [
     path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
 
     path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
-    path('log_summary/<slug:game_ids/', views.log_summary, name='log_summary'),
+    path('log_summary/<slug:game_ids>/', views.log_summary, name='log_summary'),
 
     path('api/get_log_distribution/<slug:game_ids>/', views.get_log_distribution, name='get_log_distribution'),
     path('api/get_log_summary/<slug:game_ids>/', views.get_log_summary, name='get_log_summary'),

@@ -182,6 +182,7 @@ class Game(models.Model):
         time_diff_in_min = None
         new_data = []
         game = self
+        times_triggered=None
         sensors = Game.objects.get(game_id=game.game_id).get_sensors_on_trigger_sequence
         sensors_id = []
         sensors_id_included = []
@@ -203,9 +204,14 @@ class Game(models.Model):
             data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
         # close the cursor object
         # for summary data
+        tally_data = self.pull_game_tally(self)
+
         for idx,s in enumerate(sensors):
             for data in data_return:
                 if s.sensor_id == data['sensor_id']:
+                    for t in tally_data:
+                        if t["sensor_id"] == s.sensor_id:
+                            times_triggered = t["times_triggered"]
                     if s.sensor_type.trigger_treshold <= data['value']:
                         if idx == 0:
                             datetime_object = data['timestamp']
@@ -223,7 +229,11 @@ class Game(models.Model):
                         min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
 
                         new_data.append(
-                            {"sensor_id": s.sensor_id, "time_solved": time_diff_in_min, "timestamp": data['timestamp'], "min_stamped":round(min_stamped / timedelta(minutes=1),2)})
+                            {"sensor_id": s.sensor_id,
+                             "time_solved": time_diff_in_min,
+                             "timestamp": data['timestamp'],
+                             "times_triggered": times_triggered,
+                             "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
 
                         break
         for nd in new_data:
@@ -231,7 +241,13 @@ class Game(models.Model):
 
         for s in sensors:
             if s.sensor_id not in sensors_id_included:
-                new_data.append({"sensor_id": s.sensor_id, "time_solved": 0, "timestamp": None})
+                new_data.append({"sensor_id": s.sensor_id,
+                             "times_triggered":times_triggered,
+                             "time_solved": 0,
+                             "timestamp": None,
+                             "min_stamped": None})
+
+
         cursor.close()
         # close the connection
         connection.close()

@@ -348,7 +348,8 @@ def log_summary(request, game_ids):
     games = []
     for g in gids:
         games.append(Game.objects.get(game_id=int(g)))
-    return render(request, 'octo_site/test_files/log_summary.html', {"games": games})
+    return render(request, 'octo_site/test_files/log_summary.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
+
 
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
