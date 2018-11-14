@@ -43,6 +43,7 @@
 			},
             game_ids: [],
 			datasets: [],
+            sensor_names:[],
             dataset_game_ids:[],
             dataset_r_vals:[]
 
@@ -70,9 +71,14 @@
                         callbacks: {
                             // use label callback to return the desired label
                             label: function(tooltipItem, data) {
+
+                                if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
+                                    //console.log("sensor_names",data.sensor_names);
+                                    return data.sensor_names[tooltipItem.index+1];
+                                }
+
                                 val = tooltipItem.xLabel;
                                 sec = ((val % 1)*60).toFixed(2);
-
                                 min = Math.floor(val);
                                 if (min !== 0 || sec !== 0){
                                     if (parseInt(sec) === 0){
@@ -90,12 +96,26 @@
                                 return 'Ano daw';
                             },
                             title: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
                                 return data.datasets[tooltipItem[0].datasetIndex].label
                             },
                             afterTitle: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
+
                                 return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
                             },
                             afterBody: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    str=["-----"];
+                                    str.push("Time solved average: "+tooltipItem[0].yLabel);
+                                    str.push("Minute triggered average: "+tooltipItem[0].xLabel);
+                                    return str;
+                                }
+
                                 val = parseFloat(tooltipItem[0].yLabel);
                                 sec = ((val % 1)*60).toFixed(2);
 
@@ -109,6 +129,9 @@
                                 return 'Ano daw';
                             },
                             beforeFooter: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
                                     return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
                             },
 
@@ -167,21 +190,39 @@
                    log_sum_sensors.push(obj[i].sensor_id);
                    window.myLogSummary.update()
                 }
-                /*
-                newdt = {
+                let summary_data =  $.get("/octo_site/api/get_log_summary/{{ id_slugs }}/");
+                summary_data.done(function(summary){
+                    colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                    newColor = chartColors[colorName];
+                    obj = summary.data;
+                    console.log("summary",obj);
+                    newdt = {
                         label: "averages",
                         type: "line",
-                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderDash: [10,5],
+                        pointStyle: 'rectRot',
+                        backgroundColor: newColor,
                         borderColor: newColor,
-                        data: [{x: 10, y: 4,},{x: 23, y: 4,},{x: 40, y: 4,},{x: 50, y: 4,}
-                               ],
-                        pointRadius: 4,
+                        borderWidth: 2,
+                        data: [],
+                        pointRadius: 10,
+                        pointHoverRadius: 10,
                         fill: false,
                    };
-               console.log("data",bubbleChartData.datasets);
-               bubbleChartData.datasets.push(newdt);
-                */
-                   window.myLogSummary.update()
+                    window.myLogSummary.update();
+                   console.log("data",bubbleChartData.datasets);
+                   bubbleChartData.datasets.push(newdt);
+
+                   for(ob in obj){
+                       bubbleChartData.datasets[bubbleChartData.datasets.length-1]
+                           .data
+                           .push({x: obj[ob].avg_min_stamped, y: obj[ob].avg_time_solved,});
+                       bubbleChartData.sensor_names[ob] = obj[ob].sensor_name;
+                       window.myLogSummary.update();
+                   }
+
+               });
+               window.myLogSummary.update()
 
            });
              console.log(bubbleChartData.dataset_game_ids);

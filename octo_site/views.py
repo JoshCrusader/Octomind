@@ -310,18 +310,38 @@ def get_log_distribution(request, game_ids):
 
 @csrf_exempt
 def get_log_summary(request,game_ids):
-    data_return = {}
+    '''
+    :param request: 
+    :param game_ids: slug of game ids
+    :return: returns an average of all the sensor logs
+    '''
+    summary_ave_data = {}
+    data_return = []
     gids = game_ids.split("-")
     games = []
+
     for g in gids:
-        games.append(Game.objects.get(id=int(g)))
-        data_return[str(g)] = None
+        games.append(Game.objects.get(game_id=int(g)))
     for game in games:
         data = game.pull_data_game(game)
         for d in data:
-            if int(d["value"]) == 1:
-                data_return[str(game.game_id)].append(d)
-    return JsonResponse({"data": data_return})
+            if int(d["time_solved"]) != 0:
+                data_return.append(d)
+    sensors = games[0].room.get_all_sensors
+    for s in sensors:
+        summary_ave_data[s.sensor_id] = {"sensor_id":s.sensor_id, "sensor_name":s.sensor_name, "avg_time_solved":0,"avg_min_stamped":0,"count":0}
+    for d in data_return:
+        for s in sensors:
+            if d["sensor_id"] == s.sensor_id:
+                summary_ave_data[s.sensor_id]["avg_time_solved"] += d["time_solved"]
+                summary_ave_data[s.sensor_id]["avg_min_stamped"] += d["min_stamped"]
+                summary_ave_data[s.sensor_id]["count"] += 1
+
+    for sum_av in summary_ave_data:
+        summary_ave_data[sum_av]["avg_time_solved"] = round(summary_ave_data[sum_av]["avg_time_solved"]/summary_ave_data[sum_av]["count"], 2)
+        summary_ave_data[sum_av]["avg_min_stamped"] = round(summary_ave_data[sum_av]["avg_min_stamped"]/summary_ave_data[sum_av]["count"], 2)
+    print(summary_ave_data)
+    return JsonResponse({"data": summary_ave_data})
 
 #TEST URLS
 def data_vis(request, room_id):
