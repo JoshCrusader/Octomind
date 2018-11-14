@@ -154,20 +154,7 @@ class Game(models.Model):
         return True if GameErrorLog.objects.filter(game_id=self).count() > 0 else False
     @property
     def get_error_points_sensors(self):
-        problem_sensors =[]
-        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
-        my_seq = self.get_sensor_trigger_sequence
-
-        index_add = len(real_seq) - len(my_seq)
-        if index_add != 0:
-            index_add = real_seq[-1*index_add:]
-            for i in index_add:
-                my_seq.append(i)
-
-        for i, val in enumerate(real_seq):
-            if real_seq[i] != my_seq[i]:
-                problem_sensors.append(Sensor.objects.get(sensor_id=my_seq[i]))
-        return problem_sensors
+        return GameErrorLog.objects.filter(game_id=self).count()
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
@@ -531,6 +518,7 @@ class Sensor(models.Model):
     top_coordinate = models.IntegerField(blank=True, null=True)
     left_coordinate = models.IntegerField(blank=True, null=True)
 
+    phase_name = models.CharField(max_length=150, blank=True, null=True)
     @property
     def get_sequence_number(self):
         highest = -1
