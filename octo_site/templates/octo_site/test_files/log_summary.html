@@ -26,11 +26,11 @@
         var log_sum_sensors=[];
         var summary_data = null;
         let chartColors = {
-          red: 'rgb(255, 99, 132)',
-          orange: 'rgb(255, 159, 64)',
-          yellow: 'rgb(255, 205, 86)',
-          green: 'rgb(75, 192, 192)',
-          blue: 'rgb(54, 162, 235)',
+          red: 'rgb(255, 65, 54)',
+          yellow: 'rgb(239, 206, 0)',
+          green: 'rgb(61, 142, 106)',
+          blue: 'rgb(28, 143, 219)',
+          orange: 'rgb(255, 118, 0)',
           purple: 'rgb(153, 102, 255)',
           grey: 'rgb(231,233,237)',
           black: 'rgb(0,0,0)',
@@ -74,25 +74,28 @@
                                 sec = ((val % 1)*60).toFixed(2);
 
                                 min = Math.floor(val);
-                                if (min !== 0 && sec !== 0){
-                                if (parseInt(sec) === 0){
-                                        return min + ":00";
+                                if (min !== 0 || sec !== 0){
+                                    if (parseInt(sec) === 0){
+                                            return min + ":00";
+                                        }
+                                    if (parseInt(min) === 0){
+                                            return "00:00" + sec;
+                                        }
+                                    if (Math.round(sec) < 10){
+
+                                        return min + ":0" + Math.round(sec);
                                     }
-                                    return min + ":" + Math.round(sec) ;
+                                    return min + ":" + Math.round(sec);
                                 }
                                 return 'Ano daw';
                             },
                             title: function(tooltipItem, data) {
                                 return data.datasets[tooltipItem[0].datasetIndex].label
-
                             },
                             afterTitle: function(tooltipItem, data) {
                                 return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
                             },
                             afterBody: function(tooltipItem, data) {
-
-                                console.log(tooltipItem[0]);
-                                console.log(data);
                                 val = parseFloat(tooltipItem[0].yLabel);
                                 sec = ((val % 1)*60).toFixed(2);
 
@@ -105,13 +108,8 @@
                                 }
                                 return 'Ano daw';
                             },
-                            beforeBody: function(tooltipItem, data) {
-
-                                console.log("d set",tooltipItem);
-                                console.log("d set",data);
-                                //console.log("d set",data.dataset_r_vals);
-                                //console.log(data.dataset_r_vals[tooltipItem[0].datasetIndex][tooltipItem[0].index]);
-                                    return "Trigger Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
+                            beforeFooter: function(tooltipItem, data) {
+                                    return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
                             },
 
                             // Use the footer callback to display the sum of the items showing in the tooltip
@@ -153,7 +151,7 @@
                 for (i in obj)
                 {
                    colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
-                   newColor = window.chartColors[colorName];
+                   newColor = chartColors[colorName];
                    newDataset = {
                         label: obj[i].sensor_name,
                         backgroundColor: color(newColor).alpha(0.2).rgbString(),
