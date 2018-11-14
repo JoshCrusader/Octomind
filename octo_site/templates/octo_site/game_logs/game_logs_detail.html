@@ -60,7 +60,7 @@
                             <p class="uk-text-muted uk-text-small uk-margin-remove">{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %} </p>
                         </div>
                         <div class="uk-width-expand uk-text-right pad">
-                            <button class="uk-button uk-button-default uk-button-small " disabled> COMPARE <span data-uk-icon="icon: gitter"></span></button>
+                            <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
                         </div>
 
                         <div class="uk-width-1-1 uk-child-width-1-5 uk-grid-divider uk-column-1-2@s uk-column-1-5@m uk-column-1-8@l uk-child-width-1-5@xl" style="" id="summary_container" data-uk-grid >
@@ -161,145 +161,78 @@
     let sensors=[];
     let times =0;
     let chartColors = {
-red: 'rgb(255, 99, 132)',
-orange: 'rgb(255, 159, 64)',
-yellow: 'rgb(255, 205, 86)',
-green: 'rgb(75, 192, 192)',
-blue: 'rgb(54, 162, 235)',
-purple: 'rgb(153, 102, 255)',
-grey: 'rgb(231,233,237)',
-black: 'rgb(0,0,0)',
-};
+          red: 'rgb(255, 65, 54)',
+          yellow: 'rgb(239, 206, 0)',
+          green: 'rgb(61, 142, 106)',
+          blue: 'rgb(28, 143, 219)',
+          orange: 'rgb(255, 118, 0)',
+          purple: 'rgb(153, 102, 255)',
+          grey: 'rgb(231,233,237)',
+          black: 'rgb(0,0,0)',
+        };
     let color = Chart.helpers.color;
     let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
     console.log(start_time);
-    let colorNames = Object.keys(window.chartColors);
-    let customTooltips = function(tooltip) {
-        // Tooltip Element
-        var tooltipEl = document.getElementById('chartjs-tooltip');
-
-        if (!tooltipEl) {
-            tooltipEl = document.createElement('div');
-            tooltipEl.id = 'chartjs-tooltip';
-            tooltipEl.innerHTML = '<table></table>';
-            this._chart.canvas.parentNode.appendChild(tooltipEl);
-        }
-
-        // Hide if no tooltip
-        if (tooltip.opacity === 0) {
-            tooltipEl.style.opacity = 0;
-            return;
-        }
-
-        // Set caret Position
-        tooltipEl.classList.remove('above', 'below', 'no-transform');
-        if (tooltip.yAlign) {
-            tooltipEl.classList.add(tooltip.yAlign);
-        } else {
-            tooltipEl.classList.add('no-transform');
-        }
-
-        function getBody(bodyItem) {
-            return bodyItem.lines;
-        }
-
-        // Set Text
-        if (tooltip.body) {
-            var titleLines = tooltip.title || [];
-            var bodyLines = tooltip.body.map(getBody);
-
-            var innerHtml = '<thead>';
-
-            titleLines.forEach(function(title) {
-                innerHtml += '<tr><th>' + title + '</th></tr>';
-            });
-            innerHtml += '</thead><tbody>';
-
-            bodyLines.forEach(function(body, i) {
-                var colors = tooltip.labelColors[i];
-                var style = 'background:' + colors.backgroundColor;
-                style += '; border-color:' + colors.borderColor;
-                style += '; border-width: 2px';
-                var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-                innerHtml += '<tr><td>' + span + body + '</td></tr>';
-            });
-            innerHtml += '</tbody>';
-
-            var tableRoot = tooltipEl.querySelector('table');
-            tableRoot.innerHTML = innerHtml;
-        }
-
-        var positionY = this._chart.canvas.offsetTop;
-        var positionX = this._chart.canvas.offsetLeft;
-
-        // Display, position, and set styles for font
-        tooltipEl.style.opacity = 1;
-        tooltipEl.style.left = positionX + tooltip.caretX + 'px';
-        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
-        tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
-        tooltipEl.style.fontSize = tooltip.bodyFontSize + 'px';
-        tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
-        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
-    };
+    let colorNames = Object.keys(chartColors);
     let live_config = {
-type: 'line',
-data: {
-    start_time: start_time,
-    labels: [],
-    datasets: [],
-    statuses:[],
-},
-options: {
-    elements:{
-        line: {
-            tension: 0
-        }
-    },
-    spanGaps:true,
-    responsive: true,
-    legend: {
-        position: 'bottom',
-    },
-    title: {
-        display: true,
-        text: '{{ room.room_name }} Game #69'
-    },
-    tooltips: {
-        mode: 'index',
-        intersect: false,
-        footerFontStyle: 'normal'
-    },
-    hover: {
-        mode: 'nearest',
-        intersect: false
-    },
-    scales: {
-        xAxes: [{
-            display: true,
-            type: 'time',
-            scaleLabel: {
-                display: true,
-                labelString: 'Time'
-            }
-        }],
-        yAxes: [{
-
-            display: true,
-            scaleLabel: {
-                display: true,
-                labelString: 'Activation Status'
-            },
-            ticks: {
-                    beginAtZero: true,
-                    steps: 0,
-                    min:0,
-                    stepValue: 5,
-                    max: 1.0001
+        type: 'line',
+        data: {
+            start_time: start_time,
+            labels: [],
+            datasets: [],
+            statuses:[],
+        },
+        options: {
+            elements:{
+                line: {
+                    tension: 0
                 }
-        }]
-    }
-}
-};
+            },
+            spanGaps:true,
+            responsive: true,
+            legend: {
+                position: 'bottom',
+            },
+            title: {
+                display: true,
+                text: '{{ room.room_name }} Game #{{ game.match_id }}'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                footerFontStyle: 'normal'
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: false
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    type: 'time',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                    }
+                }],
+                yAxes: [{
+
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Activation Status'
+                    },
+                    ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min:0,
+                            stepValue: 5,
+                            max: 1.0001
+                        }
+                }]
+            }
+        }
+    };
     let config = {
         type: 'line',
         data: {
@@ -423,7 +356,6 @@ options: {
 
     };
     function initData() {
-
            sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
            sensor_data.done(function(results){
                 obj = results.sensors;
@@ -431,7 +363,7 @@ options: {
                 for (i in obj)
                 {
                    colorName = colorNames[config.data.datasets.length % colorNames.length];
-                   newColor = window.chartColors[colorName];
+                   newColor = chartColors[colorName];
                    newXAxis = {
                         id: "id-"+i,
                         type: 'time',
@@ -446,7 +378,7 @@ options: {
                    };
                    newDataset = {
                         type: 'line',
-                        label: obj[i].sensor_name,
+                        label: obj[i].phase_name,
                         xAxisID:"id-"+i,
                         borderWidth: 50,
                         pointStyle: 'line',
@@ -544,10 +476,8 @@ options: {
 </script>
 <script>
     function initMonData() {
-let to_add_live=[];
-let sensors=[];
-let sensor_data=[];
-let sensor_data_len;
+           let sensors=[];
+           let sensor_data_len;
            let time = start_time;
            let newDataset;
            let newXAxis;
@@ -559,7 +489,7 @@ let sensor_data_len;
                for (i in obj)
                {
                    colorName = colorNames[live_config.data.datasets.length % colorNames.length];
-                   newColor = window.chartColors[colorName];
+                   newColor = chartColors[colorName];
                    newXAxis = {
                         id: "id-"+i,
                         type: 'time',

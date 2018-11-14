@@ -52,7 +52,7 @@
                                           <tbody>
                                           {% load static %}
                                           {% for game in cur_games reversed%}
-                                                <tr class="tbl_toggle">
+                                                <tr class="tbl_toggle" style="cursor:pointer">
                                                     <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
                                                         <b style="color: cornflowerblue">{{ game.match_id }}</b>
@@ -79,12 +79,9 @@
                                                     </td>
                                                 </tr>
                                           {% endfor %}
-                                          {% for game in games reversed%}{% if game.has_error %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
-                                                        {% endif %}
-
-                                                <tr class="tbl_toggle">
-                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
+                                          {% for game in games reversed%}
+                                                <tr class="tbl_toggle" style="cursor:pointer">
+                                                    <td class="uk-text-center"><input class="uk-checkbox disabler" room-name="{{ game.room.room_name }}" room-id="{{ game.room_id }}" onchange="disable_game(this)" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
                                                         <a href="game/{{ game.game_id }}/" style="color: white"><b>{{ game.match_id }}</b></a>
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
@@ -104,7 +101,7 @@
                                                             </p>
                                                         {% else %}
                                                             <p class="uk-margin-remove"><b style="color: #ffb843">Unsolved</b>
-                                                            {% if game.has_error %}
+                                                                {% if game.has_error %}
                                                                     <span class="uk-text-danger" uk-tooltip="Sequence anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
                                                                 {% endif %}
                                                                 {% if game.has_warning %}
@@ -158,12 +155,47 @@
 </div>
 
 	<script>
+        function all_boxes_unchecked() {
+            chk_boxes = document.getElementsByClassName('disabler');
+            for(box in chk_boxes){
+                if ($(chk_boxes[box]).prop('checked')){
+                    return false;
+                }
+            }
+            return true;
+        }
+        function disable_game(obj) {
+                let tbl = $('#room_tbl').DataTable();
+
+                chk_boxes = document.getElementsByClassName('disabler');
+                for(box in chk_boxes){
+                    try {
+                        if ($(chk_boxes[box]).attr("room-id") !== $(obj).attr("room-id")){
+                            $(chk_boxes[box]).attr("disabled",true);
+                            tbl.search( $(obj).attr("room-name") ).draw();
+                        }
+
+                    }
+                    catch(err) {
+                        console.log(err);
+                    }
+                }
+
+                if (all_boxes_unchecked()){
+
+                    tbl.search("").draw();
+                    for(box in chk_boxes){
+                        $(chk_boxes[box]).attr("disabled",false);
+                    }
+                }
+        }
         $(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
             console.log("clicked");
-            if(e.target !== chk)
+            if(e.target !== chk && chk.disabled === false)
             {
                 chk.checked = !chk.checked;
+                disable_game(chk);
             }
         });
 	</script>

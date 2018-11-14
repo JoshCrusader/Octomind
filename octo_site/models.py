@@ -56,11 +56,9 @@ class ClueDetails(models.Model):
         for d in data:
             if float(d["time_solved"]) == 0.0:
                 data.remove(d)
-        print("data length",len(data))
         if len(data) != 0:
             for i,d in enumerate(data):
                 sum_minutes += d["time_solved"]
-                print("min_sum", sum_minutes)
                 if sum_minutes > minute_asked:
                     return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
                 if i == len(data)-1:
@@ -124,7 +122,6 @@ class Game(models.Model):
                 my_seq.append(i)
         for s in my_seq:
             sensors.append(Sensor.objects.get(sensor_id=s))
-        print(sensors)
         return sensors
     @property
     def get_sensor_trigger_sequence(self):
@@ -220,6 +217,7 @@ class Game(models.Model):
                              "time_solved": time_diff_in_min,
                              "timestamp": data['timestamp'],
                              "times_triggered": times_triggered,
+                             "phase_name": s.phase_name,
                              "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
 
                         break
@@ -238,7 +236,6 @@ class Game(models.Model):
         cursor.close()
         # close the connection
         connection.close()
-        #print(new_data)
         return new_data
     @staticmethod
     def pull_game_tally(self):
@@ -255,7 +252,6 @@ class Game(models.Model):
         for d in data:
             for dr in data_return:
                 if dr["sensor_id"] == d["sensor_id"]:
-                    #print(d["log_id"], d["sensor_id"], d["value"])
                     if d["value"] == '1':
                         dr["times_triggered"] += 1
                     else:
@@ -267,7 +263,6 @@ class Game(models.Model):
         cursor = connection.cursor()
         f = '%Y-%m-%d %H:%M:%S'
         game = self
-        #print("xxxxxxxxxxx",self)
         sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
         sensors_id = []
         for s in sensors:
@@ -474,7 +469,6 @@ class Room(models.Model):
             rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
             for rpi_sensor in rpi_sensors:
                 sensors.append(rpi_sensor)
-        print(sensors)
         return sensors
 
     @property

@@ -228,7 +228,7 @@ def get_sensors_by_room_id(request,room_id):
 def get_sensor_by_game(request, game_id):
     data_return = []
     for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
-        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
+        data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "phase_name":sensor.phase_name,"top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt
 def sensor_data(request,game_id):
@@ -381,7 +381,7 @@ def add_branch(request):
     branch.save()
 def add_sensor(request):
     sensor = Sensor(sensor_name=request.POST['sensor_name'], rpi_id=request.POST['sensor_rpi_id'],
-                sensor_type_id=request.POST['sensor_sensor_type_id'])
+                sensor_type_id=request.POST['sensor_sensor_type_id'],phase_name=request.POST['phase_name'])
     sensor.sequence_number = sensor.get_sequence_number
     sensor.save()
 def add_sensor_type(request):
