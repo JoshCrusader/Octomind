@@ -18,11 +18,10 @@
 
 <body>
 	<div style="width:75%;">
-		<canvas id="canvas"></canvas>
+		<canvas id="log_sum"></canvas>
 	</div>
 	<br>
     <script>
-		var DEFAULT_DATASET_SIZE = 7;
         var log_sum_sensors=[];
         var summary_data = null;
         let chartColors = {
@@ -50,7 +49,7 @@
 		};
 
 		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
+			var ctx = document.getElementById('log_sum').getContext('2d');
 			window.myLogSummary = new Chart(ctx, {
 				type: 'bubble',
 				data: bubbleChartData,
@@ -159,14 +158,9 @@
                     }
 				}
 			});
-			initData();
-			placeAvg()
+			initLogSumData();
 		};
-		function placeAvg(){
-
-         window.myLogSummary.update()
-        }
-        function initData(){
+        function initLogSumData(){
             // Populate the datasets
          let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
              sensor_data.done(function(results){

@@ -466,10 +466,10 @@ def room_details_analysis(request):
         else:
             print("what")
         print("rep_data", report_data)
-
     print("bro wtf")
     print("rep_data", report_data)
     return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"records_len":len(games)})
+
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 def trend_analysis(request):
@@ -502,3 +502,28 @@ def game_logs_detail(request,game_id):
     summary = g.pull_game_summary(g)
     return render(request, 'octo_site/game_logs/game_logs_detail.html',
                   {'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info']})
+
+def analyze_game_logs(request,game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/game_logs/game_logs_analysis.html',
+                  {"room_id":games[0].room_id,"room": games[0].room, "id_slugs": game_ids, "game_count":len(games),'game_ids': gids, "games": games})
+'''
+
+def log_distribution(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_distribution.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
+
+def log_summary(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_summary.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
+
+'''

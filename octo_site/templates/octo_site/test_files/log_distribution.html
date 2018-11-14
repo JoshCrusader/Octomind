@@ -18,9 +18,8 @@
 
 <body>
 	<div style="width:75%">
-		<canvas id="canvas"></canvas>
+		<canvas id="log_dist"></canvas>
 	</div>
-	<button id="randomizeData">Randomize Data</button>
 	<script>
 		var color = Chart.helpers.color;
 		let chartColors = {
@@ -44,10 +43,8 @@
 		var yLbl = {
 
         };
-
-
 		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
+			var ctx = document.getElementById('log_dist').getContext('2d');
 
 			window.LogDistributionChart = Chart.Scatter(ctx, {
 				data: scatterChartData,
@@ -127,10 +124,10 @@
 
 				}
 			});
-			initData();
+			initLogDistData();
 		};
 
-        function initData() {
+        function initLogDistData() {
             console.log("ylabels",yLbl);
             // Populate the datasets
          {% for game in games %}
@@ -180,18 +177,6 @@
          {% endfor %}
             console.log("ylbl",yLbl);
         }
-
-		document.getElementById('randomizeData').addEventListener('click', function() {
-			scatterChartData.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {
-					return {
-						x: randomScalingFactor(),
-						y: randomScalingFactor()
-					};
-				});
-			});
-			window.LogDistributionChart.update();
-		});
 	</script>
 </body>
 

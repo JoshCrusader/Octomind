@@ -17,6 +17,7 @@ urlpatterns = [
     #game dets
     path('game_logs/', views.game_logs, name='game_logs'),
     path('game_logs/game/<int:game_id>/', views.game_logs_detail, name='game_logs_detail'),
+    path('game_logs/analysis/<slug:game_ids>/', views.analyze_game_logs, name='analyze_game_logs'),
     #settings
     path('sensor/', views.page_sensor, name='page_sensor'),
     path('venue/', views.page_venue, name='page_venue'),

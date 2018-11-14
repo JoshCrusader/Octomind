@@ -70,7 +70,7 @@ class Clues(models.Model):
     clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
     game = models.ForeignKey('Game', models.DO_NOTHING)
     clue_id = models.AutoField(primary_key=True)
-    
+
     class Meta:
         managed = False
         db_table = 'clues'

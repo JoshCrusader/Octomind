@@ -34,7 +34,7 @@
                             <h3 class="uk-margin-remove-bottom uk-text-warning"><span class="uk-text-primary" data-uk-icon="icon: album;ratio: 1"></span> Game Log </h3>
                         </div>
                         <div class="uk-width-expand uk-text-right">
-                            <button class="uk-button uk-button-default uk-button-small " disabled> Analyze <span data-uk-icon="icon: gitter"></span></button>
+                            <button class="uk-button uk-button-primary uk-button-small" id="analyze_btn" onclick="submit_for_analysis()" disabled> Analyze <span data-uk-icon="icon: gitter"></span></button>
                         </div>
                         <div class="uk-card-body uk-align-center uk-width-1-1">
                             <div class="uk-overflow-auto">
@@ -81,7 +81,7 @@
                                           {% endfor %}
                                           {% for game in games reversed%}
                                                 <tr class="tbl_toggle" style="cursor:pointer">
-                                                    <td class="uk-text-center"><input class="uk-checkbox disabler" room-name="{{ game.room.room_name }}" room-id="{{ game.room_id }}" onchange="disable_game(this)" value="gago" name="room_to_analyze[]" type="checkbox"></td>
+                                                    <td class="uk-text-center"><input class="uk-checkbox disabler" game-id="{{ game.game_id }}" room-name="{{ game.room.room_name }}" room-id="{{ game.room_id }}" onchange="disable_game(this)" value="gago" name="room_to_analyze[]" type="checkbox"></td>
                                                     <td>
                                                         <a href="game/{{ game.game_id }}/" style="color: white"><b>{{ game.match_id }}</b></a>
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
@@ -164,6 +164,20 @@
             }
             return true;
         }
+        function submit_for_analysis() {
+            let game_ids = get_all_checked_boxes_game_id();
+            window.location.href = '{% url 'game_logs' %}analysis/'+game_ids.join("-")+'/';
+        }
+        function get_all_checked_boxes_game_id(){
+            let data_return =[];
+            chk_boxes = document.getElementsByClassName('disabler');
+            for(box in chk_boxes){
+                if ($(chk_boxes[box]).prop('checked')){
+                    data_return.push($(chk_boxes[box]).attr("game-id"));
+                }
+            }
+            return data_return
+        }
         function disable_game(obj) {
                 let tbl = $('#room_tbl').DataTable();
 
@@ -172,6 +186,7 @@
                     try {
                         if ($(chk_boxes[box]).attr("room-id") !== $(obj).attr("room-id")){
                             $(chk_boxes[box]).attr("disabled",true);
+                            $("#analyze_btn").attr("disabled",false);
                             tbl.search( $(obj).attr("room-name") ).draw();
                         }
 
@@ -183,6 +198,7 @@
 
                 if (all_boxes_unchecked()){
 
+                    $("#analyze_btn").attr("disabled",true);
                     tbl.search("").draw();
                     for(box in chk_boxes){
                         $(chk_boxes[box]).attr("disabled",false);
