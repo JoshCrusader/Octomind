@@ -145,6 +145,17 @@ def all_sensor_data(request):
     return JsonResponse({"data": data})
 
 @csrf_exempt
+def select_sensor_data(request, game_ids):
+    data = []
+    gids = game_ids.split("-")
+    for g in gids:
+        game = Game.objects.get(game_id=g)
+        game_data = game.pull_data_fr_game(game)
+        for gd in game_data:
+            data.append(gd)
+    return JsonResponse({"data": data})
+
+@csrf_exempt
 def game_cur_logs(request,game_id):
     g = Game.objects.get(game_id=game_id)
     data = g.pull_data_game(g)
@@ -218,13 +229,6 @@ def game_logs_detail(request,game_id):
     return game_logs_func.game_logs_detail(request,game_id)
 
 def analyze_game_logs(request,game_ids):
-
-    room_id = Game.objects.get(game_id=game_ids.split("-")[0]).room_id
-    gids = game_ids.split("-")
-    for g in gids:
-        if Game.objects.get(game_id=g).room_id != room_id:
-            print("oi mali yan")
-            return redirect('error404')
     return game_logs_func.analyze_game_logs(request,game_ids)
 
 @csrf_exempt

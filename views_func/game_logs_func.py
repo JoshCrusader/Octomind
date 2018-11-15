@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from octo_site.models import *
 from octo_site.forms import *
 from django.http import HttpResponseRedirect, JsonResponse
@@ -37,7 +37,20 @@ def game_logs_detail(request,game_id):
 def analyze_game_logs(request,game_ids):
     gids = game_ids.split("-")
     games = []
+    try:
+        gids = [int(i) for i in gids]
+        room_id = Game.objects.get(game_id=game_ids.split("-")[0]).room_id
+        for g in gids:
+            if Game.objects.get(game_id=g).room_id != room_id:
+                return redirect('error404')
+
+    except:
+        return redirect('error404')
+
+    xd = set([x for x in gids if gids.count(x) > 1])
+    if xd != set():
+        return redirect('error404')
     for g in gids:
-        games.append(Game.objects.get(game_id=int(g)))
+        games.append(Game.objects.get(game_id=g))
     return render(request, 'octo_site/game_logs/game_logs_analysis.html',
                   {"room_id":games[0].room_id,"room": games[0].room, "id_slugs": game_ids, "game_count":len(games),'game_ids': gids, "games": games})

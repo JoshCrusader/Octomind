@@ -73,7 +73,10 @@ def get_log_summary(request,game_ids):
                 summary_ave_data[s.sensor_id]["count"] += 1
 
     for sum_av in summary_ave_data:
-        summary_ave_data[sum_av]["avg_time_solved"] = round(summary_ave_data[sum_av]["avg_time_solved"]/summary_ave_data[sum_av]["count"], 2)
-        summary_ave_data[sum_av]["avg_min_stamped"] = round(summary_ave_data[sum_av]["avg_min_stamped"]/summary_ave_data[sum_av]["count"], 2)
-
+        try:
+            summary_ave_data[sum_av]["avg_time_solved"] = round(summary_ave_data[sum_av]["avg_time_solved"]/summary_ave_data[sum_av]["count"], 2)
+            summary_ave_data[sum_av]["avg_min_stamped"] = round(summary_ave_data[sum_av]["avg_min_stamped"]/summary_ave_data[sum_av]["count"], 2)
+        except:
+            summary_ave_data[sum_av]["avg_time_solved"] = None
+            summary_ave_data[sum_av]["avg_min_stamped"] = None
     return JsonResponse({"data": summary_ave_data})

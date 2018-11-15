@@ -22,15 +22,58 @@
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
         {% if report_data.has_result %}
-        <div class="uk-container-expand" id="chart_container" style="display:none;height: 63vh">
+
+        <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 70vh;">
+            <div uk-grid>
+                <div class="uk-width-expand@m uk-align-center" >
+                    <ul id="component-tab-right" STYLE="margin-left:10vw;"  class="uk-switcher">
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="log_dist" ></canvas>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="log_sum" ></canvas>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class ="m-content-wrapper" id="s_plot" style="margin-right: 40vh;height: 360px;width: 360px" >
+                        <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
+                        <div class = "m-sandbox-content card-lite uk-card-hover">
+                            <div class = "m-sandbox-frame">
+                                <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                                    <!-- Things get appended here thru setSandBox() -->
+                                </div>
+                                <div id="sensor_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                                    <!-- Things get appended here thru setSandBox() -->
+                                </div>
+                                <img id="img_sensor_layout"  src="{% static 'media/' %}{{ room.blueprint_file }}" alt="" style="width: 100%;height: 100%;">
+                            </div>
+                            <div class = "m-sandbox-controller uk-text-truncate uk-text-center" style="background-color: #f7f7f7;padding:10px">
+                                <p>Blueprint for {{ room.room_name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-width-1-1 uk-text-right uk-align-right" >
+                        <ul style="margin-left: -19px;" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!--
             <div class="chart-container" style="margin-left: 15vw;height:20vh;width:70%" >
                 <canvas class="uk-align-center" id="canvas" ></canvas>
             </div>
-        <br>
-
+            <br>
+            -->
         </div>
 
-        <div class="uk-grid-divider  uk-child-width-1-4 uk-child-width-1-6@l uk-child-width-1-5@xl" id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
+        <div class="uk-grid-divider  uk-child-width-1-4 uk-child-width-1-6@l uk-child-width-1-5@xl" id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
                     <div style="padding-left: 2vw;width: auto">
                         <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
                         <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
@@ -184,65 +227,482 @@
         {% endif %}
     </section>
 </div>
+<script>
+    var color = Chart.helpers.color;
+    let chartColors = {
+      red: 'rgb(255, 65, 54)',
+      yellow: 'rgb(239, 206, 0)',
+      green: 'rgb(61, 142, 106)',
+      blue: 'rgb(28, 143, 219)',
+      orange: 'rgb(255, 118, 0)',
+      purple: 'rgb(153, 102, 255)',
+      grey: 'rgb(231,233,237)',
+      black: 'rgb(0,0,0)',
+    };
+    var log_dist_games = [];
+    var log_sum_sensors=[];
+    let distribution_data = null;
+    var colorNames = Object.keys(chartColors);
+    var bubbleChartData = {
+                animation: {
+                    duration: 0
+                },
+                game_ids: [],
+                datasets: [],
+                sensor_names:[],
+                dataset_game_ids:[],
+                dataset_r_vals:[]
 
+            };
+    var scatterChartData = {
+        datasets: [],
+        sensor_names:[],
+    };
+    var yLbl = {};
+    window.onload = function() {
+        var log_dist_ctx = document.getElementById('log_dist').getContext('2d');
+        window.LogDistributionChart = Chart.Scatter(log_dist_ctx, {
+            data: scatterChartData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Sensor Log Distribution for Game/s {{ game_ids|join:", " }}'
+                },
+
+                tooltips: {
+                mode: 'nearest',
+                intersect: false,
+                custom: function(tooltip) {
+                if (!tooltip) return;
+                // disable displaying the color box;
+                tooltip.displayColors = true;
+                },
+                callbacks: {
+                    // use label callback to return the desired label
+                    label: function(tooltipItem, data) {
+                        val = tooltipItem.xLabel;
+                        sec = ((val % 1)*60).toFixed(2);
+
+                        min = Math.floor(val);
+                        if (min !== 0 && sec !== 0){
+                        if (parseInt(sec) === 0){
+                                return 'Elapsed: ' + min + " min";
+                            }
+                            return min + " min and " + sec +" sec" ;
+                        }
+                        return 'Ano daw';
+                    },
+                    title: function(tooltipItem, data) {
+                        console.log(data);
+                        console.log(tooltipItem[0].datasetIndex);
+
+                        game_id = parseInt(data.datasets[tooltipItem[0].datasetIndex].label)-10000;
+                        return data.sensor_names[game_id][tooltipItem[0].index];
+
+                    },
+                    afterTitle: function(tooltipItem, data) {
+                        return "Game "+data.datasets[tooltipItem[0].datasetIndex].label;
+
+                    },
+
+                    // Use the footer callback to display the sum of the items showing in the tooltip
+
+                  },
+                footerFontStyle: 'normal'
+            },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'minutes',
+                            max: 60
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min: 0,
+                            stepValue: 1,
+                            max: {{ room.num_sensors }} + 0.3,
+                            callback: function(value, index, values){
+                                return yLbl[value];
+                            }
+                        }
+                    }]
+                }
+
+            }
+        });
+
+        let log_sum_ctx = document.getElementById('log_sum').getContext('2d');
+        window.myLogSummary = new Chart(log_sum_ctx, {
+            type: 'bubble',
+            data: bubbleChartData,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Log Summary for Game/s {{ game_ids|join:", " }}'
+                },
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                        // disable displaying the color box;
+                        tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+
+                            if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
+                                //console.log("sensor_names",data.sensor_names);
+                                return data.sensor_names[tooltipItem.index+1];
+                            }
+
+                            val = tooltipItem.xLabel;
+                            sec = ((val % 1)*60).toFixed(2);
+                            min = Math.floor(val);
+                            if (min !== 0 || sec !== 0){
+                                if (parseInt(sec) === 0){
+                                        return min + ":00";
+                                    }
+                                if (parseInt(min) === 0){
+                                        return "00:00" + sec;
+                                    }
+                                if (Math.round(sec) < 10){
+
+                                    return min + ":0" + Math.round(sec);
+                                }
+                                return min + ":" + Math.round(sec);
+                            }
+                            return 'Ano daw';
+                        },
+                        title: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                return null;
+                            }
+                            return data.datasets[tooltipItem[0].datasetIndex].label
+                        },
+                        afterTitle: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                return null;
+                            }
+
+                            return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
+                        },
+                        afterBody: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                str=["-----"];
+                                str.push("Time solved average: "+tooltipItem[0].yLabel);
+                                str.push("Minute triggered average: "+tooltipItem[0].xLabel);
+                                return str;
+                            }
+
+                            val = parseFloat(tooltipItem[0].yLabel);
+                            sec = ((val % 1)*60).toFixed(2);
+
+                            min = Math.floor(val);
+                            if (min !== 0 && sec !== 0){
+                            if (parseInt(sec) === 0){
+                                    return 'Solved in ' + min + " min";
+                                }
+                                return "Solved in "+min + " min and " + Math.round(sec) +" sec" ;
+                            }
+                            return 'Ano daw';
+                        },
+                        beforeFooter: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                return null;
+                            }
+                                return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
+                        },
+
+                        // Use the footer callback to display the sum of the items showing in the tooltip
+
+                      },
+                    footerFontStyle: 'normal'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'minutes triggered',
+                            max: 60
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString:'time solved (min)'
+                        }
+                    }]
+                }
+            }
+        });
+        initLogSumData();
+        initLogDistData();
+        window.LogDistributionChart.update();
+        setTimeout(() => {
+            $("#s_plot").hide();
+        },2000);
+    };
+    function initLogDistData() {
+        console.log("ylabels",yLbl);
+        // Populate the datasets
+     {% for game in games %}
+         {
+           colorName = colorNames[scatterChartData.datasets.length % colorNames.length];
+           newColor = window.chartColors[colorName];
+           newDataset = {
+                label: ({{ game.game_id }} + 10000),
+                backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                borderColor: newColor,
+                data: [],
+                pointRadius: 8,
+                pointHoverRadius: 14,
+           };
+           let ace = {{ game.game_id }}
+           scatterChartData.datasets.push(newDataset);
+           scatterChartData.sensor_names[ace] = [];
+           log_dist_games.push({{ game.game_id }});
+           window.LogDistributionChart.update()
+        }
+     {% endfor %}
+     let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+         sensor_data.done(function(results){
+            obj = results.sensors;
+            for (i in obj)
+            {
+               yLbl[obj[i].sensor_id] = obj[i].sensor_name;
+               window.LogDistributionChart.update()
+            }
+       });
+       // Populate data in the datasets
+     {% for game in games %}
+         distribution_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}/");
+         distribution_data.done(function(results){
+            obj = results.data;
+            for (i in obj)
+            {
+               if(obj[i].value !== "0"){
+                   scatterChartData.datasets[log_dist_games.indexOf({{ game.game_id }})].data.push({x:obj[i].min_stamped,y: obj[i].sensor_id });
+                   scatterChartData.sensor_names[{{ game.game_id }}].push(obj[i].sensor_name);
+                   window.LogDistributionChart.update()
+               }
+            }
+
+        });
+     {% endfor %}
+    }
+    function initLogSumData(){
+            // Populate the datasets
+        console.log("populationg");
+         let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+             sensor_data.done(function(results){
+                obj = results.sensors;
+                for (i in obj)
+                {
+                   colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                   newColor = chartColors[colorName];
+                   newDataset = {
+                        label: obj[i].sensor_name,
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        pointRadius: 8,
+                        pointHoverRadius: 14,
+                   };
+                   bubbleChartData.datasets.push(newDataset);
+                   let ace = obj[i].sensor_id;
+                   bubbleChartData.dataset_game_ids[ace] = [];
+                   bubbleChartData.dataset_r_vals[ace] = [];
+                   log_sum_sensors.push(obj[i].sensor_id);
+                   window.myLogSummary.update()
+                }
+                let summary_data =  $.get("/octo_site/api/get_log_summary/{{ id_slugs }}/");
+                summary_data.done(function(summary){
+                    colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                    newColor = chartColors[colorName];
+                    obj = summary.data;
+                    console.log("summary",obj);
+                    newdt = {
+                        label: "averages",
+                        type: "line",
+                        borderDash: [10,5],
+                        pointStyle: 'rectRot',
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        borderWidth: 2,
+                        data: [],
+                        pointRadius: 10,
+                        pointHoverRadius: 10,
+                        fill: false,
+                   };
+                    window.myLogSummary.update();
+                   console.log("data",bubbleChartData.datasets);
+                   bubbleChartData.datasets.push(newdt);
+
+                   for(ob in obj){
+                       bubbleChartData.datasets[bubbleChartData.datasets.length-1]
+                           .data
+                           .push({x: obj[ob].avg_min_stamped, y: obj[ob].avg_time_solved,});
+                       bubbleChartData.sensor_names[ob] = obj[ob].sensor_name;
+                       window.myLogSummary.update();
+                   }
+
+               });
+               window.myLogSummary.update()
+
+           });
+             console.log(bubbleChartData.dataset_game_ids);
+           // Populate data in the datasets
+         {% for game in games %}
+             summary_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+             summary_data.done(function(results){
+                obj = results.data;
+                for (i in obj)
+                {
+                   if(obj[i].value !== "0"){
+                        console.log(obj[i].time_solved);
+                       bubbleChartData.datasets[log_sum_sensors.indexOf(obj[i].sensor_id)].data.push(
+                           {
+                               x: obj[i].min_stamped,
+                               y: obj[i].time_solved,
+                               r:obj[i].times_triggered*15
+                           });
+                       bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
+                       bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
+                       window.myLogSummary.update()
+                   }
+                }
+            });
+         {% endfor %}
+        }
+	</script>
+<script>
+    console.log("------");
+    let new_opacity;
+    function sendSensorRequet(){
+        $.ajax({
+            type:"POST",
+            url:"/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/",
+            data: {
+                'game_id': {{ room.room_id }},
+            },
+            success: function(data){
+                setSandBox(data.sensors);
+            }
+        });
+    }
+    function setSandBox(sensors){
+        dom = document.getElementById("sensor_sequence_plot");
+        str = ""
+        for(i in sensors){
+            str_append = '<div id = "sensor-tip-'+sensors[i].sensor_id+'" class="div_drag" uk-tooltip="'+sensors[i].sensor_name+'" sensor-id="'+sensors[i].sensor_id+'" onmousedown=""  style="left: '+sensors[i].left_coordinate+'%; top: '+sensors[i].top_coordinate+'%;width: 25px; height: 25px;text-align: center;position: absolute;"> <span style="color: white;width: 25px; height: 25px;" data-uk-icon="icon: nut"></span></div>';
+            str += str_append+"\n";
+        }
+
+        dom.innerHTML = str;
+        setPathContent(sensors);
+    }
+    function setPathContent(sensors){
+        dom = document.getElementById("path_sequence_plot");
+        str = "";
+        senlogs = final_results.data; //sensor logs
+
+        matrix = {};
+        max = 1;
+        for(i in senlogs){
+            if(i != 0){
+                str_append = '<div class = "path-container" id = "laser_'+senlogs[i].sensor_id+'" target1 = "'+senlogs[i-1].sensor_id+'" target2 = "'+senlogs[i].sensor_id+'" arw_target = 1></div>'
+                str += str_append+"\n";
+                less = Math.min(senlogs[i].sensor_id, senlogs[i-1].sensor_id);
+                more = Math.max(senlogs[i].sensor_id, senlogs[i-1].sensor_id);
+                if(matrix[less+""] == null){
+                    matrix[less+""] = {};
+                }
+                if(matrix[less+""][max+""] == null){
+                    matrix[less+""][max+""] = 1;
+                }
+                else{
+                    matrix[less+""][max+""] += 1;
+                    if(matrix[less+""][max+""] > max){
+                        max = matrix[less+""][max+""];
+                    }
+                }
+            }
+        }
+        new_opacity = 0.75/max;
+        dom.innerHTML = str;
+        produceConnections();
+    }
+    function produceConnections(){
+        items = document.getElementsByClassName("path-container");
+        for(var i = 0; i < items.length; i++){
+            setPathF(items[i]);
+        }
+    }
+    function setPathF(pathdom){
+
+            var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
+            var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
+
+            var p1 = document.getElementById(t1n);
+            var p2 = document.getElementById(t2n);
+
+            var s1 = window.getComputedStyle(p1);
+            var s2 = window.getComputedStyle(p2);
+
+            var y1 = parseInt(p1.offsetTop);
+            var y2 = parseInt(p2.offsetTop);
+
+            var x1 = parseInt(p1.offsetLeft);
+            var x2 = parseInt(p2.offsetLeft);
+
+            delta_x = x2 - x1;
+            delta_y = y2 - y1;
+
+            theta_radians = Math.atan2(delta_y, delta_x)*57.2958;
+
+            delta_a = Math.abs(delta_x)*Math.abs(delta_x);
+            delta_b = Math.abs(delta_y)*Math.abs(delta_y);
+            hypotenuse = Math.sqrt(delta_a + delta_b);
+
+            var l = pathdom;
+            console.log(new_opacity+"px")
+            l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;background-color: rgba(0,255,0,"+new_opacity+");");
+            l.style.top = p1.offsetTop+"px";
+            l.style.left = p1.offsetLeft+"px";
+            l.style.width = hypotenuse+"px";
+            str = "";
+            rep = Math.floor((hypotenuse)/20);
+
+            for(var i = 0; i < rep; i++){
+                str += '<img class = "arw" src="{% static "media/imgs/arrow.png" %}" width = "20px" height = "100%" style = "visibility: hidden;">\n';
+            }
+            l.innerHTML = str;
+        }
+</script>
+<script>
+let final_results;
+sensor_data =  $.get("/octo_site/api/select_sensor_data/{{ id_slugs }}/");
+sensor_data.done(function(results){
+    final_results = results;
+    console.log("finalres", final_results);
+    sendSensorRequet();
+})
+</script>
 	<script>
-        let to_add=[];
-        let sensor_data;
-		let MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		let config = {
-			type: 'bar',
-			data: {
-				labels: [],
-				datasets: [{
-					label: 'Time Triggered at',
-					backgroundColor: window.chartColors.red,
-					borderColor: window.chartColors.red,
-					data: [],
-					fill: false,
-				}]
-			},
-			options: {
-				responsive: true,
-
-				title: {
-					display: true,
-					text: '{{ room.room_name }} Game #69'
-				},
-				tooltips: {
-					mode: 'index',
-					intersect: false,
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-				},
-				scales: {
-					xAxes: [{
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: 'Sensor Name'
-						}
-					}],
-					yAxes: [{
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: 'seconds'
-						}
-					}]
-				}
-			}
-		};
-
-		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
-			//initData();
-            //console.log("started");
-			//window.setInterval(reloadData, 1000);
-
-		};
 		$(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
             console.log("clicked");
