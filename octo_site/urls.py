@@ -63,7 +63,10 @@ urlpatterns = [
 
     #testinging
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
-    path('sample_marker', views.sample_marker, name='sample_marker')
+    path('sample_marker', views.sample_marker, name='sample_marker'),
+
+    #handlers
+    path('error404', views.handler404, name='error404')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

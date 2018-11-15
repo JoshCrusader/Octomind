@@ -15,7 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
 from octo_site.db_conf import *
-
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from octo_site.reports_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -24,7 +25,13 @@ from utils import federate, ajax_helper
 from django.http import HttpResponse
 from views_func import *
 from api_func import *
-# Create your views here
+
+def handler404(request, template_name="octo_site/handler404.html"):
+    response = render_to_response(template_name)
+    response.status_code = 404
+    return response
+
+
 def log_in(request):
     user = None
     try:
