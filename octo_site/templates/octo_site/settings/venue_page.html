@@ -612,53 +612,6 @@
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
-    UIkit.upload('.js-upload', {
-        url: '/octo_site/api/upload_process/',
-        multiple: false,
-        beforeSend: function(xhr) {
-            xhr = new XMLHttpRequest();
-            xhr.open("POST","/octo_site/api/upload_process/");
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            const csrfmiddlewaretoken = csrftoken;
-        },
-        beforeAll: function () {
-            console.log('beforeAll', arguments);
-            console.log(arguments[1][0].name);
-            handleFile(arguments[1][0]);
-        },
-        load: function () {
-            console.log('load', arguments);
-        },
-        error: function () {
-            console.log('error', arguments);
-        },
-        complete: function () {
-            console.log('complete', arguments);
-        },
-        loadStart: function (e) {
-            console.log('loadStart', arguments);
-            bar.removeAttribute('hidden');
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-        progress: function (e) {
-            console.log('progress', arguments);
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-        loadEnd: function (e) {
-            console.log('loadEnd', arguments);
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-        completeAll: function (arguments) {
-            console.log('completeAll', arguments);
-            setTimeout(function () {
-                bar.setAttribute('hidden', 'hidden');
-            }, 1000);
-            console.log('Upload Completed');
-        }
-    });
 </script>
 <!-- /CONTENT -->
 {% include 'octo_site/includes/offcanvas.html' %}

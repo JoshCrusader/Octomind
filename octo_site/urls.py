@@ -37,7 +37,6 @@ urlpatterns = [
     path('api/game_summary/<int:game_id>/', views.game_summary, name='game_summary'),
     path('api/game_tally/<int:game_id>/', views.game_tally, name='game_tally'),
     #ajax functions
-    path('api/upload_process/', views.upload_process,name='upload_process'),
     path('api/update_plot/', views.update_plot, name='update_plot'),
     path('api/get_sensor_by_game/<int:game_id>/', views.get_sensor_by_game, name='get_sensor_by_game'),
     path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
