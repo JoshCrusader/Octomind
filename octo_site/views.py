@@ -22,6 +22,8 @@ from django.utils import timezone
 from utils import federate, ajax_helper
 
 from django.http import HttpResponse
+from views_func import *
+from api_func import *
 # Create your views here
 def log_in(request):
     user = None
@@ -103,90 +105,17 @@ def page_venue(request):
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
 
 def control_panel(request):
-    if request.method == 'GET':
-        # federate.sync()
-        game_details = []
-        now_datetime = timezone.now() + timezone.timedelta(hours=8)
-        finish_time = now_datetime - timezone.timedelta(hours = 1)
-        print(now_datetime)
-        for i in GameDetails.objects.all().filter(timestart__gte = finish_time).filter(timeend__isnull = True):
-            game_details.append(i)
-        games = {}
-        for g_d in game_details:
-            i = Game.objects.get(game_details_id = g_d.game_details_id)
-            games[i.room_id] = {}
-            games[i.room_id]['game_id'] = i.game_id
-            games[i.room_id]['game'] = (Room.objects.get(room_id = i.room_id))
-            ## GETTING TIME DETAILS
-            game_detail = GameDetails.objects.get(game_details_id = i.game_details_id)
-            games[i.room_id]['minutes'] = (game_detail.timestart + timezone.timedelta(hours = 1) - now_datetime).seconds//60
-            games[i.room_id]['seconds'] = (game_detail.timestart + timezone.timedelta(hours = 1) - now_datetime).seconds%60
-            ## GETTING PLAYERS DETAILS
-            teams = Teams.objects.filter(game_id = i.game_id)
-            games[i.room_id]['players'] = []
-            for team in teams:
-                games[i.room_id]['players'].append(Players.objects.get(players_id = team.players_players_id))
-            ## CLUES
-            clues = Clues.objects.filter(games_id = i.game_id)
-            games[i.room_id]['clues'] = range(0, 3-len(clues))
-            games[i.room_id]['mystery'] = range(0, len(clues))
-            print(len(clues))
-        #for i in games[3]['players']:
-        #    print(i.firstname)
-        properties = {}
-        properties['h'] = 5
-        properties['rooms'] = Room.objects.all()
-        properties['games'] = games
-        return render(request,'octo_site/control_panel.html', properties)
-        pass
+    return control_panel_func.control_panel(request)
+
 
 def view_room(request, game_id):
-    try:
-        game = Game.objects.get(game_id = game_id)
-        if(game is not None):
-            details = GameDetails.objects.get(game_details_id = game.game_details_id)
-            team = Teams.objects.filter(game_id = game.game_id)
-            players = []
-            for i in team:
-                pass
-                players.append(Players.objects.get(players_id = i.players_players_id))
-            clues = Clues.objects.filter(games_id = game.game_id)
-            properties = {}
-            properties['gameid'] = game.game_id
-            properties['details'] = details
-            properties['players'] = players
-            properties['clues'] = clues
-            room_obj = Room.objects.get(room_id = game.room_id)
-            properties['roomid'] = room_obj.room_id
-            properties['img'] = room_obj.header_img
-            properties['roomname'] = room_obj.room_name
-            properties['blueprint'] = room_obj.blueprint_file
-            properties['sensors'] = []
-            for sensor in room_obj.get_all_sensors:
-                properties['sensors'].append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
-            
-            # sensors = Sensor.objects.get(room_id = room_obj.room_id)
-            # for i in sensors:
-            #     pass
-            now_datetime = timezone.now() + timezone.timedelta(hours=8)
-            if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
-                properties['done'] = False
-                properties['minutes'] = (details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60
-                properties['seconds'] = (details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds % 60
-            else:
-                properties['done'] = True
+    return view_room_func.view_room(request, game_id)
 
-            if(details.timeend is not None):
-                properties['done'] = True
-            print('MINUTES: ')
-            print((details.timestart + timezone.timedelta(hours=1)- now_datetime))
-            print((details.timestart + timezone.timedelta(hours=1) - now_datetime).seconds // 60)
-            return render(request,'octo_site/view_room.html', properties)
-        else:
-            pass
-    except Exception as e:
-        print(e)
-        return render(request,'octo_site/dashboard.html')
+def sandbox_analysis(request, room_id):
+    return sandbox_analysis_func.sandbox_analysis(request, room_id)
+
+def market_report(request):
+    return market_report_func.market_report(request)
 
 def access_room(request):
     ## Add Room in the game room
@@ -239,6 +168,16 @@ def sensor_data(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+@csrf_exempt
+def all_sensor_data(request):
+    data = pull_all_sensor_data()
+    for d in data:
+        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
+        d['sensor_name'] = sensor.sensor_name
+        d['rpi_id'] = sensor.rpi_id
+        d['sensor_type_id'] = sensor.sensor_type_id
+    return JsonResponse({"data": data})
+
 @csrf_exempt
 def game_cur_logs(request,game_id):
     g = Game.objects.get(game_id=game_id)
@@ -344,6 +283,9 @@ def get_log_summary(request,game_ids):
     return JsonResponse({"data": summary_ave_data})
 
 #TEST URLS
+def get_market(request):
+    return get_market_func.get_market(request)
+
 def data_vis(request, room_id):
     room = Room.objects.get(room_id=room_id)
     return render(request, 'octo_site/test_files/data_vis.html', {"room":room, "game":Game.objects.get(game_id=1)})
@@ -502,6 +444,7 @@ def game_logs_detail(request,game_id):
     return render(request, 'octo_site/game_logs/game_logs_detail.html',
                   {'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info']})
 
+
 def analyze_game_logs(request,game_ids):
     gids = game_ids.split("-")
     games = []
@@ -526,3 +469,8 @@ def log_summary(request, game_ids):
     return render(request, 'octo_site/test_files/log_summary.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
 
 '''
+
+@csrf_exempt
+def get_players_data(request):
+    data = {}
+    return JsonResponse({"data", data})

@@ -1,0 +1,83 @@
+
+{% load staticfiles %}
+{% load templaterange %}
+{% load get_attr %}
+{% include 'octo_site/includes/header.html' %}
+<link rel="stylesheet" href = "{% static 'styles/market_report.css' %}" type = "text/css">
+
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+    <div class = "pie_container">
+        <canvas id = "chart"></canvas>
+    </div>
+  <div><slot name = "ur-mom">XD</slot></div>
+  <span slot = "ur-mom"> NO U </span>
+</div>
+<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+<script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+
+<script>
+let data = {
+    /*
+        TODO: market data
+    */
+    datasets: [
+    {
+      data: [10],
+      backgroundColor: "#93acef",
+      label: "Male"
+    }, 
+    {
+      data: [2],
+      backgroundColor: "#f685c0",
+      label: "female"
+    }, 
+    ],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Respondents',
+    ],
+};
+$.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_market/",
+        data: {
+            'game_id': {{ 3 }}
+        },
+        success: function(market){
+            data.datasets[0].data[0] = market.data.m+2;
+            data.datasets[1].data[0] = market.data.f+2;
+            window.genderGraph.update();
+            //location.reload();
+        }
+});
+</script>
+<script>
+
+options = {
+    legend: {
+      display: false // hides the legend
+    },
+    tooltips: {
+      enabled: true // hides the tooltip.
+    },
+    scales: {
+      xAxes: [{
+        display: false, // hides the horizontal scale
+        stacked: true // stacks the bars on the x axis
+      }],
+      yAxes: [{
+        display: false, // hides the vertical scale
+        stacked: true, // stacks the bars on the y axis
+      }]
+    }
+}
+var ctx = document.getElementById('chart').getContext('2d');
+window.genderGraph = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: data,
+    options: options
+});
+</script>

@@ -114,7 +114,7 @@ html {
     margin-top: 2.5px;
     width: 500px;
     height: 20px;
-    background-color: rgba(0,255,0,0.5);
+    background-color: rgba(0,255,0,0.2);
     position: fixed;
 
     -webkit-transform-origin: 0% 10px;

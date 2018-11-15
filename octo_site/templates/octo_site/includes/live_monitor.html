@@ -1,4 +1,13 @@
 <script>
+/*
+PARAMS:
+    details - specific game detail
+    gameid - gameid of game
+    roomid - roomid of room
+
+    sendSensorRequet(); - comes from live_sandbox.html
+*/
+        let final_results;
         let to_add=[];
         let sensors=[];
 
@@ -17,11 +26,12 @@
         };
 		let colorNames = Object.keys(window.chartColors);
         let start_time=new Date ("{{ details.timestart |date:'Y-m-d H:i:s' }}");
-        console.log(start_time);
+        let end_time = new Date("{{ timeend |date:'Y-m-d H:i:s' }}");
 		let config = {
 			type: 'line',
 			data: {
 			    start_time: start_time,
+                end_time: end_time,
 				labels: [],
 				datasets: [],
                 statuses:[],
@@ -79,13 +89,14 @@
 		};
 		window.onload = function() {
 			var ctx = document.getElementById('canvas').getContext('2d');
+            
 			window.myLine = new Chart(ctx, config);
 			initData();
-            console.log("started");
+            //console.log("started");
 			window.setInterval(reloadData, 1000);
 		};
 		function reloadData() {
-		    console.log("reading");
+		    //console.log("reading");
             sensor_data =  $.get("/octo_site/sensor_data/{{ gameid }}");
             sensor_data.done(function(results){
                 if (sensor_data_len < results.data.length){
@@ -113,7 +124,7 @@
         function pullData() {
            sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ roomid }}/");
            sensor_data.done(function(results){
-                console.log(results.data);
+                //console.log(results.data);
            });
            //splice data
         }
@@ -166,6 +177,9 @@
            });
 		   sensor_data =  $.get("/octo_site/sensor_data/{{ gameid }}");
            sensor_data.done(function(results){
+               //console.log("RESULTS");
+               // console.log(results);
+               final_results = results;
                sensor_data_len = results.data.length;
                obj = results.data;
                 for (ob in obj)
@@ -182,10 +196,18 @@
 			        window.myLine.update()
                 }
 
+                config.data.labels.push(end_time);
+                for(let x =0; x < sensors.length;x++){
+                    config.data.datasets[x].data.push(null);
+                }
+                window.myLine.update();
+
+                sendSensorRequet();
+                //console.log(config.data);
            });
         let summary_data =  $.get("/octo_site/api/game_summary/{{ gameid }}/");
             summary_data.done(function(results){
-                console.log(results.data);
+                //console.log(results.data);
            });
 			window.myLine.update();
         }

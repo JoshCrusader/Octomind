@@ -43,6 +43,11 @@ def check_anomaly(game):
     return "no anomaly in solving times detected"
 
 def check_seq(game):
+    if game.has_error:
+        error_sensor = game.get_error_points_sensors
+        print("has error")
+        for s in error_sensor:
+            print(s.sensor_name, "not in sequence")
     in_seq = True
     sensors = Room.objects.get(room_id=game.room.room_id).get_all_sensors
     seq = []
@@ -79,7 +84,8 @@ def check_seq(game):
                     print(str(s.sensor_name) + " not in sequence")
                 in_seq = False
     if in_seq:
-        print("all is insequence so far")
+        # print("all is insequence so far")
+        pass
     return in_seq
 # UNUSED FUNCTIONS
 def pull_data():
@@ -131,3 +137,17 @@ def pull_data_room(room_id):
     connection.close()
     return data_return
 
+def pull_all_sensor_data():
+    connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
+    cursor = connection.cursor()
+    data_return = []
+    # execute the SQL query using execute() method.
+    cursor.execute("select * from sensor_log;")
+
+    # fetch all of the rows from the query
+    data = cursor.fetchall()
+
+    # print the rows
+    for row in data:
+        data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
+    return data_return

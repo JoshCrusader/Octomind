@@ -3,3 +3,7 @@ octo_site/__pycache__
 octo_site/migrations
 octo_site/templatetags/__pycache__
 utils/__pycache__
+views_func/__pycache__
+api_func/__pycache__
+.idea/dataSources/
+package-lock.json
