@@ -28,7 +28,8 @@ from api_func import *
 def handler404(request, template_name="octo_site/handler404.html"):
     response = render_to_response(template_name)
     response.status_code = 404
-    return response
+
+    return render(request,template_name)
 
 def log_in(request):
     user = None
@@ -210,12 +211,20 @@ def sample_marker(request):
     return render(request, 'octo_site/sample_marker.html')
 
 def game_logs(request):
+
     return game_logs_func.game_logs(request)
 
 def game_logs_detail(request,game_id):
     return game_logs_func.game_logs_detail(request,game_id)
 
 def analyze_game_logs(request,game_ids):
+
+    room_id = Game.objects.get(game_id=game_ids.split("-")[0]).room_id
+    gids = game_ids.split("-")
+    for g in gids:
+        if Game.objects.get(game_id=g).room_id != room_id:
+            print("oi mali yan")
+            return redirect('error404')
     return game_logs_func.analyze_game_logs(request,game_ids)
 
 @csrf_exempt
