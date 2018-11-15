@@ -94,7 +94,7 @@ class Game(models.Model):
                 my_seq.append(i)
         for s in my_seq:
             sensors.append(Sensor.objects.get(sensor_id=s))
-        print(sensors)
+        # print(sensors)
         return sensors
     @property
     def get_sensor_trigger_sequence(self):
@@ -125,7 +125,7 @@ class Game(models.Model):
         my_seq = self.get_sensor_trigger_sequence
         # print("real seqeunce: ", real_seq)
         # print("init my seqeunce: ", my_seq)
-        print(my_seq)
+        # print(my_seq)
         index_add = len(real_seq) - len(my_seq)
         if index_add != 0:
             index_add = real_seq[-1*index_add:]
@@ -243,6 +243,40 @@ class Game(models.Model):
                         dr["times_down"] += 1
         return data_return
     @staticmethod
+    def get_market_data(self):
+        market = {}
+        market["players"] = []
+        market["m"] = 0
+        market["f"] = 0
+        try:
+            players = self.get_players_fr_game(self)
+            for i in players:
+                if(i.gender == 0):
+                    market["m"] += 1
+                else:
+                    market["f"] +=1
+        except:
+            pass
+        return market
+    @staticmethod
+    def get_players_fr_game(self):
+        players = []
+        try:
+            teams = self.get_team_fr_game(self)
+            for i in teams:
+                players.append(i.players_players)
+        except:
+            pass
+        return players
+    @staticmethod
+    def get_team_fr_game(self):
+        try:
+            team = Teams.objects.filter(game_id = self.game_id)
+        except:
+            team = None
+        return team
+
+    @staticmethod
     def pull_data_fr_game(self):
         connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
         cursor = connection.cursor()
@@ -276,6 +310,7 @@ class Game(models.Model):
                 data['value'] = '1'
             else:
                 data['value'] = '0'
+        # print(dataset_logs)
         return dataset_logs
     @staticmethod
     def pull_game_summary(self):
@@ -446,7 +481,7 @@ class Room(models.Model):
             rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id).order_by("sequence_number")
             for rpi_sensor in rpi_sensors:
                 sensors.append(rpi_sensor)
-        print(sensors)
+        # print(sensors)
         return sensors
 
     @property

@@ -21,6 +21,7 @@ urlpatterns = [
     path('sensor/', views.page_sensor, name='page_sensor'),
     path('venue/', views.page_venue, name='page_venue'),
     path('sensor_data/<int:game_id>/',views.sensor_data, name='sensor_data'),
+    path('all_sensor_data/',views.all_sensor_data, name='all_sensor_data'),
     #test_urls
     path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
     path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
@@ -39,15 +40,18 @@ urlpatterns = [
     path('api/start_game/', views.start_game, name = 'start_game'),
     path('api/end_game/', views.end_game, name = 'end_game'),
     path('api/add_clue/', views.add_clue, name = 'add_clue'),
+    path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),
+    path('api/get_market/', views.get_market, name = 'get_market'),
     path('admin/', admin.site.urls),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
     path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),
     path('reports/sensor_analysis', views.sensor_analysis,name='sensor_analysis'),
     path('reports/trend_analysis', views.trend_analysis, name='trend_analysis'),
+    path('reports/market_report', views.market_report, name='market_report'),
 
     #testinging
-
+    path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
     path('sample_marker', views.sample_marker, name='sample_marker')
 ]
 
