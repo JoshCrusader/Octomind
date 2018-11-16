@@ -53,7 +53,7 @@
                 <div class="uk-card-header" style="padding: 0px 0px 0px 0px; margin: 0">
                     <div class="uk-grid uk-grid-medium" >
                         <div class="uk-width-auto pad" >
-                            <h3 class="uk-margin-remove-bottom uk-text-warning"> MATCH {{ game.match_id }} <p class="txt_white" style="display: inline"> {{ game.room.room_name }}</p> </h3>
+                            <h3 class="uk-margin-remove-bottom uk-text-warning"> MYSTERY {{ game.match_id }} <p class="txt_white" style="display: inline"> {{ game.room.room_name }}</p> </h3>
                             <p class="uk-text-muted uk-text-small uk-margin-remove">{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %} </p>
                         </div>
                         <div class="uk-width-expand uk-text-right pad">

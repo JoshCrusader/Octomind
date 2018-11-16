@@ -37,7 +37,6 @@ urlpatterns = [
     path('api/game_summary/<int:game_id>/', views.game_summary, name='game_summary'),
     path('api/game_tally/<int:game_id>/', views.game_tally, name='game_tally'),
     #ajax functions
-    path('api/upload_process/', views.upload_process,name='upload_process'),
     path('api/update_plot/', views.update_plot, name='update_plot'),
     path('api/get_sensor_by_game/<int:game_id>/', views.get_sensor_by_game, name='get_sensor_by_game'),
     path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
@@ -48,12 +47,10 @@ urlpatterns = [
     path('api/start_game/', views.start_game, name = 'start_game'),
     path('api/end_game/', views.end_game, name = 'end_game'),
     path('api/add_clue/', views.add_clue, name = 'add_clue'),
-
     path('api/get_clues_by_game/<int:game_id>/', views.get_clues_by_game, name = 'get_clues_by_game'),
-
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),
     path('api/get_market/', views.get_market, name = 'get_market'),
-    path('admin/', admin.site.urls),
+    path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
     path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),
@@ -63,7 +60,11 @@ urlpatterns = [
     path('reports/map_market_report', views.map_market_report, name='map_market_report'),
     #testinging
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
-    path('sample_marker', views.sample_marker, name='sample_marker')
+    path('sample_marker', views.sample_marker, name='sample_marker'),
+
+    #handlers
+    path('error404/', views.handler404, name='error404'),
+    path('admin/', admin.site.urls),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
