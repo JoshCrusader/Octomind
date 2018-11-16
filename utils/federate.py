@@ -41,7 +41,7 @@ def sync():
                     game = Game(room_id = data_obj['room_id'], game_details_id = gamedets.game_details_id, game_keeper_id = data_obj['game_keeper_id'])
                     game.save()
                     for i in data_obj['players']:
-                        players = Players(firstname = i['firstname'], lastname = i['lastname'], contact = i['contact'], gender = i['gender'], email = i['email'])
+                        players = Players(firstname = i['firstname'], lastname = i['lastname'], contact = i['contact'], gender = i['gender'], email = i['email'], age = i['age'], loc_dictionary_id = i['loc'])
                         players.save()
                         teams = Teams(game_id = game.game_id, players_players_id = players.players_id)
                         teams.save()
@@ -66,8 +66,8 @@ def sync():
                     data_obj['teamname'] = cell.value
                 elif (cell.col > 8 and cell.value != ''):
                     p_col = cell.col - 9 #player coloumn, starts from 9 but normalize to 0 
-                    cur_p = p_col//5 #each player has 5 cols so this is to check if its same player
-                    cur_c = p_col%5 #this is get current coloumn with normalization
+                    cur_p = p_col//7 #each player has 7 cols so this is to check if its same player
+                    cur_c = p_col%7 #this is get current coloumn with normalization
                     if(cur_c == 0):
                         data_obj['players'][cur_p]['firstname'] = cell.value
                     elif(cur_c == 1):
@@ -81,6 +81,10 @@ def sync():
                         data_obj['players'][cur_p]['gender'] = gender
                     elif(cur_c == 4):
                         data_obj['players'][cur_p]['contact'] = cell.value
+                    elif(cur_c == 5):
+                        data_obj['players'][cur_p]['age'] = (int)(cell.value)
+                    elif(cur_c == 6):
+                        data_obj['players'][cur_p]['loc'] = (int)(cell.value)
                     pass
                 pass
             '''

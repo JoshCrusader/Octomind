@@ -101,6 +101,9 @@ def sandbox_analysis(request, room_id):
 def market_report(request):
     return market_report_func.market_report(request)
 
+def map_market_report(request):
+    return render(request, 'octo_site/reports/market_map.html')
+    
 def access_room(request):
     ## Add Room in the game room
     if request.method == 'POST':
