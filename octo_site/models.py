@@ -458,6 +458,15 @@ class GameWarningLog(models.Model):
         ct = GameWarningLog.objects.filter(game_id=game_id, sensor_id=sensor_id).count()
         return False if ct > 0 else True
 
+class LocDictionary(models.Model):
+    loc_dictionary_id = models.IntegerField(primary_key=True)
+    loc_code = models.CharField(max_length=45, blank=True, null=True)
+    loc_title = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'loc_dictionary'
+
 class Players(models.Model):
     players_id = models.AutoField(primary_key=True)
     firstname = models.CharField(max_length=45, blank=True, null=True)
@@ -465,7 +474,10 @@ class Players(models.Model):
     contact = models.CharField(max_length=45, blank=True, null=True)
     gender = models.IntegerField(blank=True, null=True)
     email = models.CharField(max_length=45, blank=True, null=True)
-
+    gender = models.IntegerField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    loc_dictionary = models.ForeignKey(LocDictionary, models.DO_NOTHING, blank=True, null=True)
+    
     class Meta:
         managed = False
         db_table = 'players'
