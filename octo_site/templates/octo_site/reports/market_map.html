@@ -1,0 +1,80 @@
+{% load staticfiles %}
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>amMap example</title>
+        <style>
+        a{display:none !important}
+        </style>
+
+        <link rel="stylesheet" href="{% static 'octo_site/res/amCharts/ammap/ammap.css' %}" type="text/css">
+        <script src="{% static 'octo_site/res/amCharts/ammap/ammap.js' %}" type="text/javascript"></script>
+        <!-- map file should be included after ammap.js -->
+        <script src="{% static 'octo_site/res/amCharts/ammap/maps/js/philippinesHigh.js' %}" type="text/javascript"></script>
+        <script>
+			AmCharts.makeChart("mapdiv", {
+				type: "map",
+
+
+				colorSteps: 10,
+
+				dataProvider: {
+					map: "philippinesHigh",
+					getAreasFromMap: true,
+					areas: [{
+						id: "PH-MNL",
+						value: 4447100
+					}]
+				},
+
+				areasSettings: {
+					autoZoom: true,
+					balloonText: "[[title]]: <strong>[[value]]</strong>"	
+				},
+
+				valueLegend: {
+					right: 10,
+					minValue: "0",
+					maxValue: "10000"
+				},
+				listeners:[{
+					"event": "init",
+					"method": updateHeatmap
+				}]
+
+			});
+			function updateHeatmap( event ) {
+                /*
+			    var map = event.chart;
+			    if ( map.dataGenerated )
+			      return;
+			    if ( map.dataProvider.areas.length === 0 ) {
+			      setTimeout( updateHeatmap, 100 );
+			      return;
+			    }
+			    areatitles = []
+                console.log(map.dataProvider.areas);
+			    for ( var i = 0; i < map.dataProvider.areas.length; i++ ) {
+
+                  areatitles.push(map.dataProvider.areas[i].id);
+			      map.dataProvider.areas[ i ].value = Math.round( Math.random() * 10000 );
+			    }
+			    areatitles.sort();
+			    str = "";
+			   	for(i in areatitles){
+			   		str+= areatitles[i]+"\n";
+		   		}
+		   		console.log(str);
+			    map.dataGenerated = true;
+			    map.validateNow();
+                */
+		  }	
+		</script>
+    </head>
+
+    <body>
+        <div id="mapdiv" style="width: 400px; background-color:#EEEEEE; height: 400px;"></div>
+    </body>
+
+</html>

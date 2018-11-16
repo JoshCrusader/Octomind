@@ -60,7 +60,7 @@ urlpatterns = [
     path('reports/sensor_analysis', views.sensor_analysis,name='sensor_analysis'),
     path('reports/trend_analysis', views.trend_analysis, name='trend_analysis'),
     path('reports/market_report', views.market_report, name='market_report'),
-
+    path('reports/map_market_report', views.map_market_report, name='map_market_report'),
     #testinging
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
     path('sample_marker', views.sample_marker, name='sample_marker')
