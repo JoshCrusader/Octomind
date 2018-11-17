@@ -126,7 +126,7 @@ def get_sensors_by_room_id(request,room_id):
 @csrf_exempt
 def get_sensor_by_game(request, game_id):
     data_return = []
-    for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
+    for sensor in Game.objects.get(game_id=game_id).get_sensors_on_trigger_sequence:
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "phase_name":sensor.phase_name,"top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt

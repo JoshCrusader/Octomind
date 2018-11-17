@@ -153,16 +153,12 @@ class Game(models.Model):
         return GameErrorLog.objects.filter(game_id=self).count()
         real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
         my_seq = self.get_sensor_trigger_sequence
-        # print("real seqeunce: ", real_seq)
-        # print("init my seqeunce: ", my_seq)
-        # print(my_seq)
         index_add = len(real_seq) - len(my_seq)
         if index_add != 0:
             index_add = real_seq[-1*index_add:]
             for i in index_add:
                 my_seq.append(i)
 
-        # print("my seqeunce: ", my_seq)
         if str(my_seq) == str(real_seq):
             return False
         return True
@@ -227,7 +223,6 @@ class Game(models.Model):
         # fetch all of the rows from the query
         data = cursor.fetchall()
 
-        # print the rows
         for row in data:
             data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
         # close the cursor object
@@ -355,7 +350,6 @@ class Game(models.Model):
                 f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")
         # fetch all of the rows from the query
         data = cursor.fetchall()
-        # print the rows
         for row in data:
             f = '%Y-%m-%d %H:%M:%S'
             utc = pytz.UTC
@@ -374,7 +368,6 @@ class Game(models.Model):
                 data['value'] = '1'
             else:
                 data['value'] = '0'
-        # print(dataset_logs)
         return dataset_logs
     @staticmethod
     def pull_game_summary(self):
@@ -611,7 +604,6 @@ class Sensor(models.Model):
 
         room = Rpi.objects.get(rpi_id=self.rpi_id).room
         flag = room.has_game_sequence
-        # print("flag: ",flag)
         if flag == True:
             for r in Rpi.objects.filter(room_id=room.room_id):
                 for s in Sensor.objects.filter(rpi_id=r.rpi_id):

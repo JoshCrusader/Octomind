@@ -123,6 +123,8 @@ function initData() {
    sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
    sensor_data.done(function(results){
         obj = results.sensors;
+
+        console.log("gotten d sensors {{ game.game_id }}",obj);
         newYAxis = null;
         for (i in obj)
         {

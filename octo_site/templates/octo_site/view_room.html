@@ -7,65 +7,75 @@
 
 <div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
 
-    <div class = "room-banner">
-        <div class = "header-wrapper">
-            <div class = "pic-container">
-                <!-- <div class = "room-pic"> </div> -->
-                <img class = "room-pic" src = "{% static 'media/' %}{{ img   }}">
-            </div>
+    <div uk-grid style="padding-left:40px;height: 300px; background-image: url('{% static 'media/' %}{{ img }}');">
+            <div class="uk-width-expand uk-grid-medium" style="padding:15px;background-color: rgba(12,0,0,0.85)" uk-grid>
+                <div class="uk-width-1-4">
+                    <h2 class="uk-text-warning uk-margin-remove uk-text-break">{{ roomname }} </h2>
+                    <p class="uk-text-muted uk-margin-remove">Game {{ matchid }}</p>
+                </div>
 
-            <div class = "m-info-box">
-                <div class = "m-time-left">
-                    <div class = "timeLeft">
+                <div {% if player.count > 3 %}class="uk-column-1-2"{% endif %}>
+
+                    <h3 class="uk-text-primary uk-margin-remove">{{ details.teamname }} </h3>
+                    <div class = "m-team-mems">
+                        {% for i in players %}
+                        <div class = "m-member uk-text-muted uk-text-small" style="color: white">{{i.firstname}} {{i.lastname}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                        <div class = "m-clues">
+                            <div class = "m-clue-title">Clues: </div>
+                        </div>
+                </div>
+                <div class="uk-text-center uk-width-expand ">
+                    <div class = " uk-text-success timeLeft" style="font-size: 30px;">
                         {% if done == False %}
-                        Time Left: 
-                        <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                            <span class="uk-margin-remove" uk-icon="icon: clock"></span>
+                            <br>
+                        <span class = " uk-margin-remove spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
                             {{ minutes }}:{{ seconds }}
                         </span>
                         {% else %}
                         Game is Finished
                         {% endif %}
                     </div>
-                </div>
-                <div class = "m-team-name"> {{ details.teamname }} </div>
-                <div class = "m-team-mems">
-                    <div class = "m-mem-title">Members:</div>
-                    {% for i in players %}
-                    <div class = "m-member">{{i.firstname}} {{i.lastname}}</div>
-                    {% endfor %}
-                </div>
-                <div class = "m-clues">
-                    <div class = "m-clue-title">Clues: </div>
+
                 </div>
             </div>
-
-            <div class = "m-options-box">
+            <div class = "uk-width-1-5" style="padding:15px;background-color: rgba(12,0,0,0.85)">
                 {% if done == False %}
-                <div id = "endgameb">
-                <div class = "uk-button uk-button-secondary" gameid = "{{details.game_details_id}}" onClick = "endGame(this)"> End Game</div>
-                </div>
+                    <div id = "endgameb" style="margin-bottom: 1vh">
+                        <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this)">
+                             <span uk-icon="icon: check"></span> End Game
+                        </button>
+                    </div>
+                    <div>
+                        <a href ="#modal-example"  uk-toggle class = "atag">
+                            <button class = "uk-button uk-button-secondary uk-button-medium" type="button">
+                                <span uk-icon="icon: lifesaver"></span> Add Clue
+                            </button>
+                        </a>
+                    </div>
                 {% else %}
+                    <div style="margin-top: 3vh">
+                    <a href ="{% url 'game_logs' %}game/{{ gameid }}">
+                        <button class = "uk-button uk-button-primary uk-button-small" type="button">
+                            Post Game Analysis <span uk-icon="icon: gitter"></span>
+                        </button>
+                    </a>
+                </div>
                 {% endif %}
-                <a href ="#modal-example"  uk-toggle class = "atag"><div class = "uk-button uk-button-secondary"> Add Clue</div></a>
-            </div>
 
-        </div>
+            </div>
     </div>
 
     <div class = "m-content-wrapper">
         
         <div class = "m-sensor-content">
             <div class = "m-sensor-div card-lite uk-card-hover">
-            <canvas id="canvas"></canvas>
+                <canvas id="canvas"></canvas>
             </div>
-            <!--
-            <div class = "m-filter-content">
-                <input type = "checkbox" name = "sens1">Sensor 1
-                <input type = "checkbox" name = "sens2">Sensor 2
-                <input type = "checkbox" name = "sens3">Sensor 3
-                <input type = "checkbox" name = "sens4">Sensor 4
-            </div>
-            -->
         </div>
 
         <div class = "m-sandbox-content card-lite uk-card-hover">
@@ -87,7 +97,30 @@
         </div>
     </div>
 </div>
-<!-- /CONTENT -->
+<!-- /CONTENT
+<div class = "m-time-left">
+                    <div class = "timeLeft">
+                        {% if done == False %}
+                        Time Left:
+                        <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                            {{ minutes }}:{{ seconds }}
+                        </span>
+                        {% else %}
+                        Game is Finished
+                        {% endif %}
+                    </div>
+                </div>
+                <div class = "m-team-name"> {{ details.teamname }} </div>
+                    <div class = "m-team-mems">
+                    <div class = "m-mem-title">Members:</div>
+                    {% for i in players %}
+                    <div class = "m-member">{{i.firstname}} {{i.lastname}}</div>
+                    {% endfor %}
+                </div>
+                    <div class = "m-clues">
+                    <div class = "m-clue-title">Clues: </div>
+                </div>
+-->
 
 
 <!-- Modal -->

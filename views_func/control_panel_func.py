@@ -2,14 +2,15 @@ from utils import federate
 from django.utils import timezone
 from django.shortcuts import render,redirect
 from octo_site.models import *
+import datetime
 import json
 def control_panel(request):
     if request.method == 'GET':
         # federate.sync()
         game_details = []
-        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        now_datetime = timezone.now()
         finish_time = now_datetime - timezone.timedelta(hours = 1)
-        print(now_datetime)
+
         for i in GameDetails.objects.all().filter(timestart__gte = finish_time).filter(timeend__isnull = True):
             game_details.append(i)
         games = {}
@@ -28,7 +29,7 @@ def control_panel(request):
             for team in teams:
                 games[i.room_id]['players'].append(Players.objects.get(players_id = team.players_players_id))
             ## CLUES
-            clues = Clues.objects.filter(games_id = i.game_id)
+            clues = Clues.objects.filter(game_id = i.game_id)
             games[i.room_id]['clues'] = range(0, 3-len(clues))
             games[i.room_id]['mystery'] = range(0, len(clues))
             print(len(clues))

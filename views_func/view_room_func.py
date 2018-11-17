@@ -23,6 +23,7 @@ def view_room(request, game_id):
             properties['roomid'] = room_obj.room_id
             properties['img'] = room_obj.header_img
             properties['roomname'] = room_obj.room_name
+            properties['matchid'] = game.match_id
             properties['blueprint'] = room_obj.blueprint_file
             properties['sensors'] = []
             for sensor in room_obj.get_all_sensors:
@@ -31,7 +32,7 @@ def view_room(request, game_id):
             # sensors = Sensor.objects.get(room_id = room_obj.room_id)
             # for i in sensors:
             #     pass
-            now_datetime = timezone.now() + timezone.timedelta(hours=8)
+            now_datetime = timezone.now()
             properties['timeend'] = details.timestart + timezone.timedelta(hours=1)+ timezone.timedelta(minutes=1)
             if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
                 properties['done'] = False
