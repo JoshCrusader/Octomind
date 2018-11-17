@@ -25,9 +25,11 @@
     function setSandBox(sensors){
         //console.log(sensors);
         dom = document.getElementById("sensor_sequence_plot");
-        str = ""
+        str = "";
         for(i in sensors){
-            str_append = '<div id = "sensor-tip-'+sensors[i].sensor_id+'" class="div_drag" uk-tooltip="'+sensors[i].sensor_name+'" sensor-id="'+sensors[i].sensor_id+'" onmousedown=""  style="left: '+sensors[i].left_coordinate+'%; top: '+sensors[i].top_coordinate+'%;width: 25px; height: 25px;text-align: center;position: absolute;"> <span style="color: white;width: 25px; height: 25px;" data-uk-icon="icon: nut"></span></div>';
+            colorName = colorNames[i % colorNames.length];
+            colr = chartColors[colorName];
+            str_append = '<div id = "sensor-tip-'+sensors[i].sensor_id+'" class="div_drag" uk-tooltip="'+sensors[i].sensor_name+'" sensor-id="'+sensors[i].sensor_id+'" onmousedown=""  style="left: '+sensors[i].left_coordinate+'%; top: '+sensors[i].top_coordinate+'%;width: 25px; height: 25px;text-align: center;position: absolute;background-color:'+colr+'"> <span style="color: white;width: 25px; height: 25px;" data-uk-icon="icon: nut"></span></div>';
             str += str_append+"\n";
         }
 

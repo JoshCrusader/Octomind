@@ -13,7 +13,7 @@ def view_room(request, game_id):
             for i in team:
                 pass
                 players.append(Players.objects.get(players_id = i.players_players_id))
-            clues = Clues.objects.filter(games_id = game.game_id)
+            clues = Clues.objects.filter(game_id = game.game_id)
             properties = {}
             properties['gameid'] = game.game_id
             properties['details'] = details

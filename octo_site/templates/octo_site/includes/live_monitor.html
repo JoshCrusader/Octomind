@@ -14,17 +14,19 @@ PARAMS:
         let color = Chart.helpers.color;
         let sensor_data;
         let sensor_data_len;
-        let chartColors = {
-          red: 'rgb(255, 99, 132)',
-          orange: 'rgb(255, 159, 64)',
-          yellow: 'rgb(255, 205, 86)',
-          green: 'rgb(75, 192, 192)',
-          blue: 'rgb(54, 162, 235)',
-          purple: 'rgb(153, 102, 255)',
-          grey: 'rgb(231,233,237)',
-          black: 'rgb(0,0,0)',
-        };
-		let colorNames = Object.keys(window.chartColors);
+        chartColors = {
+              red: 'rgb(255, 65, 54)',
+              yellow: 'rgb(239, 206, 0)',
+              green: 'rgb(61, 142, 106)',
+              blue: 'rgb(28, 143, 219)',
+              orange: 'rgb(255, 118, 0)',
+              purple: 'rgb(153, 102, 255)',
+              grey: 'rgb(231,233,237)',
+              black: 'rgb(0,0,0)',
+            };
+
+        color = Chart.helpers.color;
+        colorNames = Object.keys(chartColors);
         let start_time=new Date ("{{ details.timestart |date:'Y-m-d H:i:s' }}");
         let end_time = new Date("{{ timeend |date:'Y-m-d H:i:s' }}");
 		let config = {
@@ -142,7 +144,7 @@ PARAMS:
                for (i in obj)
                {
                    colorName = colorNames[config.data.datasets.length % colorNames.length];
-                   newColor = window.chartColors[colorName];
+                   newColor = chartColors[colorName];
                    newXAxis = {
                         id: "id-"+i,
                         type: 'time',

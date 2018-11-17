@@ -93,6 +93,7 @@ def control_panel(request):
     return control_panel_func.control_panel(request)
 
 def view_room(request, game_id):
+    print("viewing room")
     return view_room_func.view_room(request, game_id)
 
 def sandbox_analysis(request, room_id):

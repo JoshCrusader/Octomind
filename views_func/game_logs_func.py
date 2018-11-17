@@ -12,6 +12,7 @@ def game_logs(request):
     cur_games = []
     cur_inds = []
     all_g = Game.objects.all()
+    all_g2 =[]
     gd = GameDetails.objects.filter(timeend__isnull=True)
     for g in gd:
         diff = datetime.now().replace(tzinfo=utc) - g.timestart.replace(tzinfo=utc)
@@ -20,13 +21,13 @@ def game_logs(request):
         diff_btw_two_times = diff.seconds / 3600
         overall_hours = days_to_hours + diff_btw_two_times
         #difference between time and now is less than 1 hour, then it is a past game.
-        if diff_btw_two_times < 1:
+        if overall_hours < 1:
             cur_games.append(Game.objects.get(game_id=g.game_details_id))
             cur_inds.append(g.game_details_id)
     for ag in all_g:
-        if ag.game_id in cur_inds:
-            all_g.remove(ag)
-    return render(request, 'octo_site/game_logs/game_logs.html', {'games': all_g, 'cur_games': cur_games})
+        if ag.game_id not in cur_inds:
+            all_g2.append(ag)
+    return render(request, 'octo_site/game_logs/game_logs.html', {'games': all_g2, 'cur_games': cur_games})
 
 def game_logs_detail(request,game_id):
     g = Game.objects.get(game_id=game_id)
