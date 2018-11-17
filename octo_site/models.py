@@ -296,15 +296,29 @@ class Game(models.Model):
         market["players"] = []
         market["m"] = 0
         market["f"] = 0
+        market['locs'] = {}
+        market['ages'] = {}
         try:
             players = self.get_players_fr_game(self)
             for i in players:
+                p_area = LocDictionary.objects.get(loc_dictionary_id = i.loc_dictionary_id).loc_code
+                market['players'].append(i)
                 if(i.gender == 0):
                     market["m"] += 1
                 else:
                     market["f"] +=1
-        except:
-            pass
+                
+                try:
+                    market['ages'][i.age] += 1
+                except:
+                    market['ages'][i.age] = 1
+                try:
+                    market['locs'][p_area] += 1
+                except:
+                    market['locs'][p_area] = 1
+        except Exception as e:
+            print(e)
+        market['length'] = len(market['players'])
         return market
     @staticmethod
     def get_players_fr_game(self):
@@ -459,7 +473,7 @@ class GameWarningLog(models.Model):
         return False if ct > 0 else True
 
 class LocDictionary(models.Model):
-    loc_dictionary_id = models.IntegerField(primary_key=True)
+    loc_dictionary_id = models.AutoField(primary_key=True)
     loc_code = models.CharField(max_length=45, blank=True, null=True)
     loc_title = models.CharField(max_length=45, blank=True, null=True)
 

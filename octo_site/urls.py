@@ -50,6 +50,7 @@ urlpatterns = [
     path('api/get_clues_by_game/<int:game_id>/', views.get_clues_by_game, name = 'get_clues_by_game'),
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),
     path('api/get_market/', views.get_market, name = 'get_market'),
+    path('api/get_room_market/', views.get_room_market, name = 'get_room_market'),
     path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),

@@ -1,0 +1,39 @@
+<script>
+age_bar_data = {
+    datasets: [{
+        data: [10,22,44,14,15,10,12,6,2,1,1],
+
+        backgroundColor: "#93acef",
+        label: "Number per age group"
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        '0-17',
+        '18-22',
+        '23-30',
+        '30-35',
+        '36-40',
+        '41-45',
+        '46-50',
+        '51-55',
+        '56-60',
+        '61-65',
+        '66+'
+    ],
+};
+
+age_bar_options = {
+    title:{
+        display: true,
+        text: "Player Age Distribution"
+    }
+}
+var ctx = document.getElementById('age_bar_chart').getContext('2d');
+window.ageBarPieChart = new Chart(ctx,{
+    type: 'horizontalBar',
+    data: age_bar_data,
+    options: age_bar_options
+});
+
+</script>

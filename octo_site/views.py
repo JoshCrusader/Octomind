@@ -206,8 +206,13 @@ def get_log_distribution(request, game_ids):
 def get_log_summary(request,game_ids):
     return plot_func.get_log_summary(request, game_ids)
 
+@csrf_exempt
 def get_market(request):
     return get_market_func.get_market(request)
+
+@csrf_exempt
+def get_room_market(request):
+    return get_room_market_func.get_room_market(request)
 
 def room_analysis(request):
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})

@@ -37,6 +37,33 @@
                                 <canvas class="uk-align-center" id="log_sum" ></canvas>
                             </div>
                         </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
+                                <div id="player_div" style="width: 100%; height: 551px;">
+                                    <div style = "width: 60%; height: 100%; float: left;">
+                                        <div style = "width: 100%; height: 20%;" >
+                                        Total Players: chuchu
+                                        </div>
+                                        <div style = "width: 100%; height: 80%; position: relative;" >
+                                            <canvas id = "age_bar_chart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div style = "width: 40%; height: 50%; float: left;">
+                                        <canvas id = "gender_pie_chart"></canvas>
+                                    </div>
+                                    <div style = "width: 40%; height: 50%; float: left;">
+                                        <canvas id = "team_size_pie_chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
+                                <div id="mapdiv" style="width: 100%; height: 551px;"></div>
+                            </div>
+                        </li>
                     </ul>
                     <div class ="m-content-wrapper" id="s_plot" style="margin-right: 40vh;height: 360px;width: 360px" >
                         <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
@@ -59,6 +86,8 @@
                         <ul style="margin-left: -19px;" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: users"></span> Player Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: world"></span> Market Demographics</a></li>
                             <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
                         </ul>
                     </div>
@@ -227,6 +256,7 @@
         {% endif %}
     </section>
 </div>
+
 <script>
     var color = Chart.helpers.color;
     let chartColors = {
@@ -293,8 +323,8 @@
                         return 'Ano daw';
                     },
                     title: function(tooltipItem, data) {
-                        console.log(data);
-                        console.log(tooltipItem[0].datasetIndex);
+                        // console.log(data);
+                        // console.log(tooltipItem[0].datasetIndex);
 
                         game_id = parseInt(data.datasets[tooltipItem[0].datasetIndex].label)-10000;
                         return data.sensor_names[game_id][tooltipItem[0].index];
@@ -457,7 +487,7 @@
         },2000);
     };
     function initLogDistData() {
-        console.log("ylabels",yLbl);
+        // console.log("ylabels",yLbl);
         // Populate the datasets
      {% for game in games %}
          {
@@ -506,7 +536,7 @@
     }
     function initLogSumData(){
             // Populate the datasets
-        console.log("populationg");
+        // console.log("populationg");
          let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
              sensor_data.done(function(results){
                 obj = results.sensors;
@@ -534,7 +564,7 @@
                     colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
                     newColor = chartColors[colorName];
                     obj = summary.data;
-                    console.log("summary",obj);
+                    // console.log("summary",obj);
                     newdt = {
                         label: "averages",
                         type: "line",
@@ -549,7 +579,7 @@
                         fill: false,
                    };
                     window.myLogSummary.update();
-                   console.log("data",bubbleChartData.datasets);
+                   // console.log("data",bubbleChartData.datasets);
                    bubbleChartData.datasets.push(newdt);
 
                    for(ob in obj){
@@ -564,7 +594,7 @@
                window.myLogSummary.update()
 
            });
-             console.log(bubbleChartData.dataset_game_ids);
+             // console.log(bubbleChartData.dataset_game_ids);
            // Populate data in the datasets
          {% for game in games %}
              summary_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
@@ -573,7 +603,7 @@
                 for (i in obj)
                 {
                    if(obj[i].value !== "0"){
-                        console.log(obj[i].time_solved);
+                        // console.log(obj[i].time_solved);
                        bubbleChartData.datasets[log_sum_sensors.indexOf(obj[i].sensor_id)].data.push(
                            {
                                x: obj[i].min_stamped,
@@ -590,7 +620,7 @@
         }
 	</script>
 <script>
-    console.log("------");
+    // console.log("------");
     let new_opacity;
     function sendSensorRequet(){
         $.ajax({
@@ -679,7 +709,7 @@
             hypotenuse = Math.sqrt(delta_a + delta_b);
 
             var l = pathdom;
-            console.log(new_opacity+"px")
+            // console.log(new_opacity+"px")
             l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;background-color: rgba(0,255,0,"+new_opacity+");");
             l.style.top = p1.offsetTop+"px";
             l.style.left = p1.offsetLeft+"px";
@@ -698,14 +728,14 @@ let final_results;
 sensor_data =  $.get("/octo_site/api/select_sensor_data/{{ id_slugs }}/");
 sensor_data.done(function(results){
     final_results = results;
-    console.log("finalres", final_results);
+    // console.log("finalres", final_results);
     sendSensorRequet();
 })
 </script>
 	<script>
 		$(".tbl_toggle").click(function(e) {
             var chk = $(this).find("input:checkbox").get(0);
-            console.log("clicked");
+            // console.log("clicked");
             if(e.target !== chk)
             {
                 chk.checked = !chk.checked;
@@ -751,4 +781,132 @@ sensor_data.done(function(results){
 
 	</script>
 {% include 'octo_site/includes/offcanvas_reports.html' %}
+{% include 'octo_site/includes/map_market_script.html' %}
+{% include 'octo_site/includes/market/gender_pie_chart.html' %}
+{% include 'octo_site/includes/market/age_bar_chart.html' %}
+{% include 'octo_site/includes/market/team_pie_chart.html' %}
 
+
+<script>
+    /*
+        Optimization magic - we will be handling large datasets, the ff techniques would have to be used:
+        Push critical data first - get the first data to load in views and load them
+        lazy laod - async data fetch to large data sets like market data
+
+        for lazy load when need the request data and pass it to an api instead of loading it all in the views
+
+    */
+
+    /*
+        TODO: GET ALL MARKET DATA
+    */
+    let req_cat = "{{ rep_cat }}";
+{% if rep_cat == 'range' %}
+    let sd = {{ sd }};
+    let ed = {{ ed }};
+{% else %}
+    let req_date = "{{ date }}";
+{% endif %}
+    $.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_room_market/",
+        data: {
+            {% if rep_cat != 'range' %}
+            'req_date': req_date,
+            {% else %}
+            'sd': sd,
+            'ed': ed,
+            {% endif %}
+            'req_cat': req_cat,
+            'room_id': {{ room.room_id }},
+        },
+        success: function(data){
+            console.log("MAP DATA");
+            const market = data.data;
+            console.log(market);
+
+            // <FUNCTION FOR LOADING MAP> //
+            areas = [],
+            loc_keys = Object.keys(market['locs']);
+            let area_max = -1;
+            for(i in loc_keys){
+                let area_val = market['locs'][loc_keys[i]];
+                let area_key = loc_keys[i];
+                window.map_market.dataProvider.areas.push({id: area_key, value: area_val});
+                if(area_val > area_max){
+                    area_max = area_val;
+                }
+            }
+            // console.log(areas);
+            // console.log(window.map_market);
+            window.map_market.dataGenerated = true;
+            window.map_market.valueLegend.maxValue = area_max;
+            window.map_market.validateNow();
+
+            // </FUNCTION FOR LOADING MAP> //
+
+            // <FUNCTION FOR LOADING GENDER> //
+            gender_data.datasets[0].data[0] = market['m'];
+            gender_data.datasets[0].data[1] = market['f'];
+            window.genderPieChart.update();
+            // </FUNCTION FOR LOADING GENDER> //
+
+            // <FUNCTION FOR LOADING TEAMS> //
+            temp_data = [0,0,0,0,0,0,0]
+            for(i in market['teamsizes']){
+                if(i == 0){
+                    temp_data[0] = market['teamsizes'][i];
+                }
+                else{
+                    temp_data[i-1] = market['teamsizes'][i];
+                }
+            }
+            team_size_data.datasets[0].data = temp_data;
+            window.teamSizePieChart.update();
+            // </FUNCTION FOR LOADING TEAMS> //
+
+            // <FUNCTION FOR LOADING AGES> //
+            temp_data = [0,0,0,0,0,0,0,0,0,0,0];
+            for(i in market['ages']){
+                if(i <= 17){
+                    temp_data[0] += market['ages'][i];
+                }
+                else if(i <= 22){
+                    temp_data[1] += market['ages'][i];
+                }
+                else if(i <= 30){
+                    temp_data[2] += market['teamsizes'][i];
+                }
+                else if(i <= 35){
+                    temp_data[3] += market['teamsizes'][i];
+                }
+                else if(i <= 40){
+                    temp_data[4] += market['teamsizes'][i];
+                }
+                else if(i <= 45){
+                    temp_data[5] += market['teamsizes'][i];
+                }
+                else if(i <= 50){
+                    temp_data[6] += market['teamsizes'][i];
+                }
+                else if(i <= 55){
+                    temp_data[7] += market['teamsizes'][i];
+                }
+                else if(i <= 60){
+                    temp_data[8] += market['teamsizes'][i];
+                }
+                else if(i <= 65){
+                    temp_data[9] += market['teamsizes'][i];
+                }
+                else{
+                    temp_data[10] += market['teamsizes'][i];
+                }
+            }
+            age_bar_data.datasets[0].data = temp_data;
+            window.ageBarPieChart.update();
+            // </FUNCTION FOR LOADING AGES> //
+
+            
+        }
+    });
+</script>

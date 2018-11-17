@@ -1,0 +1,43 @@
+<script>
+gender_data = {
+    datasets: [{
+        data: [10, 20],
+
+        backgroundColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        borderColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        hoverBorderColor: [
+            "orange",
+            "orange"
+        ]
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Male',
+        'Female',
+    ],
+};
+
+gender_options = {
+    legend:{
+        position: 'right'
+    },
+    title:{
+        display: true,
+        text: "Player Gender Distribution"
+    }
+}
+var ctx = document.getElementById('gender_pie_chart').getContext('2d');
+window.genderPieChart = new Chart(ctx,{
+    type: 'pie',
+    data: gender_data,
+    options: gender_options
+});
+
+</script>

@@ -1,0 +1,63 @@
+<script>
+team_size_data = {
+    datasets: [{
+        data: [4,6,14,72,37,31,7],
+
+        backgroundColor: [
+            "orange",
+            "#1e87f0",
+            "#f0506e",
+            "#32d296",
+            "#69693d",
+            "#6d375d",
+            "#474667"
+        ],
+        borderColor: [
+            "orange",
+            "#1e87f0",
+            "#f0506e",
+            "#32d296",
+            "#69693d",
+            "#6d375d",
+            "#474667"
+        ],
+        hoverBorderColor: [
+            "orange",
+            "orange",
+            "orange",
+            "orange",
+            "orange",
+            "orange",
+            "orange"
+        ]
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+    ],
+};
+
+team_size_options = {
+    legend:{
+        position: 'right'
+    },
+    title:{
+        display: true,
+        text: "Sizes of Teams"
+    }
+}
+var ctx = document.getElementById('team_size_pie_chart').getContext('2d');
+window.teamSizePieChart = new Chart(ctx,{
+    type: 'doughnut',
+    data: team_size_data,
+    options: team_size_options
+});
+
+</script>
