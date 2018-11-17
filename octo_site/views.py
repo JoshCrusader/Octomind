@@ -180,6 +180,10 @@ def get_cur_games(request):
     return ajax_helper.get_cur_games(request)
 
 @csrf_exempt
+def get_clue_data(request,game_id):
+    return JsonResponse({"data": Game.objects.get(game_id=game_id).get_data_clues})
+
+@csrf_exempt
 def get_player_list(request):
     return ajax_helper.get_player_list(request)
 

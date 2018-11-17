@@ -105,7 +105,6 @@ class Game(models.Model):
     @property
     def match_id(self):
         return self.game_id + 100000
-
     @property
     def get_team_size(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
@@ -186,6 +185,18 @@ class Game(models.Model):
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
+    @property
+    def get_data_clues(self):
+        data_return=[]
+        clues = Clues.objects.filter(game_id=self.game_id)
+        for c in clues:
+            data_return.append({
+                'sensor_phase':c.clue_details.get_sensor_asked,
+                'timestamp':c.clue_details.timestamp,
+                'minute_asked':c.clue_details.get_minute_asked,
+                'detail':c.clue_details.detail
+            })
+        return data_return
     @staticmethod
     def pull_data_game(self):
         # to_put_time_constraint here
@@ -323,7 +334,6 @@ class Game(models.Model):
         except:
             team = None
         return team
-
     @staticmethod
     def pull_data_fr_game(self):
         connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
