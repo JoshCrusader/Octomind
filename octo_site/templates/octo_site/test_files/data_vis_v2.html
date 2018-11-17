@@ -44,10 +44,10 @@
         let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
         console.log(start_time);
 		let config = {
-			type: 'line',
 			data: {
 			    start_time: start_time,
 				labels: [],
+                clues_data:[],
 				datasets: [],
                 statuses:[],
                 data_objs:[],
@@ -69,7 +69,7 @@
 					text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
 				},
 				tooltips: {
-					mode: 'index',
+					mode: 'nearest',
 					intersect: false,
                     custom: function(tooltip) {
                     if (!tooltip) return;
@@ -79,7 +79,9 @@
                     callbacks: {
                         // use label callback to return the desired label
                         label: function(tooltipItem, data) {
-                         // console.log(tooltipItem);
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                              return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
+                          }
                           let time_solved = new Date(tooltipItem.xLabel);
                           let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
                           if (comp_time) {return "Start time";}
@@ -87,6 +89,10 @@
                           return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
                         },
                         title: function(tooltipItem, data) {
+
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                              return null;
+                          }
                             return tooltipItem[0].xLabel;
                         },
                         footer: function(tooltipItems, data) {
@@ -94,13 +100,25 @@
 							let min = null;
 							let sec = null;
 							let stat = null;
-							console.log(data.statuses);
+							let clu = false;
+							let det = "";
+
 							tooltipItems.forEach(function(tooltipItem) {
-								val = data.data_objs[tooltipItem.datasetIndex].time_solved;
-								sec = ((val % 1)*60).toFixed(2);
-								min = Math.floor(val);
-								stat = data.statuses[tooltipItem.datasetIndex];
+
+                              if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                                  clu =true;
+                                  det = data.clues_data[tooltipItem.index].detail
+                              }else{
+                                    val = data.data_objs[tooltipItem.datasetIndex].time_solved;
+                                    sec = ((val % 1)*60).toFixed(2);
+                                    min = Math.floor(val);
+                                    stat = data.statuses[tooltipItem.datasetIndex];
+                              }
+
 							});
+							if(clu){
+							    return det
+                            }
 							if(stat){
                                 if (min !== 0 && sec !== 0){
                                     if (parseInt(sec) === 0){
@@ -109,17 +127,10 @@
                                     return 'Elapsed: ' + min + " min and " + sec +" sec" ;
                                 }
                             }
+
                             return 'Not solved yet';
 						},
-
-                        // Use the footer callback to display the sum of the items showing in the tooltip
-
                       },
-                    /*
-                    callbacks: {
-
-					},
-                    */
 					footerFontStyle: 'normal'
 				},
 				hover: {
@@ -145,7 +156,7 @@
                                 steps: 0,
                                 min:0,
                                 stepValue: 5,
-                                max: 4.00001
+                                max: {{ game.room.num_sensors }}.00001
                             }
 					}]
 				}
@@ -197,7 +208,6 @@
                    config.options.scales.xAxes.push(newXAxis);
                    window.myLine.update()
                 }
-                console.log("sensors array",sensors);
            });
 
             let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
@@ -260,6 +270,43 @@
                 }
                 console.log("lbl",config.data.labels);
                 console.log("datset",config.data.datasets);
+           });
+
+            let clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
+            clue_data.done(function(results){
+               let obj = results.data;
+                   newXAxis = {
+                        id: "clues",
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+                   };
+                   newDataset = {
+                        type: 'scatter',
+                        showLine: false,
+                        label: 'Clues Asked',
+                        xAxisID:"clues",
+                        borderWidth: 15,
+                        pointStyle: 'triangle',
+                        backgroundColor: 'rgb(26, 35, 126)',
+                        borderColor: 'rgb(26, 35, 126)',
+                        data: [],
+                        fill: false
+                   };
+                   config.data.datasets.push(newDataset);
+                   config.options.scales.xAxes.push(newXAxis);
+                   window.myLine.update();
+                for (ob in obj)
+                {
+                   config.data.datasets[config.data.datasets.length-1].data.push({x:new Date(obj[ob].timestamp),y:0.0});
+                   config.data.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
+                   window.myLine.update();
+                }
            });
 
             window.myLine.update();

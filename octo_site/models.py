@@ -190,8 +190,10 @@ class Game(models.Model):
         data_return=[]
         clues = Clues.objects.filter(game_id=self.game_id)
         for c in clues:
+            s = Sensor.objects.get(sensor_id=c.clue_details.get_sensor_asked)
             data_return.append({
-                'sensor_phase':c.clue_details.get_sensor_asked,
+                'sensor_id':c.clue_details.get_sensor_asked,
+                'phase_name':s.phase_name,
                 'timestamp':c.clue_details.timestamp,
                 'minute_asked':c.clue_details.get_minute_asked,
                 'detail':c.clue_details.detail
