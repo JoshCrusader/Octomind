@@ -37,7 +37,7 @@ let config = {
                     callbacks: {
                         // use label callback to return the desired label
                         label: function(tooltipItem, data) {
-                          if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                               return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
                           }
                           let time_solved = new Date(tooltipItem.xLabel);
@@ -47,8 +47,7 @@ let config = {
                           return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
                         },
                         title: function(tooltipItem, data) {
-
-                          if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                               return null;
                           }
                             return tooltipItem[0].xLabel;
@@ -63,7 +62,7 @@ let config = {
 
 							tooltipItems.forEach(function(tooltipItem) {
 
-                              if(tooltipItem.datasetIndex === config.data.datasets.length-1){
+                              if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                                   clu =true;
                                   det = data.clues_data[tooltipItem.index].detail
                               }else{
