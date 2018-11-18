@@ -60,8 +60,13 @@ h1{
                     </div>
                 </div>
                 <div>
-                        <div class = "m-clues">
-                            <div class = "m-clue-title">Clues: </div>
+                        <div>
+                            <div class="uk-text-primary"><b>Clues</b>: </div>
+                            {% for clue in clues %}
+                                <p class="uk-text-small uk-text-muted uk-margin-remove" uk-tooltip="{{ clue.timestamp|date:'H:i:s'}}">
+                                <span data-uk-icon="icon: unlock"></span>{{ clue.detail }}
+                                </p>
+                            {% endfor %}
                         </div>
                 </div>
                 <div class="uk-text-center uk-width-expand ">
@@ -143,30 +148,6 @@ h1{
         </div>
     </div>
 </div>
-<!-- /CONTENT
-<div class = "m-time-left">
-                    <div class = "timeLeft">
-                        {% if done == False %}
-                        Time Left:
-                        <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
-                            {{ minutes }}:{{ seconds }}
-                        </span>
-                        {% else %}
-                        Game is Finished
-                        {% endif %}
-                    </div>
-                </div>
-                <div class = "m-team-name"> {{ details.teamname }} </div>
-                    <div class = "m-team-mems">
-                    <div class = "m-mem-title">Members:</div>
-                    {% for i in players %}
-                    <div class = "m-member">{{i.firstname}} {{i.lastname}}</div>
-                    {% endfor %}
-                </div>
-                    <div class = "m-clues">
-                    <div class = "m-clue-title">Clues: </div>
-                </div>
--->
 
 
 <!-- Modal -->

@@ -18,7 +18,7 @@ def view_room(request, game_id):
             properties['gameid'] = game.game_id
             properties['details'] = details
             properties['players'] = players
-            properties['clues'] = clues
+            properties['clues'] = game.get_data_clues
             room_obj = Room.objects.get(room_id = game.room_id)
             properties['roomid'] = room_obj.room_id
             properties['img'] = room_obj.header_img

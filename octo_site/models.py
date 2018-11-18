@@ -190,6 +190,7 @@ class Game(models.Model):
             data_return.append({
                 'sensor_id':c.clue_details.get_sensor_asked,
                 'phase_name':s.phase_name,
+                'game_id':self.game_id,
                 'timestamp':c.clue_details.timestamp,
                 'minute_asked':c.clue_details.get_minute_asked,
                 'detail':c.clue_details.detail
