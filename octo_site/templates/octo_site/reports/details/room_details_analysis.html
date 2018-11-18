@@ -61,7 +61,15 @@
                         <li style="height: 70vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
-                                <div id="mapdiv" style="width: 100%; height: 551px;"></div>
+                                <div id="mapdiv" style="width: 100%; height: 551px;position: absolute;"></div>
+                                <div class = "area-count" style = "position: absolute;width: 200px; height: 350px; margin-top: 150px; overflow-x: auto; overflow-y: auto;">
+                                    <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
+                                    <div id = "area-legend">
+                                        <div style = 'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;'>Metro manila: 1</div>
+                                        <div style = 'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;'>Metro manila: 1</div>
+                                        <div style = 'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;'>Metro manila: 1</div>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -830,7 +838,7 @@ sensor_data.done(function(results){
             loc_keys = Object.keys(market['locs']);
             let area_max = -1;
             for(i in loc_keys){
-                let area_val = market['locs'][loc_keys[i]];
+                let area_val = market['locs'][loc_keys[i]]['value'];
                 let area_key = loc_keys[i];
                 window.map_market.dataProvider.areas.push({id: area_key, value: area_val});
                 if(area_val > area_max){
@@ -906,7 +914,28 @@ sensor_data.done(function(results){
             window.ageBarPieChart.update();
             // </FUNCTION FOR LOADING AGES> //
 
-            
+            // <FUNCTION FOR LOADING MAP LEGEND> //
+            map_leg = document.getElementById("area-legend");
+            map_leg.innerHTML = ""
+            var map_str = ""
+            sort_market = []
+            for(i in market['locs']){
+                sort_market.push({value: market['locs'][i].value, title: market['locs'][i].title})
+            }
+            sort_market.sort(function(a, b) { 
+                if(b.value != a.value)
+                    return b.value - a.value;
+                else
+                    return a.title < b.title;
+
+            })
+
+
+            for(i in sort_market){
+                map_str += '<div style = \'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;\'>'+sort_market[i]['title']+': '+sort_market[i]['value']+'</div>\n';
+            }
+            map_leg.innerHTML = map_str;
+            // </FUNCTION FOR LOADING MAP LEGEND> //
         }
     });
 </script>

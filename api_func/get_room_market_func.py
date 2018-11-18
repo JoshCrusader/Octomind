@@ -55,6 +55,7 @@ def get_room_market(request):
     market['m'] = 0
     market['length'] = 0
     market['locs'] = {}
+    market['loc_titles'] = {}
     market['ages'] = {}
     market['teamsizes'] = {}
     if(request.method == 'POST'):
@@ -74,6 +75,12 @@ def get_room_market(request):
        # game = Game.objects.get(game_id = gid)
        # market = game.get_market_data(game)
 
+    all_locs = LocDictionary.objects.all()
+    for i in all_locs:
+        market['locs'][i.loc_code] = {}
+        market['locs'][i.loc_code]['value'] = 0
+        market['locs'][i.loc_code]['title'] = i.loc_title
+
     for game in games:
         g_market = game.get_market_data(game)
         market['f'] += g_market['f']
@@ -81,9 +88,9 @@ def get_room_market(request):
         market['length'] += g_market['length']
         for key, value in g_market['locs'].items():
             try:
-                market['locs'][key] += value
+                market['locs'][key]['value'] += value
             except:
-                market['locs'][key] = value
+                market['locs'][key]['value'] = value
         for key, value in g_market['ages'].items():
             try:
                 market['ages'][key] += value
