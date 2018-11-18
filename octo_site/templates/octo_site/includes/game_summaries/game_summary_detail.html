@@ -37,6 +37,7 @@ let config = {
                     callbacks: {
                         // use label callback to return the desired label
                         label: function(tooltipItem, data) {
+
                           if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                               return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
                           }

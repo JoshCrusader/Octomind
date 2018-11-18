@@ -1,0 +1,129 @@
+<script>
+
+    var log_sum_sensors=[];
+    var bubbleChartData = {
+                animation: {
+                    duration: 0
+                },
+                game_ids: [],
+                datasets: [],
+                clues_data:[],
+                sensor_names:[],
+                dataset_game_ids:[],
+                dataset_r_vals:[]
+
+            };
+    function initLogSumData(){
+
+         let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room_id }}/");
+             sensor_data.done(function(results){
+                obj = results.sensors;
+                for (i in obj)
+                {
+                   colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                   newColor = chartColors[colorName];
+                   newDataset = {
+                        label: obj[i].sensor_name,
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        pointRadius: 8,
+                        pointHoverRadius: 14,
+                   };
+                   bubbleChartData.datasets.push(newDataset);
+                   let ace = obj[i].sensor_id;
+                   bubbleChartData.dataset_game_ids[ace] = [];
+                   bubbleChartData.dataset_r_vals[ace] = [];
+                   log_sum_sensors.push(obj[i].sensor_id);
+                   window.myLogSummary.update()
+                }
+                let summary_data =  $.get("/octo_site/api/get_log_summary/{{ id_slugs }}/");
+                summary_data.done(function(summary){
+                    colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                    newColor = chartColors[colorName];
+                    obj = summary.data;
+
+                    newDataset = {
+                            type: 'scatter',
+                            showLine: false,
+                            label: 'Clues Asked',
+                            borderWidth: 3,
+                            pointStyle: 'triangle',
+                            backgroundColor: 'rgb(26, 35, 126)',
+                            borderColor: 'rgb(26, 35, 126)',
+                            data: [],
+                            fill: false
+                       };
+                    bubbleChartData.datasets.push(newDataset);
+                    window.myLogSummary.update();
+
+                    newdt = {
+                        label: "averages",
+                        type: "line",
+                        borderDash: [10,5],
+                        pointStyle: 'rectRot',
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        borderWidth: 2,
+                        data: [],
+                        pointRadius: 10,
+                        pointHoverRadius: 10,
+                        fill: false,
+                   };
+                   window.myLogSummary.update();
+                   console.log("data",bubbleChartData.datasets);
+                   bubbleChartData.datasets.push(newdt);
+
+                   for(ob in obj){
+                       bubbleChartData.datasets[bubbleChartData.datasets.length-1]
+                           .data
+                           .push({x: obj[ob].avg_min_stamped, y: obj[ob].avg_time_solved,});
+                       bubbleChartData.sensor_names[ob] = obj[ob].sensor_name;
+                       window.myLogSummary.update();
+                   }
+
+               });
+
+               {% for game in games %}
+               clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
+               clue_data.done(function(results){
+                    let obj = results.data;
+                    if (obj.length !=0){
+                       for (ob in obj)
+                       {
+                           bubbleChartData.datasets[bubbleChartData.datasets.length-2].data.push({x:obj[ob].minute_asked, y:0.0});
+                           bubbleChartData.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
+                           window.myLogSummary.update();
+                       }
+                    }
+                });
+               {% endfor %}
+               window.myLogSummary.update()
+
+           });
+             console.log(bubbleChartData.dataset_game_ids);
+           // Populate data in the datasets
+
+         {% for game in games %}
+             summary_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+             summary_data.done(function(results){
+                obj = results.data;
+                for (i in obj)
+                {
+                   if(obj[i].value !== "0"){
+                        console.log(obj[i].time_solved);
+                       bubbleChartData.datasets[log_sum_sensors.indexOf(obj[i].sensor_id)].data.push(
+                           {
+                               x: obj[i].min_stamped,
+                               y: obj[i].time_solved,
+                               r:obj[i].times_triggered*15
+                           });
+                       bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
+                       bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
+                       window.myLogSummary.update()
+                   }
+                }
+            });
+         {% endfor %}
+        }
+</script>
