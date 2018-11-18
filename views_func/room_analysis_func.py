@@ -27,4 +27,5 @@ def room_details_analysis(request):
             report_data, msg, games,game_ids = get_daily_report(request,room)
         else:
             print("what")
-    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"id_slugs": game_ids,"records_len":len(games)})
+
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"room_id":request.POST['room_id'],"id_slugs": game_ids,"records_len":len(games)})
