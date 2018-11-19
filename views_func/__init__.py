@@ -5,3 +5,4 @@ from .sandbox_analysis_func import *
 from .page_func import *
 from .game_logs_func import *
 from .room_analysis_func import *
+from .player_analysis_report_func import *
