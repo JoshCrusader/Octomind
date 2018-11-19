@@ -33,6 +33,7 @@ def game_logs_detail(request,game_id):
     g = Game.objects.get(game_id=game_id)
     summary = g.pull_game_summary(g)
     data_summary = g.pull_data_game(g)
+    clues = g.get_data_clues
     senlogs = g.pull_data_fr_game(g)
     for d in senlogs:
         sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
@@ -40,7 +41,7 @@ def game_logs_detail(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return render(request, 'octo_site/game_logs/game_logs_detail.html',
-                  {'logs':senlogs,'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info'],'data_summary':data_summary})
+                  {'logs':senlogs,'clues':clues,'clues_len':len(clues),'game': g,'general_info':summary['general_info'],'sensor_info': summary['sensor_info'],'data_summary':data_summary})
 
 def analyze_game_logs(request,game_ids):
     gids = game_ids.split("-")

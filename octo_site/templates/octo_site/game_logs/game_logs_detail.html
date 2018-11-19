@@ -182,6 +182,30 @@
                                                     </tbody>
                                                 </table>
                                                 <hr>
+                                                {% if clues_len != 0 %}
+                                                <h4 class="uk-margin-remove">* Clues Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Clue Number</th>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="left">Detail</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for c in clues %}
+                                                        <tr>
+                                                            <td>{{ forloop.counter }}</td>
+                                                            <td>{{ c.phase_name }}</td>
+                                                            <td>{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}</td>
+                                                            <td>{{ c.timestamp }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                {% endif %}
                                                 <h4 class="uk-margin-remove">* Signals Received Summary</h4>
                                                 <table class="uk-table uk-table-divider" style="width:100%;">
                                                     <thead>

@@ -273,7 +273,7 @@ class Game(models.Model):
                 new_data.append({"sensor_id": s.sensor_id,
                              "times_triggered":times_triggered,
                              "time_solved": 0,
-                             "ts": data['timestamp'].strftime('%H:%M:%S'),
+                             "ts": None,
                              "phase_name": s.phase_name,
                              "sensor_name": s.sensor_name,
                              "timestamp": None,
