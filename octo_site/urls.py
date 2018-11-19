@@ -23,13 +23,6 @@ urlpatterns = [
     path('venue/', views.page_venue, name='page_venue'),
     path('sensor_data/<int:game_id>/',views.sensor_data, name='sensor_data'),
     path('all_sensor_data/',views.all_sensor_data, name='all_sensor_data'),
-    #test_urls
-    path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
-    path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
-    path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
-
-    path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
-    path('log_summary/<slug:game_ids>/', views.log_summary, name='log_summary'),
 
     path('api/get_log_distribution/<slug:game_ids>/', views.get_log_distribution, name='get_log_distribution'),
     path('api/get_log_summary/<slug:game_ids>/', views.get_log_summary, name='get_log_summary'),
@@ -51,6 +44,7 @@ urlpatterns = [
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),
     path('api/get_market/', views.get_market, name = 'get_market'),
     path('api/get_room_market/', views.get_room_market, name = 'get_room_market'),
+    path('api/get_clue_data/<int:game_id>/', views.get_clue_data, name='get_clue_data'),
     path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
@@ -64,6 +58,14 @@ urlpatterns = [
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
     path('sample_marker', views.sample_marker, name='sample_marker'),
 
+    #test_urls
+    path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
+    path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
+    path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
+    path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
+    path('log_summary/<slug:game_ids>/', views.log_summary, name='log_summary'),
+    path('log_percentage_complete/<slug:game_ids>/', views.log_percentage_complete, name='log_percentage_complete'),
+    ##
     #handlers
     path('error404/', views.handler404, name='error404'),
     path('admin/', admin.site.urls),

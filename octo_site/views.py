@@ -93,6 +93,7 @@ def control_panel(request):
     return control_panel_func.control_panel(request)
 
 def view_room(request, game_id):
+    print("viewing room")
     return view_room_func.view_room(request, game_id)
 
 def sandbox_analysis(request, room_id):
@@ -128,7 +129,7 @@ def get_sensors_by_room_id(request,room_id):
 @csrf_exempt
 def get_sensor_by_game(request, game_id):
     data_return = []
-    for sensor in Game.objects.get(game_id=3).get_sensors_on_trigger_sequence:
+    for sensor in Game.objects.get(game_id=game_id).get_sensors_on_trigger_sequence:
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "phase_name":sensor.phase_name,"top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt
@@ -180,6 +181,10 @@ def game_tally(request,game_id):
 @csrf_exempt
 def get_cur_games(request):
     return ajax_helper.get_cur_games(request)
+
+@csrf_exempt
+def get_clue_data(request,game_id):
+    return JsonResponse({"data": Game.objects.get(game_id=game_id).get_data_clues})
 
 @csrf_exempt
 def get_player_list(request):
@@ -259,6 +264,13 @@ def data_vis_v2(request, game_id):
 def live_monitoring(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
     return render(request, 'octo_site/test_files/live_monitoring_data.html', {"room":room, "game":Game.objects.get(game_id=game_id)})
+
+def log_percentage_complete(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_distribution.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
 
 def log_distribution(request, game_ids):
     gids = game_ids.split("-")

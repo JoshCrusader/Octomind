@@ -1,31 +1,27 @@
-
 {% load staticfiles %}
+
 <script>
     /*
         final_results - comes from live_monitor, retreived by sensor logs api
-        roomid  - from view
-        
-    */ 
-    console.log("------");
+        room.room_id  - from view
+
+    */
     let new_opacity;
     function sendSensorRequet(){
-        //var rid = document.getElementById("mainInfo").getAttribute("roomid");
         $.ajax({
             type:"POST",
-            url:"/octo_site/api/get_sensor_by_room_id/{{ roomid }}/",
+            url:"/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/",
             data: {
-                'game_id': {{ roomid }},
+                'game_id': {{ room.room_id }},
             },
             success: function(data){
                 setSandBox(data.sensors);
             }
         });
     }
-
     function setSandBox(sensors){
-        //console.log(sensors);
         dom = document.getElementById("sensor_sequence_plot");
-        str = "";
+        str = ""
         for(i in sensors){
             colorName = colorNames[i % colorNames.length];
             colr = chartColors[colorName];
@@ -36,12 +32,7 @@
         dom.innerHTML = str;
         setPathContent(sensors);
     }
-
     function setPathContent(sensors){
-        /*
-            TODO: Set Connections based on sequence
-
-        */
         dom = document.getElementById("path_sequence_plot");
         str = "";
         senlogs = final_results.data; //sensor logs
@@ -64,34 +55,22 @@
                     matrix[less+""][max+""] += 1;
                     if(matrix[less+""][max+""] > max){
                         max = matrix[less+""][max+""];
-                    } 
+                    }
                 }
             }
         }
-        new_opacity = 1/max;
-        /*
-        for(i in sensors){
-            if(i != 0){
-                console.log(sensors[i]);
-                str_append = '<div class = "path-container" id = "laser_'+sensors[i].sensor_id+'" target1 = "'+sensors[i-1].sensor_id+'" target2 = "'+sensors[i].sensor_id+'" arw_target = 1></div>'
-                str += str_append+"\n";
-            }
-        }
-        */
+        new_opacity = 0.75/max;
         dom.innerHTML = str;
         produceConnections();
     }
-
     function produceConnections(){
         items = document.getElementsByClassName("path-container");
         for(var i = 0; i < items.length; i++){
             setPathF(items[i]);
         }
-        console.log(items);
-        animatePath(items);
     }
     function setPathF(pathdom){
-        
+
             var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
             var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
 
@@ -100,7 +79,7 @@
 
             var s1 = window.getComputedStyle(p1);
             var s2 = window.getComputedStyle(p2);
-            
+
             var y1 = parseInt(p1.offsetTop);
             var y2 = parseInt(p2.offsetTop);
 
@@ -130,40 +109,13 @@
             }
             l.innerHTML = str;
         }
-        function animatePath(paths){
-            const animate_arrows = (elements, elem_index, this_interval) => {
-                var arrows = elements[elem_index].children;
-                var target  = parseInt(elements[elem_index].getAttribute("arw_target"));
-                var arrowLength = arrows.length;
-                if(arrowLength > 0){
-                    arrows[target].setAttribute("style", "visibility: visible;");
-                    if(target == 0){
-                        arrows[arrowLength-1].setAttribute("style", "visibility: hidden;");
-                    }
-                    else{
-                        arrows[target-1].setAttribute("style", "visibility: hidden;");
-                    }
-                }
-                elements[elem_index].setAttribute("arw_target", parseInt(target) + 1 < arrowLength ? parseInt(target)+1: 0);
-                if(target == arrowLength-1 || arrowLength == 0){
-
-                    clearInterval(this_interval);
-                    setTimeout(()=> {
-                        if(arrowLength > 0){
-                            arrows[target].setAttribute("style", "visibility: hidden;");
-                        }
-                        if(!(elem_index < elements.length-1)){
-                            elem_index = -1;
-                        }
-                        var new_interv = setInterval(() => {
-                            animate_arrows(elements, elem_index+1, new_interv);
-                        }, 80);
-                    }, 80)
-                }
-            }
-            var interv = setInterval(() => {
-                animate_arrows(paths, 0, interv);
-            }, 80);
-
-    }   
+</script>
+<script>
+let final_results;
+sensor_data =  $.get("/octo_site/api/select_sensor_data/{{ id_slugs }}/");
+sensor_data.done(function(results){
+    final_results = results;
+    console.log("finalres", final_results);
+    sendSensorRequet();
+})
 </script>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html>
+{% load staticfiles %}
+<head>
+	<title>Line Chart</title>
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="width:75%;">
+		<canvas id="log_sum"></canvas>
+	</div>
+	<br>
+    <script>
+        var log_sum_sensors=[];
+        var summary_data = null;
+        let chartColors = {
+          red: 'rgb(255, 65, 54)',
+          yellow: 'rgb(239, 206, 0)',
+          green: 'rgb(61, 142, 106)',
+          blue: 'rgb(28, 143, 219)',
+          orange: 'rgb(255, 118, 0)',
+          purple: 'rgb(153, 102, 255)',
+          grey: 'rgb(231,233,237)',
+          black: 'rgb(0,0,0)',
+        };
+		var colorNames = Object.keys(chartColors);
+		var color = Chart.helpers.color;
+		var bubbleChartData = {
+			animation: {
+				duration: 0
+			},
+            game_ids: [],
+			datasets: [],
+            sensor_names:[],
+            dataset_game_ids:[],
+            dataset_r_vals:[]
+
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('log_sum').getContext('2d');
+			window.myLogSummary = new Chart(ctx, {
+				type: 'bubble',
+				data: bubbleChartData,
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Log Summary for Game/s {{ game_ids|join:", " }}'
+					},
+					tooltips: {
+						mode: 'nearest',
+                        intersect: false,
+                        custom: function(tooltip) {
+                        if (!tooltip) return;
+                            // disable displaying the color box;
+                            tooltip.displayColors = true;
+                        },
+                        callbacks: {
+                            // use label callback to return the desired label
+                            label: function(tooltipItem, data) {
+
+                                if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
+                                    //console.log("sensor_names",data.sensor_names);
+                                    return data.sensor_names[tooltipItem.index+1];
+                                }
+
+                                val = tooltipItem.xLabel;
+                                sec = ((val % 1)*60).toFixed(2);
+                                min = Math.floor(val);
+                                if (min !== 0 || sec !== 0){
+                                    if (parseInt(sec) === 0){
+                                            return min + ":00";
+                                        }
+                                    if (parseInt(min) === 0){
+                                            return "00:00" + sec;
+                                        }
+                                    if (Math.round(sec) < 10){
+
+                                        return min + ":0" + Math.round(sec);
+                                    }
+                                    return min + ":" + Math.round(sec);
+                                }
+                                return 'Ano daw';
+                            },
+                            title: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
+                                return data.datasets[tooltipItem[0].datasetIndex].label
+                            },
+                            afterTitle: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
+
+                                return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
+                            },
+                            afterBody: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    str=["-----"];
+                                    str.push("Time solved average: "+tooltipItem[0].yLabel);
+                                    str.push("Minute triggered average: "+tooltipItem[0].xLabel);
+                                    return str;
+                                }
+
+                                val = parseFloat(tooltipItem[0].yLabel);
+                                sec = ((val % 1)*60).toFixed(2);
+
+                                min = Math.floor(val);
+                                if (min !== 0 && sec !== 0){
+                                if (parseInt(sec) === 0){
+                                        return 'Solved in ' + min + " min";
+                                    }
+                                    return "Solved in "+min + " min and " + Math.round(sec) +" sec" ;
+                                }
+                                return 'Ano daw';
+                            },
+                            beforeFooter: function(tooltipItem, data) {
+                                if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                    return null;
+                                }
+                                    return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
+                            },
+
+                            // Use the footer callback to display the sum of the items showing in the tooltip
+
+                          },
+                        footerFontStyle: 'normal'
+					},
+                    scales: {
+					    xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'minutes triggered',
+                                max: 60
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString:'time solved (min)'
+                            }
+                        }]
+                    }
+				}
+			});
+			initLogSumData();
+		};
+        function initLogSumData(){
+            // Populate the datasets
+         let sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ room.room_id }}/");
+             sensor_data.done(function(results){
+                obj = results.sensors;
+                for (i in obj)
+                {
+                   colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                   newColor = chartColors[colorName];
+                   newDataset = {
+                        label: obj[i].sensor_name,
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        pointRadius: 8,
+                        pointHoverRadius: 14,
+                   };
+                   bubbleChartData.datasets.push(newDataset);
+                   let ace = obj[i].sensor_id;
+                   bubbleChartData.dataset_game_ids[ace] = [];
+                   bubbleChartData.dataset_r_vals[ace] = [];
+                   log_sum_sensors.push(obj[i].sensor_id);
+                   window.myLogSummary.update()
+                }
+                let summary_data =  $.get("/octo_site/api/get_log_summary/{{ id_slugs }}/");
+                summary_data.done(function(summary){
+                    colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
+                    newColor = chartColors[colorName];
+                    obj = summary.data;
+                    console.log("summary",obj);
+                    newdt = {
+                        label: "averages",
+                        type: "line",
+                        borderDash: [10,5],
+                        pointStyle: 'rectRot',
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        borderWidth: 2,
+                        data: [],
+                        pointRadius: 10,
+                        pointHoverRadius: 10,
+                        fill: false,
+                   };
+                    window.myLogSummary.update();
+                   console.log("data",bubbleChartData.datasets);
+                   bubbleChartData.datasets.push(newdt);
+
+                   for(ob in obj){
+                       bubbleChartData.datasets[bubbleChartData.datasets.length-1]
+                           .data
+                           .push({x: obj[ob].avg_min_stamped, y: obj[ob].avg_time_solved,});
+                       bubbleChartData.sensor_names[ob] = obj[ob].sensor_name;
+                       window.myLogSummary.update();
+                   }
+
+               });
+               window.myLogSummary.update()
+
+           });
+             console.log(bubbleChartData.dataset_game_ids);
+           // Populate data in the datasets
+         {% for game in games %}
+             summary_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+             summary_data.done(function(results){
+                obj = results.data;
+                for (i in obj)
+                {
+                   if(obj[i].value !== "0"){
+                        console.log(obj[i].time_solved);
+                       bubbleChartData.datasets[log_sum_sensors.indexOf(obj[i].sensor_id)].data.push(
+                           {
+                               x: obj[i].min_stamped,
+                               y: obj[i].time_solved,
+                               r:obj[i].times_triggered*15
+                           });
+                       bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
+                       bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
+                       window.myLogSummary.update()
+                   }
+                }
+            });
+         {% endfor %}
+        }
+	</script>
+</body>
+
+</html>

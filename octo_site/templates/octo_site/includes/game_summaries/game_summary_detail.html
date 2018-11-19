@@ -1,0 +1,275 @@
+<script>
+
+let config = {
+        type: 'line',
+        data: {
+            start_time: start_time,
+            labels: [],
+            datasets: [],
+            statuses:[],
+            clues_data:[],
+            data_objs:[],
+        },
+        options: {
+            responsive: true,
+            spanGaps:true,
+            legend: {
+                position: 'bottom',
+                display: true,
+                labels: {
+                    padding:15,
+                    fontSize: 13,
+                    usePointStyle:true,
+                }
+            },
+            title: {
+                display: true,
+                text: 'Summary of Game #{{ game.game_id }} in {{ room.room_name }} [{{ game.game_details.timestart }}-{{ game.game_details.timeend }}]'
+            },
+            tooltips: {
+					mode: 'nearest',
+					intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
+                              return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
+                          }
+                          let time_solved = new Date(tooltipItem.xLabel);
+                          let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+                          if (comp_time) {return "Start time";}
+                          let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
+                          return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
+                        },
+                        title: function(tooltipItem, data) {
+                          if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
+                              return null;
+                          }
+                            return tooltipItem[0].xLabel;
+                        },
+                        footer: function(tooltipItems, data) {
+							let val = null;
+							let min = null;
+							let sec = null;
+							let stat = null;
+							let clu = false;
+							let det = "";
+
+							tooltipItems.forEach(function(tooltipItem) {
+
+                              if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
+                                  clu =true;
+                                  det = data.clues_data[tooltipItem.index].detail
+                              }else{
+                                    val = data.data_objs[tooltipItem.datasetIndex].time_solved;
+                                    sec = ((val % 1)*60).toFixed(2);
+                                    min = Math.floor(val);
+                                    stat = data.statuses[tooltipItem.datasetIndex];
+                              }
+
+							});
+							if(clu){
+							    return det
+                            }
+							if(stat){
+                                if (min !== 0 && sec !== 0){
+                                    if (parseInt(sec) === 0){
+                                        return 'Elapsed: ' + min + " min";
+                                    }
+                                    return 'Elapsed: ' + min + " min and " + sec +" sec" ;
+                                }
+                            }
+
+                            return 'Not solved yet';
+						},
+                      },
+					footerFontStyle: 'normal'
+				},
+            hover: {
+                mode: 'index',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    type: 'time',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'time triggered'
+                    }
+                }],
+                yAxes: [{
+                    display: false,
+                    scaleLabel: {
+                        display: true,
+                    },
+                    ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min:-0.4,
+                            stepValue: 5,
+                            max: {{ game.room.num_sensors }}.00001
+                        }
+                }]
+            }
+        }
+    };
+function initData() {
+   sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
+   sensor_data.done(function(results){
+        obj = results.sensors;
+
+        console.log("gotten d sensors {{ game.game_id }}",obj);
+        newYAxis = null;
+        for (i in obj)
+        {
+           colorName = colorNames[config.data.datasets.length % colorNames.length];
+           newColor = chartColors[colorName];
+           newXAxis = {
+                id: "id-"+i,
+                type: 'time',
+                position: 'bottom',
+                display: false,
+                ticks: {
+                min: 0,
+                max: 168,
+                stepSize: 1000
+                }
+
+           };
+           newDataset = {
+                type: 'line',
+                label: obj[i].phase_name,
+                xAxisID:"id-"+i,
+                borderWidth: 50,
+                pointStyle: 'line',
+                backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                borderColor: newColor,
+                data: [],
+                fill: false
+           };
+
+           config.data.datasets.push(newDataset);
+           sensors.push(obj[i].sensor_id);
+           config.options.scales.xAxes.push(newXAxis);
+           window.myLine.update()
+        }
+   });
+   let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+   game_data.done(function(results){
+       let obj = results.data;
+       let prev_ts=null;
+        for (obx in obj)
+        {
+           let ind = sensors.indexOf(obj[obx].sensor_id);
+           if(parseInt(obj[obx].time_solved.toFixed(2)) !== 0){
+               if(prev_ts !== null){
+                   let time_stamp = new Date(obj[obx].timestamp);
+                   new_obj.push(prev_ts);
+                   prev_ts=obj[obx].timestamp;
+               }
+               else{
+                   new_obj.push(start_time);
+                   prev_ts=obj[obx].timestamp;
+               }
+           }
+        }
+        for (ob in obj)
+        {
+           if(parseInt(obj[ob].time_solved.toFixed(2)) !== 0){
+
+           config.data.data_objs.push(obj[ob]) ;
+           let ind = sensors.indexOf(obj[ob].sensor_id);
+           if(ind !== 0){
+               config.data.labels.push(new_obj[ob]);
+               config.data.labels.push(new Date(obj[ob].timestamp));
+               for(let x =0; x < sensors.length;x++){
+                    if(obj[ob].sensor_id === sensors[x] &&  (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
+                        config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                        config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                        config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                    }
+                    else{
+                        config.data.datasets[x].data.push(null);
+                        config.data.datasets[x].data.push(null);
+                    }
+                }
+           }
+           else{
+               config.data.labels.push(start_time);
+               config.data.labels.push(new Date(obj[ob].timestamp));
+               for(let x =0; x < sensors.length;x++){
+                    if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
+                        config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                        config.data.datasets[x].data.push(sensors.length-0.75);
+                        config.data.datasets[x].data.push(sensors.length-0.75);
+                    }
+                    else{
+                        config.data.datasets[x].data.push(null);
+                        config.data.datasets[x].data.push(null);
+                    }
+                }
+           }
+           }
+           window.myLine.update()
+        }
+        console.log("lbl",config.data.labels);
+        console.log("datset",config.data.datasets);
+   });
+    let clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
+    clue_data.done(function(results){
+               let obj = results.data;
+                if (obj.length !=0){
+                    newXAxis = {
+                        id: "clues",
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+                   };
+                   newDataset = {
+                        type: 'scatter',
+                        showLine: false,
+                        label: 'Clues Asked',
+                        xAxisID:"clues",
+                        borderWidth: 15,
+                        pointStyle: 'circle',
+                        backgroundColor: 'rgb(26, 35, 126)',
+                        borderColor: 'rgb(26, 35, 126)',
+                        data: [],
+                        fill: false
+                   };
+                   config.data.datasets.push(newDataset);
+                   config.options.scales.xAxes.push(newXAxis);
+                   window.myLine.update();
+                for (ob in obj)
+                {
+                   config.data.datasets[config.data.datasets.length-1].data.push({x:new Date(obj[ob].timestamp),y:-0.4});
+                   config.data.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
+                   window.myLine.update();
+                }
+                }
+
+           });
+
+    window.myLine.update();
+    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+    summary_data.done(function(results){
+        console.log(results.data);
+        $("#time_finished").html(results.data.general_info.time_finished_duration);
+        $("#skill_bracket").html(results.data.general_info.skill_bracket);
+        $("#avg_time").html(results.data.general_info.average_time);
+
+    });
+}
+</script>

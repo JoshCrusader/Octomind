@@ -5,16 +5,15 @@
         final_results - comes from live_monitor, retreived by sensor logs api
         roomid  - from view
         
-    */ 
-    console.log("------");
+    */
     let new_opacity;
     function sendSensorRequet(){
         //var rid = document.getElementById("mainInfo").getAttribute("roomid");
         $.ajax({
             type:"POST",
-            url:"/octo_site/api/get_sensor_by_room_id/{{ roomid }}/",
+            url:"/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/",
             data: {
-                'game_id': {{ roomid }},
+                'game_id': {{ game.room_id }},
             },
             success: function(data){
                 setSandBox(data.sensors);
@@ -45,7 +44,7 @@
         dom = document.getElementById("path_sequence_plot");
         str = "";
         senlogs = final_results.data; //sensor logs
-
+        console.log("senlogs",senlogs);
         matrix = {};
         max = 1;
         for(i in senlogs){
@@ -165,5 +164,14 @@
                 animate_arrows(paths, 0, interv);
             }, 80);
 
-    }   
+    }
+</script>
+
+<script>
+let final_results;
+sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}/");
+sensor_data.done(function(results){
+    final_results = results;
+    sendSensorRequet();
+})
 </script>

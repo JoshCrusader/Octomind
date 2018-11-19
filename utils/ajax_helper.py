@@ -34,7 +34,7 @@ def get_player_list(request):
 def start_game(request):
     if(request.method == 'POST'):
         gid = request.POST['game_id']
-        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        now_datetime = timezone.now()
         game = Game.objects.get(game_id = gid)
         game_detail = GameDetails.objects.get(game_details_id = game.game_details_id)
         game_detail.timestart = now_datetime
@@ -45,7 +45,7 @@ def start_game(request):
 def end_game(request):
     if(request.method == 'POST'):
         gid = request.POST['game_id']
-        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        now_datetime = timezone.now()
         game_detail = GameDetails.objects.get(game_details_id = gid)
         game_detail.timeend = now_datetime
         game_detail.save()
@@ -55,10 +55,10 @@ def add_clue(request):
     if(request.method == 'POST'):
         cval = request.POST['clue_desc']
         gid = request.POST['gameid']
-        now_datetime = timezone.now() + timezone.timedelta(hours=8)
+        now_datetime = timezone.now()
         cdetail = ClueDetails(detail = cval, timestamp = now_datetime)
         cdetail.save()
-        clue = Clues(clue_details_id = cdetail.clue_details_id, games_id = gid)
+        clue = Clues(clue_details_id = cdetail.clue_details_id, game_id = gid)
         clue.save()
     return JsonResponse({"data": "done"})
 

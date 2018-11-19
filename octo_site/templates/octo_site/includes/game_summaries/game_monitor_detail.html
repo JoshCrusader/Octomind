@@ -1,0 +1,133 @@
+<script>
+
+    let live_config = {
+        type: 'line',
+        data: {
+            start_time: start_time,
+            labels: [],
+            datasets: [],
+            statuses:[],
+        },
+        options: {
+            elements:{
+                line: {
+                    tension: 0
+                }
+            },
+            spanGaps:true,
+            responsive: true,
+            legend: {
+                position: 'bottom',
+            },
+            title: {
+                display: true,
+                text: '{{ room.room_name }} Game #{{ game.match_id }}'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                footerFontStyle: 'normal'
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: false
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    type: 'time',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                    }
+                }],
+                yAxes: [{
+
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Activation Status'
+                    },
+                    ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min:0,
+                            stepValue: 5,
+                            max: 1.0001
+                        }
+                }]
+            }
+        }
+    };
+    function initMonData() {
+           let sensors=[];
+           let sensor_data_len;
+           let time = start_time;
+           let newDataset;
+           let newXAxis;
+           let colorName;
+           let newColor;
+           sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/{{ game.room_id }}/");
+           sensor_data.done(function(results){
+              let obj = results.sensors;
+               for (i in obj)
+               {
+                   colorName = colorNames[live_config.data.datasets.length % colorNames.length];
+                   newColor = chartColors[colorName];
+                   newXAxis = {
+                        id: "id-"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   newDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name,
+                        xAxisID:"id-"+i,
+                        steppedLine: true,
+                        pointStyle: 'circle',
+                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                        borderColor: newColor,
+                        data: [],
+                        fill: false
+                   };
+                   live_config.data.datasets.push(newDataset);
+                   sensors.push(obj[i].sensor_id);
+                   live_config.options.scales.xAxes.push(newXAxis);
+                   window.LiveLine.update()
+               }
+
+           });
+           sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}");
+           sensor_data.done(function(results){
+               sensor_data_len = results.data.length;
+                obj = results.data;
+                for (ob in obj)
+                {
+                    live_config.data.labels.push(new Date(obj[ob].timestamp));
+                    for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x]){
+                            live_config.data.datasets[x].data.push(obj[ob].value);
+                        }
+                        else{
+                            live_config.data.datasets[x].data.push(null);
+                        }
+                    }
+                    window.LiveLine.update()
+                }
+
+           });
+        let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+            summary_data.done(function(results){
+                console.log(results.data);
+           });
+            window.LiveLine.update();
+        }
+</script>

@@ -105,7 +105,6 @@ class Game(models.Model):
     @property
     def match_id(self):
         return self.game_id + 100000
-
     @property
     def get_team_size(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
@@ -154,16 +153,12 @@ class Game(models.Model):
         return GameErrorLog.objects.filter(game_id=self).count()
         real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
         my_seq = self.get_sensor_trigger_sequence
-        # print("real seqeunce: ", real_seq)
-        # print("init my seqeunce: ", my_seq)
-        # print(my_seq)
         index_add = len(real_seq) - len(my_seq)
         if index_add != 0:
             index_add = real_seq[-1*index_add:]
             for i in index_add:
                 my_seq.append(i)
 
-        # print("my seqeunce: ", my_seq)
         if str(my_seq) == str(real_seq):
             return False
         return True
@@ -186,6 +181,21 @@ class Game(models.Model):
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
+    @property
+    def get_data_clues(self):
+        data_return=[]
+        clues = Clues.objects.filter(game_id=self.game_id)
+        for c in clues:
+            s = Sensor.objects.get(sensor_id=c.clue_details.get_sensor_asked)
+            data_return.append({
+                'sensor_id':c.clue_details.get_sensor_asked,
+                'phase_name':s.phase_name,
+                'game_id':self.game_id,
+                'timestamp':c.clue_details.timestamp,
+                'minute_asked':c.clue_details.get_minute_asked,
+                'detail':c.clue_details.detail
+            })
+        return data_return
     @staticmethod
     def pull_data_game(self):
         # to_put_time_constraint here
@@ -214,7 +224,6 @@ class Game(models.Model):
         # fetch all of the rows from the query
         data = cursor.fetchall()
 
-        # print the rows
         for row in data:
             data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3]})
         # close the cursor object
@@ -247,9 +256,11 @@ class Game(models.Model):
 
                         new_data.append(
                             {"sensor_id": s.sensor_id,
-                             "time_solved": time_diff_in_min,
+                             "time_solved": round(time_diff_in_min,2),
+                             "ts": data['timestamp'].strftime('%H:%M:%S'),
                              "timestamp": data['timestamp'],
                              "times_triggered": times_triggered,
+                             "sensor_name": s.sensor_name,
                              "phase_name": s.phase_name,
                              "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
 
@@ -262,12 +273,23 @@ class Game(models.Model):
                 new_data.append({"sensor_id": s.sensor_id,
                              "times_triggered":times_triggered,
                              "time_solved": 0,
+                             "ts": data['timestamp'].strftime('%H:%M:%S'),
+                             "phase_name": s.phase_name,
+                             "sensor_name": s.sensor_name,
                              "timestamp": None,
                              "min_stamped": None})
-
-
         cursor.close()
         # close the connection
+        '''
+        for(ind in results.data.sensor_info)
+        {
+            console.log(results.data.sensor_info[ind].sensor_name);
+            let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
+            str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].sensor+"</p><br>";
+            str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
+            $("#sensor_list").append(str);
+        }
+        '''
         connection.close()
         return new_data
     @staticmethod
@@ -337,7 +359,6 @@ class Game(models.Model):
         except:
             team = None
         return team
-
     @staticmethod
     def pull_data_fr_game(self):
         connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
@@ -357,14 +378,14 @@ class Game(models.Model):
                 f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")
         # fetch all of the rows from the query
         data = cursor.fetchall()
-        # print the rows
         for row in data:
             f = '%Y-%m-%d %H:%M:%S'
             utc = pytz.UTC
             clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
             datetime_object = row[1]
             min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
-            data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3], "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
+            data_return.append({"log_id": row[0],"ts": row[1].strftime('%H:%M:%S'),
+                              "timestamp": row[1], "sensor_id": row[2], "value": row[3], "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
             # close the cursor object
         cursor.close()
         # close the connection
@@ -376,7 +397,6 @@ class Game(models.Model):
                 data['value'] = '1'
             else:
                 data['value'] = '0'
-        # print(dataset_logs)
         return dataset_logs
     @staticmethod
     def pull_game_summary(self):
@@ -613,7 +633,6 @@ class Sensor(models.Model):
 
         room = Rpi.objects.get(rpi_id=self.rpi_id).room
         flag = room.has_game_sequence
-        # print("flag: ",flag)
         if flag == True:
             for r in Rpi.objects.filter(room_id=room.room_id):
                 for s in Sensor.objects.filter(rpi_id=r.rpi_id):

@@ -26,7 +26,6 @@ def pull_data_live_control_panel(game_id):
 # CAN THEY CHANGE TIME SOLVED?
 def check_anomaly(game):
     data = game.pull_data_game(game)
-    print(data)
     for s in data:
         #if lesser than 5 minutes you uhhh label it as warning[ hey u solved it too fast! r u G0D ]
         if float(s['time_solved']) != 0.0 and float(s['time_solved']) < 5.0:
