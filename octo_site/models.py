@@ -256,9 +256,11 @@ class Game(models.Model):
 
                         new_data.append(
                             {"sensor_id": s.sensor_id,
-                             "time_solved": time_diff_in_min,
+                             "time_solved": round(time_diff_in_min,2),
+                             "ts": data['timestamp'].strftime('%H:%M:%S'),
                              "timestamp": data['timestamp'],
                              "times_triggered": times_triggered,
+                             "sensor_name": s.sensor_name,
                              "phase_name": s.phase_name,
                              "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
 
@@ -271,12 +273,23 @@ class Game(models.Model):
                 new_data.append({"sensor_id": s.sensor_id,
                              "times_triggered":times_triggered,
                              "time_solved": 0,
+                             "ts": data['timestamp'].strftime('%H:%M:%S'),
+                             "phase_name": s.phase_name,
+                             "sensor_name": s.sensor_name,
                              "timestamp": None,
                              "min_stamped": None})
-
-
         cursor.close()
         # close the connection
+        '''
+        for(ind in results.data.sensor_info)
+        {
+            console.log(results.data.sensor_info[ind].sensor_name);
+            let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
+            str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].sensor+"</p><br>";
+            str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
+            $("#sensor_list").append(str);
+        }
+        '''
         connection.close()
         return new_data
     @staticmethod
@@ -357,7 +370,8 @@ class Game(models.Model):
             clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
             datetime_object = row[1]
             min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
-            data_return.append({"log_id": row[0], "timestamp": row[1], "sensor_id": row[2], "value": row[3], "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
+            data_return.append({"log_id": row[0],"ts": row[1].strftime('%H:%M:%S'),
+                              "timestamp": row[1], "sensor_id": row[2], "value": row[3], "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
             # close the cursor object
         cursor.close()
         # close the connection

@@ -257,6 +257,13 @@ def live_monitoring(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
     return render(request, 'octo_site/test_files/live_monitoring_data.html', {"room":room, "game":Game.objects.get(game_id=game_id)})
 
+def log_percentage_complete(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+    return render(request, 'octo_site/test_files/log_distribution.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
+
 def log_distribution(request, game_ids):
     gids = game_ids.split("-")
     games = []

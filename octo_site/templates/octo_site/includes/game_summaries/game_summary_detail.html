@@ -269,14 +269,7 @@ function initData() {
         $("#time_finished").html(results.data.general_info.time_finished_duration);
         $("#skill_bracket").html(results.data.general_info.skill_bracket);
         $("#avg_time").html(results.data.general_info.average_time);
-        for(ind in results.data.sensor_info)
-        {
-            console.log(results.data.sensor_info[ind].sensor_name);
-            let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
-            str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].times_triggered+"</p><br>";
-            str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
-            $("#sensor_list").append(str);
-        }
+
     });
 }
 </script>

@@ -17,7 +17,9 @@
     .myProgress {
       width: 80px;
     }
-
+    .bdr{
+        border: 1px solid black;
+    }
     .myBar {
       width: 100%;
       height: 15px;
@@ -58,6 +60,9 @@
                         </div>
                         <div class="uk-width-expand uk-text-right pad">
                             <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
+
+                            <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><a href="#" uk-tooltip="Print Report" onclick="window.print()" ><span data-uk-icon="icon: download"></span> CSV</a></button>
+                            <button class="uk-button uk-button-warning uk-button-small" ><a href="#" onclick="printDiv('print_area')" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a></button>
                         </div>
 
                         <div class="uk-width-1-1 uk-child-width-1-5 uk-grid-divider uk-column-1-2@s uk-column-1-5@m uk-column-1-8@l uk-child-width-1-5@xl" style="" id="summary_container" data-uk-grid >
@@ -92,6 +97,7 @@
                                         <li><a href="#" onclick="$('#s_plot').hide()">Summary Data</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()">Log Digital Signals</a></li>
                                         <li><a href="#" onclick="$('#s_plot').show()">Sensor Plot Simulation</a></li>
+                                        <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-file" style="font-size: 22px"></i> Overview</a></li>
                                     </ul>
                                 </div>
                                 <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
@@ -117,6 +123,108 @@
                                         </li>
                                         <li>
                                             <div class="uk-align-center uk-text-center uk-width-1-1">
+                                            </div>
+                                        </li>
+
+                                        <li>
+                                            <div class="uk-align-center uk-text-left uk-width-1-1" id="print_area">
+
+                                                <hr class="uk-divider-icon"/>
+                                                <h3 class="uk-margin-remove">Overview -
+                                                    {% if game.is_solved == True %}
+                                                        <p style="color: limegreen;display: inline">Solved</p>
+                                                    {% else %}
+                                                        <p style="color: orange;display: inline">Unsolved</p>
+                                                    {% endif %}
+                                                </h3>
+                                                <p class="uk-margin-remove uk-text-small">Game {{ game.match_id }}  Insights</p>
+                                                <p class="uk-margin-remove uk-text-small uk-text-muted">{{ game.game_details.timestart|date:'M d Y '  }}</p>
+                                                <table class="uk-table uk-table-striped" style="border: 1px solid black;width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="bdr">Skill Bracket</th>
+                                                            <th class="bdr">Player Size</th>
+                                                            <th class="bdr">Game Duration</th>
+                                                            <th class="bdr">Average Duration/Sensor</th>
+                                                            <th class="bdr">Clues Asked</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="bdr" align="center">{{ general_info.skill_bracket }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_team_size }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_duration }}</td>
+                                                            <td class="bdr" align="center">{{ general_info.average_time }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_num_clues_asked }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                <h4 class="uk-margin-remove">* Game Phases Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="left" >Sensor Name</th>
+                                                            <th align="left">Time Solved(minutes)</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for data in data_summary %}
+                                                        <tr>
+                                                            <td>{{ data.phase_name }}</td>
+                                                            <td>{{ data.sensor_name }}</td>
+                                                            <td>{{ data.time_solved }}</td>
+                                                            <td>{{ data.ts}}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                <h4 class="uk-margin-remove">* Signals Received Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Sensor Name</th>
+                                                            <th align="left">Trigger Count</th>
+                                                            <th align="left">Down Count</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for sensor in sensor_info %}
+
+                                                        <tr>
+                                                            <td>{{ sensor.sensor_name }}</td>
+                                                            <td>{{ sensor.times_triggered }}</td>
+                                                            <td>{{ sensor.times_down}}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                <h4 class="uk-margin-remove">* List of Logs</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Sensor Name</th>
+                                                            <th align="left">Timestamp</th>
+                                                            <th align="left">Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for log in logs %}
+                                                        <tr>
+                                                            <td>{{ log.sensor_name }}</td>
+                                                            <td>{{ log.ts }}</td>
+                                                            <td>{{ log.value}}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+
+                                                <center><h3>------------------- END OF REPORT -------------------</h3></center>
+
                                             </div>
                                         </li>
                                     </ul>
@@ -150,7 +258,26 @@
     </section>
 </div>
 
+<script>
+    function printDiv(div) {
+        var printStr = "<script>"+"window.print();</"+"script>";
 
+        var printCont = document.getElementById(div);
+        var html = '<html><head>'+
+               '<title>Report For Game {{ game.match_id }}</title>'+
+               '</head><body style="background:#ffffff;">'+
+               printCont.innerHTML+
+               '</body></html>'+printStr;
+        var WindowObject =window.open('',"Print Window",
+            "width=5,height=5,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+        WindowObject.document.writeln(html);
+        WindowObject.document.close();
+        WindowObject.focus();
+        WindowObject.print();
+        WindowObject.close();
+
+    }
+</script>
 <script>
 
     let to_add=[];
