@@ -100,5 +100,4 @@ def get_room_market(request):
             market['teamsizes'][g_market['length']] += 1
         except:
             market['teamsizes'][g_market['length']] = 1
-    print(market)
     return JsonResponse({"data": market})
