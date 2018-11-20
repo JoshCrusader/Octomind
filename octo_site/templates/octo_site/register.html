@@ -38,7 +38,7 @@
 						</div>
 						<div class="uk-margin">
 							<div class="uk-inline uk-width-1-1">
-                                <select class="uk-select uk-form-large"  name="usertype" id="form-stacked-select">
+                                <select class="uk-select uk-form-large"  onchange="changeType(this)" name="usertype" id="userType">
                                     <option value="" selected disabled>Usertype</option>
                                     <option value="admin">Administrator</option>
                                     <option value="gk">Gamekeeper</option>
@@ -48,6 +48,17 @@
 							</div>
 						</div>
 						<div class="uk-margin">
+							<div class="uk-inline uk-width-1-1">
+                                <select class="uk-select uk-form-large"  id="branches" name="usertype" style="display: none">
+                                    <option value="" selected disabled>Branch</option>
+                                    {% for branch in branches %}
+                                        <option value="{{ branch.branch_id }}">{{ branch.name }}</option>
+                                    {% endfor %}
+                                </select>
+							</div>
+						</div>
+
+                        <div class="uk-margin">
 							<div class="uk-inline uk-width-1-1">
 								<span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
 								<input class="uk-input uk-form-large" required placeholder="Username" name="user" type="text">
@@ -84,3 +95,16 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.6/js/uikit-icons.min.js"></script>
 	</body>
 </html>
+<script>
+    function changeType(){
+
+        var e = document.getElementById("userType");
+        var strVal = e.options[e.selectedIndex].value;
+        if (strVal === "os" || strVal == "gk"){
+            document.getElementById("branches").style.display = "block";
+        }
+        else{
+            document.getElementById("branches").style.display = "none";
+        }
+    }
+</script>
