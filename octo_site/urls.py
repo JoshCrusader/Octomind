@@ -53,6 +53,7 @@ urlpatterns = [
     path('reports/sensor_analysis', views.sensor_analysis,name='sensor_analysis'),
     path('reports/trend_analysis', views.trend_analysis, name='trend_analysis'),
     path('reports/player_analysis_report', views.player_analysis_report, name = 'player_analysis_report'),
+    path('reports/market_analysis', views.market_analysis, name = 'market_analysis'),
     path('reports/market_report', views.market_report, name='market_report'), ## test url only
     path('reports/map_market_report', views.map_market_report, name='map_market_report'), ## test url only
     #testinging

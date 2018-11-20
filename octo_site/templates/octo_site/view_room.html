@@ -97,16 +97,21 @@ h1{
             <div class = "uk-width-1-5" style="padding:15px;background-color: rgba(12,0,0,0.85)">
                 {% if done == False %}
                     <div id = "endgameb" style="margin-bottom: 1vh">
-                        <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this)">
+                        <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this, 1)">
                              <span uk-icon="icon: check"></span> End Game
                         </button>
                     </div>
-                    <div>
+                    <div style="margin-bottom: 1vh">
                         <a href ="#modal-example"  uk-toggle class = "atag">
                             <button class = "uk-button uk-button-secondary uk-button-medium" type="button">
                                 <span uk-icon="icon: lifesaver"></span> Add Clue
                             </button>
                         </a>
+                    </div>
+                    <div id = "forfeitgameb" style="margin-bottom: 1vh">
+                        <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this, 0)">
+                             <span uk-icon="icon: close"></span> Forfeit Game
+                        </button>
                     </div>
                 {% else %}
                     <div style="margin-top: 3vh">
@@ -187,13 +192,14 @@ function addClue(target){
     });
 }
 
-function endGame(target){
+function endGame(target, yesend){
     var gid = target.getAttribute("gameid");
     $.ajax({
             type:"POST",
             url:"/octo_site/api/end_game/",
             data: {
                 'game_id': gid,
+                'end': yesend
             },
             success: function(data){
                 location.reload();

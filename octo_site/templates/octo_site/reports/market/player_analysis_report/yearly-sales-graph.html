@@ -1,0 +1,64 @@
+<table class="uk-table uk-table-striped">
+    <caption> Group Size Success Rate</caption>
+    <thead>
+        <tr>
+            <th>Size 1</th>
+            <th>Size 2</th>
+            <th>Size 3</th>
+            <th>Size 4</th>
+            <th>Size 5</th>
+            <th>Size 6</th>
+            <th>Size 7</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>20%</td>
+            <td>52%</td>
+            <td>68%</td>
+            <td>36%</td>
+            <td>79%</td>
+            <td>64%</td>
+            <td>42%</td>
+        </tr>
+    </tbody>
+</table>
+<div>
+<canvas id = "yearly_size_graph"></canvas>
+</div>
+
+
+<script>
+yearly_sales_data = {
+    datasets: [{
+        data: [20,52,68,36, 79, 64],
+
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        label: "Success Rate in %"
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        '2013',
+        '2014',
+        '2015',
+        '2016',
+        '2017',
+        '2018',
+    ],
+};
+
+yearly_sales_options = {
+    title:{
+        display: true,
+        text: "Total success rate of each team size"
+    },
+}
+var ctx = document.getElementById('yearly_size_graph').getContext('2d');
+window.ageBarPieChart = new Chart(ctx,{
+    type: 'line',
+    data: yearly_sales_data,
+    options: yearly_sales_options
+});
+
+</script>

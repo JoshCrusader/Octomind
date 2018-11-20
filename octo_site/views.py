@@ -109,7 +109,10 @@ def map_market_report(request):
     return render(request, 'octo_site/reports/market_map.html')
 
 def player_analysis_report(request):
-    return render(request, 'octo_site/reports/market/player_analysis_report.html')
+    return player_analysis_report_func.player_analysis_report(request)
+
+def market_analysis(request):
+    return market_analysis_func.market_analysis(request)
     
 def access_room(request):
     ## Add Room in the game room

@@ -1,0 +1,85 @@
+<table class="uk-table uk-table-divider">
+    <caption> Player age Success Rate</caption>
+    <thead>
+        <tr>
+            <th>0-17</th>
+            <th>18-22</th>
+            <th>23-30</th>
+            <th>31-35</th>
+            <th>36-40</th>
+            <th>41-45</th>
+            <th>46-50</th>
+            <th>51-55</th>
+            <th>56-60</th>
+            <th>61-65</th>
+            <th>66++</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>20%</td>
+            <td>52%</td>
+            <td>68%</td>
+            <td>36%</td>
+            <td>79%</td>
+            <td>84%</td>
+            <td>42%</td>
+            <td>31%</td>
+            <td>20%</td>
+            <td>5%</td>
+            <td>1%</td>
+        </tr>
+    </tbody>
+</table>
+<div>
+<canvas id = "age_success"></canvas>
+</div>
+
+
+<script>
+age_success_data = {
+    datasets: [{
+        data: [20,52,68,36, 79, 84, 42, 31, 20, 5, 1],
+
+        backgroundColor: "#93acef",
+        label: "Success Rate in %"
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        '0-17',
+        '18-22',
+        '23-30',
+        '31-35',
+        '36-40',
+        '41-45',
+        '46-50',
+        '51-55',
+        '56-60',
+        '61-65',
+        '66+',
+    ],
+};
+
+age_success_options = {
+    title:{
+        display: true,
+        text: "Total success rate of each age group"
+    },
+    scales: {
+        yAxes: [{
+            ticks: {
+                min: 0,
+                max: 100,
+            }
+        }]
+    }
+}
+var ctx = document.getElementById('age_success').getContext('2d');
+window.ageSuccessChart = new Chart(ctx,{
+    type: 'bar',
+    data: age_success_data,
+    options: age_success_options
+});
+
+</script>

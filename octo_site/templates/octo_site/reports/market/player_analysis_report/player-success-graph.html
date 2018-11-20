@@ -1,0 +1,73 @@
+<table class="uk-table uk-table-striped">
+    <caption> Group Size Success Rate</caption>
+    <thead>
+        <tr>
+            <th>Size 1</th>
+            <th>Size 2</th>
+            <th>Size 3</th>
+            <th>Size 4</th>
+            <th>Size 5</th>
+            <th>Size 6</th>
+            <th>Size 7</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>20%</td>
+            <td>52%</td>
+            <td>68%</td>
+            <td>36%</td>
+            <td>79%</td>
+            <td>64%</td>
+            <td>42%</td>
+        </tr>
+    </tbody>
+</table>
+<div>
+<canvas id = "team_size_success"></canvas>
+</div>
+
+
+<script>
+team_size_success_data = {
+    datasets: [{
+        data: [20,52,68,36, 79, 64, 42],
+
+        backgroundColor: "#93acef",
+        label: "Success Rate in %"
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Group size 1',
+        'Group size 2',
+        'Group size 3',
+        'Group size 4',
+        'Group size 5',
+        'Group size 6',
+        'Group size 7',
+    ],
+};
+
+team_size_success_options = {
+    title:{
+        display: true,
+        text: "Total success rate of each team size"
+    },
+    scales: {
+        yAxes: [{
+            ticks: {
+                min: 0,
+                max: 100,
+            }
+        }]
+    }
+}
+var ctx = document.getElementById('team_size_success').getContext('2d');
+window.playerSuccessGraph = new Chart(ctx,{
+    type: 'bar',
+    data: team_size_success_data,
+    options: team_size_success_options
+});
+
+</script>

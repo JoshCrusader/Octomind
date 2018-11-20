@@ -48,8 +48,13 @@ def end_game(request):
         now_datetime = timezone.now()
         game_detail = GameDetails.objects.get(game_details_id = gid)
         game_detail.timeend = now_datetime
+        if(request.POST['end'] == 1):
+            game_detail.solved = 1
+        else:
+            game_detail.solved = 0
         game_detail.save()
     return JsonResponse({"data": "done"})
+
 
 def add_clue(request):
     if(request.method == 'POST'):
