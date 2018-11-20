@@ -47,6 +47,9 @@ urlpatterns = [
     path('api/get_room_market/', views.get_room_market, name = 'get_room_market'),
     path('api/get_clue_data/<int:game_id>/', views.get_clue_data, name='get_clue_data'),
     path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
+    path('api/get_all_time_data/<int:room_id>/', views.get_all_time_data, name='get_all_time_data'),
+    path('api/get_all_time_data_sensor/<int:sensor_id>/', views.get_all_time_data_sensor, name='get_all_time_data_sensor'),
+
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
     path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),

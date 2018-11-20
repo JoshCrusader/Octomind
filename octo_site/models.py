@@ -106,6 +106,10 @@ class Game(models.Model):
     def match_id(self):
         return self.game_id + 100000
     @property
+    def get_team_size_int(self):
+        sz = Teams.objects.filter(game_id=self.game_id).count()
+        return sz
+    @property
     def get_team_size(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
         return numToWords(int(sz))
@@ -136,6 +140,10 @@ class Game(models.Model):
         data = self.pull_game_summary(self)
         return data["general_info"]["time_finished_duration"]
     @property
+    def get_final_duration(self):
+        data = self.pull_game_summary(self)
+        return data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked)
+    @property
     def get_num_clues_asked(self):
         return Clues.objects.filter(game_id=self.game_id).count()
     @property
@@ -149,8 +157,10 @@ class Game(models.Model):
     def has_error(self):
         return True if GameErrorLog.objects.filter(game_id=self).count() > 0 else False
     @property
-    def get_error_points_sensors(self):
+    def get_num_error(self):
         return GameErrorLog.objects.filter(game_id=self).count()
+        '''
+        if sequence not equal to you know, my sensor
         real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
         my_seq = self.get_sensor_trigger_sequence
         index_add = len(real_seq) - len(my_seq)
@@ -162,6 +172,7 @@ class Game(models.Model):
         if str(my_seq) == str(real_seq):
             return False
         return True
+        '''
     @property
     def get_error_points_sensors(self):
         problem_sensors =[]
@@ -181,6 +192,9 @@ class Game(models.Model):
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
+    @property
+    def get_num_warning(self):
+        return GameWarningLog.objects.filter(game_id=self).count()
     @property
     def get_data_clues(self):
         data_return=[]
@@ -531,6 +545,29 @@ class Room(models.Model):
     blueprint_file = models.ImageField(upload_to='imgs/')
 
     @property
+    def get_all_time_data(self):
+        all_games = Game.objects.filter(room_id=self.room_id) #:'(
+        t_solved = 0
+        c_asked = 0
+        p_size =0
+        error = 0
+        warning =0
+
+        for game in all_games:
+            t_solved += game.get_duration
+            c_asked += game.get_num_clues_asked
+            p_size += game.get_team_size_int
+            error += game.get_num_error
+            warning += game.get_num_warning
+        data_return = {
+            "average_duration": round(t_solved/len(all_games),2),
+            "average_clues_asked": round(c_asked/len(all_games),2),
+            "average_errors": round(float(error/len(all_games)),2),
+            "average_warnings": round(float(warning/len(all_games)),2),
+            "average_team_size":round(p_size/len(all_games),2),
+                       }
+        return data_return
+    @property
     def has_game_sequence(self):
         for r in Rpi.objects.filter(room_id=self.room_id):
             rpi_sensors = Sensor.objects.filter(rpi_id=r.rpi_id)
@@ -633,6 +670,25 @@ class Sensor(models.Model):
     left_coordinate = models.IntegerField(blank=True, null=True)
 
     phase_name = models.CharField(max_length=150, blank=True, null=True)
+
+    @property
+    def get_all_time_data(self):
+        all_games = Game.objects.filter(room_id=self.rpi.room.room_id) #:'(
+        deduc = 0
+        min_stamped = 0
+        time_solved = 0
+        for game in all_games:
+            for d in game.pull_data_game(game):
+                if d["sensor_id"] == self.sensor_id:
+                    if d["min_stamped"] != None:
+                        min_stamped += d["min_stamped"]
+                    else:
+                        deduc += 1
+                    time_solved += d["time_solved"]
+
+        return {"average_min_stamped": round(min_stamped / len(all_games)-deduc, 2),
+                "average_time_solved": round(time_solved / len(all_games)-deduc, 2)}
+
     @property
     def get_sequence_number(self):
         highest = -1

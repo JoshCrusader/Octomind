@@ -228,6 +228,14 @@ def get_market(request):
 def get_room_market(request):
     return get_room_market_func.get_room_market(request)
 
+@csrf_exempt
+def get_all_time_data(request,room_id):
+    return JsonResponse(Room.objects.get(room_id=room_id).get_all_time_data)
+
+@csrf_exempt
+def get_all_time_data_sensor(request,sensor_id):
+    return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
+
 def room_analysis(request):
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
 

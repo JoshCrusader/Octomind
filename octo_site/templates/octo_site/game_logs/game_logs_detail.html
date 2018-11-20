@@ -57,6 +57,13 @@
                         <div class="uk-width-auto pad" >
                             <h3 class="uk-margin-remove-bottom uk-text-warning"> MYSTERY {{ game.match_id }} <p class="txt_white" style="display: inline"> {{ game.room.room_name }}</p> </h3>
                             <p class="uk-text-muted uk-text-small uk-margin-remove">{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %} </p>
+                            <h4 class="txt_white uk-margin-remove uk-padding-remove">Mystery
+                            {% if game.is_solved == True %}
+                                <p class="uk-text-success uk-margin-remove" style="display: inline">Solved</p>  <span class="uk-text-success" data-uk-icon="icon: question;ratio: 1.0"></span>
+                            {% else %}
+                                <p class="uk-text-success uk-margin-remove" style="display: inline">Unsolved</p><span class="uk-text-warning" data-uk-icon="icon: question;ratio: 1.0"></span>
+                            {% endif %}
+                            </h4>
                         </div>
                         <div class="uk-width-expand uk-text-right pad">
                             <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
@@ -65,33 +72,44 @@
                             <button class="uk-button uk-button-warning uk-button-small" ><a href="#" onclick="printDiv('print_area')" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a></button>
                         </div>
 
-                        <div class="uk-width-1-1 uk-child-width-1-5 uk-grid-divider uk-column-1-2@s uk-column-1-5@m uk-column-1-8@l uk-child-width-1-5@xl" style="" id="summary_container" data-uk-grid >
-                            <div class="uk-text-center">
+                        <div class="uk-width-1-1 uk-child-width-expand" style="margin-left: 0.1vw" id="summary_container" data-uk-grid >
+                            <div class="uk-text-center  uk-padding-remove" >
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Skill Bracket</span>
                                 <h3 class="uk-margin-remove txt_white">{{ general_info.skill_bracket }}</h3>
                             </div>
-                            <div class="uk-text-left">
+                            <div class="uk-text-center uk-padding-remove" >
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span># of Players</span>
                                 <h3 class="uk-margin-remove txt_white">{{ game.get_team_size }}</h3>
-
+                                <h5 class="uk-margin-remove" id="avg_team_size"><div uk-spinner></div></h5>
                             </div>
-                            <div class="uk-text-left">
+                            <div class="uk-text-center  uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
                                 <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3>
+                                <h5 class="uk-margin-remove" id="avg_duration"><div uk-spinner></div></h5>
                             </div>
-                            <div class="uk-text-left">
+                            <div class="uk-text-center uk-padding-remove">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-primary"></span>Final Duration </span>
+                                <h3 class="uk-margin-remove  txt_white">{{ game.get_final_duration }}<small class="uk-text-small">min</small></h3>
+                            </div>
+                            <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Avg. Time Solve </span>
                                 <h3 class="uk-margin-remove txt_white">{{ general_info.average_time }}<small class="uk-text-small">/sensor</small></h3></h3>
                             </div>
-                            <div class="uk-text-left">
-                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Clues Asked </span>
+                            <div class="uk-text-center uk-padding-remove">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-warning"></span># of Clues </span>
                                 <h3 class="uk-margin-remove  txt_white">{{ game.get_num_clues_asked }}</h3>
+                                <h5 class="uk-margin-remove" id="avg_clues"><div uk-spinner></div></h5>
+                            </div>
+                            <div class="uk-text-center uk-padding-remove">
+                                <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-warning"></span>Errors/Warnings </span>
+                                <h3 class="uk-margin-remove  txt_white">{{ game.get_num_error }}/{{ game.get_num_warning }}</h3>
+                                <h5 style="display: inline" class="uk-margin-remove" id="avg_error"><div uk-spinner></div>/</h5>
+                                <h5 style="display: inline" class="uk-margin-remove" id="avg_warning"></h5>
                             </div>
                         </div>
                         <div class="uk-width-1-1" style="margin-left: 30px;background-color: white;margin-top: 2vh" >
 
                             <div style="margin-top: 2vh" uk-grid>
-
                                 <div class="uk-width-auto@m uk-flex-last@m">
                                     <ul class="uk-tab-right" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-top-medium, uk-animation-slide-bottom-medium">
                                         <li><a href="#" onclick="$('#s_plot').hide()">Summary Data</a></li>
@@ -101,13 +119,7 @@
                                     </ul>
                                 </div>
                                 <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
-                                    <h2 class="uk-text-center">Mystery
-                                    {% if game.is_solved == True %}
-                                        <p class="uk-text-success" style="display: inline">Solved</p>  <span class="uk-text-success" data-uk-icon="icon: question;ratio: 1.25"></span>
-                                    {% else %}
-                                        <p class="uk-text-success" style="display: inline">Unsolved</p><span class="uk-text-warning" data-uk-icon="icon: question;ratio: 1.25"></span>
-                                    {% endif %}
-                                    </h2>
+
                                     <ul id="component-tab-right" class="uk-switcher">
                                         <li style="height: 60vh">
                                             <div class="chart-container" style="height:20vh;width:100%" >
@@ -175,9 +187,28 @@
                                                         <tr>
                                                             <td align="left">{{ data.phase_name }}</td>
                                                             <td align="left">{{ data.sensor_name }}</td>
-                                                            <td align="right">{{ data.time_solved_clean }}</td>
+                                                            <td align="right">{{ data.time_solved_clean }}<p style="display: inline" id="ts_{{ data.sensor_id }}"></p></td>
                                                             <td align="right">{{ data.ts}}</td>
                                                         </tr>
+                                                        <script>
+                                                        sensor{{ data.sensor_id }}_comp =  $.get("/octo_site/api/get_all_time_data_sensor/{{ data.sensor_id }}/");
+                                                        sensor{{ data.sensor_id }}_comp.done(function(results){
+                                                            clean = parseFloat({{ data.time_solved }}-results.average_time_solved).toFixed(2);
+                                                            clean = Math.abs(clean);
+                                                            sec = Math.round((clean % 1)*60);
+                                                            min = Math.floor(clean);
+                                                            clean = min+":"+sec;
+                                                            if({{ data.time_solved }}-results.average_time_solved > 0){
+                                                                $("#ts_{{ data.sensor_id }}").html("(+"+ clean +")⬆");
+                                                            }
+                                                            else {
+                                                                $("#ts_{{ data.sensor_id }}").html("(-"+ clean +")⬇");
+                                                            }
+
+                                                       });
+                                                    </script>
+
+
                                                     {% endfor %}
                                                     </tbody>
                                                 </table>
@@ -418,6 +449,7 @@
     };
 </script>
 
+{% include 'octo_site/includes/all_time/game_logs_detail_summary.html' %}
 {% include 'octo_site/includes/game_summaries/game_summary_detail.html' %}
 {% include 'octo_site/includes/live_sandboxes/live_sandbox_detail.html' %}
 {% include 'octo_site/includes/game_summaries/game_monitor_detail.html' %}

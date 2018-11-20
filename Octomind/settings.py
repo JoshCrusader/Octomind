@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'octo_site',
+    'mathfilters'
 ]
 
 
