@@ -1,0 +1,208 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+<div id="modal-select" uk-modal>
+    
+</div>
+<div id="content" style="padding: 0 0 0 0; background-color:#3e4042; margin-left: 240px;" class="uk-height-1-1" uk-height-viewport>
+			<section class="uk-section uk-article " style="padding: 10px" >
+				<div class="uk-container uk-container-xsmall uk-align-bottom" style="margin-top: 15vh">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-medium" id="grid" style=";background-repeat: no-repeat; background-position: right bottom;" >
+
+                                <form action="{% url 'player_analysis_report' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
+                                {% csrf_token %}
+                                <div class="uk-align-center uk-position-center">
+                                    <span id="spinner" style="display: none ;text-align:center;" uk-spinner="ratio: 4.5"></span>
+                                </div>
+                                    <h2 class="uk-text-muted" id="load_text" style="display: none;margin-top: 0vh">Loading Report ..</h2>
+                                <div id="form_elem" class="uk-width-auto uk-text-center uk-align-center">
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Market <b class="uk-text-primary">Analytics</b></h2>
+                                    <br>
+                                    <div class="uk-width-1-1 uk-text-center" id="hdr">
+                                        <div class="uk-margin" style="margin-top: 3vh">
+                                                <input type="hidden" id="room_id_holder" name="room_id" value="">
+                                                <input type="hidden" id="report_cat_holder" name="report_cat" value="range">
+
+                                                <input type="hidden" id="sd" name="sd" value="">
+                                                <input type="hidden" id="ed" name="ed" value="">
+                                            <div class="uk-inline">
+                                                <button class="uk-button uk-button-secondary" type="button" id="btn_report_cat">Ranged Report</button>
+                                                <div uk-dropdown="pos: right-center">
+                                                    <ul class="uk-nav uk-dropdown-nav">
+                                                        <li class="uk-nav-header">Report Categories</li>
+                                                        <li class="uk-active rep_cats" onclick="change_cat(this)" value="ranged"><a href="#">Ranged Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="daily"><a href="#">Daily Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="monthly"><a href="#">Monthly Report</a></li>
+                                                        <li class="rep_cats" onclick="change_cat(this)" value="yearly"><a href="#">Yearly Report</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-alert-danger" uk-alert id="alert" style="display: none">
+                                            <p></p>
+                                        </div>
+                                        <hr class="uk-divider-small">
+                                        <div class="uk-margin" style="margin-top: 3vh">
+                                                <input class="datepicker-here uk-input" id="dp" style="width: 45%" name="date"  type="text"
+                                                                data-auto-close="true"
+                                                                data-range="true"
+                                                                data-multiple-dates-separator=" to "
+                                                                data-language="en"
+                                                                data-min-view="days"
+                                                                data-view="days"
+                                                                data-date-format="yyyy-mm-dd"
+                                                                required readonly>
+                                                <button class="uk-button uk-button-primary" onclick="check_valid();" type="button">Submit</button>
+                                            </div>
+                                        <hr class="uk-divider-small">
+                                    </div>
+
+                                </div>
+                                </form>
+                        </div>
+                        </div>
+                    </div>
+				</div>
+            </section>
+				<!-- large image -->
+				<!-- /large image -->
+</div>
+
+	<script>
+
+        function change_cat(obj) {
+            $( ".rep_cats" ).each(function(index, element) {
+                $(this).removeClass('uk-active');
+            });
+            $(obj).addClass('uk-active');
+
+            $('#dp').datepicker().data('datepicker').clear();
+            switch ($(obj).attr("value")){
+                case "daily":
+                    console.log("dd");
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Daily Report");
+                    $("#report_cat_holder").val("daily");
+                    break;
+                case "monthly":
+                    $('#dp').datepicker().data('datepicker').view= 'months';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"months",
+                        view:"months",
+                        dateFormat:"yyyy-mm"
+                    });
+                    $("#btn_report_cat").html("Monthly Report");
+                    $("#report_cat_holder").val("monthly");
+                    break;
+                case "yearly":
+                    $('#dp').datepicker().data('datepicker').view= 'years';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:false,
+                        minView:"years",
+                        view:"years",
+                        dateFormat:"yyyy"
+                    });
+                    $("#btn_report_cat").html("Yearly Report");
+                    $("#report_cat_holder").val("yearly");
+                    break;
+                default:
+                    $('#dp').datepicker().data('datepicker').view= 'days';
+                    $('#dp').datepicker().data('datepicker').update({
+                        range:true,
+                        minView:"days",
+                        view:"days",
+                        dateFormat:"yyyy-mm-dd"
+                    });
+                    $("#btn_report_cat").html("Ranged Report");
+                    $("#report_cat_holder").val("range");
+
+            }
+        }
+        $(".tbl_toggle").click(function(e) {
+            console.log($(this).attr("room_name"));
+
+            $("#room_name_holder").val($(this).attr("room_name"));
+            $("#room_id_holder").val($(this).attr("room_id"));
+
+            UIkit.modal($("#modal-select")).hide();
+        });
+        function check_dates() {
+            let sd = new Date($("#sd").val());
+            let ed = new Date($("#ed").val());
+            if (ed>sd){
+                console.log("valid");
+                return true
+            }
+                console.log("invalid");
+            return false
+        }
+        function check_valid() {
+            let new_val;
+            if ($("#room_name_holder").val() !== ""){
+                if ($("#dp").val().search("to") !== -1 || $("#report_cat_holder").val() !== "range" ) {
+                    if ($("#dp").val() !== "") {
+                        switch ($("#report_cat_holder").val()) {
+                            case "monthly":
+                                $("#dp").val($("#dp").val() + "-01");
+                                break;
+                            case "yearly":
+                                $("#dp").val($("#dp").val() + "-01-01");
+                                break;
+                            case "range":
+                                new_val = $("#dp").val();
+                                new_val = new_val.split(" to ");
+                                //console.log(new_val);
+                                $("#sd").val(new_val[0]);
+                                $("#ed").val(new_val[1]);
+                                break;
+                        }
+                        console.log($("#room_id_holder").val());
+                        console.log($("#dp").val());
+                        console.log($("#sd").val());
+                        console.log($("#ed").val());
+
+                        $('#form_elem').animate({opacity:0});
+                        $('#spinner').fadeIn();
+                        $('#load_text').fadeIn();
+                        $('#grid').css('background-image', 'url("{% static 'octo_puz.png' %}")');
+                        setTimeout(() => {
+                            $('#form').submit();
+                        }, 1500);
+                    }
+                    else {
+                        $("#dp").addClass("uk-form-danger");
+                        $('#alert').html(' Please select a valid date');
+                        $('#alert').css('display', 'block');
+                    }
+                }
+                else{
+                    $("#dp").addClass("uk-form-danger");
+                    $('#alert').html('Invalid or incomplete date range');
+                    $('#alert').css('display', 'block');
+                }
+            }else{
+                $("#room_name_holder").addClass("uk-form-danger");
+                $('#alert').html('No Room is selected. Please select a room to be analyzed');
+                $('#alert').css('display','block');
+            }
+        }
+
+	</script>
+{% include 'octo_site/includes/offcanvas.html' %}
+

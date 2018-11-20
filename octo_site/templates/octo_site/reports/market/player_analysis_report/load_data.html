@@ -1,0 +1,54 @@
+<script>
+    function load_games_played(data){
+        const labels = data.labels;
+        let group_count = []
+        let sales_count = []
+        for(i in data){
+            if(i != 'labels'){
+                group_count.push(data[i]['count'] * 400);
+                sales_count.push(data[i]['sales']);
+            }
+        }
+        games_played_data.labels = labels;
+        games_played_data.datasets[0].data = group_count;
+        games_played_data.datasets[1].data = sales_count;
+        window.gamesPlayedChart.update();
+    }
+    load_games_played(salesdata['sales']);
+
+
+    function load_player_success(data){
+        let suc_data = []
+        for(i in data){
+            let suc = data[i].success;
+            let fal = data[i].fail;
+            if(data[i].fail == 0 && data[i].success == 0){
+                suc_data.push(0);
+            }
+            else{
+                suc_data.push(suc/(fal+suc) * 100);
+            }
+            
+        }
+        team_size_success_data.datasets[0].data = suc_data;
+        window.playerSuccessGraph.update();
+    }
+
+    load_player_success(salesdata['teamcount']);
+    function load_age_success(data){
+        let suc_data = []
+        for(i in data){
+            let suc = data[i].success;
+            let fal = data[i].fail;
+            if(data[i].fail == 0 && data[i].success == 0){
+                suc_data.push(0);
+            }
+            else{
+                suc_data.push(suc/(fal+suc) * 100);
+            }
+        }
+        age_success_data.datasets[0].data = suc_data;
+        window.ageSuccessChart.update();
+    }
+    load_age_success(salesdata['ages']);
+</script>

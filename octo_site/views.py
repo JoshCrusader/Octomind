@@ -107,6 +107,9 @@ def map_market_report(request):
 
 def player_analysis_report(request):
     return player_analysis_report_func.player_analysis_report(request)
+
+def market_analysis(request):
+    return market_analysis_func.market_analysis(request)
     
 def access_room(request):
     ## Add Room in the game room

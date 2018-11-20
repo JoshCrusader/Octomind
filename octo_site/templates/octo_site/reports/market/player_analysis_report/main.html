@@ -15,8 +15,8 @@
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="" style="background-color: #f7f7f7;padding: 20px; max-width: 650px; margin: auto;" >
         <center>
-        <div id = "yearly-sales-graph" style = "width: 650px; height: 450px; padding: 0px">
-            {% include 'octo_site/reports/market/player_analysis_report/yearly-sales-graph.html' %}
+        <div id = "games-played-graph" style = "width: 650px; height: 450px; padding: 0px">
+            {% include 'octo_site/reports/market/player_analysis_report/games-played-graph.html' %}
         </div>
         <div id = "team-success-graph" style = "width: 650px; height: 450px; padding: 0px; margin-top: 55px;">
             {% include 'octo_site/reports/market/player_analysis_report/player-success-graph.html' %}
@@ -29,3 +29,9 @@
         </center>
     </section>
 </div>
+
+<script>
+let salesdata = {{ sales_graph | safe}}
+console.log(salesdata);
+</script>
+{% include 'octo_site/reports/market/player_analysis_report/load_data.html' %}

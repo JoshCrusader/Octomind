@@ -48,6 +48,7 @@ def end_game(request):
         now_datetime = timezone.now()
         game_detail = GameDetails.objects.get(game_details_id = gid)
         game_detail.timeend = now_datetime
+        game_detail.solved = 1
         game_detail.save()
     return JsonResponse({"data": "done"})
 

@@ -452,6 +452,7 @@ class GameDetails(models.Model):
     timestart = models.DateTimeField(blank=True, null=True)
     timeend = models.DateTimeField(blank=True, null=True)
     teamname = models.CharField(max_length=45, blank=True, null=True)
+    solved = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
