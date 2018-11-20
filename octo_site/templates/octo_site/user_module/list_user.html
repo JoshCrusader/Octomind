@@ -1,0 +1,63 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+
+<div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
+			<section class="uk-section uk-article" style="background-color: white;padding: 10px" >
+				<div class="uk-container uk-container-medium" style="margin-top: 3vh">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-medium" >
+
+                                <div class="uk-width-auto" >
+                                    <h4 class="uk-margin-remove-bottom"><span  data-uk-icon="icon: list;ratio: 1"></span> List Of User</h4>
+                                </div>
+                                <div class="uk-width-expand uk-text-right">
+                                    <a href="{% url 'register' %}">
+                                        <button class="uk-button uk-button-default uk-button-small hobor" style="">Add user <span data-uk-icon="icon: plus"></span></button>
+                                    </a>
+                                </div>
+
+	                            <div class="uk-card-body uk-align-center">
+									<div class="uk-overflow-auto">
+									<table  class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+										<thead>
+											<tr>
+												<th>First Name</th>
+												<th>Last Name</th>
+												<th>Username</th>
+												<th>User Type</th>
+												<th>Last Login</th>
+												<th>Date Created</th>
+                                                <th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+                                        {% for user in users %}
+											<tr>
+												<td>{{ user.first_name }}</td>
+												<td>{{ user.last_name }}</td>
+												<td>{{ user.username }}</td>
+												<td>{{ user.groups.all.0.name }}</td>
+												<td>{{ user.last_login }}</td>
+												<td>{{ user.date_joined }}</td>
+                                                <td>
+													<a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
+													<a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
+												</td>
+                                            </tr>
+                                        {% endfor %}
+										</tbody>
+									</table>
+								</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+            </section>
+				<!-- large image -->
+				<!-- /large image -->
+</div>
+<!-- /CONTENT -->
+{% include 'octo_site/includes/offcanvas.html' %}
+

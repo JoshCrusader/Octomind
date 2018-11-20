@@ -164,7 +164,7 @@
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings</li>
             <li class="{% if request.resolver_match.view_name ==  'page_sensor' %}uk-active{% endif %}"><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>
             <li class="{% if request.resolver_match.view_name ==  'page_venue' %}uk-active{% endif %}"><a href="{% url 'page_venue' %}"><span class="uk-margin-small-left" data-uk-icon="icon: home"></span> Venues</a></li>
-            <li class="{% if request.resolver_match.view_name ==  'add_user' %}uk-active{% endif %}"><a href="{% url 'register' %}"><span class="uk-margin-small-left" data-uk-icon="icon: users"></span> Add User</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'list_user' %}uk-active{% endif %}"><a href="{% url 'list_user' %}"><span class="uk-margin-small-left" data-uk-icon="icon: users"></span> Users List</a></li>
 
         {% endif %}
         </ul>

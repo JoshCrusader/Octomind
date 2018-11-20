@@ -14,6 +14,7 @@ urlpatterns = [
     path('signout', views.signout, name='signout'),
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),
+    path('list_user/', views.list_user, name='list_user'),
     #game dets
     path('game_logs/', views.game_logs, name='game_logs'),
     path('game_logs/game/<int:game_id>/', views.game_logs_detail, name='game_logs_detail'),

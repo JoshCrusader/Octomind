@@ -71,7 +71,10 @@ def register(request):
         user.save()
         messages.warning(request, 'Account Created.')
         return redirect('index')
-    return render(request, 'octo_site/register.html',{'branches':Branch.objects.all()})
+    return render(request, 'octo_site/user_module/register.html', {'branches':Branch.objects.all()})
+
+def list_user(request):
+    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
