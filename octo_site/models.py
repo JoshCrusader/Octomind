@@ -192,6 +192,7 @@ class Game(models.Model):
                 'phase_name':s.phase_name,
                 'game_id':self.game_id,
                 'timestamp':c.clue_details.timestamp,
+                'ts': c.clue_details.timestamp.strftime('%H:%M:%S'),
                 'minute_asked':c.clue_details.get_minute_asked,
                 'detail':c.clue_details.detail
             })
@@ -254,10 +255,20 @@ class Game(models.Model):
                         clean_date = datetime.strptime(game.game_details.timestart.strftime(f), f)
                         min_stamped = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
 
+                        sec = int(round((time_diff_in_min % 1)*60, 2))
+                        min = math.floor(time_diff_in_min)
+
+                        if sec <10:
+                            sec = "0"+str(sec)
+                        if min == 0:
+                            min = ""
+                        else:
+                            min = str(min)+":"
                         new_data.append(
                             {"sensor_id": s.sensor_id,
                              "time_solved": round(time_diff_in_min,2),
                              "ts": data['timestamp'].strftime('%H:%M:%S'),
+                             "time_solved_clean":str(min)+str(sec),
                              "timestamp": data['timestamp'],
                              "times_triggered": times_triggered,
                              "sensor_name": s.sensor_name,
@@ -274,22 +285,13 @@ class Game(models.Model):
                              "times_triggered":times_triggered,
                              "time_solved": 0,
                              "ts": None,
+                             "time_solved_clean": None,
                              "phase_name": s.phase_name,
                              "sensor_name": s.sensor_name,
                              "timestamp": None,
                              "min_stamped": None})
         cursor.close()
         # close the connection
-        '''
-        for(ind in results.data.sensor_info)
-        {
-            console.log(results.data.sensor_info[ind].sensor_name);
-            let str="<b>"+results.data.sensor_info[ind].sensor_name+"</b><br>";
-            str+="<b>times triggered:</b><p>"+results.data.sensor_info[ind].sensor+"</p><br>";
-            str+="<b>times down:</b><p>"+results.data.sensor_info[ind].times_down+"</p><br>";
-            $("#sensor_list").append(str);
-        }
-        '''
         connection.close()
         return new_data
     @staticmethod
@@ -433,12 +435,15 @@ class Game(models.Model):
             average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
 
 
-        if time_finished >= 31 and time_finished <= 45:
+        if time_finished >= 30 and time_finished < 51:
             skill_bracket = "Normal"
-        elif time_finished >= 46 and time_finished <= 60:
+        elif time_finished >= 51:
             skill_bracket = "Low"
-        elif time_finished <= 30:
+        elif time_finished < 30:
             skill_bracket = "High"
+        if game.is_solved == False:
+            skill_bracket = "Low"
+
         data_return["sensor_info"] = data_tally
         data_return["general_info"] = {
             "time_finished_duration": time_finished,

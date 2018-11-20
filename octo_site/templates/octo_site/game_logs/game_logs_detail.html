@@ -61,7 +61,7 @@
                         <div class="uk-width-expand uk-text-right pad">
                             <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
 
-                            <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><a href="#" uk-tooltip="Print Report" onclick="window.print()" ><span data-uk-icon="icon: download"></span> CSV</a></button>
+                            <button class="uk-button uk-button-warning uk-button-small" ><a href="#" uk-tooltip="Export data to CSV" onclick="exportData()" ><span data-uk-icon="icon: download"></span> CSV</a></button>
                             <button class="uk-button uk-button-warning uk-button-small" ><a href="#" onclick="printDiv('print_area')" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a></button>
                         </div>
 
@@ -128,7 +128,7 @@
 
                                         <li>
                                             <div class="uk-align-center uk-text-left uk-width-1-1" id="print_area">
-
+                                                <p style="font-size: 12px">Report generated at {{ dt_now }}</p>
                                                 <hr class="uk-divider-icon"/>
                                                 <h3 class="uk-margin-remove">Overview -
                                                     {% if game.is_solved == True %}
@@ -137,8 +137,8 @@
                                                         <p style="color: orange;display: inline">Unsolved</p>
                                                     {% endif %}
                                                 </h3>
-                                                <p class="uk-margin-remove uk-text-small">Game {{ game.match_id }}  Insights</p>
-                                                <p class="uk-margin-remove uk-text-small uk-text-muted">{{ game.game_details.timestart|date:'M d Y '  }}</p>
+                                                <p class="uk-margin-remove uk-text-small">Game {{ game.match_id }}  Insights Report</p>
+                                                <p class="uk-margin-remove uk-text-small uk-text-muted">{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %} </p>
                                                 <table class="uk-table uk-table-striped" style="border: 1px solid black;width:100%">
                                                     <thead>
                                                         <tr>
@@ -166,17 +166,17 @@
                                                         <tr>
                                                             <th align="left">Phase Name</th>
                                                             <th align="left" >Sensor Name</th>
-                                                            <th align="left">Time Solved(minutes)</th>
-                                                            <th align="left">Timestamp</th>
+                                                            <th align="right">Time Solved</th>
+                                                            <th align="right">Timestamp</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                     {% for data in data_summary %}
                                                         <tr>
-                                                            <td>{{ data.phase_name }}</td>
-                                                            <td>{{ data.sensor_name }}</td>
-                                                            <td>{{ data.time_solved }}</td>
-                                                            <td>{{ data.ts}}</td>
+                                                            <td align="left">{{ data.phase_name }}</td>
+                                                            <td align="left">{{ data.sensor_name }}</td>
+                                                            <td align="right">{{ data.time_solved_clean }}</td>
+                                                            <td align="right">{{ data.ts}}</td>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
@@ -187,7 +187,7 @@
                                                 <table class="uk-table uk-table-divider" style="width:100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th align="left">Clue Number</th>
+                                                            <th align="left">Clue #</th>
                                                             <th align="left">Phase Name</th>
                                                             <th align="left">Detail</th>
                                                             <th align="left">Timestamp</th>
@@ -198,8 +198,8 @@
                                                         <tr>
                                                             <td>{{ forloop.counter }}</td>
                                                             <td>{{ c.phase_name }}</td>
-                                                            <td>{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}{{ c.detail}}</td>
-                                                            <td>{{ c.timestamp }}</td>
+                                                            <td>{{ c.detail}}</td>
+                                                            <td>{{ c.ts }}</td>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
@@ -220,8 +220,8 @@
 
                                                         <tr>
                                                             <td>{{ sensor.sensor_name }}</td>
-                                                            <td>{{ sensor.times_triggered }}</td>
-                                                            <td>{{ sensor.times_down}}</td>
+                                                            <td align="center">{{ sensor.times_triggered }}</td>
+                                                            <td align="center">{{ sensor.times_down}}</td>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
@@ -239,9 +239,9 @@
                                                     <tbody>
                                                     {% for log in logs %}
                                                         <tr>
-                                                            <td>{{ log.sensor_name }}</td>
-                                                            <td>{{ log.ts }}</td>
-                                                            <td>{{ log.value}}</td>
+                                                            <td align="left">{{ log.sensor_name }}</td>
+                                                            <td align="left">{{ log.ts }}</td>
+                                                            <td align="center">{{ log.value}}</td>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
@@ -283,13 +283,97 @@
 </div>
 
 <script>
+    /*
+
+    */
+    var data_export = [['Overview','{% if game.is_solved == True %}Solved{% else %}Unsolved{% endif %}','{{ game.match_id }}']
+        ,
+        ['Skill Bracket','Player Size','Game Duration','Clues Asked','Date'],
+        ['{{ general_info.skill_bracket }}','{{ game.get_team_size }}','{{ game.get_duration }}','{{ game.get_num_clues_asked }},{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %}' ],
+        ['','""',''],
+        ['Game Phase Analysis'],
+        ['Phase Name','Sensor Name','Time Solved','Timestamp'],
+        {% for data in data_summary %}
+        ['{{ data.phase_name }}','{{ data.sensor_name }}','{{ data.time_solved_clean }}','{{ data.ts}}'],
+        {% endfor %}
+        ['','""',''],
+
+        {% if clues_len != 0 %}
+        ['Clues'],
+        ['Phase Name','Detail','Timestamp'],
+        {% for c in clues %}
+        ['{{ c.phase_name }}','{{ c.detail }}','{{ c.ts}}'],
+        {% endfor %}
+        ['','""',''],
+        {% endif %}
+
+        ['Signals Received Summaries'],
+        ['Sensor Name','Trigger Count','Down Count'],
+        {% for sensor in sensor_info %}
+        ['{{ sensor.sensor_name }}','{{ sensor.times_triggered }}','{{ sensor.times_down}}'],
+        {% endfor %}
+        ['','""',''],
+
+        ['List of Logs'],
+        ['Sensor Name','Timestamp','Value'],
+        {% for log in logs %}
+        ['{{ log.sensor_name }}','{{ log.ts }}','{{ log.value}}'],
+        {% endfor %}
+        ['','""',''],
+    ];
+
+    function exportData() {
+        exportToCsv('insight_report.csv', data_export);
+    }
+    function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            for (var j = 0; j < row.length; j++) {
+                var innerValue = row[j] === null ? '' : row[j].toString();
+                if (row[j] instanceof Date) {
+                    innerValue = row[j].toLocaleString();
+                };
+                var result = innerValue.replace(/"/g, '""');
+                if (result.search(/("|,|\n)/g) >= 0)
+                    result = '"' + result + '"';
+                if (j > 0)
+                    finalVal += ',';
+                finalVal += result;
+            }
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+
+
+
     function printDiv(div) {
         var printStr = "<script>"+"window.print();</"+"script>";
-
         var printCont = document.getElementById(div);
         var html = '<html><head>'+
                '<title>Report For Game {{ game.match_id }}</title>'+
-               '</head><body style="background:#ffffff;">'+
+               '</head><style>@page { size: auto;  margin-top: 0mm;margin-left:1vw;margin-right:1vw }</style><body style="background:#ffffff;">'+
                printCont.innerHTML+
                '</body></html>'+printStr;
         var WindowObject =window.open('',"Print Window",
