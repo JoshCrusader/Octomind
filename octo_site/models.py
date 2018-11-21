@@ -152,6 +152,14 @@ class Game(models.Model):
     def get_num_clues_asked(self):
         return Clues.objects.filter(game_id=self.game_id).count()
     @property
+    def get_game_conclusion(self):
+        if self.game_details.solved == 0 and self.game_details.timeend is None:
+            return "unsolved"
+        elif self.game_details.solved == 1 and self.game_details.timeend is not None:
+            return "solved"
+        elif self.game_details.solved == 0 and self.game_details.timeend is not None:
+            return "forfeit"
+    @property
     def is_solved(self):
         data = self.pull_data_game(self)
         for d in data:

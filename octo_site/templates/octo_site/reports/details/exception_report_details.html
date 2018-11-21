@@ -1,0 +1,689 @@
+{% include 'octo_site/includes/header_reports.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+
+        <link rel="stylesheet" href = "{% static 'styles/view_room.css' %}" type = "text/css">
+
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+    .myProgress {
+      width: 80px;
+    }
+    .myBar {
+      width: 100%;
+      height: 15px;
+      background-color: cornflowerblue;
+    }
+	</style>
+<div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
+    <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
+        {% if report_data.has_result %}
+
+        <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 70vh;">
+            <div uk-grid>
+                <div class="uk-width-expand@m uk-align-center" >
+                    <ul id="component-tab-right" STYLE="margin-left:10vw;"  class="uk-switcher">
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="log_dist" ></canvas>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="log_sum" ></canvas>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
+                                <div id="player_div" style="width: 100%; height: 551px;">
+                                    <div style = "width: 60%; height: 100%; float: left;">
+                                        <div style = "width: 100%; height: 20%;" >
+                                        Total Players: chuchu
+                                        </div>
+                                        <div style = "width: 100%; height: 80%; position: relative;" >
+                                            <canvas id = "age_bar_chart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div style = "width: 40%; height: 50%; float: left;">
+                                        <canvas id = "gender_pie_chart"></canvas>
+                                    </div>
+                                    <div style = "width: 40%; height: 50%; float: left;">
+                                        <canvas id = "team_size_pie_chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
+                                <div class = "area-count" style = "position: absolute;width: 200px; height: 350px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important;">
+                                    <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
+                                    <div id = "area-legend">
+                                    </div>
+                                </div>
+                                <div id="mapdiv" style="width: 100%; height: 551px;"></div>
+                                
+                            </div>
+                        </li>
+
+                        <li style="height: 70vh">
+                        </li>
+                    </ul>
+
+            <div class ="m-content-wrapper uk-position-center" id="s_plot" style="opacity:0.0;margin-bottom:10vh;height: 400px;width: 360px" >
+                        <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
+                        <div class = "m-sandbox-content card-lite uk-card-hover" style="height: 400px">
+                            <div class = "m-sandbox-frame" style="margin-right: 40vh;height: 360px;width: 360px">
+                                <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
+                                    <!-- Things get appended here thru setSandBox() -->
+                                </div>
+                                <div id="sensor_sequence_plot" style = "position: absolute; width: 360px; height: 360px;" style="margin-right: 40vh;height: 360px;width: 360px">
+                                    <!-- Things get appended here thru setSandBox() -->
+                                </div>
+                                <img id="img_sensor_layout"  src="{% static 'media/' %}{{ room.blueprint_file }}" alt="" style="width: 100%;height: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="uk-width-1-1 uk-text-right uk-align-right" >
+                        <ul style="margin-left: -19px;" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: users"></span> Player Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: world"></span> Market Demographics</a></li>
+                            <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!--
+            <div class="chart-container" style="margin-left: 15vw;height:20vh;width:70%" >
+                <canvas class="uk-align-center" id="canvas" ></canvas>
+            </div>
+            <br>
+            -->
+        </div>
+        <div class="uk-grid-divider  uk-child-width-1-4 uk-child-width-1-6@l uk-child-width-1-5@xl" id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
+                    <div style="padding-left: 2vw;width: auto">
+                        <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
+                        <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-success" data-uk-icon="icon: triangle-up">15%</span> vs all time avg.
+                        </div>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-success"></span>Completion Rate</span>
+                        <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
+                        </div>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Clues Asked</span>
+                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> vs all time avg.
+                        </div>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
+                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> vs all time avg.
+                        </div>
+
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
+                        <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}</h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
+                        </div>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
+                        <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}</h3>
+                        <div class="uk-text-small">
+                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
+                        </div>
+                    </div>
+                </div>
+        <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">
+            <div class="uk-grid" >
+                <div class="uk-width-auto uk-text-left" >
+                    <h4 class="uk-margin-remove-bottom uk-text-left"> <b>{{ room.room_name }}</b> <span  class="uk-text-primary" data-uk-icon="icon: gitter;ratio: 1.0;"></span></h4>
+                    <p class="uk-margin-remove uk-text-small">Report {{ msg }} <b class="uk-text-muted">({{ records_len }} Records Found)</b></p>
+                </div>
+
+                <div class="uk-width-expand uk-text-right">
+                    <label uk-tooltip="Show all time statistics vs metrics"><input class="uk-checkbox" type="checkbox" onclick="show_stats(this)"> All-time Stats</label> |
+                    <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
+                    <label uk-tooltip="Show summary insights"><input class="uk-checkbox" type="checkbox"  onclick="show_summary(this)" checked> Summary</label> |
+                    <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-1-1" style="background-color:#FFF; ">
+            <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #fff;padding-left: 3vw;padding-right: 2vw">
+            <div class="uk-card-header">
+                <div class="uk-grid uk-grid-medium" >
+                        <div class="uk-width-auto" >
+                            <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Games Included </h4>
+                        </div>
+                        <div class="uk-width-expand uk-text-right">
+                            <button class="uk-button uk-button-default uk-button-small " disabled> Discard <span data-uk-icon="icon: trash"></span></button>
+                        </div>
+                        <div class="uk-card-body uk-align-center uk-width-1-1">
+                            <div class="uk-overflow-auto">
+                                     <table id="room_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-table-shrink uk-text-nowrap"></th>
+                                                  <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-medium">Time Start & End</th>
+                                                  <th class="uk-width-medium">Team name</th>
+                                                  <th class="uk-width-medium">Duration</th>
+                                                  <th class="uk-width-medium">Anomaly Detection</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% load static %}
+                                          {% for game in games %}
+                                                <tr class="tbl_toggle">
+                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
+                                                    <td>
+                                                        <a class="uk-text-emphasis"><b>{{ game.match_id }}</b></a>
+                                                        {% if game.is_solved %}
+                                                            <p class="uk-text-small" style="margin-top: 0px">Mystery Solved</p>
+                                                        {% else %}
+                                                            <p class="uk-text-small" style="margin-top: 0px">Mystery Unsolved</p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove"><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
+                                                            {% if game.is_solved %}
+                                                                to
+                                                                <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
+                                                            {% endif %}
+                                                        <p class="uk-text-small" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
+
+                                                    </td>
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove"><b>{{ game.game_details.teamname }}</b></p>
+                                                        <p class="uk-text-small uk-margin-remove">{{ game.get_num_clues_asked }} clues asked</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="uk-text-emphasis uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
+                                                        <div class="myProgress">
+                                                          <div class="myBar" style="width: {{ game.get_duration }}px"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if game.has_error %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_warning %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
+                                                        {% endif %}
+                                                        {% if game.has_error == False and game.has_warning == False %}
+                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                          {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    <script>
+                                        $(document).ready(function() {
+                                        $('#example').DataTable();
+                                        } );
+                                        $(document).ready(function() {
+                                        $('#room_tbl').DataTable();
+                                        });
+                                    </script>
+                                    </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            <div class="uk-width-1-1 uk-text-center uk-position-center">
+                <h1><i class="fa fa-frown-o uk-text-muted fa-3x"></i></h1>
+                <h1 class="uk-text-muted">No Results found.</h1>
+
+                <h1 class="uk-text-muted"><a href="{% url 'room_analysis' %}">Create another report.</a></h1>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    var color = Chart.helpers.color;
+    let chartColors = {
+      red: 'rgb(255, 65, 54)',
+      yellow: 'rgb(239, 206, 0)',
+      green: 'rgb(61, 142, 106)',
+      blue: 'rgb(28, 143, 219)',
+      orange: 'rgb(255, 118, 0)',
+      purple: 'rgb(153, 102, 255)',
+      grey: 'rgb(231,233,237)',
+      black: 'rgb(0,0,0)',
+    };
+
+    var colorNames = Object.keys(chartColors);
+
+    window.onload = function() {
+        let log_sum_ctx = document.getElementById('log_sum').getContext('2d');
+        window.myLogSummary = new Chart(log_sum_ctx, {
+        type: 'bubble',
+        data: bubbleChartData,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Log Summary for Game/s {{ game_ids|join:", " }}'
+            },
+            tooltips: {
+                mode: 'nearest',
+                intersect: false,
+                custom: function(tooltip) {
+                if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = true;
+                },
+                callbacks: {
+                    // use label callback to return the desired label
+                    label: function(tooltipItem, data) {
+                        if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-2){
+                            //console.log("sensor_names",data.sensor_names);
+                            return tooltipItem.xLabel;
+                        }
+                        if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
+                            //console.log("sensor_names",data.sensor_names);
+                            return data.sensor_names[tooltipItem.index+1];
+                        }
+
+                        val = tooltipItem.xLabel;
+                        sec = ((val % 1)*60).toFixed(2);
+                        min = Math.floor(val);
+                        if (min !== 0 || sec !== 0){
+                            if (parseInt(sec) === 0){
+                                    return min + ":00";
+                                }
+                            if (parseInt(min) === 0){
+                                    return "00:00" + sec;
+                                }
+                            if (Math.round(sec) < 10){
+
+                                return min + ":0" + Math.round(sec);
+                            }
+                            return min + ":" + Math.round(sec);
+                        }
+                        return 'Ano daw';
+                    },
+                    title: function(tooltipItem, data) {
+
+                            //console.log("cdata",data.clues_data[tooltipItem[0].index].phase_name);
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                            return data.clues_data[tooltipItem[0].index].phase_name;
+                        }
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                            return null;
+                        }
+                        return data.datasets[tooltipItem[0].datasetIndex].label
+                    },
+                    afterTitle: function(tooltipItem, data) {
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                            return null;
+                        }
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                            //console.log("sensor_names",data.sensor_names);
+                            return null;
+                        }
+
+                        return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
+                    },
+                    afterBody: function(tooltipItem, data) {
+                        str=["-----"];
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+
+                            str.push("Time solved average: "+tooltipItem[0].yLabel);
+                            str.push("Minute triggered average: "+tooltipItem[0].xLabel);
+                            return str;
+                        }
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                            str.push("Details: "+data.clues_data[tooltipItem[0].index].detail);
+                            return str;
+                        }
+
+                        val = parseFloat(tooltipItem[0].yLabel);
+                        sec = ((val % 1)*60).toFixed(2);
+
+                        min = Math.floor(val);
+                        if (min !== 0 && sec !== 0){
+                        if (parseInt(sec) === 0){
+                                return 'Solved in ' + min + " min";
+                            }
+                            return "Solved in "+min + " min and " + Math.round(sec) +" sec" ;
+                        }
+                        return 'Ano daw';
+                    },
+                    beforeFooter: function(tooltipItem, data) {
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                            //console.log("sensor_names",data.sensor_names);
+                            return null;
+                        }
+
+                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                            return null;
+                        }
+                            return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
+                    },
+
+                    // Use the footer callback to display the sum of the items showing in the tooltip
+
+                  },
+                footerFontStyle: 'normal'
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'minutes triggered',
+                        max: 60
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString:'time solved (min)'
+                    }
+                }]
+            }
+        }
+    });
+        var log_dist_ctx = document.getElementById('log_dist').getContext('2d');
+        window.LogDistributionChart = Chart.Scatter(log_dist_ctx, {
+            data: scatterChartData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Sensor Log Distribution for Game/s {{ game_ids|join:", " }}'
+                },
+
+                tooltips: {
+                mode: 'nearest',
+                intersect: false,
+                custom: function(tooltip) {
+                if (!tooltip) return;
+                // disable displaying the color box;
+                tooltip.displayColors = true;
+                },
+                callbacks: {
+                    // use label callback to return the desired label
+                    label: function(tooltipItem, data) {
+                        val = tooltipItem.xLabel;
+                        sec = ((val % 1)*60).toFixed(2);
+
+                        min = Math.floor(val);
+                        if (min !== 0 && sec !== 0){
+                        if (parseInt(sec) === 0){
+                                return 'Elapsed: ' + min + " min";
+                            }
+                            return min + " min and " + sec +" sec" ;
+                        }
+                        return 'Ano daw';
+                    },
+                    title: function(tooltipItem, data) {
+                        // console.log(data);
+                        // console.log(tooltipItem[0].datasetIndex);
+
+                        game_id = parseInt(data.datasets[tooltipItem[0].datasetIndex].label)-10000;
+                        return data.sensor_names[game_id][tooltipItem[0].index];
+
+                    },
+                    afterTitle: function(tooltipItem, data) {
+                        return "Game "+data.datasets[tooltipItem[0].datasetIndex].label;
+
+                    },
+
+                    // Use the footer callback to display the sum of the items showing in the tooltip
+
+                  },
+                footerFontStyle: 'normal'
+            },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'minutes',
+                            max: 60
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            steps: 0,
+                            min: 0,
+                            stepValue: 1,
+                            max: {{ room.num_sensors }} + 0.3,
+                            callback: function(value, index, values){
+                                return yLbl[value];
+                            }
+                        }
+                    }]
+                }
+
+            }
+        });
+
+        initLogSumData();
+        initLogDistData();
+        window.LogDistributionChart.update();
+        setTimeout(() => {
+            $("#s_plot").hide();
+            $("#s_plot").css('opacity',1.0);
+        },2000);
+    };
+</script>
+
+{% include 'octo_site/includes/log_summaries/log_summary.html' %}
+{% include 'octo_site/includes/log_summaries/log_distribution.html' %}
+{% include 'octo_site/includes/live_sandboxes/live_sandbox_joint.html' %}
+	<script>
+		$(".tbl_toggle").click(function(e) {
+            var chk = $(this).find("input:checkbox").get(0);
+            // console.log("clicked");
+            if(e.target !== chk)
+            {
+                chk.checked = !chk.checked;
+            }
+        });
+
+        function show_stats(obj) {
+            if($(obj).is(':checked'))
+                $("#chart_container").fadeIn();
+            else
+                $("#chart_container").fadeOut();
+        }
+        function show_chart(obj) {
+            if($(obj).is(':checked'))
+                $("#chart_container").fadeIn();
+            else
+                $("#chart_container").fadeOut();
+        }
+        function show_summary(obj) {
+            if($(obj).is(':checked'))
+                $("#summary_container").fadeIn();
+            else
+                $("#summary_container").fadeOut();
+        }
+
+	</script>
+{% include 'octo_site/includes/offcanvas_reports.html' %}
+{% include 'octo_site/includes/map_market_script.html' %}
+{% include 'octo_site/includes/market/gender_pie_chart.html' %}
+{% include 'octo_site/includes/market/age_bar_chart.html' %}
+{% include 'octo_site/includes/market/team_pie_chart.html' %}
+
+
+<script>
+    /*
+        Optimization magic - we will be handling large datasets, the ff techniques would have to be used:
+        Push critical data first - get the first data to load in views and load them
+        lazy laod - async data fetch to large data sets like market data
+
+        for lazy load when need the request data and pass it to an api instead of loading it all in the views
+
+    */
+
+    /*
+        TODO: GET ALL MARKET DATA
+    */
+    let req_cat = "{{ rep_cat }}";
+{% if rep_cat == 'range' %}
+    let sd = {{ sd }};
+    let ed = {{ ed }};
+{% else %}
+    let req_date = "{{ date }}";
+{% endif %}
+    $.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_room_market/",
+        data: {
+            {% if rep_cat != 'range' %}
+            'req_date': req_date,
+            {% else %}
+            'sd': sd,
+            'ed': ed,
+            {% endif %}
+            'req_cat': req_cat,
+            'room_id': {{ room.room_id }},
+        },
+        success: function(data){
+            console.log("MAP DATA");
+            const market = data.data;
+            console.log(market);
+
+            // <FUNCTION FOR LOADING MAP> //
+            areas = [],
+            loc_keys = Object.keys(market['locs']);
+            let area_max = -1;
+            for(i in loc_keys){
+                let area_val = market['locs'][loc_keys[i]]['value'];
+                let area_key = loc_keys[i];
+                window.map_market.dataProvider.areas.push({id: area_key, value: area_val});
+                if(area_val > area_max){
+                    area_max = area_val;
+                }
+            }
+            // console.log(areas);
+            // console.log(window.map_market);
+            window.map_market.dataGenerated = true;
+            window.map_market.valueLegend.maxValue = area_max;
+            window.map_market.validateNow();
+
+            // </FUNCTION FOR LOADING MAP> //
+
+            // <FUNCTION FOR LOADING GENDER> //
+            gender_data.datasets[0].data[0] = market['m'];
+            gender_data.datasets[0].data[1] = market['f'];
+            window.genderPieChart.update();
+            // </FUNCTION FOR LOADING GENDER> //
+
+            // <FUNCTION FOR LOADING TEAMS> //
+            temp_data = [0,0,0,0,0,0,0]
+            for(i in market['teamsizes']){
+                if(i == 0){
+                    temp_data[0] = market['teamsizes'][i];
+                }
+                else{
+                    temp_data[i-1] = market['teamsizes'][i];
+                }
+            }
+            team_size_data.datasets[0].data = temp_data;
+            window.teamSizePieChart.update();
+            // </FUNCTION FOR LOADING TEAMS> //
+
+            // <FUNCTION FOR LOADING AGES> //
+            temp_data = [0,0,0,0,0,0,0,0,0,0,0];
+            for(i in market['ages']){
+                if(i <= 17){
+                    temp_data[0] += market['ages'][i];
+                }
+                else if(i <= 22){
+                    temp_data[1] += market['ages'][i];
+                }
+                else if(i <= 30){
+                    temp_data[2] += market['teamsizes'][i];
+                }
+                else if(i <= 35){
+                    temp_data[3] += market['teamsizes'][i];
+                }
+                else if(i <= 40){
+                    temp_data[4] += market['teamsizes'][i];
+                }
+                else if(i <= 45){
+                    temp_data[5] += market['teamsizes'][i];
+                }
+                else if(i <= 50){
+                    temp_data[6] += market['teamsizes'][i];
+                }
+                else if(i <= 55){
+                    temp_data[7] += market['teamsizes'][i];
+                }
+                else if(i <= 60){
+                    temp_data[8] += market['teamsizes'][i];
+                }
+                else if(i <= 65){
+                    temp_data[9] += market['teamsizes'][i];
+                }
+                else{
+                    temp_data[10] += market['teamsizes'][i];
+                }
+            }
+            age_bar_data.datasets[0].data = temp_data;
+            window.ageBarPieChart.update();
+            // </FUNCTION FOR LOADING AGES> //
+
+            // <FUNCTION FOR LOADING MAP LEGEND> //
+            map_leg = document.getElementById("area-legend");
+            map_leg.innerHTML = ""
+            var map_str = ""
+            sort_market = []
+            for(i in market['locs']){
+                sort_market.push({value: market['locs'][i].value, title: market['locs'][i].title})
+            }
+            sort_market.sort(function(a, b) { 
+                if(b.value != a.value)
+                    return b.value - a.value;
+                else
+                    return a.title < b.title;
+
+            })
+
+
+            for(i in sort_market){
+                map_str += '<div style = \'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;\'>'+sort_market[i]['title']+': '+sort_market[i]['value']+'</div>\n';
+            }
+            map_leg.innerHTML = map_str;
+            // </FUNCTION FOR LOADING MAP LEGEND> //
+        }
+    });
+</script>

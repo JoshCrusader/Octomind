@@ -242,6 +242,12 @@ def room_analysis(request):
 def room_details_analysis(request):
     return room_analysis_func.room_details_analysis(request)
 
+def exception_report(request):
+    return render(request, 'octo_site/reports/exception_report.html',{"rooms":Room.objects.all()})
+
+def exception_report_details(request):
+    return exception_report_func.exception_report_details(request)
+
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')
 

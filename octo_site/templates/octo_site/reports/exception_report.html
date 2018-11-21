@@ -59,14 +59,14 @@
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-medium" id="grid" style=";background-repeat: no-repeat; background-position: right bottom;" >
 
-                                <form action="{% url 'room_details_analysis' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
+                                <form action="{% url 'exception_report_details' %}" method="post" id="form" class="uk-align-center uk-width-1-1">
                                 {% csrf_token %}
                                 <div class="uk-align-center uk-position-center">
                                     <span id="spinner" style="display: none ;text-align:center;" uk-spinner="ratio: 4.5"></span>
                                 </div>
                                     <h2 class="uk-text-muted" id="load_text" style="display: none;margin-top: 0vh">Loading Report ..</h2>
                                 <div id="form_elem" class="uk-width-auto uk-text-center uk-align-center">
-                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span  data-uk-icon="icon: gitter;ratio: 2;"></span> Room <b class="uk-text-primary">Analytics</b></h2>
+                                    <h2 class="uk-margin-remove-bottom uk-text-center"><span style="color: orange" data-uk-icon="icon: bell;ratio: 2;"></span> Exception <b class="uk-text-warning">Reports</b></h2>
                                     <br>
                                     <div class="uk-width-1-1 uk-text-center" id="hdr">
                                         <div class="uk-margin" style="margin-top: 3vh">
@@ -78,7 +78,7 @@
                                                 <input type="hidden" id="sd" name="sd" value="">
                                                 <input type="hidden" id="ed" name="ed" value="">
                                             <div class="uk-inline">
-                                                <button class="uk-button uk-button-secondary" type="button" id="btn_report_cat">Ranged Report</button>
+                                                <button class="uk-button uk-button-secondary" type="button" id="btn_report_cat">Date Range</button>
                                                 <div uk-dropdown="pos: right-center">
                                                     <ul class="uk-nav uk-dropdown-nav">
                                                         <li class="uk-nav-header">Report Categories</li>

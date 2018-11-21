@@ -49,7 +49,6 @@ urlpatterns = [
     path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
     path('api/get_all_time_data/<int:room_id>/', views.get_all_time_data, name='get_all_time_data'),
     path('api/get_all_time_data_sensor/<int:sensor_id>/', views.get_all_time_data_sensor, name='get_all_time_data_sensor'),
-
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
     path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),
@@ -59,6 +58,8 @@ urlpatterns = [
     path('reports/market_analysis', views.market_analysis, name = 'market_analysis'),
     path('reports/market_report', views.market_report, name='market_report'), ## test url only
     path('reports/map_market_report', views.map_market_report, name='map_market_report'), ## test url only
+    path('reports/exception_report', views.exception_report, name='exception_report'),
+    path('reports/exception_report_details', views.exception_report_details, name='exception_report_details'),
     #testinging
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
     path('sample_marker', views.sample_marker, name='sample_marker'),
