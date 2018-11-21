@@ -67,7 +67,6 @@
                         </div>
                         <div class="uk-width-expand uk-text-right pad">
                             <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
-
                             <button class="uk-button uk-button-warning uk-button-small" ><a href="#" uk-tooltip="Export data to CSV" onclick="exportData()" ><span data-uk-icon="icon: download"></span> CSV</a></button>
                             <button class="uk-button uk-button-warning uk-button-small" ><a href="#" onclick="printDiv('print_area')" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a></button>
                         </div>
@@ -79,13 +78,13 @@
                             </div>
                             <div class="uk-text-center uk-padding-remove" >
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span># of Players</span>
-                                <h3 class="uk-margin-remove txt_white">{{ game.get_team_size }}</h3>
+                                <h3 class="uk-margin-remove txt_white">{{ game.get_team_size_int }}</h3>
                                 <h5 class="uk-margin-remove" id="avg_team_size"><div uk-spinner></div></h5>
                             </div>
                             <div class="uk-text-center  uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3>
-                                <h5 class="uk-margin-remove" id="avg_duration"><div uk-spinner></div></h5>
+                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3><h5 class="uk-margin-remove" style="display: inline;" id="avg_duration"><div uk-spinner></div></h5>
+
                             </div>
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-primary"></span>Final Duration </span>
@@ -103,8 +102,6 @@
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-warning"></span>Errors/Warnings </span>
                                 <h3 class="uk-margin-remove  txt_white">{{ game.get_num_error }}/{{ game.get_num_warning }}</h3>
-                                <h5 style="display: inline" class="uk-margin-remove" id="avg_error"><div uk-spinner></div>/</h5>
-                                <h5 style="display: inline" class="uk-margin-remove" id="avg_warning"></h5>
                             </div>
                         </div>
                         <div class="uk-width-1-1" style="margin-left: 30px;background-color: white;margin-top: 2vh" >
@@ -115,6 +112,7 @@
                                         <li><a href="#" onclick="$('#s_plot').hide()">Summary Data</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()">Log Digital Signals</a></li>
                                         <li><a href="#" onclick="$('#s_plot').show()">Sensor Plot Simulation</a></li>
+                                        <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-warning" style="font-size: 22px"></i> Anomaly Detection</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-file" style="font-size: 22px"></i> Overview</a></li>
                                     </ul>
                                 </div>
@@ -138,6 +136,60 @@
                                             </div>
                                         </li>
 
+                                        <li>
+                                            <div class="uk-align-center uk-text-center uk-width-1-1">
+                                                <h2 class="uk-text-danger">Sequence Error Logs</h2>
+                                                <table class="uk-table uk-table-divider uk-table-hover" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Game ID</th>
+                                                            <th align="left">Sensor Name</th>
+                                                            <th align="left">Detail</th>
+                                                            <th align="left">Minute Logged</th>
+                                                            <th align="left">Sequence Recorded</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for er in errors %}
+                                                        <tr>
+                                                            <td>{{ er.game.match_id }}</td>
+                                                            <td>{{ er.sensor.sensor_name }}</td>
+                                                            <td>{{ er.details}}</td>
+                                                            <td>{{ er.get_minute_asked}}</td>
+                                                            <td>{{ er.cur_sensor_sequence}}</td>
+                                                            <td>{{ er.timestamp }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <h2 class="uk-text-danger">Warning Logs</h2>
+                                                <table class="uk-table uk-table-divider uk-table-hover" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Game ID</th>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="left">Detail</th>
+                                                            <th align="left">Minute Logged</th>
+                                                            <th align="left">Time Solved</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for wa in warnings %}
+                                                        <tr>
+                                                            <td>{{ wa.game.match_id }}</td>
+                                                            <td>{{ wa.sensor.phase_name }}</td>
+                                                            <td>{{ wa.details}}</td>
+                                                            <td>{{ wa.get_minute_asked}}</td>
+                                                            <td>{{ wa.time_solved}}</td>
+                                                            <td>{{ wa.timestamp }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
                                         <li>
                                             <div class="uk-align-center uk-text-left uk-width-1-1" id="print_area">
                                                 <p style="font-size: 12px">Report generated at {{ dt_now }}</p>

@@ -138,6 +138,8 @@ class Game(models.Model):
     @property
     def get_duration(self):
         data = self.pull_game_summary(self)
+        if self.game_details.solved == 0:
+            return 60.0
         return data["general_info"]["time_finished_duration"]
     @property
     def get_final_duration(self):
@@ -491,6 +493,15 @@ class GameErrorLog(models.Model):
         managed = False
         db_table = 'game_error_log'
         unique_together = (('game_error_id', 'game', 'sensor'),)
+
+    @property
+    def get_minute_asked(self):
+        f = '%Y-%m-%d %H:%M:%S'
+        utc = pytz.UTC
+        datetime_object = self.timestamp
+        clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
+        time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+        return round(time_diff / timedelta(minutes=1),2)
     @staticmethod
     def error_log_not_existing(game_id, sensor_id):
         ct = GameErrorLog.objects.filter(game_id=game_id,sensor_id=sensor_id).count()
@@ -507,6 +518,15 @@ class GameWarningLog(models.Model):
     class Meta:
         managed = False
         db_table = 'game_warning_log'
+
+    @property
+    def get_minute_asked(self):
+        f = '%Y-%m-%d %H:%M:%S'
+        utc = pytz.UTC
+        datetime_object = self.timestamp
+        clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
+        time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+        return round(time_diff / timedelta(minutes=1),2)
     @staticmethod
     def warning_log_not_existing(game_id, sensor_id):
         ct = GameWarningLog.objects.filter(game_id=game_id, sensor_id=sensor_id).count()
@@ -552,21 +572,31 @@ class Room(models.Model):
         p_size =0
         error = 0
         warning =0
-
+        complet =0
+        has_e= 0
+        has_w = 0
         for game in all_games:
             t_solved += game.get_duration
             c_asked += game.get_num_clues_asked
             p_size += game.get_team_size_int
             error += game.get_num_error
             warning += game.get_num_warning
-        data_return = {
+            if game.game_details.solved == 1:
+                complet += 1
+            if game.has_error:
+                has_e += 1
+            if game.has_warning:
+                has_w += 1
+        return{
             "average_duration": round(t_solved/len(all_games),2),
+            "average_completion_rate": round(complet/len(all_games),2)*100,
             "average_clues_asked": round(c_asked/len(all_games),2),
             "average_errors": round(float(error/len(all_games)),2),
+            "average_error_rate": round(float(has_e / len(all_games)), 2)*100,
             "average_warnings": round(float(warning/len(all_games)),2),
+            "average_warning_rate": round(float(has_w / len(all_games)), 2)*100,
             "average_team_size":round(p_size/len(all_games),2),
                        }
-        return data_return
     @property
     def has_game_sequence(self):
         for r in Rpi.objects.filter(room_id=self.room_id):
