@@ -185,14 +185,26 @@
         var anomalyChartData = {
 			datasets: [{
 				label: 'Errors',
-				borderColor: chartColors.red,
-				backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
-				data: []
+				borderColor: chartColors.orange,
+                pointRadius: 10,
+                pointHoverRadius: 10,
+				backgroundColor: color(chartColors.orange).alpha(0.2).rgbString(),
+				data: [
+                    {% for error in errors %}
+                    {x:{{error.get_minute_asked}},y:1},
+                    {% endfor %}
+                ]
 			}, {
 				label: 'Warnings',
-				borderColor: chartColors.blue,
-				backgroundColor: color(chartColors.blue).alpha(0.2).rgbString(),
-				data: []
+				borderColor: chartColors.red,
+                pointRadius: 10,
+                pointHoverRadius: 10,
+				backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
+				data: [
+                    {% for warning in warnings %}
+                    {x:{{warning.get_minute_asked}},y:1},
+                    {% endfor %}
+                ]
 			}]
 		};
 
@@ -243,7 +255,24 @@
 					title: {
 						display: true,
 						text: 'Anomaly Timeline'
-					},
+					},gridLines:{
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Minute Logged'
+                            }
+                        }],
+                        yAxes: [{
+                            display: false,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
 				}
 			});
 			initData();
@@ -252,6 +281,7 @@
 		
 	</script>
 <script>
+    /*
     function initData() {
         rd = "{{ date }}";
         sd = "{{ sd }}";
@@ -274,17 +304,29 @@
                 console.log("killme",data[i]);
             }
             for (g in forfeits){
-                dt = {
-                    label: forfeits[g].match_id,
-                    borderColor: chartColors.red,
-                    backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
-                    data: [{x:forfeits[g].minute_forfeit,y:forfeits[g].clues_asked}]
-                };
+                dt = ;
                 forfeitChartData.datasets.push(dt);
                 console.log(forfeitChartData.datasets);
             }
             window.myForfeitChart.update();
         });
+    }
+    */
+    function initData(){
+        {% for game in games %}
+           colorName = colorNames[forfeitChartData.datasets.length % colorNames.length];
+           newColor = chartColors[colorName];
+           dt= {
+                label: {{ game.match_id }},
+                borderColor: newColor,
+               pointRadius: 10,
+                pointHoverRadius: 10,
+                backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                data: [{x:{{ game.get_game_lasted }},y:{{ game.get_num_clues_asked }}}]
+            };
+            forfeitChartData.datasets.push(dt);
+            window.myForfeitChart.update();
+        {% endfor %}
     }
 </script>
 {% include 'octo_site/includes/offcanvas_reports.html' %}
