@@ -151,15 +151,12 @@
             <li class="{% if request.resolver_match.view_name ==  'game_logs' %}uk-active uk-open{% endif %}"><a href="{% url 'game_logs' %}">Game Logs</a></li>
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
-            <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}">Room Analysis</a></li>
-            <li class="{% if request.resolver_match.view_name ==  'sensor_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'sensor_analysis' %}">Sensor Analysis</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: gitter"></span> Room Analysis</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'exception_report' %}uk-active uk-open{% endif %}"><a href="{% url 'sensor_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span> Exception Report</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'market_report' %}uk-active uk-open{% endif %}"><a href="#"> <span class="uk-margin-small-right" data-uk-icon="icon: world"></span> Market Segmentation</a></li>
         {% endif %}
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner"%}
-            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span>Exception Report</li>
-            <li><a href="#">Errors Report</a></li>
-            <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: world"></span>Market Report</li>
 
-            <li><a href="#">Market Segmentation</a></li>
             <li class="uk-nav-divider"></li>
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings</li>
             <li class="{% if request.resolver_match.view_name ==  'page_sensor' %}uk-active{% endif %}"><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>

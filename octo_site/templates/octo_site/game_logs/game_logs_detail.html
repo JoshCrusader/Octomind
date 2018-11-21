@@ -79,12 +79,12 @@
                             <div class="uk-text-center uk-padding-remove" >
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span># of Players</span>
                                 <h3 class="uk-margin-remove txt_white">{{ game.get_team_size_int }}</h3>
-                                <h5 class="uk-margin-remove" id="avg_team_size"><div uk-spinner></div></h5>
+                                <div class="uk-text-small uk-margin-remove" id="avg_team_size"><div uk-spinner></div></div>
                             </div>
                             <div class="uk-text-center  uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3><h5 class="uk-margin-remove" style="display: inline;" id="avg_duration"><div uk-spinner></div></h5>
-
+                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3>
+                                <div class="uk-text-small uk-margin-remove" style="display: inline;" id="avg_duration"><div uk-spinner></div></div>
                             </div>
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-primary"></span>Final Duration </span>
@@ -97,7 +97,7 @@
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-warning"></span># of Clues </span>
                                 <h3 class="uk-margin-remove  txt_white">{{ game.get_num_clues_asked }}</h3>
-                                <h5 class="uk-margin-remove" id="avg_clues"><div uk-spinner></div></h5>
+                                <div class="uk-text-small uk-margin-remove" id="avg_clues"><div uk-spinner></div></div>
                             </div>
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-warning"></span>Errors/Warnings </span>

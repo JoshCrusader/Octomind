@@ -144,6 +144,9 @@ class Game(models.Model):
     @property
     def get_final_duration(self):
         data = self.pull_game_summary(self)
+
+        if self.game_details.solved == 0:
+            return 60.0+(5*self.get_num_clues_asked)
         return data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked)
     @property
     def get_num_clues_asked(self):
@@ -576,6 +579,7 @@ class Room(models.Model):
         has_e= 0
         has_w = 0
         for game in all_games:
+
             t_solved += game.get_duration
             c_asked += game.get_num_clues_asked
             p_size += game.get_team_size_int
@@ -587,6 +591,7 @@ class Room(models.Model):
                 has_e += 1
             if game.has_warning:
                 has_w += 1
+
         return{
             "average_duration": round(t_solved/len(all_games),2),
             "average_completion_rate": round(complet/len(all_games),2)*100,
