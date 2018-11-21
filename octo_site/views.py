@@ -236,6 +236,14 @@ def get_all_time_data(request,room_id):
 def get_all_time_data_sensor(request,sensor_id):
     return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
 
+@csrf_exempt
+def get_exception_data(request):
+    return get_exception_report.get_exception_data(request)
+
+@csrf_exempt
+def get_all_time_data_sensor(request,sensor_id):
+    return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
+
 def room_analysis(request):
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
 

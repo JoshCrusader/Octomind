@@ -22,7 +22,7 @@ def room_details_analysis(request):
         room = Room.objects.get(room_id=request.POST['room_id'])
         if request.POST['report_cat'] == "range":
             a_sd = request.POST['sd']
-            a_ed = request.POST['sd']
+            a_ed = request.POST['ed']
             report_data,msg,games,game_ids = get_range_report(request,room)
         elif request.POST['report_cat'] == "monthly":
             a_date = request.POST['date']
