@@ -9,12 +9,12 @@ from django.urls import reverse
 from octo_site.exception_controller import *
 
 def exception_report_details(request):
-    report_data=""
     room=""
     msg = ""
-    gamedet=""
+    has_result=False
+    errors=""
+    warnings=""
     games=None
-    game_ids=None
     a_date = None
     a_sd = None
     a_ed = None
@@ -23,28 +23,35 @@ def exception_report_details(request):
         if request.POST['report_cat'] == "range":
             a_sd = request.POST['sd']
             a_ed = request.POST['ed']
-            report_data,msg,games,game_ids = get_range_report(request,room)
+            print("to date range we go!")
+            msg, games, errors, warnings = get_range_exception(request,room)
         elif request.POST['report_cat'] == "monthly":
             a_date = request.POST['date']
-            report_data, msg, games ,game_ids= get_monthly_report(request,room)
+            msg, games, errors, warnings = get_monthly_exception(request,room)
         elif request.POST['report_cat'] == "yearly":
             a_date = request.POST['date']
-            report_data, msg, games ,game_ids= get_yearly_report(request,room)
+            msg, games, errors, warnings = get_yearly_exception(request,room)
         elif request.POST['report_cat'] == "daily":
             a_date = request.POST['date']
-            report_data, msg, games,game_ids = get_daily_report(request,room)
+            msg, games, errors, warnings = get_daily_exception(request,room)
         else:
             print("what")
-            
-    return render(request, 'octo_site/reports/details/room_details_analysis.html',
-                  {"msg":msg,
-                   "forfeit_games":games,
-                   "errors": games,
-                   "warnings":games,
+    if len(games) !=0 or len(warnings) !=0 or len(errors) !=0:
+        has_result=True
+        print(len(games))
+        print(len(warnings))
+        print(len(errors))
+    for e in errors:
+        print(e.game.game_details.timestart)
+    return render(request, 'octo_site/reports/details/exception_report_details.html',
+                  {"has_result":has_result,
+                   "msg":msg,
+                   "games":games,
+                   "errors": errors,
+                   "warnings":warnings,
                    "room":room,
                    "room_id":request.POST['room_id'],
                    "rep_cat": request.POST['report_cat'],
-                   "req_date":request.POST['req_date'],
                    "date" : a_date,
                    "sd": a_sd,
                    "ed": a_ed})

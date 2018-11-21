@@ -23,7 +23,7 @@
 	</style>
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
-        {% if report_data.has_result %}
+        {% if has_result %}
 
         <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 70vh;">
             <div uk-grid>
@@ -31,64 +31,33 @@
                     <ul id="component-tab-right" STYLE="margin-left:10vw;"  class="uk-switcher">
                         <li style="height: 70vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
-                                <canvas class="uk-align-center" id="log_dist" ></canvas>
+                                <canvas class="uk-align-center" id="forfeit_chart" ></canvas>
                             </div>
                         </li>
                         <li style="height: 70vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
-                                <canvas class="uk-align-center" id="log_sum" ></canvas>
+                                <canvas class="uk-align-center" id="anomaly_timeline" ></canvas>
                             </div>
                         </li>
                         <li style="height: 70vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
-                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
-                                <div id="player_div" style="width: 100%; height: 551px;">
-                                    <div style = "width: 60%; height: 100%; float: left;">
-                                        <div style = "width: 100%; height: 20%;" >
-                                        Total Players: chuchu
-                                        </div>
-                                        <div style = "width: 100%; height: 80%; position: relative;" >
-                                            <canvas id = "age_bar_chart"></canvas>
-                                        </div>
-                                    </div>
-                                    <div style = "width: 40%; height: 50%; float: left;">
-                                        <canvas id = "gender_pie_chart"></canvas>
-                                    </div>
-                                    <div style = "width: 40%; height: 50%; float: left;">
-                                        <canvas id = "team_size_pie_chart"></canvas>
-                                    </div>
-                                </div>
+                                <canvas class="uk-align-center" id="sensor_breakdown" ></canvas>
                             </div>
-                        </li>
-                        <li style="height: 70vh">
-                            <div class="chart-container" style="height:20vh;width:85%" >
-                                <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
-                                <div class = "area-count" style = "position: absolute;width: 200px; height: 350px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important;">
-                                    <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
-                                    <div id = "area-legend">
-                                    </div>
-                                </div>
-                                <div id="mapdiv" style="width: 100%; height: 551px;"></div>
-
-                            </div>
-                        </li>
-                        <li style="height: 70vh">
                         </li>
                     </ul>
 
                     <div class="uk-width-1-1 uk-text-right uk-align-right" >
                         <ul style="margin-left: -19px;" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
-                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
-                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
-                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: users"></span> Player Summary</a></li>
-                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: world"></span> Market Demographics</a></li>
-                            <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
+                            <li><a href=""><span data-uk-icon="icon: unlock"></span> Forfeit Timeline</a></li>
+                            <li><a href=""><span data-uk-icon="icon: more"></span> Anomaly Timeline</a></li>
+                            <li><a href=""><span data-uk-icon="icon: nut"></span> Sensor Breakdown</a></li>
                         </ul>
                     </div>
+                                          {% load static %}
                 </div>
             </div>
         </div>
-        <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">
+        <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;margin-top: 7.5vh;padding-bottom: 2vh;background-color: white ">
             <div class="uk-grid" >
                 <div class="uk-width-auto uk-text-left" >
                     <h4 class="uk-margin-remove-bottom uk-text-left"> <b>{{ room.room_name }}</b> <span  class="uk-text-primary" data-uk-icon="icon: gitter;ratio: 1.0;"></span></h4>
@@ -96,9 +65,7 @@
                 </div>
 
                 <div class="uk-width-expand uk-text-right">
-                    <label uk-tooltip="Show all time statistics vs metrics"><input class="uk-checkbox" type="checkbox" onclick="show_stats(this)"> All-time Stats</label> |
                     <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
-                    <label uk-tooltip="Show summary insights"><input class="uk-checkbox" type="checkbox"  onclick="show_summary(this)" checked> Summary</label> |
                     <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>
                 </div>
             </div>
@@ -110,75 +77,74 @@
                         <div class="uk-width-auto" >
                             <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Games Included </h4>
                         </div>
-                        <div class="uk-width-expand uk-text-right">
-                            <button class="uk-button uk-button-default uk-button-small " disabled> Discard <span data-uk-icon="icon: trash"></span></button>
-                        </div>
                         <div class="uk-card-body uk-align-center uk-width-1-1">
                             <div class="uk-overflow-auto">
-                                     <table id="room_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
+                                     <table id="anomaly_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
                                           <thead>
                                               <tr>
-                                                  <th class="uk-table-shrink uk-text-nowrap"></th>
                                                   <th class="uk-width-small">Match ID</th>
-                                                  <th class="uk-width-medium">Time Start & End</th>
-                                                  <th class="uk-width-medium">Team name</th>
-                                                  <th class="uk-width-medium">Duration</th>
+                                                  <th class="uk-width-medium">Sensor Name</th>
+                                                  <th class="uk-width-medium">Minute Logged</th>
+                                                  <th class="uk-width-medium">Timestamp</th>
+                                                  <th class="uk-width-medium">Details</th>
                                                   <th class="uk-width-medium">Anomaly Detection</th>
                                               </tr>
                                           </thead>
                                           <tbody>
-                                          {% load static %}
-                                          {% for game in games %}
+                                          {% for error in errors %}
                                                 <tr class="tbl_toggle">
-                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
-                                                    <td>
-                                                        <a class="uk-text-emphasis"><b>{{ game.match_id }}</b></a>
-                                                        {% if game.is_solved %}
-                                                            <p class="uk-text-small" style="margin-top: 0px">Mystery Solved</p>
-                                                        {% else %}
-                                                            <p class="uk-text-small" style="margin-top: 0px">Mystery Unsolved</p>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove"><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
-                                                            {% if game.is_solved %}
-                                                                to
-                                                                <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
-                                                            {% endif %}
-                                                        <p class="uk-text-small" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove"><b>{{ game.game_details.teamname }}</b></p>
-                                                        <p class="uk-text-small uk-margin-remove">{{ game.get_num_clues_asked }} clues asked</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
-                                                        <div class="myProgress">
-                                                          <div class="myBar" style="width: {{ game.get_duration }}px"></div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        {% if game.has_error %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-danger"><span class="uk-text-danger" data-uk-icon="icon: warning"></span> Sequence anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_warning %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-warning"><span class="uk-text-warning" data-uk-icon="icon: warning"></span> Sensor anomaly detected</h5>
-                                                        {% endif %}
-                                                        {% if game.has_error == False and game.has_warning == False %}
-                                                            <h5 class="uk-heading-bullet uk-margin-remove uk-text-success"><span class="" data-uk-icon="icon: check"></span> No anomaly detected</h5>
-                                                        {% endif %}
-                                                    </td>
+                                                    <td>{{ error.game.match_id }}</td>
+                                                    <td>{{ error.sensor.sensor_id }}</td>
+                                                    <td>{{ error.get_minute_asked }}</td>
+                                                    <td>{{ error.timestamp }}</td>
+                                                    <td>{{ error.details }}</td>
+                                                    <td>Error Sequence</td>
+                                                </tr>
+                                          {% endfor %}
+                                          {% for warning in warnings %}
+                                                <tr class="tbl_toggle">
+                                                    <td>{{ warning.game.match_id }}</td>
+                                                    <td>{{ warning.sensor.sensor_id }}</td>
+                                                    <td>{{ warning.get_minute_asked }}</td>
+                                                    <td>{{ warning.timestamp }}</td>
+                                                    <td>{{ warning.details }}</td>
+                                                    <td>Game Warning</td>
                                                 </tr>
                                           {% endfor %}
                                           </tbody>
                                      </table>
                                     <script>
-                                        $(document).ready(function() {
-                                        $('#room_tbl').DataTable();
+                                        $(document).ready(function(){
+                                        $('#anomaly_tbl').DataTable();
                                         });
                                     </script>
-                                    </div>
+                                    <table id="forfeit_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-medium">Timestart</th>
+                                                  <th class="uk-width-medium">Time Forfeited</th>
+                                                  <th class="uk-width-medium">Minute Forfeited</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% for game in games %}
+                                                <tr class="tbl_toggle">
+                                                    <td>{{ game.match_id }}</td>
+                                                    <td>{{ game.game_details.timestart }}</td>
+                                                    <td>{{ game.game_details.timeend }}</td>
+                                                    <td>{{ game.get_game_lasted }}</td>
+                                                </tr>
+                                          {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    <script>
+                                        $(document).ready(function(){
+                                        $('#forfeit_tbl').DataTable();
+                                        });
+                                    </script>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,12 +175,116 @@
 
     var colorNames = Object.keys(chartColors);
 
-    window.onload = function() {};
 </script>
 <script>
-    $.post( "test.php", { name: "John", time: "2pm" })
-    .done(function( data ) {
-        alert( "Data Loaded: " + data );
-    });
+        let post_data;
+		var color = Chart.helpers.color;
+		var forfeitChartData = {
+			datasets: []
+		};
+        var anomalyChartData = {
+			datasets: [{
+				label: 'Errors',
+				borderColor: chartColors.red,
+				backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
+				data: []
+			}, {
+				label: 'Warnings',
+				borderColor: chartColors.blue,
+				backgroundColor: color(chartColors.blue).alpha(0.2).rgbString(),
+				data: []
+			}]
+		};
+
+		window.onload = function() {
+
+			var forfeit_ctx = document.getElementById('forfeit_chart').getContext('2d');
+			window.myForfeitChart = Chart.Scatter(forfeit_ctx, {
+				data: forfeitChartData,
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Forfeit Timeline'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    gridLines:{
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Minute Forfeited'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: '# of Clues Asked'
+                            }
+                        }]
+                    }
+			}
+			});
+		    var anomaly_ctx = document.getElementById('anomaly_timeline').getContext('2d');
+			window.myAnomalyChart = Chart.Scatter(anomaly_ctx, {
+				data: anomalyChartData,
+				options: {
+					title: {
+						display: true,
+						text: 'Anomaly Timeline'
+					},
+				}
+			});
+			initData();
+		};
+
+		
+	</script>
+<script>
+    function initData() {
+        rd = "{{ date }}";
+        sd = "{{ sd }}";
+        ed = "{{ ed }}";
+        rep_cat = "{{ rep_cat }}";
+        ri = "{{ room_id }}";
+        post_data = $.post("/octo_site/api/get_exception_data/",
+            {
+            'req_date': rd,
+                'sd': sd,
+                'ed': ed,
+                'req_cat':rep_cat,
+                'room_id':ri
+            });
+        post_data.done(function(data){
+            let forfeits = data[0];
+            let warnings = data[1];
+            let errors = data[2];
+            for(i in data){
+                console.log("killme",data[i]);
+            }
+            for (g in forfeits){
+                dt = {
+                    label: forfeits[g].match_id,
+                    borderColor: chartColors.red,
+                    backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
+                    data: [{x:forfeits[g].minute_forfeit,y:forfeits[g].clues_asked}]
+                };
+                forfeitChartData.datasets.push(dt);
+                console.log(forfeitChartData.datasets);
+            }
+            window.myForfeitChart.update();
+        });
+    }
 </script>
 {% include 'octo_site/includes/offcanvas_reports.html' %}

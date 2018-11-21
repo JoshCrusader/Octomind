@@ -136,6 +136,10 @@ class Game(models.Model):
                     trigger_seq.append(d["sensor_id"])
         return trigger_seq
     @property
+    def get_game_lasted(self):
+        data = self.pull_game_summary(self)
+        return round(data["general_info"]["time_finished_duration"],2)
+    @property
     def get_duration(self):
         data = self.pull_game_summary(self)
         if self.game_details.solved == 0:

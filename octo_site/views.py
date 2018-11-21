@@ -254,6 +254,7 @@ def exception_report(request):
     return render(request, 'octo_site/reports/exception_report.html',{"rooms":Room.objects.all()})
 
 def exception_report_details(request):
+    print("wat happening")
     return exception_report_func.exception_report_details(request)
 
 def sensor_analysis(request):

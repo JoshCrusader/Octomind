@@ -26,15 +26,14 @@ def get_range_exception(request, room):
     for er in error_logs:
         g = Game.objects.get(game_id=er.game_id)
         if g.room_id == room.room_id:
-            errors.append(g)
+            errors.append(er)
 
     for wa in warning_logs:
         g = Game.objects.get(game_id=wa.game_id)
         if g.room_id == room.room_id:
-            warnings.append(g)
+            warnings.append(wa)
 
     return games,errors,warnings
-
 
 def get_monthly_exception(request, room):
     games = []
@@ -54,13 +53,13 @@ def get_monthly_exception(request, room):
         if er.timestamp.month == month.month:
             g = Game.objects.get(game_id=er.game_id)
             if g.room_id == room.room_id:
-                errors.append(g)
+                errors.append(er)
 
     for wa in warning_logs:
         if wa.timestamp.month == month.month:
             g = Game.objects.get(game_id=wa.game_id)
         if g.room_id == room.room_id:
-            warnings.append(g)
+            warnings.append(wa)
     return games,errors,warnings
 
 
@@ -79,11 +78,11 @@ def get_yearly_exception(request, room):
     for er in error_logs:
         g = Game.objects.get(game_id=er.game_id)
         if g.room_id == room.room_id:
-            errors.append(g)
+            errors.append(er)
     for wa in warning_logs:
         g = Game.objects.get(game_id=wa.game_id)
         if g.room_id == room.room_id:
-            warnings.append(g)
+            warnings.append(wa)
     return games,errors,warnings
 
 
@@ -103,18 +102,22 @@ def get_daily_exception(request, room):
     for er in error_logs:
         g = Game.objects.get(game_id=er.game_id)
         if g.room_id == room.room_id:
-            errors.append(g)
+            errors.append(er)
     for wa in warning_logs:
         g = Game.objects.get(game_id=wa.game_id)
         if g.room_id == room.room_id:
-            warnings.append(g)
+            warnings.append(wa)
     return games,errors,warnings
 
 def get_exception_data(request):
     exceptions = {"games":None,"errors":None,"warnings":None}
+    ex = []
     games=""
     errors=""
     warnings=""
+    fgame=[]
+    ferrors=[]
+    fwarnings=[]
     if request.method == 'POST':
         req_cat = request.POST['req_cat']
         rid = request.POST['room_id']
@@ -128,7 +131,23 @@ def get_exception_data(request):
         elif req_cat == 'daily':
             games, errors, warnings = get_daily_exception(request, room)
 
-        exceptions["games"] = games
-        exceptions["errors"] = errors
-        exceptions["warnings"] = warnings
-    return JsonResponse({"data": exceptions})
+        for g in games:
+            fgame.append({"minute_forfeit":g.get_game_lasted,
+                          "match_id":g.match_id,
+                          "clues_asked":g.get_num_clues_asked,
+                          "team_size":g.get_team_size
+                          })
+        for e in errors:
+            ferrors.append({"minute_logged":e.get_minute_asked,
+                            "details":e.details})
+        for w in warnings:
+            fwarnings.append({
+                            "minute_logged": w.get_minute_asked,
+                            "details": w.details})
+        exceptions["games"] = fgame
+        exceptions["errors"] = ferrors
+        exceptions["warnings"] = fwarnings
+        ex.append(fgame)
+        ex.append(ferrors)
+        ex.append(fwarnings)
+    return JsonResponse({"data": ex})
