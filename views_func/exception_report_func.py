@@ -42,17 +42,18 @@ def exception_report_details(request):
         print("wats_good", sensor_dist)
     if len(games) !=0 or len(warnings) !=0 or len(errors) !=0:
         has_result=True
+
     for s in sensor_dist:
         sen = Sensor.objects.get(sensor_id=s)
         new_s.append({"sensor_id":s,
                       "phase_name":sen.phase_name,
                       "dist":bdown[s],
                       "frequency":sensor_dist[s]})
-    print("psass pls",new_s)
     return render(request, 'octo_site/reports/details/exception_report_details.html',
                   {"has_result":has_result,
                    "msg":msg,
                    "games":games,
+                   "max_clue_num":len(games),
                    "errors": errors,
                    "warnings":warnings,
                    "room":room,

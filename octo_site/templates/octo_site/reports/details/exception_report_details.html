@@ -76,7 +76,7 @@
             <div class="uk-grid" >
                 <div class="uk-width-auto uk-text-left" >
                     <h4 class="uk-margin-remove-bottom uk-text-left"> <b>{{ room.room_name }}</b> <span  class="uk-text-primary" data-uk-icon="icon: gitter;ratio: 1.0;"></span></h4>
-                    <p class="uk-margin-remove uk-text-small">Report {{ msg }} <b class="uk-text-muted">({{ records_len }} Records Found)</b></p>
+                    <p class="uk-margin-remove uk-text-small">Report {{ msg }}</p>
 
 
                 </div>
@@ -276,10 +276,10 @@
         var anomalyChartData = {
 			datasets: [{
 				label: 'Errors',
-				borderColor: chartColors.orange,
+				borderColor: chartColors.blue,
                 pointRadius: 10,
                 pointHoverRadius: 10,
-				backgroundColor: color(chartColors.orange).alpha(0.2).rgbString(),
+				backgroundColor: color(chartColors.blue).alpha(0.2).rgbString(),
 				data: [
                     {% for error in errors %}
                     {x:{{error.get_minute_asked}},y:1},
@@ -324,7 +324,7 @@
                         display: false
                      },
                     tooltips: {
-                        mode: 'index',
+                        mode: 'nearest',
                         intersect: false,
                     },
                     hover: {
@@ -350,9 +350,7 @@
                             },
                             ticks: {
                                 beginAtZero: true,
-                                steps: 1,
-                                stepValue: 1,
-                                max: {{ games.count }}.0001
+                                max: 3.0001
                             }
                         }]
                     }
@@ -393,6 +391,8 @@
 	</script>
 <script>
     function initData(){
+        let highest_clue =[];
+        h=null;
         {% for game in games %}
            colorName = colorNames[forfeitChartData.datasets.length % colorNames.length];
            newColor = chartColors[colorName];
@@ -405,8 +405,11 @@
                 data: [{x:{{ game.get_game_lasted }},y:{{ game.get_num_clues_asked }}}]
             };
             forfeitChartData.datasets.push(dt);
+            highest_clue.push({{ game.get_num_clues_asked }});
             window.myForfeitChart.update();
         {% endfor %}
+        h = Math.max.apply(null,highest_clue);
+
     }
 </script>
 {% include 'octo_site/includes/offcanvas_reports.html' %}
