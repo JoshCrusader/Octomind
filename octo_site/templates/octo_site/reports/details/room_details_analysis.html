@@ -558,8 +558,8 @@
     */
     let req_cat = "{{ rep_cat }}";
 {% if rep_cat == 'range' %}
-    let sd = {{ sd }};
-    let ed = {{ ed }};
+    let sd = '{{ sd }}';
+    let ed = '{{ ed }}';
 {% else %}
     let req_date = "{{ date }}";
 {% endif %}
@@ -588,7 +588,7 @@
             for(i in loc_keys){
                 let area_val = market['locs'][loc_keys[i]]['value'];
                 let area_key = loc_keys[i];
-                window.map_market.dataProvider.areas.push({id: area_key, value: area_val});
+                window.map_market.dataProvider.areas.push({id: area_key, value: area_val > 0 ? area_val : 0});
                 if(area_val > area_max){
                     area_max = area_val;
                 }
@@ -631,31 +631,31 @@
                     temp_data[1] += market['ages'][i];
                 }
                 else if(i <= 30){
-                    temp_data[2] += market['teamsizes'][i];
+                    temp_data[2] += market['ages'][i];
                 }
                 else if(i <= 35){
-                    temp_data[3] += market['teamsizes'][i];
+                    temp_data[3] += market['ages'][i];
                 }
                 else if(i <= 40){
-                    temp_data[4] += market['teamsizes'][i];
+                    temp_data[4] += market['ages'][i];
                 }
                 else if(i <= 45){
-                    temp_data[5] += market['teamsizes'][i];
+                    temp_data[5] += market['ages'][i];
                 }
                 else if(i <= 50){
-                    temp_data[6] += market['teamsizes'][i];
+                    temp_data[6] += market['ages'][i];
                 }
                 else if(i <= 55){
-                    temp_data[7] += market['teamsizes'][i];
+                    temp_data[7] += market['ages'][i];
                 }
                 else if(i <= 60){
-                    temp_data[8] += market['teamsizes'][i];
+                    temp_data[8] += market['ages'][i];
                 }
                 else if(i <= 65){
-                    temp_data[9] += market['teamsizes'][i];
+                    temp_data[9] += market['ages'][i];
                 }
                 else{
-                    temp_data[10] += market['teamsizes'][i];
+                    temp_data[10] += market['ages'][i];
                 }
             }
             age_bar_data.datasets[0].data = temp_data;

@@ -8,14 +8,20 @@ import datetime as dt
 
 def get_range_games(request,room):
     games=[]
+    print('SSSDDDDDDD')
+    print(request.POST)
     sd = datetime.strptime(request.POST['sd'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
     ed = datetime.strptime(request.POST['ed'] + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+    print(sd)
+    print(ed)
     gamedet = GameDetails.objects.filter(timestart__gte=sd, timestart__lte=ed)
+    print(len(gamedet))
     for det in gamedet:
         g = Game.objects.get(game_id=det.game_details_id)
         if g.room_id == room.room_id:
             games.append(g)
-            
+    print(games)
+    print('XDDDDD')
     return games
 def get_monthly_games(request,room):
     games = []

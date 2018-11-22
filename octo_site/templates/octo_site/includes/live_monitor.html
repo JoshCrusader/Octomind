@@ -97,7 +97,7 @@ PARAMS:
 			window.setInterval(reloadData, 1000);
 		};
 		function reloadData() {
-		    console.log("reading");
+		    // console.log("reading");
             sensor_data =  $.get("/octo_site/sensor_data/{{ gameid }}");
             sensor_data.done(function(results){
                 if (sensor_data_len < results.data.length){

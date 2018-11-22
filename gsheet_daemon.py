@@ -14,7 +14,5 @@ client.on_message = on_message  # attach function to callback
 
 client.connect(broker_address)  # connect to broke
 while True:
-    client.subscribe("ccm/rpi_1")
-    client.loop_start()  # start the loop
-    # client.loop_stop() #stop the loop
+    print("HI")
     time.sleep(3)  # wait

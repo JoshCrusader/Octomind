@@ -36,7 +36,8 @@ def compute_report_data(games):
         report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
         report_data["has_errors"] = round((report_data["has_errors"]/float(len(games)))*100, 2)
         report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
-    except:
+    except Exception as e:
+        print(e)
         report_data["completion_rate"] = None
         report_data["avg_clues_asked"] = None
         report_data["avg_duration"] = None

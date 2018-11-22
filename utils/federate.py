@@ -17,7 +17,7 @@ def sync():
         client = gspread.authorize(creds)
 
         print("Accessing worksheet...")
-        sheets = client.open_by_key("1RRx2XM7fhFoYxeGlEeKog1xHeU06eAUXLm1zOXfO5nk").worksheet("MM Registration Form Responses")
+        sheets = client.open_by_key("1EyGxqQzNaXmbvU61LTvKAbYjXMTcDvIrl0oJ9rgtVs0").worksheet("Registration")
 
         beg_col = 1
         beg_row = Game.objects.all().count()
@@ -33,10 +33,8 @@ def sync():
         player_cnt = 0
         for cell in data:
             if(cell.row != curr_row):
-
                 if(data_obj != {}):
-                    print(data_obj)
-                    gamedets = GameDetails(teamname = data_obj['teamname'])
+                    gamedets = GameDetails(teamname = data_obj['teamname'], solved = 0)
                     gamedets.save()
                     game = Game(room_id = data_obj['room_id'], game_details_id = gamedets.game_details_id, game_keeper_id = data_obj['game_keeper_id'])
                     game.save()
@@ -47,25 +45,26 @@ def sync():
                         teams.save()
                     print("Finish scanning data")
                 curr_row = cell.row
+                data_obj = {}
                 if(cell.value == ''):
                     break
-                
-                data_obj = {}
+                # elif(cell.col == 1):
+                #     data_obj['timestart'] = cell.value
             else:
                 if (cell.col == 2):
                     data_obj['game_keeper_id'] = 1
-                elif (cell.col == 4):
+                elif (cell.col == 3):
                     data_obj['room_id'] =  Room.objects.get(room_name = cell.value).room_id
-                elif (cell.col == 5):
+                elif (cell.col == 4):
                     player_cnt = (int)(cell.value)
                     data_obj['players'] = []
                     for i in range(0, player_cnt):
                         player_obj = {}
                         data_obj['players'].append(player_obj)
-                elif (cell.col == 6):
+                elif (cell.col == 5):
                     data_obj['teamname'] = cell.value
-                elif (cell.col > 8 and cell.value != ''):
-                    p_col = cell.col - 9 #player coloumn, starts from 9 but normalize to 0 
+                elif (cell.col > 7 and cell.value != ''):
+                    p_col = cell.col - 8 #player coloumn, starts from 9 but normalize to 0 
                     cur_p = p_col//7 #each player has 7 cols so this is to check if its same player
                     cur_c = p_col%7 #this is get current coloumn with normalization
                     if(cur_c == 0):
@@ -74,16 +73,16 @@ def sync():
                         data_obj['players'][cur_p]['lastname'] = cell.value
                     elif(cur_c == 2):
                         data_obj['players'][cur_p]['email'] = cell.value
-                    elif(cur_c == 3):
+                    elif(cur_c == 6):
                         gender = 0
                         if(cell.value == 'Male'):
                             gender = 1
                         data_obj['players'][cur_p]['gender'] = gender
-                    elif(cur_c == 4):
+                    elif(cur_c == 3):
                         data_obj['players'][cur_p]['contact'] = cell.value
                     elif(cur_c == 5):
                         data_obj['players'][cur_p]['age'] = (int)(cell.value)
-                    elif(cur_c == 6):
+                    elif(cur_c == 4):
                         data_obj['players'][cur_p]['loc'] = (int)(cell.value)
                     pass
                 pass
@@ -118,7 +117,7 @@ def sync():
 
         return True
     except Exception as e:
-        print("ERROR: " + str(e))
+        print(e)
         print(">> Worksheet not found.")
 
         return False

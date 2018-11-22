@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from octo_site.models import *
 from django.http import HttpResponseRedirect, JsonResponse
+import calendar
 import json
 
 def get_range_games(request):
@@ -41,6 +42,49 @@ def get_daily_games(request):
         games.append(g)
     return games
 
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
+def setup_sales(c, data, cur_date, reqsd, reqed):
+    stat = 0
+    if(c == 'yearly'):
+        stat = 12
+        data['sales']['labels'] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    elif(c == 'monthly'):
+        month_date = datetime.strptime(cur_date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+        stat = calendar.monthrange(month_date.year, month_date.month)[1]
+        data['sales']['labels'] = []
+        for i in range(1, stat+1):
+            data['sales']['labels'].append(i)
+    if(c == 'yearly' or c == 'monthly'):
+        for i in range(1, stat+1):
+            data['sales'][i] = {}
+            data['sales'][i]['count'] = 0
+            data['sales'][i]['sales'] = 0
+            data['sales'][i]['title'] = i
+    elif(c == 'range'):
+        sd = datetime.strptime(reqsd + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+        ed = datetime.strptime(reqed + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+        data['sales']['labels'] = []
+        for a_date in daterange(sd, ed):
+            datekey = str(a_date.year)+'-'+str(a_date.month)+'-'+str(a_date.day)
+            data['sales'][datekey] = {}
+            data['sales'][datekey]['count'] = 0
+            data['sales'][datekey]['sales'] = 0
+            data['sales'][datekey]['title'] = datekey
+            data['sales']['labels'].append(datekey)
+
+def setup_sales_count(c, data, gamedet, teamlen, price_dict):
+    m = 1
+    if(c == 'yearly'):
+        m = gamedet.timestart.month
+    elif( c == 'monthly'):
+        m = gamedet.timestart.day
+    else:
+        m = str(gamedet.timestart.year)+'-'+str(gamedet.timestart.month)+'-'+str(gamedet.timestart.day)
+    data['sales'][m]['count'] += 1
+    data['sales'][m]['sales'] += price_dict[teamlen]
 
 def get_game_sales(games, req):
     data = {}
@@ -49,27 +93,23 @@ def get_game_sales(games, req):
     data['teamcount'] = {}
     data['ages'] = {}
     price_dict = {
-        1: 550,
-        2: 550,
-        3: 500,
-        4: 450,
-        5: 400,
-        6: 400
+        1: 1100,
+        2: 1100,
+        3: 1500,
+        4: 1800,
+        5: 2000,
+        6: 2400
     }
     age_dict = ['0-17', '18-22', '23-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65', '66+']
     stat = 12
 
+    setup_sales(req.POST['report_cat'], data, req.POST['date'],req.POST['sd'],req.POST['ed'])
     for age_group in age_dict:
         data['ages'][age_group] = {}
         data['ages'][age_group]['count'] = 0
         data['ages'][age_group]['success'] = 0
         data['ages'][age_group]['fail'] = 0
 
-    for i in range(1, stat+1):
-        data['sales'][i] = {}
-        data['sales'][i]['count'] = 0
-        data['sales'][i]['sales'] = 0
-        data['sales'][i]['title'] = i
     for i in range(0, 7):
         data['teamcount'][i+1] = {}
         data['teamcount'][i+1]['count'] = 0
@@ -80,18 +120,17 @@ def get_game_sales(games, req):
         gamedet = game.game_details
         solved = gamedet.solved
         m = gamedet.timestart.month
-        data['sales'][m]['count'] += 1
         teams = Teams.objects.filter(game_id = game.game_id)
         teamlen = len(teams)
         if(teamlen == 0):
             teamlen = 1
         data['teamcount'][teamlen]['count'] += 1
-        data['sales'][m]['sales'] += price_dict[teamlen]
         if(solved == 1):
             data['teamcount'][teamlen]['success'] += 1
         else:
             data['teamcount'][teamlen]['fail'] += 1
             
+        setup_sales_count(req.POST['report_cat'], data, gamedet, teamlen, price_dict)
         for team in teams:
             player = team.players_players
             age = player.age
@@ -128,8 +167,6 @@ def get_game_sales(games, req):
             data['ages'][mg]['count'] += 1
 
 
-
-    print(data)
     return data
 
 def player_analysis_report(request):

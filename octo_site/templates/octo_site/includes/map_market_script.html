@@ -35,10 +35,10 @@
     });
     function updateHeatmap( event ) {
         
-        const varx = event.chart.zoomX()-0.5;
-        const vary = event.chart.zoomY()-0.4; //this value was trial and error lmao
+        const varx = event.chart.zoomX()-0.8;
+        const vary = event.chart.zoomY()-1.1; //this value was trial and error lmao
         
-        event.chart.zoomTo(2.4, varx, vary, true);
+        event.chart.zoomTo(4, varx, vary, true);
         /*
         var map = event.chart;
         if ( map.dataGenerated )
