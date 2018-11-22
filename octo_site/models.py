@@ -89,19 +89,23 @@ class Game(models.Model):
     @property
     def get_time_ago(self):
         utc = pytz.UTC
-        diff = relativedelta(datetime.now().replace(tzinfo=utc),self.game_details.timestart.replace(tzinfo=utc),)
-        if diff.months == 0:
-            if diff.days == 0:
-                if diff.hours == 0:
-                    if diff.minutes == 0:
-                        return "moments ago"
-                    return str(diff.minutes)+" minutes ago"
+        try:
+            diff = relativedelta(datetime.now().replace(tzinfo=utc),self.game_details.timestart.replace(tzinfo=utc),)
+            if diff.months == 0:
+                if diff.days == 0:
+                    if diff.hours == 0:
+                        if diff.minutes == 0:
+                            return "moments ago"
+                        return str(diff.minutes)+" minutes ago"
+                    else:
+                        return str(diff.hours)+" hours ago"
                 else:
-                    return str(diff.hours)+" hours ago"
+                    return str(diff.days)+" days ago"
             else:
-                return str(diff.days)+" days ago"
-        else:
-            return str(diff.months)+" months ago"
+                return str(diff.months)+" months ago"
+        except:
+            pass
+        return None
     @property
     def match_id(self):
         return self.game_id + 100000

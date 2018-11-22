@@ -15,15 +15,19 @@ def game_logs(request):
     all_g2 =[]
     gd = GameDetails.objects.filter(timeend__isnull=True)
     for g in gd:
-        diff = datetime.now().replace(tzinfo=utc) - g.timestart.replace(tzinfo=utc)
-        days = diff.days
-        days_to_hours = days * 24
-        diff_btw_two_times = diff.seconds / 3600
-        overall_hours = days_to_hours + diff_btw_two_times
-        #difference between time and now is less than 1 hour, then it is a past game.
-        if overall_hours < 1:
-            cur_games.append(Game.objects.get(game_id=g.game_details_id))
-            cur_inds.append(g.game_details_id)
+        try:
+            diff = datetime.now().replace(tzinfo=utc) - g.timestart.replace(tzinfo=utc)
+            days = diff.days
+            days_to_hours = days * 24
+            diff_btw_two_times = diff.seconds / 3600
+            overall_hours = days_to_hours + diff_btw_two_times
+            #difference between time and now is less than 1 hour, then it is a past game.
+            if overall_hours < 1:
+                cur_games.append(Game.objects.get(game_id=g.game_details_id))
+                cur_inds.append(g.game_details_id)
+        except:
+            pass
+
     for ag in all_g:
         if ag.game_id not in cur_inds:
             all_g2.append(ag)
