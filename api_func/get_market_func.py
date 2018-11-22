@@ -4,9 +4,9 @@ from django.http import JsonResponse
 from octo_site.db_conf import *
 
 
-from utils import populate_details
+from utils import populate_rebeca, populate_details
 def get_market(request):
-    populate_details.main_start()
+    # populate_rebeca.main_start()
     market = []
     if(request.method == 'POST'):
         gid = request.POST['game_id']

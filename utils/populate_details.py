@@ -35,10 +35,11 @@ def gen_error(chance, dts, si, game):
 def main_start():
     games = Game.objects.filter(room_id = 2)
     for game in games:
-        detail = game.game_details
-        dts = detail.timestart
+        
         rd = gen_random(100)
-        if(rd <= 60):
+        if(rd <= 55):
+            detail = GameDetails.objects.get(game_details_id = game.game_details_id)
+            dts = detail.timestart
             detail.solved = 1
             r2 = gen_random(100)
             te = 60
@@ -58,11 +59,13 @@ def main_start():
             detail.timeend = timee
             detail.save()
         else:
+            detail = game.game_details
+            dts = detail.timestart
             t3 = gen_random(100)
             te = 60
-
+            detail.solved = 0
             delta_time = timedelta(minutes = te)
-            if(t3 <= 7):
+            if(t3 <= 14):
                 te = gen_r_random(15, 50)
                 gen_clues(58, dts, te, game)
                 delta_time = timedelta(minutes = te, seconds = gen_r_random(0, 58))
@@ -70,6 +73,9 @@ def main_start():
                 detail.timeend = timee
                 detail.save()
             else:
+                print('d natapos')
+                detail.timeend = None
+                detail.save()
                 gen_clues(40, dts, te, game)
             
     print('done')
