@@ -71,7 +71,10 @@ def register(request):
         user.save()
         messages.warning(request, 'Account Created.')
         return redirect('index')
-    return render(request, 'octo_site/register.html')
+    return render(request, 'octo_site/user_module/register.html', {'branches':Branch.objects.all()})
+
+def list_user(request):
+    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
 
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
@@ -81,7 +84,8 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    return render(request,'octo_site/dashboard.html')
+    return redirect('control_panel')
+    #return render(request,'octo_site/dashboard.html')
 
 def page_sensor(request):
     return page_func.page_sensor(request)
@@ -225,11 +229,48 @@ def get_market(request):
 def get_room_market(request):
     return get_room_market_func.get_room_market(request)
 
+@csrf_exempt
+def get_all_time_data(request,room_id):
+    return JsonResponse(Room.objects.get(room_id=room_id).get_all_time_data)
+
+@csrf_exempt
+def get_all_time_data_sensor(request,sensor_id):
+    return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
+
+@csrf_exempt
+def get_exception_data(request):
+    return get_exception_report.get_exception_data(request)
+@csrf_exempt
+def open_notif(request):
+    notifs = Notifs.objects.all()
+    for n in notifs:
+        n.viewed = 1
+        n.save()
+    return JsonResponse({"data": 'ok'})
+@csrf_exempt
+def check_notif(request):
+    notifs = Notifs.objects.all().order_by("-timestamp")[0:5]
+    chk = Notifs.check_new_notif()
+    data=[]
+    for n in notifs:
+        data.append({"new_notif":chk,"details":n.details,"timestamp":n.get_time_ago,"game_id":n.game_id,"is_ongoing":n.game.is_ongoing})
+    return JsonResponse({"data": data})
+@csrf_exempt
+def get_all_time_data_sensor(request,sensor_id):
+    return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
+
 def room_analysis(request):
     return render(request, 'octo_site/reports/room_analysis.html',{"rooms":Room.objects.all()})
 
 def room_details_analysis(request):
     return room_analysis_func.room_details_analysis(request)
+
+def exception_report(request):
+    return render(request, 'octo_site/reports/exception_report.html',{"rooms":Room.objects.all()})
+
+def exception_report_details(request):
+    print("wat happening")
+    return exception_report_func.exception_report_details(request)
 
 def sensor_analysis(request):
     return render(request, 'octo_site/reports/sensor_analysis.html')

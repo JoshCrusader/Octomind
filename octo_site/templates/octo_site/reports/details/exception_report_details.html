@@ -1,0 +1,434 @@
+{% include 'octo_site/includes/header_reports.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+
+        <link rel="stylesheet" href = "{% static 'styles/view_room.css' %}" type = "text/css">
+
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+    .myProgress {
+      width: 80px;
+    }
+    .myBar {
+      width: 100%;
+      height: 15px;
+      background-color: cornflowerblue;
+    }
+	</style>
+<div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
+    <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
+        {% if has_result %}
+
+        <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 70vh;">
+            <div uk-grid>
+                <div class="uk-width-expand@m uk-align-center" >
+                    <ul id="component-tab-right" STYLE="margin-left:10vw;"  class="uk-switcher">
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="forfeit_chart" ></canvas>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="anomaly_timeline" ></canvas>
+                            </div>
+                        </li>
+                        <li style="height: 70vh">
+                            <div class="chart-container" style="height:20vh;width:85%" >
+                                <canvas class="uk-align-center" id="sensor_breakdown" ></canvas>
+                            </div>
+                            <div class="uk-align-left">
+                                <div style="width: 7vh;height: 3vh;background-color: rgb(244, 146, 66);padding: 3vh;margin: 3vh">Warning</div>
+                                <div style="width: 7vh;height: 3vh;color:white;background-color: rgb(255, 65, 54);padding: 3vh;margin: 3vh">Error</div>
+                                <div style="width: 7vh;height: 3vh;background-color: rgb(190, 185, 191);padding: 3vh;margin: 3vh">Forfeit</div>
+                            </div>
+                            <div class="uk-align-right">
+
+                                <div style="margin-right: 6vw">
+                                    {% for s in sensors %}
+                                    <p class="uk-margin-remove uk-text-small" >{{ s.phase_name }}</p>
+                                    <div class="labels" style="width: 6vh;height: 2vh; background-color: rgb(244, 146, 66);">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="uk-width-1-1 uk-text-right uk-align-right" >
+                        <ul style="margin-left: -19px;" uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
+                            <li><a href=""><span data-uk-icon="icon: unlock"></span> Forfeit Timeline</a></li>
+                            <li><a href=""><span data-uk-icon="icon: more"></span> Anomaly Timeline</a></li>
+                            <li><a href=""><span data-uk-icon="icon: nut"></span> Sensor Breakdown</a></li>
+                        </ul>
+                    </div>
+                {% load static %}
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;margin-top: 7.5vh;padding-bottom: 2vh;background-color: white ">
+            <div class="uk-grid" >
+                <div class="uk-width-auto uk-text-left" >
+                    <h4 class="uk-margin-remove-bottom uk-text-left"> <b>{{ room.room_name }}</b> <span  class="uk-text-primary" data-uk-icon="icon: gitter;ratio: 1.0;"></span></h4>
+                    <p class="uk-margin-remove uk-text-small">Report {{ msg }} <b class="uk-text-muted">({{ records_len }} Records Found)</b></p>
+
+
+                </div>
+
+                <div class="uk-width-expand uk-text-right">
+                    <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
+                    <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-1-1" style="background-color:#FFF; ">
+            <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #fff;padding-left: 3vw;padding-right: 2vw">
+            <div class="uk-card-header">
+                <div class="uk-grid uk-grid-medium" >
+                        <div class="uk-card-body uk-align-center uk-width-1-1">
+                            <div class="uk-overflow-auto">
+                                     <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Anomalies </h4>
+                                     <table id="anomaly_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-medium">Sensor Name</th>
+                                                  <th class="uk-width-medium">Minute Logged</th>
+                                                  <th class="uk-width-medium">Timestamp</th>
+                                                  <th class="uk-width-medium">Details</th>
+                                                  <th class="uk-width-medium">Anomaly Detection</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% for error in errors %}
+                                                <tr class="tbl_toggle">
+                                                    <td>{{ error.game.match_id }}</td>
+                                                    <td>{{ error.sensor.sensor_id }}</td>
+                                                    <td>{{ error.get_minute_asked }}</td>
+                                                    <td>{{ error.timestamp }}</td>
+                                                    <td>{{ error.details }}</td>
+                                                    <td>Error Sequence</td>
+                                                </tr>
+                                          {% endfor %}
+                                          {% for warning in warnings %}
+                                                <tr class="tbl_toggle">
+                                                    <td>{{ warning.game.match_id }}</td>
+                                                    <td>{{ warning.sensor.sensor_id }}</td>
+                                                    <td>{{ warning.get_minute_asked }}</td>
+                                                    <td>{{ warning.timestamp }}</td>
+                                                    <td>{{ warning.details }}</td>
+                                                    <td>Game Warning</td>
+                                                </tr>
+                                          {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    <script>
+                                        $(document).ready(function(){
+                                        $('#anomaly_tbl').DataTable({
+                                            "aaSorting": [[2,'desc']]
+                                        });
+                                        });
+                                    </script>
+                                    <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> Games Forfeited </h4>
+                                    <table id="forfeit_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
+                                          <thead>
+                                              <tr>
+                                                  <th class="uk-width-small">Match ID</th>
+                                                  <th class="uk-width-medium">Timestart</th>
+                                                  <th class="uk-width-medium">Time Forfeited</th>
+                                                  <th class="uk-width-medium">Minute Forfeited</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          {% for game in games %}
+                                                <tr class="tbl_toggle">
+                                                    <td>{{ game.match_id }}</td>
+                                                    <td>{{ game.game_details.timestart }}</td>
+                                                    <td>{{ game.game_details.timeend }}</td>
+                                                    <td>{{ game.get_game_lasted }}</td>
+                                                </tr>
+                                          {% endfor %}
+                                          </tbody>
+                                     </table>
+                                    <script>
+                                        $(document).ready(function(){
+                                        $('#forfeit_tbl').DataTable();
+                                        });
+                                    </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            <div class="uk-width-1-1 uk-text-center uk-position-center">
+                <h1><i class="fa fa-frown-o uk-text-muted fa-3x"></i></h1>
+                <h1 class="uk-text-muted">No Results found.</h1>
+
+                <h1 class="uk-text-muted"><a href="{% url 'room_analysis' %}">Create another report.</a></h1>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    var color = Chart.helpers.color;
+    let chartColors = {
+      red: 'rgb(255, 65, 54)',
+      yellow: 'rgb(240, 206, 0)',
+      green: 'rgb(61, 142, 106)',
+      blue: 'rgb(28, 143, 219)',
+      orange: 'rgb(255, 118, 0)',
+      purple: 'rgb(153, 102, 255)',
+      grey: 'rgb(231,233,237)',
+      black: 'rgb(0,0,0)',
+    };
+
+    var colorNames = Object.keys(chartColors);
+
+</script>
+<script>
+		var color = Chart.helpers.color;
+		var forfeitChartData = {
+			datasets: []
+		};
+		var breakdownChartData = {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+                        {% for s in sensors %}
+                            {{ s.frequency }},
+                        {% endfor %}
+                        {% for s in sensors %}
+                            null,null,null,
+                        {% endfor %}
+
+					],
+					backgroundColor: [
+                        {% for s in sensors %}
+                        chartColors[colorNames[0{{ forloop.counter }} % colorNames.length]],
+                        {% endfor %}
+                        {% for s in sensors %}
+                            null,null,null,
+                        {% endfor %}
+					],
+					label: 'Sensors'
+				},{
+					data: [
+
+                            {% for s in sensors %}
+                                null,
+                            {% endfor %}
+                            {% for s in sensors %}
+                            {{ s.dist.warnings }},{{ s.dist.errors }},{{ s.dist.forfeits }},
+                            {% endfor %}
+					],
+					backgroundColor: [
+
+                            {% for s in sensors %}
+                                null,
+                            {% endfor %}
+                    {% for s in sensors %}
+                            'rgb(244, 146, 66)',
+                            chartColors['red'],
+                            'rgb(190, 185, 191)',
+                    {% endfor %}
+					],
+					label: 'Breakdowns'
+				}],
+				labels: [
+                    {% for s in sensors %}
+					'{{ s.phase_name }}',
+                    {% endfor %}
+                    {% for s in sensors %}
+					'{{ s.phase_name }}',
+					'{{ s.phase_name }}',
+					'{{ s.phase_name }}',
+                    {% endfor %}
+
+				]
+			},
+			options: {
+				responsive: true,
+				legend: {
+				    display:false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Sensor Anomaly Sources'
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		};
+
+        var anomalyChartData = {
+			datasets: [{
+				label: 'Errors',
+				borderColor: chartColors.orange,
+                pointRadius: 10,
+                pointHoverRadius: 10,
+				backgroundColor: color(chartColors.orange).alpha(0.2).rgbString(),
+				data: [
+                    {% for error in errors %}
+                    {x:{{error.get_minute_asked}},y:1},
+                    {% endfor %}
+                ]
+			}, {
+				label: 'Warnings',
+				borderColor: chartColors.red,
+                pointRadius: 10,
+                pointHoverRadius: 10,
+				backgroundColor: color(chartColors.red).alpha(0.2).rgbString(),
+				data: [
+                    {% for warning in warnings %}
+                    {x:{{warning.get_minute_asked}},y:1},
+                    {% endfor %}
+                ]
+			}]
+		};
+        function paintLabels() {
+            lbl = document.getElementsByClassName('labels');
+
+            for (i in lbl){
+                colorName = colorNames[i % colorNames.length+1];
+                newColor = chartColors[colorName];
+                lbl[i].style.backgroundColor=newColor;
+            }
+        }
+		window.onload = function() {
+
+			var breakdown_ctx = document.getElementById('sensor_breakdown').getContext('2d');
+			window.myBreakdownChart = new Chart(breakdown_ctx, breakdownChartData);
+			var forfeit_ctx = document.getElementById('forfeit_chart').getContext('2d');
+			window.myForfeitChart = Chart.Scatter(forfeit_ctx, {
+				data: forfeitChartData,
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Forfeit Timeline'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    gridLines:{
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Minute Forfeited'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: '# of Clues Asked'
+                            }
+                        }]
+                    }
+			}
+			});
+		    var anomaly_ctx = document.getElementById('anomaly_timeline').getContext('2d');
+			window.myAnomalyChart = Chart.Scatter(anomaly_ctx, {
+				data: anomalyChartData,
+				options: {
+					title: {
+						display: true,
+						text: 'Anomaly Timeline'
+					},gridLines:{
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Minute Logged'
+                            }
+                        }],
+                        yAxes: [{
+                            display: false,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+				}
+			});
+			initData();
+			paintLabels();
+		};
+
+		
+	</script>
+<script>
+    /*
+    function initData() {
+        rd = "{{ date }}";
+        sd = "{{ sd }}";
+        ed = "{{ ed }}";
+        rep_cat = "{{ rep_cat }}";
+        ri = "{{ room_id }}";
+        post_data = $.post("/octo_site/api/get_exception_data/",
+            {
+            'req_date': rd,
+                'sd': sd,
+                'ed': ed,
+                'req_cat':rep_cat,
+                'room_id':ri
+            });
+        post_data.done(function(data){
+            let forfeits = data[0];
+            let warnings = data[1];
+            let errors = data[2];
+            for(i in data){
+                console.log("killme",data[i]);
+            }
+            for (g in forfeits){
+                dt = ;
+                forfeitChartData.datasets.push(dt);
+                console.log(forfeitChartData.datasets);
+            }
+            window.myForfeitChart.update();
+        });
+    }
+    */
+    function initData(){
+        {% for game in games %}
+           colorName = colorNames[forfeitChartData.datasets.length % colorNames.length];
+           newColor = chartColors[colorName];
+           dt= {
+                label: {{ game.match_id }},
+                borderColor: newColor,
+               pointRadius: 10,
+                pointHoverRadius: 10,
+                backgroundColor: color(newColor).alpha(0.2).rgbString(),
+                data: [{x:{{ game.get_game_lasted }},y:{{ game.get_num_clues_asked }}}]
+            };
+            forfeitChartData.datasets.push(dt);
+            window.myForfeitChart.update();
+        {% endfor %}
+    }
+</script>
+{% include 'octo_site/includes/offcanvas_reports.html' %}

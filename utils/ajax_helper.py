@@ -38,6 +38,13 @@ def start_game(request):
         game = Game.objects.get(game_id = gid)
         game_detail = GameDetails.objects.get(game_details_id = game.game_details_id)
         game_detail.timestart = now_datetime
+        notifs_detail = "Game " + game.match_id + " @ " + game.room.room_name + " started."
+        Notifs.objects.create(
+            details=notifs_detail,
+            timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            viewed=0,
+            game_id=game.game_id
+        )
         game_detail.save()
 
     return JsonResponse({"data": "done"})
@@ -52,6 +59,13 @@ def end_game(request):
             game_detail.solved = 1
         else:
             game_detail.solved = 0
+        notifs_detail = "Game " + game_detail.game.match_id + " @ " + game_detail.game.room.room_name + " ended."
+        Notifs.objects.create(
+            details=notifs_detail,
+            timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            viewed=0,
+            game_id=game_detail.game.game_id
+        )
         game_detail.save()
     return JsonResponse({"data": "done"})
 

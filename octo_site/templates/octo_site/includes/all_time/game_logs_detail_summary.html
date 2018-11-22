@@ -1,0 +1,68 @@
+<script>
+
+                            let all_time =  $.get("/octo_site/api/get_all_time_data/{{ game.room_id }}/");
+                                all_time.done(function(results){
+                                    console.log("all_t",results);
+                                    if({{ game.get_team_size_int }}-results.average_team_size > 0){
+                                        $("#avg_team_size").html("(+"+parseFloat({{ game.get_team_size_int }}-results.average_team_size).toFixed(2)+")").addClass("uk-text-success");
+                                        $("#avg_team_size").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
+                                        $('#avg_team_size').attr("uk-tooltip","more than all time average ");
+                                    }
+                                    else if({{ game.get_team_size_int }}-results.average_team_size === 0){
+                                        $("#avg_team_size").html("(=)").addClass("uk-text-primary");
+                                        $('#avg_team_size').attr("uk-tooltip","equal to all time average");
+                                    }
+                                    else{
+                                        $("#avg_team_size").html("("+parseFloat({{ game.get_team_size_int }}-results.average_team_size*-1).toFixed(2)+")").addClass("uk-text-warning");
+                                        $("#avg_team_size").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
+                                        $('#avg_team_size').attr("uk-tooltip","more than all time average ");
+                                    }
+                                    if({{ game.get_duration }}-results.average_duration < 0){
+                                        $("#avg_duration").html("(+"+parseFloat({{ game.get_duration }}-results.average_duration).toFixed(2)*-1+")").addClass("uk-text-success");
+                                        $("#avg_duration").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
+                                        $('#avg_duration').attr("uk-tooltip","shorter than the average");
+                                    }
+                                    else if({{ game.get_duration }}-results.average_duration === 0){
+                                        $("#avg_duration").html("(=)").addClass("uk-text-primary");
+                                        $('#avg_duration').attr("uk-tooltip","equal to all time average");
+                                    }
+                                    else{
+                                        $("#avg_duration").html("(+"+parseFloat({{ game.get_duration }}-results.average_duration).toFixed(2)+")").addClass("uk-text-warning");
+                                        $("#avg_duration").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
+                                        $('#avg_duration').attr("uk-tooltip","longer than the average");
+                                    }
+                                    if({{ game.get_num_clues_asked }}-results.average_clues_asked > 0){
+                                        $("#avg_clues").html("(+"+parseFloat({{ game.get_num_clues_asked }}-results.average_clues_asked).toFixed(2)+")").addClass("uk-text-success");
+                                        $("#avg_clues").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
+                                        $('#avg_clues').attr("uk-tooltip","asked more than the average");
+                                    }
+                                    else if({{ game.get_num_clues_asked }}-results.average_clues_asked === 0){
+                                        $("#avg_clues").html("(=)").addClass("uk-text-primary");
+                                        $('#avg_clues').attr("uk-tooltip","equal to all time average");
+                                    }
+                                    else{
+                                        $("#avg_clues").html("("+parseFloat({{ game.get_num_clues_asked }}-results.average_clues_asked*-1).toFixed(2)+")").addClass("uk-text-warning");
+                                        $("#avg_clues").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
+                                        $('#avg_clues').attr("uk-tooltip","asked less than the average");
+                                    }
+                                    /*
+                                    if({{ game.get_num_error }}-results.average_errors > 0){
+                                        $("#avg_error").html("(+"+parseFloat({{ game.get_num_error }}-results.average_errors).toFixed(2)+")").addClass("uk-text-success");
+                                        $("#avg_error").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
+                                    }
+                                    else{
+                                        $("#avg_error").html("("+parseFloat({{ game.get_num_error }}-results.average_errors).toFixed(2)+")").addClass("uk-text-warning");
+                                        $("#avg_error").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
+                                    }
+                                    if({{ game.get_num_warning }}-results.average_warnings > 0){
+                                        $("#avg_warning").html("(+"+parseFloat({{ game.get_num_warning }}-results.average_warnings).toFixed(2)+")").addClass("uk-text-success");
+                                        $("#avg_warning").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
+                                    }
+                                    else{
+                                        $("#avg_warning").html("("+parseFloat({{ game.get_num_warning }}-results.average_warnings).toFixed(2)+")").addClass("uk-text-warning");
+                                        $("#avg_warning").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
+                                    }
+                                    */
+                               });
+                            </script>
+

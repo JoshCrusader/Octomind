@@ -14,6 +14,7 @@ urlpatterns = [
     path('signout', views.signout, name='signout'),
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),
+    path('list_user/', views.list_user, name='list_user'),
     #game dets
     path('game_logs/', views.game_logs, name='game_logs'),
     path('game_logs/game/<int:game_id>/', views.game_logs_detail, name='game_logs_detail'),
@@ -44,8 +45,14 @@ urlpatterns = [
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),
     path('api/get_market/', views.get_market, name = 'get_market'),
     path('api/get_room_market/', views.get_room_market, name = 'get_room_market'),
+    path('api/get_exception_data/', views.get_exception_data, name = 'get_exception_data'),
     path('api/get_clue_data/<int:game_id>/', views.get_clue_data, name='get_clue_data'),
     path('api/select_sensor_data/<slug:game_ids>/', views.select_sensor_data, name='select_sensor_data'),
+    path('api/get_all_time_data/<int:room_id>/', views.get_all_time_data, name='get_all_time_data'),
+    path('api/check_notifs/', views.check_notif, name='check_notif'),
+    path('api/open_notifs/', views.open_notif, name='open_notif'),
+
+    path('api/get_all_time_data_sensor/<int:sensor_id>/', views.get_all_time_data_sensor, name='get_all_time_data_sensor'),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),
     path('reports/room_details_analysis', views.room_details_analysis, name='room_details_analysis'),
@@ -55,6 +62,8 @@ urlpatterns = [
     path('reports/market_analysis', views.market_analysis, name = 'market_analysis'),
     path('reports/market_report', views.market_report, name='market_report'), ## test url only
     path('reports/map_market_report', views.map_market_report, name='map_market_report'), ## test url only
+    path('reports/exception_report', views.exception_report, name='exception_report'),
+    path('reports/exception_report_details', views.exception_report_details, name='exception_report_details'),
     #testinging
     path('sandbox_analysis/<int:room_id>/', views.sandbox_analysis, name='sandbox_analysis'),
     path('sample_marker', views.sample_marker, name='sample_marker'),

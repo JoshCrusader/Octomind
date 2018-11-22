@@ -130,7 +130,13 @@
                                                     <td>
                                                         <p class="txt_light_gray uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
                                                         <div class="myProgress">
-                                                          <div class="myBar" style="width: {{ game.get_duration }}px"></div>
+                                                        {% if game.get_game_conclusion == "solved" %}
+                                                            <div class="myBar" style="width: {{ game.get_duration }}px"></div>
+                                                        {% elif game.get_game_conclusion == "unsolved" %}
+                                                            <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: black">UNSOLVED</p></div>
+                                                        {% elif game.get_game_conclusion == "forfeit" %}
+                                                            <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: dimgray">FORFEIT</p></div>
+                                                        {% endif %}
                                                         </div>
                                                     </td>
 
@@ -215,5 +221,6 @@
             }
         });
 	</script>
+
 {% include 'octo_site/includes/offcanvas.html' %}
 
