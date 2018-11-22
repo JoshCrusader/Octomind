@@ -1,8 +1,10 @@
 {% include 'octo_site/includes/header_reports.html' %}
 <!-- CONTENT -->
 {% load staticfiles %}
+<div id = 'toimport'>
 	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
 	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+</div>
 
 
 <!--
@@ -13,7 +15,17 @@
         - 
 -->
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
-    <section class="" style="background-color: #f7f7f7;padding: 20px; max-width: 650px; margin: auto;" >
+    <div style = "width: 100px; height: 100px; background-color: red;" onclick = "PrintElem('secc')"> click me</div>
+    <section id = "secc" class="" style="background-color: #f7f7f7;padding: 20px; max-width: 650px; margin: auto;" >
+        <div 
+            class = "uk-grid-divider uk-grid"
+            style = "background-color:#3e4042;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px"
+            >
+            
+            <div class = "uk-first-column" style = "color: #faa05a;">
+                Total number of Games: 
+            </div>
+        </div>
         <center>
         <div id = "games-played-graph" style = "width: 650px; height: 450px; padding: 0px">
             {% include 'octo_site/reports/market/player_analysis_report/games-played-graph.html' %}
@@ -35,3 +47,4 @@ let salesdata = {{ sales_graph | safe}}
 console.log(salesdata);
 </script>
 {% include 'octo_site/reports/market/player_analysis_report/load_data.html' %}
+{% include 'octo_site/reports/market/player_analysis_report/print_window.html' %}
