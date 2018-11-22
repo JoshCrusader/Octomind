@@ -16,13 +16,9 @@ def insert_val(sid,ts,val):
     try:
         x.execute("INSERT INTO `sensorDB`.`sensor_log` (`log_id`,`sensor_id`, `timestamp`, `value`) VALUES (null, %s, %s, %s);", (sid, ts, val))
         conn.commit()
-        print("inserted!")
     except Exception as e:
         print(e)
         conn.rollback()
-
-    conn.close()
-
     conn.close()
 def gen_random(x):
     return math.ceil(random.random() * x)
@@ -42,54 +38,199 @@ def gen_clues(dts, te, game):
             clue = Clues(clue_details_id=cd.clue_details_id, game_id=game.game_id)
             clue.save()
 
+def gen_error(ts,det,game,si,sensor_seq):
+    app =[]
+    for s in sensor_seq:
+        app.append(s.sensor_id)
+    er = GameErrorLog(game_id=game.game_id,timestamp=ts,details=det,sensor_id=si,cur_sensor_seq=app)
+    er.save()
+
+def gen_warning(ts, det, game, si,time_solved):
+    wa = GameWarningLog(game_id=game.game_id, timestamp=ts, details=det, sensor_id=si, time_solved=time_solved)
+    wa.save()
 
 def gen_log_db(case, dts , game):
     sensors = game.room.get_all_sensors
+    case_3_sensors = []
+    case_3_sensors.append(sensors[1])
+    case_3_sensors.append(sensors[0])
+    case_3_sensors.append(sensors[2])
+    case_3_sensors.append(sensors[3])
     cum_solve_time = 0
+
     if case == 1:
         for s in sensors:
-            min_solve = gen_r_random(6,15)
+            print("case!",case)
+            min_solve = gen_r_random(4,15)
             cum_solve_time += min_solve
             delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
             ts = dts + delta_time
             insert_val(s.sensor_id, ts, 1)
-    if case == 2:
+    elif case == 2:
         for s in sensors:
-            min_solve = gen_r_random(6,15)
+            print("case!",case)
+            min_solve = gen_r_random(8,16)
             cum_solve_time += min_solve
             delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
             ts = dts + delta_time
-
             insert_val(s.sensor_id, ts, 1)
 
-            if gen_random(100) <= 60:
-                delta_time = timedelta(minutes=cum_solve_time+gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+            if gen_random(100) <= 50:
+                delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+                ts = ts + delta_time
+                insert_val(s.sensor_id, ts, 0)
+            else:
+                delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
                 ts = dts + delta_time
                 insert_val(s.sensor_id, ts, 0)
+                delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+                ts = ts + delta_time
+                insert_val(s.sensor_id, ts, 1)
+    elif case == 3:
+        if gen_random(100) <= 70:
+            for s in case_3_sensors:
+                min_solve = gen_r_random(8, 16)
+                cum_solve_time += min_solve
+                delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+                ts = dts + delta_time
+                insert_val(s.sensor_id, ts, 1)
+                gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
+                print("case!",case)
+                if gen_random(100) <= 50:
+                    delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                else:
+                    delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
+                    ts = dts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                    delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 1)
+        else:
+            for s in sensors:
+                print("case!", case)
+                min_solve = gen_r_random(8, 15)
+                if gen_random(100) <= 70:
+                    min_solve = gen_r_random(3, 5)
+                    cum_solve_time += min_solve
+                    delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+                    ts = dts + delta_time
+                    insert_val(s.sensor_id, ts, 1)
+                    gen_warning(ts,"Sensor "+s.sensor_name+" solved too fast",game,s.sensor_id,min_solve)
+                else:
+                    cum_solve_time += min_solve
+                    delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+                    ts = dts + delta_time
+                    insert_val(s.sensor_id, ts, 1)
+def gen_log_lose(case, dts , game):
+    sensors = game.room.get_all_sensors
+    case_3_sensors = []
+    case_3_sensors.append(sensors[1])
+    case_3_sensors.append(sensors[0])
+    case_3_sensors.append(sensors[2])
+    case_3_sensors.append(sensors[3])
+    cum_solve_time = 0
+
+    if case == 1:
+        ss =sensors[:-1]
+        cs = case_3_sensors[:-1]
+        if gen_random(100) <= 50:
+            ss = sensors[:-2]
+            cs = case_3_sensors[:-2]
+        if gen_random(100) <= 70:
+            for s in ss:
+                print("case!",case)
+                min_solve = gen_r_random(4,15)
+                cum_solve_time += min_solve
+                delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+                ts = dts + delta_time
+                insert_val(s.sensor_id, ts, 1)
+        else:
+            for s in case_3_sensors:
+                min_solve = gen_r_random(8, 16)
+                cum_solve_time += min_solve
+                delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+                ts = dts + delta_time
+                insert_val(s.sensor_id, ts, 1)
+                gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
+                print("case!",case)
+                if gen_random(100) <= 50:
+                    delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                else:
+                    delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
+                    ts = dts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                    delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 1)
+    elif case == 2:
+        if gen_random(100) <= 80:
+            s=sensors[0]
+        else:
+            s = sensors[1]
+        print("case!",case)
+        min_solve = gen_r_random(8,16)
+        cum_solve_time += min_solve
+        delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
+        ts = dts + delta_time
+        insert_val(s.sensor_id, ts, 1)
+
+        if gen_random(100) <= 50:
+            delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+            ts = ts + delta_time
+            insert_val(s.sensor_id, ts, 0)
+        else:
+            delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
+            ts = dts + delta_time
+            insert_val(s.sensor_id, ts, 0)
+            delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+            ts = ts + delta_time
+            insert_val(s.sensor_id, ts, 1)
 
 def main_start():
+    print("zuc starting")
     games = Game.objects.filter(room_id=2)
     for game in games:
         detail = game.game_details
         sensors = game.room.get_all_sensors
         dts = detail.timestart
-        rd = gen_random(100)
-        if (rd <= 60):
-            if(detail.solved ==1):
-                for s in sensors:
-                    insert_val(s.sensor_id,dts,0)
 
-                r2 = gen_random(100)
-                if 0 > r2 <= 5:     #case 3
+        for s in sensors:
+            insert_val(s.sensor_id, dts, 0)
+        if(detail.solved ==1):
+            r2 = gen_r_random(1,100)
+            if r2 > 0 and r2 <= 65:     #case 1
+                gen_log_db(1, dts, game)
+            elif r2 > 66 and r2 <= 92:  #case2
+                gen_log_db(2, dts, game)
+            else:
+                gen_log_db(3, dts,game)
+                #cases 3 & 4
+                pass
+        else:
+            if game.get_game_conclusion == "forfeit":
+                #upto sensor 1 or 2 only
+                r2 = gen_r_random(1, 100)
+                if r2 > 0 and r2 <= 70:  # case 1
+                    gen_log_lose(4, dts, game)
+                else:
+                    gen_log_lose(5, dts, game)
+                    # cases 3 & 4
                     pass
-                elif 5 > r2 <= 65:  #case1
-                    te = gen_r_random(35, 45)
-                    gen_clues(1, dts, game)
-                elif 65 > r2 <= 95: #case2
-                    te = gen_r_random(35, 45)
-                    gen_clues(2, dts, game)
-                else:               #case4
+            else:
+                r2 = gen_r_random(1, 100)
+                if r2 > 0 and r2 <= 85:  # case 1
+                    gen_log_lose(1, dts, game)
+                elif r2 > 85 and r2 <= 98:  # case2
+                    gen_log_lose(2, dts, game)
+                else:
                     pass
+
+
+
     print('done')
 def dupe():
     games = Game.objects.filter(room_id=2)

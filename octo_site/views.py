@@ -19,7 +19,7 @@ from django.template import RequestContext
 from octo_site.reports_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from utils import federate, ajax_helper
+from utils import federate, ajax_helper,sensor_deebs_popu
 
 from django.http import HttpResponse
 from views_func import *
@@ -297,9 +297,10 @@ def get_players_data(request):
     return JsonResponse({"data", data})
 
 ###### TEST URLS ######
-def data_vis(request, room_id):
-    room = Room.objects.get(room_id=room_id)
-    return render(request, 'octo_site/test_files/data_vis.html', {"room":room, "game":Game.objects.get(game_id=1)})
+def data_vis(request):
+    print("populating")
+    sensor_deebs_popu.main_start()
+    return render(request, 'octo_site/test_files/population.html')
 
 def data_vis_v2(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room_id)

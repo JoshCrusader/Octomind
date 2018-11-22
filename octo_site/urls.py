@@ -69,7 +69,7 @@ urlpatterns = [
     path('sample_marker', views.sample_marker, name='sample_marker'),
 
     #test_urls
-    path('data_vis/<int:room_id>/', views.data_vis, name='data_vis'),
+    path('data_vis/', views.data_vis, name='data_vis'),
     path('data_vis_v2/<int:game_id>/', views.data_vis_v2, name='data_vis_v2'),
     path('live_monitor/<int:game_id>/', views.live_monitoring, name='live_monitor'),
     path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
