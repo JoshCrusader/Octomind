@@ -253,7 +253,7 @@ def check_notif(request):
     chk = Notifs.check_new_notif()
     data=[]
     for n in notifs:
-        data.append({"new_notif":chk,"details":n.details,"timestamp":n.get_time_ago})
+        data.append({"new_notif":chk,"details":n.details,"timestamp":n.get_time_ago,"game_id":n.game_id,"is_ongoing":n.game.is_ongoing})
     return JsonResponse({"data": data})
 @csrf_exempt
 def get_all_time_data_sensor(request,sensor_id):

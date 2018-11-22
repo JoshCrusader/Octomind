@@ -684,7 +684,18 @@ class Room(models.Model):
         for r in Rpi.objects.filter(room_id=self.room_id):
             sensors.append(len(Sensor.objects.filter(rpi_id=r.rpi_id)))
         return sum(sensors)
-
+    @property
+    def is_ongoing(self):
+        utc = pytz.UTC
+        diff = datetime.now().replace(tzinfo=utc) - self.game_details.timestart.replace(tzinfo=utc)
+        days = diff.days
+        days_to_hours = days * 24
+        diff_btw_two_times = diff.seconds / 3600
+        overall_hours = days_to_hours + diff_btw_two_times
+        # difference between time and now is less than 1 hour, then it is a past game.
+        if overall_hours < 1:
+            return True
+        return False
     @property
     def get_all_sensors(self):
         sensors=[]
@@ -724,14 +735,16 @@ class Rpi(models.Model):
         unique_together = (('rpi_id', 'room'),)
 
 class Notifs(models.Model):
-    notif_id = models.AutoField(primary_key=True)
+    notif_id = models.IntegerField(blank=True, null=True)
     details = models.CharField(max_length=150, blank=True, null=True)
     timestamp = models.DateTimeField(blank=True, null=True)
     viewed = models.IntegerField(blank=True, null=True)
+    game = models.ForeignKey(Game, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'notifs'
+
 
     @property
     def get_time_ago(self):
