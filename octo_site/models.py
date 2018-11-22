@@ -740,7 +740,7 @@ class Rpi(models.Model):
         unique_together = (('rpi_id', 'room'),)
 
 class Notifs(models.Model):
-    notif_id = models.IntegerField(blank=True, null=True)
+    notif_id = models.AutoField(primary_key=True)
     details = models.CharField(max_length=150, blank=True, null=True)
     timestamp = models.DateTimeField(blank=True, null=True)
     viewed = models.IntegerField(blank=True, null=True)
