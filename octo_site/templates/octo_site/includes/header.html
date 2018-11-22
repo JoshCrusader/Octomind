@@ -237,8 +237,8 @@
     function checkNotif() {
         let notif_data = $.get("/octo_site/api/check_notifs/");
         notif_data.done(function(results){
-           if (results.data[0].new_notif === true){
 
+           if (results.data[0].new_notif === true){
                 clearInterval(checkingNotif);
                 let audio = new Audio('{% static 'octo_site/ping.wav' %}');
                 audio.play();

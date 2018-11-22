@@ -344,6 +344,12 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: '# of Clues Asked'
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                steps: 1,
+                                stepValue: 1,
+                                max: {{ games.count }}.0001
                             }
                         }]
                     }
@@ -383,37 +389,6 @@
 		
 	</script>
 <script>
-    /*
-    function initData() {
-        rd = "{{ date }}";
-        sd = "{{ sd }}";
-        ed = "{{ ed }}";
-        rep_cat = "{{ rep_cat }}";
-        ri = "{{ room_id }}";
-        post_data = $.post("/octo_site/api/get_exception_data/",
-            {
-            'req_date': rd,
-                'sd': sd,
-                'ed': ed,
-                'req_cat':rep_cat,
-                'room_id':ri
-            });
-        post_data.done(function(data){
-            let forfeits = data[0];
-            let warnings = data[1];
-            let errors = data[2];
-            for(i in data){
-                console.log("killme",data[i]);
-            }
-            for (g in forfeits){
-                dt = ;
-                forfeitChartData.datasets.push(dt);
-                console.log(forfeitChartData.datasets);
-            }
-            window.myForfeitChart.update();
-        });
-    }
-    */
     function initData(){
         {% for game in games %}
            colorName = colorNames[forfeitChartData.datasets.length % colorNames.length];
