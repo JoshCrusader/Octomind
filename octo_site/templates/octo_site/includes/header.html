@@ -152,7 +152,7 @@
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: gitter"></span> Room Analysis</a></li>
-            <li class="{% if request.resolver_match.view_name ==  'exception_report' %}uk-active uk-open{% endif %}"><a href="{% url 'exception_report' %}"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span> Exception Report <span class="uk-badge" style="width:1vw;height:20px;background-color:red;color: orange">!</span></a></li>
+            <li class="{% if request.resolver_match.view_name ==  'exception_report' %}uk-active uk-open{% endif %}"><a href="{% url 'exception_report' %}"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span> Exception Report </a></li>
             <li class="{% if request.resolver_match.view_name ==  'market_report' %}uk-active uk-open{% endif %}"><a href="#"> <span class="uk-margin-small-right" data-uk-icon="icon: world"></span> Market Segmentation</a></li>
         {% endif %}
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner"%}
@@ -208,14 +208,75 @@
                             <li class="uk-nav-header">{{ request.user.first_name }} {{ request.user.last_name }} </li>
                             <li class="uk-nav-divider"></li>
                             <li><a href="{% url 'signout' %}"><span data-uk-icon="icon: sign-out"  data-uk-tooltip="Sign out"></span> Logout</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" onclick="openNotif()" id="new_notif_icon" data-uk-icon="icon: bell">
+                    </a>
+                    <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-left" style="width: 400px">
+                        <ul id="noticias" class="uk-nav uk-navbar-dropdown-nav" style="width: 400px">
+                            <li class="uk-nav-header">Noticias</li>
 
                         </ul>
                     </div>
                 </li>
+                    <!--
                 <li><a class="uk-navbar-toggle" data-uk-toggle data-uk-navbar-toggle-icon href="#offcanvas-nav"></a></li>
+                -->
                 </ul>
             </div>
         </nav>
     </div>
 </header>
+<script>
+    initNotif();
+
+    let checkingNotif = setInterval(checkNotif, 1000);
+
+    function checkNotif() {
+        let notif_data = $.get("/octo_site/api/check_notifs/");
+        notif_data.done(function(results){
+           if (results.data[0].new_notif === true){
+
+                clearInterval(checkingNotif);
+                let audio = new Audio('{% static 'octo_site/ping.wav' %}');
+                audio.play();
+                $("#spanz").remove();
+                $("#noticias").empty().append('<li class="uk-nav-header">Noticias</li>');
+                initNotif();
+           }
+        });
+    }
+    function openNotif() {
+        let notif_data = $.get("/octo_site/api/open_notifs/");
+            $("#new_notif_icon").removeClass("uk-text-warning");
+            $("#spanz").remove();
+        checkingNotif = setInterval(checkNotif, 1000);
+    }
+    function initNotif(){
+       let notif_data = $.get("/octo_site/api/check_notifs/");
+       notif_data.done(function(results){
+       obj = results.data;
+       spanz = '<span id="spanz" class="uk-text-warning uk-badge">!</span>';
+       if (obj[0].new_notif === true){
+            $("#new_notif_icon").addClass("uk-text-warning").append(spanz);
+       }
+       else{
+            $("#new_notif_icon").removeClass("uk-text-warning");
+            $("#spanz").remove();
+       }
+       for (i in obj){
+           item = '<li>';
+           item += '<a href=""><span data-uk-icon="icon: chevron-double-right"></span>';
+           item += obj[i].details;
+           item +='<p class="uk-text-small uk-margin-remove">'+obj[i].timestamp+'</p></a></li>';
+           item+= '<li class="uk-nav-divider" style="width: 75%"></li>';
+           $("#noticias").append(item);
+       }
+    });
+    }
+
+    //NOTIFICATIONS SHITERINO
+</script>
 <!--/HEADER-->

@@ -723,7 +723,38 @@ class Rpi(models.Model):
         db_table = 'rpi'
         unique_together = (('rpi_id', 'room'),)
 
+class Notifs(models.Model):
+    notif_id = models.AutoField(primary_key=True)
+    details = models.CharField(max_length=150, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    viewed = models.IntegerField(blank=True, null=True)
 
+    class Meta:
+        managed = False
+        db_table = 'notifs'
+
+    @property
+    def get_time_ago(self):
+        utc = pytz.UTC
+        diff = relativedelta(datetime.now().replace(tzinfo=utc), self.timestamp.replace(tzinfo=utc), )
+        if diff.months == 0:
+            if diff.days == 0:
+                if diff.hours == 0:
+                    if diff.minutes == 0:
+                        return "moments ago"
+                    return str(diff.minutes) + " minutes ago"
+                else:
+                    return str(diff.hours) + " hours ago"
+            else:
+                return str(diff.days) + " days ago"
+        else:
+            return str(diff.months) + " months ago"
+    @staticmethod
+    def check_new_notif():
+        for n in Notifs.objects.all():
+            if n.viewed == 0:
+                return True
+        return False
 class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=45, blank=True, null=True)

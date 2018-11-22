@@ -84,7 +84,8 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    return render(request,'octo_site/dashboard.html')
+    return redirect('control_panel')
+    #return render(request,'octo_site/dashboard.html')
 
 def page_sensor(request):
     return page_func.page_sensor(request)
@@ -239,7 +240,21 @@ def get_all_time_data_sensor(request,sensor_id):
 @csrf_exempt
 def get_exception_data(request):
     return get_exception_report.get_exception_data(request)
-
+@csrf_exempt
+def open_notif(request):
+    notifs = Notifs.objects.all()
+    for n in notifs:
+        n.viewed = 1
+        n.save()
+    return JsonResponse({"data": 'ok'})
+@csrf_exempt
+def check_notif(request):
+    notifs = Notifs.objects.all().order_by("-timestamp")[0:5]
+    chk = Notifs.check_new_notif()
+    data=[]
+    for n in notifs:
+        data.append({"new_notif":chk,"details":n.details,"timestamp":n.get_time_ago})
+    return JsonResponse({"data": data})
 @csrf_exempt
 def get_all_time_data_sensor(request,sensor_id):
     return JsonResponse(Sensor.objects.get(sensor_id=sensor_id).get_all_time_data)
