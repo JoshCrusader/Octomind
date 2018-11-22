@@ -165,11 +165,23 @@ class Game(models.Model):
             return "forfeit"
     @property
     def is_solved(self):
-        data = self.pull_data_game(self)
-        for d in data:
-            if d["time_solved"] == 0:
+        if self.game_details.solved == 0:
                 return False
         return True
+
+    @property
+    def is_ongoing(self):
+        if self.is_solved == False and self.game_details.timeend is None:
+            utc = pytz.UTC
+            diff = datetime.now().replace(tzinfo=utc) - self.game_details.timestart.replace(tzinfo=utc)
+            days = diff.days
+            days_to_hours = days * 24
+            diff_btw_two_times = diff.seconds / 3600
+            overall_hours = days_to_hours + diff_btw_two_times
+            # difference between time and now is less than 1 hour, then it is a past game.
+            if overall_hours < 1:
+                return True
+        return False
     @property
     def has_error(self):
         return True if GameErrorLog.objects.filter(game_id=self).count() > 0 else False
@@ -684,18 +696,7 @@ class Room(models.Model):
         for r in Rpi.objects.filter(room_id=self.room_id):
             sensors.append(len(Sensor.objects.filter(rpi_id=r.rpi_id)))
         return sum(sensors)
-    @property
-    def is_ongoing(self):
-        utc = pytz.UTC
-        diff = datetime.now().replace(tzinfo=utc) - self.game_details.timestart.replace(tzinfo=utc)
-        days = diff.days
-        days_to_hours = days * 24
-        diff_btw_two_times = diff.seconds / 3600
-        overall_hours = days_to_hours + diff_btw_two_times
-        # difference between time and now is less than 1 hour, then it is a past game.
-        if overall_hours < 1:
-            return True
-        return False
+
     @property
     def get_all_sensors(self):
         sensors=[]
