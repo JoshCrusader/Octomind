@@ -43,6 +43,21 @@
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <canvas class="uk-align-center" id="sensor_breakdown" ></canvas>
                             </div>
+                            <div class="uk-align-left">
+                                <div style="width: 7vh;height: 3vh;background-color: rgb(244, 146, 66);padding: 3vh;margin: 3vh">Warning</div>
+                                <div style="width: 7vh;height: 3vh;color:white;background-color: rgb(255, 65, 54);padding: 3vh;margin: 3vh">Error</div>
+                                <div style="width: 7vh;height: 3vh;background-color: rgb(190, 185, 191);padding: 3vh;margin: 3vh">Forfeit</div>
+                            </div>
+                            <div class="uk-align-right">
+
+                                <div style="margin-right: 6vw">
+                                    {% for s in sensors %}
+                                    <p class="uk-margin-remove uk-text-small" >{{ s.phase_name }}</p>
+                                    <div class="labels" style="width: 6vh;height: 2vh; background-color: rgb(244, 146, 66);">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </li>
                     </ul>
 
@@ -53,7 +68,7 @@
                             <li><a href=""><span data-uk-icon="icon: nut"></span> Sensor Breakdown</a></li>
                         </ul>
                     </div>
-                                          {% load static %}
+                {% load static %}
                 </div>
             </div>
         </div>
@@ -62,6 +77,8 @@
                 <div class="uk-width-auto uk-text-left" >
                     <h4 class="uk-margin-remove-bottom uk-text-left"> <b>{{ room.room_name }}</b> <span  class="uk-text-primary" data-uk-icon="icon: gitter;ratio: 1.0;"></span></h4>
                     <p class="uk-margin-remove uk-text-small">Report {{ msg }} <b class="uk-text-muted">({{ records_len }} Records Found)</b></p>
+
+
                 </div>
 
                 <div class="uk-width-expand uk-text-right">
@@ -74,11 +91,9 @@
             <div class="uk-card uk-card-default uk-card-small uk-card-hover" style="background-color: #fff;padding-left: 3vw;padding-right: 2vw">
             <div class="uk-card-header">
                 <div class="uk-grid uk-grid-medium" >
-                        <div class="uk-width-auto" >
-                            <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Games Included </h4>
-                        </div>
                         <div class="uk-card-body uk-align-center uk-width-1-1">
                             <div class="uk-overflow-auto">
+                                     <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Anomalies </h4>
                                      <table id="anomaly_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
                                           <thead>
                                               <tr>
@@ -118,6 +133,7 @@
                                         $('#anomaly_tbl').DataTable();
                                         });
                                     </script>
+                                    <h4 class="uk-margin-remove-bottom uk-text-primary"><span class="uk-text-primary" data-uk-icon="icon: list;ratio: 1"></span> List of Anomalies </h4>
                                     <table id="forfeit_tbl" class="uk-table uk-table-hover uk-table-divider" style="width:100%">
                                           <thead>
                                               <tr>
@@ -177,11 +193,84 @@
 
 </script>
 <script>
-        let post_data;
 		var color = Chart.helpers.color;
 		var forfeitChartData = {
 			datasets: []
 		};
+		var breakdownChartData = {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+                        {% for s in sensors %}
+                            {{ s.frequency }},
+                        {% endfor %}
+                        {% for s in sensors %}
+                            null,null,null,
+                        {% endfor %}
+
+					],
+					backgroundColor: [
+                        {% for s in sensors %}
+                        chartColors[colorNames[0{{ forloop.counter }} % colorNames.length]],
+                        {% endfor %}
+                        {% for s in sensors %}
+                            null,null,null,
+                        {% endfor %}
+					],
+					label: 'Sensors'
+				},{
+					data: [
+
+                            {% for s in sensors %}
+                                null,
+                            {% endfor %}
+                            {% for s in sensors %}
+                            {{ s.dist.warnings }},{{ s.dist.errors }},{{ s.dist.forfeits }},
+                            {% endfor %}
+					],
+					backgroundColor: [
+
+                            {% for s in sensors %}
+                                null,
+                            {% endfor %}
+                    {% for s in sensors %}
+                            'rgb(244, 146, 66)',
+                            chartColors['red'],
+                            'rgb(190, 185, 191)',
+                    {% endfor %}
+					],
+					label: 'Breakdowns'
+				}],
+				labels: [
+                    {% for s in sensors %}
+					'{{ s.phase_name }}',
+                    {% endfor %}
+                    {% for s in sensors %}
+					'{{ s.phase_name }}',
+					'{{ s.phase_name }}',
+					'{{ s.phase_name }}',
+                    {% endfor %}
+
+				]
+			},
+			options: {
+				responsive: true,
+				legend: {
+				    display:false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Sensor Anomaly Sources'
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		};
+
         var anomalyChartData = {
 			datasets: [{
 				label: 'Errors',
@@ -207,9 +296,19 @@
                 ]
 			}]
 		};
+        function paintLabels() {
+            lbl = document.getElementsByClassName('labels');
 
+            for (i in lbl){
+                colorName = colorNames[i % colorNames.length+1];
+                newColor = chartColors[colorName];
+                lbl[i].style.backgroundColor=newColor;
+            }
+        }
 		window.onload = function() {
 
+			var breakdown_ctx = document.getElementById('sensor_breakdown').getContext('2d');
+			window.myBreakdownChart = new Chart(breakdown_ctx, breakdownChartData);
 			var forfeit_ctx = document.getElementById('forfeit_chart').getContext('2d');
 			window.myForfeitChart = Chart.Scatter(forfeit_ctx, {
 				data: forfeitChartData,
@@ -276,6 +375,7 @@
 				}
 			});
 			initData();
+			paintLabels();
 		};
 
 		

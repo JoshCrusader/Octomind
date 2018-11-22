@@ -465,12 +465,12 @@ class Game(models.Model):
         else:
             average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
 
-
-        if time_finished >= 30 and time_finished < 51:
+        tf = time_finished + (game.get_num_clues_asked*5)
+        if tf >= 30 and tf < 51:
             skill_bracket = "Normal"
-        elif time_finished >= 51:
+        elif tf >= 51:
             skill_bracket = "Low"
-        elif time_finished < 30:
+        elif tf < 30:
             skill_bracket = "High"
         if game.is_solved == False:
             skill_bracket = "Low"
@@ -482,7 +482,26 @@ class Game(models.Model):
             "skill_bracket": skill_bracket
         }
         return data_return
+    @staticmethod
+    def get_sensor_asked(self):
+        g = self
+        data = g.pull_data_game(g)
+        minute_asked = self.get_game_lasted
+        sum_minutes =0
+        sensors_by_trigger = g.get_sensors_on_trigger_sequence
 
+        for d in data:
+            if float(d["time_solved"]) == 0.0:
+                data.remove(d)
+        if len(data) != 0:
+            for i,d in enumerate(data):
+                sum_minutes += d["time_solved"]
+                if sum_minutes > minute_asked:
+                    return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
+                if i == len(data)-1:
+                    return sensors_by_trigger[i+1].sensor_id
+        else:
+            return sensors_by_trigger[0].sensor_id
 class GameDetails(models.Model):
     game_details_id = models.AutoField(primary_key=True)
     timestart = models.DateTimeField(blank=True, null=True)

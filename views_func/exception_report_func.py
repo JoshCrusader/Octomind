@@ -18,31 +18,37 @@ def exception_report_details(request):
     a_date = None
     a_sd = None
     a_ed = None
+    sensor_dist = []
+    bdown=[]
+    new_s = []
     if request.method == 'POST':
         room = Room.objects.get(room_id=request.POST['room_id'])
         if request.POST['report_cat'] == "range":
             a_sd = request.POST['sd']
             a_ed = request.POST['ed']
             print("to date range we go!")
-            msg, games, errors, warnings = get_range_exception(request,room)
+            msg, games, errors, warnings,sensor_dist,bdown = get_range_exception(request,room)
         elif request.POST['report_cat'] == "monthly":
             a_date = request.POST['date']
-            msg, games, errors, warnings = get_monthly_exception(request,room)
+            msg, games, errors, warnings,sensor_dist,bdown = get_monthly_exception(request,room)
         elif request.POST['report_cat'] == "yearly":
             a_date = request.POST['date']
-            msg, games, errors, warnings = get_yearly_exception(request,room)
+            msg, games, errors, warnings,sensor_dist,bdown = get_yearly_exception(request,room)
         elif request.POST['report_cat'] == "daily":
             a_date = request.POST['date']
-            msg, games, errors, warnings = get_daily_exception(request,room)
+            msg, games, errors, warnings,sensor_dist,bdown = get_daily_exception(request,room)
         else:
             print("what")
+        print("wats_good", sensor_dist)
     if len(games) !=0 or len(warnings) !=0 or len(errors) !=0:
         has_result=True
-        print(len(games))
-        print(len(warnings))
-        print(len(errors))
-    for e in errors:
-        print(e.game.game_details.timestart)
+    for s in sensor_dist:
+        sen = Sensor.objects.get(sensor_id=s)
+        new_s.append({"sensor_id":s,
+                      "phase_name":sen.phase_name,
+                      "dist":bdown[s],
+                      "frequency":sensor_dist[s]})
+    print("psass pls",new_s)
     return render(request, 'octo_site/reports/details/exception_report_details.html',
                   {"has_result":has_result,
                    "msg":msg,
@@ -53,5 +59,6 @@ def exception_report_details(request):
                    "room_id":request.POST['room_id'],
                    "rep_cat": request.POST['report_cat'],
                    "date" : a_date,
+                   "sensors": new_s,
                    "sd": a_sd,
                    "ed": a_ed})
