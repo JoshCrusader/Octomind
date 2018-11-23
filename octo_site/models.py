@@ -52,17 +52,19 @@ class ClueDetails(models.Model):
         minute_asked = self.get_minute_asked
         sum_minutes =0
         sensors_by_trigger = g.get_sensors_on_trigger_sequence
-
-        for d in data:
-            if float(d["time_solved"]) == 0.0:
-                data.remove(d)
-        if len(data) != 0:
-            for i,d in enumerate(data):
-                sum_minutes += d["time_solved"]
-                if sum_minutes > minute_asked:
-                    return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
-                if i == len(data)-1:
-                    return sensors_by_trigger[i+1].sensor_id
+        try:
+            for d in data:
+                if float(d["time_solved"]) == 0.0:
+                    data.remove(d)
+            if len(data) != 0:
+                for i,d in enumerate(data):
+                    sum_minutes += d["time_solved"]
+                    if sum_minutes > minute_asked:
+                        return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
+                    if i == len(data)-1:
+                        return sensors_by_trigger[i+1].sensor_id
+        except:
+            return sensors_by_trigger[0].sensor_id
         else:
             return sensors_by_trigger[0].sensor_id
 
@@ -505,17 +507,19 @@ class Game(models.Model):
         minute_asked = self.get_game_lasted
         sum_minutes =0
         sensors_by_trigger = g.get_sensors_on_trigger_sequence
-
-        for d in data:
-            if float(d["time_solved"]) == 0.0:
-                data.remove(d)
-        if len(data) != 0:
-            for i,d in enumerate(data):
-                sum_minutes += d["time_solved"]
-                if sum_minutes > minute_asked:
-                    return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
-                if i == len(data)-1:
-                    return sensors_by_trigger[i+1].sensor_id
+        try:
+            for d in data:
+                if float(d["time_solved"]) == 0.0:
+                    data.remove(d)
+            if len(data) != 0:
+                for i,d in enumerate(data):
+                    sum_minutes += d["time_solved"]
+                    if sum_minutes > minute_asked:
+                        return data[0]["sensor_id"] if i == 0 else data[i]["sensor_id"]
+                    if i == len(data)-1:
+                        return sensors_by_trigger[i+1].sensor_id
+        except:
+            return sensors_by_trigger[0].sensor_id
         else:
             return sensors_by_trigger[0].sensor_id
 class GameDetails(models.Model):
@@ -550,7 +554,9 @@ class GameErrorLog(models.Model):
         utc = pytz.UTC
         datetime_object = self.timestamp
         clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
-        time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+        time_diff = datetime_object - clean_date
+        if self.game_id == 243:
+            print(self.timestamp,self.game.game_details.timestart,round(time_diff / timedelta(minutes=1),2))
         return round(time_diff / timedelta(minutes=1),2)
     @staticmethod
     def error_log_not_existing(game_id, sensor_id):

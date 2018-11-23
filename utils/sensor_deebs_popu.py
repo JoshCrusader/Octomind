@@ -39,7 +39,7 @@ def gen_clues(dts, te, game):
             clue.save()
 
 def gen_error(ts,det,game,si,sensor_seq):
-    app =[]
+    app=[]
     for s in sensor_seq:
         app.append(s.sensor_id)
     er = GameErrorLog(game_id=game.game_id,timestamp=ts,details=det,sensor_id=si,cur_sensor_seq=app)
@@ -94,7 +94,9 @@ def gen_log_db(case, dts , game):
                 delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
                 ts = dts + delta_time
                 insert_val(s.sensor_id, ts, 1)
-                gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
+                if s.sensor_id == case_3_sensors[1].sensor_id:
+                    gen_error(ts, "Sensor " + s.sensor_name + " not in sequence", game, s.sensor_id, case_3_sensors)
+
                 print("case!",case)
                 if gen_random(100) <= 50:
                     delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
@@ -111,7 +113,7 @@ def gen_log_db(case, dts , game):
             for s in sensors:
                 print("case!", case)
                 min_solve = gen_r_random(8, 15)
-                if gen_random(100) <= 70:
+                if gen_random(100) <= 40:
                     min_solve = gen_r_random(3, 5)
                     cum_solve_time += min_solve
                     delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
@@ -153,7 +155,8 @@ def gen_log_lose(case, dts , game):
                 delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
                 ts = dts + delta_time
                 insert_val(s.sensor_id, ts, 1)
-                gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
+                if s.sensor_id == case_3_sensors[1].sensor_id:
+                    gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
                 print("case!",case)
                 if gen_random(100) <= 50:
                     delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
@@ -271,45 +274,5 @@ def dupe():
                 detail.save()
             else:
                 gen_clues(40, dts, te, game)
-
-    print('done')
-
-def sec_start():
-    games = Game.objects.filter(room_id=2)
-    for game in games:
-        detail = game.game_details
-        dts = detail.timestart
-        rd = gen_random(100)
-        if (rd <= 12):
-            r2 = gen_r_random(1, 4)
-            if r2 == 1:
-                te = gen_r_random(0, 15)
-                gen_error(12, dts, te, game)
-            elif r2 == 2:
-                te = gen_r_random(16, 30)
-                gen_error(5, dts, te, game)
-            elif r2 == 3:
-                te = gen_r_random(31, 45)
-                gen_error(5, dts, te, game)
-            else:
-                te = gen_r_random(46, 59)
-                gen_error(40, dts, te, game)
-
-            '''
-            t3 = gen_random(100)
-            te = 60
-            delta_time = timedelta(minutes=te)
-            if (t3 <= 7):
-                te = gen_r_random(15, 50)
-                gen_clues(58, dts, te, game)
-                delta_time = timedelta(minutes=te, seconds=gen_r_random(0, 58))
-                timee = dts + delta_time
-                detail.timeend = timee
-                detail.save()
-            else:
-                gen_clues(40, dts, te, game)
-            '''
-        else:
-            pass
 
     print('done')
