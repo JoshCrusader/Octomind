@@ -20,8 +20,7 @@
             <li><a href="#">Market Warnings</a></li>
 
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: world"></span>Market Report</li>
-            <li><a href="#">Lead Generation</a></li>
-            <li><a href="#">Market Segmentation</a></li>
+            <li><a href="{% url 'market_analysis' %}" class = "{% if request.resolver_match.view_name ==  'market_analysis' %}uk-active uk-open{% endif %}">Market Analysis</a></li>
             <li class="uk-nav-divider"></li>
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: cog"></span>Settings</li>
             <li class="{% if request.resolver_match.view_name ==  'page_sensor' %}uk-active{% endif %}"><a href="{% url 'page_sensor' %}"><span class="uk-margin-small-left" data-uk-icon="icon: nut"></span> Sensors</a></li>

@@ -1,3 +1,4 @@
+<!--
 <table class="uk-table uk-table-striped">
     <caption> Yearly Games Played</caption>
     <thead>
@@ -23,6 +24,7 @@
         </tr>
     </tbody>
 </table>
+-->
 <div>
 <canvas id = "games_played_graph"></canvas>
 </div>
@@ -34,14 +36,8 @@ games_played_data = {
         data: [11,22,58,31, 119, 84],
 
         backgroundColor: "rgba(255, 99, 132, 0.2)",
-        label: "Number of games played"
-    },
-    {
-        data: [20,52,68,36, 79, 64],
-
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
         label: "Sales"
-    }],
+    },],
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
     labels: [
@@ -58,7 +54,7 @@ games_played_options = {
     responsive: true,
     title:{
         display: true,
-        text: "Yearly Games Played"
+        text: "Sales earned by the Rooms"
     },
     xAxes: [{
         afterTickToLabelConversion: function(data){

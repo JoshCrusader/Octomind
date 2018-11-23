@@ -186,4 +186,5 @@ def player_analysis_report(request):
     
     properties = {}
     properties['sales_graph'] = json.dumps(get_game_sales(games, request))
+    properties['lengames'] = len(games)
     return render(request, 'octo_site/reports/market/player_analysis_report/main.html', properties)

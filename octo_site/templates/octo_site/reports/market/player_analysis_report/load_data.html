@@ -10,8 +10,7 @@
             }
         }
         games_played_data.labels = labels;
-        games_played_data.datasets[0].data = group_count;
-        games_played_data.datasets[1].data = sales_count;
+        games_played_data.datasets[0].data = sales_count;
         window.gamesPlayedChart.update();
     }
     load_games_played(salesdata['sales']);

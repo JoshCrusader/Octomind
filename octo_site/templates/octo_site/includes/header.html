@@ -153,7 +153,7 @@
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: gitter"></span> Room Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'exception_report' %}uk-active uk-open{% endif %}"><a href="{% url 'exception_report' %}"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span> Exception Report </a></li>
-            <li class="{% if request.resolver_match.view_name ==  'market_report' %}uk-active uk-open{% endif %}"><a href="#"> <span class="uk-margin-small-right" data-uk-icon="icon: world"></span> Market Segmentation</a></li>
+            <li class="{% if request.resolver_match.view_name ==  'market_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'market_analysis' %}"> <span class="uk-margin-small-right" data-uk-icon="icon: world"></span> Market Analysis</a></li>
         {% endif %}
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner"%}
 

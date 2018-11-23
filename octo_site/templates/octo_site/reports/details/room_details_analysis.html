@@ -81,6 +81,9 @@
                         <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
                         <div class = "m-sandbox-content card-lite uk-card-hover" style="height: 400px">
                             <div class = "m-sandbox-frame" style="margin-right: 40vh;height: 360px;width: 360px">
+                                <div id="heatmap_container" style = "position: absolute; width: 360px; height: 360px;">
+                                    <canvas id = "heatmap_canvas"></canvas>
+                                </div>
                                 <div id="path_sequence_plot" style = "position: absolute; width: 360px; height: 360px;">
                                     <!-- Things get appended here thru setSandBox() -->
                                 </div>

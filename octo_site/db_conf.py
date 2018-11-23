@@ -38,7 +38,7 @@ def check_anomaly(game):
                     timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
                     time_solved=s['time_solved']
                 )
-                notifs_detail = "Game Anomaly Detected at game "+game.match_id
+                notifs_detail = "Game Anomaly Detected at game "+str(game.match_id)
                 Notifs.objects.create(
                         details=notifs_detail,
                         timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
@@ -86,7 +86,7 @@ def check_seq(game):
                         cur_sensor_seq=game.get_sensor_trigger_sequence
                     )
                     game_error_log.save()
-                    notifs_detail = "Sensor Sequence Error Detected at game "+game.match_id
+                    notifs_detail = "Sensor Sequence Error Detected at game "+str(game.match_id)
                     Notifs.objects.create(
                         details=notifs_detail,
                         timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
