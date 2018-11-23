@@ -1,11 +1,13 @@
 
 {% load staticfiles %}
+<script src="{% static 'octo_site/res/simpleheatmap/simpleheat.js' %}"></script>
 <script>
     /*
         final_results - comes from live_monitor, retreived by sensor logs api
         roomid  - from view
         
     */
+    let heat_data = []
     let new_opacity;
     function sendSensorRequet(){
         //var rid = document.getElementById("mainInfo").getAttribute("roomid");
@@ -86,8 +88,10 @@
         for(var i = 0; i < items.length; i++){
             setPathF(items[i]);
         }
-        console.log(items);
+        addHeat(items);
+        req_heat();
         animatePath(items);
+        
     }
     function setPathF(pathdom){
         
@@ -164,9 +168,93 @@
                 animate_arrows(paths, 0, interv);
             }, 80);
 
-    }
-</script>
+        }
 
+        function addHeat(paths){
+            for(let i = 0; i < paths.length; i++){
+                pathdom = paths[i];
+                var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
+                var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
+
+                var p1 = document.getElementById(t1n);
+                var p2 = document.getElementById(t2n);
+
+                var s1 = window.getComputedStyle(p1);
+                var s2 = window.getComputedStyle(p2);
+                
+                var y1 = parseInt(p1.offsetTop);
+                var y2 = parseInt(p2.offsetTop);
+
+                var x1 = parseInt(p1.offsetLeft);
+                var x2 = parseInt(p2.offsetLeft);
+
+                delta_x = x2 - x1;
+                delta_y = y2 - y1;
+
+                delta_a = Math.abs(delta_x)*Math.abs(delta_x);
+                delta_b = Math.abs(delta_y)*Math.abs(delta_y);
+                hypotenuse = Math.sqrt(delta_a + delta_b);
+                console.log(hypotenuse);
+                
+                var posx = delta_x/Math.floor(hypotenuse /30);
+                var posy = delta_y/Math.floor(hypotenuse /30);
+
+                var low = 20;
+                var high = low*2;
+                for(var x = 0; x < Math.floor(hypotenuse /30); x++ ){
+                    for(var z = 0; z < 4; z++){
+                        var oldx = x1+posx*(x+1);
+                        var oldy = y1+posy*(x+1);
+                        var pathx = Math.floor(oldx-low+Math.random()*high);
+                        var pathy = Math.floor(oldy-low+Math.random()*high);
+                        heat_data.push([pathx, pathy, 1]);
+                    }
+                }
+                var low = 50;
+                var high = low*2;
+                for(var x = 0; x < 11; x++){
+                    fakex1 = Math.floor(x1-low+Math.random()*high);
+                    fakex2 = Math.floor(x2-low+Math.random()*high);
+                    fakey1 = Math.floor(y1-low+Math.random()*high);
+                    fakey2 = Math.floor(y2-low+Math.random()*high);
+                    heat_data.push([fakex1, fakey1, 1]);
+                    heat_data.push([fakex2, fakey2, 1]);
+                }
+                heat_data.push([x1+15, y1+15, 1]);
+                heat_data.push([x2+15, y2+15, 1]);
+            }
+        }   
+</script>
+<script>
+function req_heat(){
+    var data = [[38,20,2],[38,690,3],[48,30,1], [360,360,1], [350,360,1], [360,350,1]];
+    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+    function get(id) {
+        return document.getElementById(id);
+    }
+
+    var heat = simpleheat('heatmap_canvas').data(heat_data).max(18),
+        frame;
+
+    function draw() {
+        // console.time('draw');
+        heat.draw();
+        // console.timeEnd('draw');
+        frame = null;
+    }
+
+    draw();
+    get('heatmap_canvas').onmousemove = function (e) {
+        // console.log(e.layerX+' '+e.layerY);
+        heat.add([e.layerX, e.layerY, 1]);
+        frame = frame || window.requestAnimationFrame(draw);
+    };
+}
+
+
+</script>
 <script>
 let final_results;
 sensor_data =  $.get("/octo_site/sensor_data/{{ game.game_id }}/");

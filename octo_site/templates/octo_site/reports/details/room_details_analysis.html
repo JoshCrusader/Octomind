@@ -44,8 +44,8 @@
                                 <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
                                 <div id="player_div" style="width: 100%; height: 551px;">
                                     <div style = "width: 60%; height: 100%; float: left;">
-                                        <div style = "width: 100%; height: 20%;" >
-                                        Total Players: chuchu
+                                        <div style = "width: 100%; height: 20%;" id = 'teamlen'>
+                                        Total Players: 0
                                         </div>
                                         <div style = "width: 100%; height: 80%; position: relative;" >
                                             <canvas id = "age_bar_chart"></canvas>
@@ -684,6 +684,11 @@
             }
             map_leg.innerHTML = map_str;
             // </FUNCTION FOR LOADING MAP LEGEND> //
+
+            // UPDATE THE TEAM NUMBER//
+                var teaml = document.getElementById('teamlen');
+                teaml.innerHTML = 'Total Players: '+market['length'];
+            // end //
         }
     });
 </script>
