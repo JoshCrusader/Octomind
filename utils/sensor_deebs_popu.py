@@ -81,7 +81,7 @@ def gen_log_db(case, dts , game):
                 insert_val(s.sensor_id, ts, 0)
             else:
                 delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
-                ts = dts + delta_time
+                ts = ts + delta_time
                 insert_val(s.sensor_id, ts, 0)
                 delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
                 ts = ts + delta_time
@@ -104,7 +104,7 @@ def gen_log_db(case, dts , game):
                     insert_val(s.sensor_id, ts, 0)
                 else:
                     delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
-                    ts = dts + delta_time
+                    ts = ts + delta_time
                     insert_val(s.sensor_id, ts, 0)
                     delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
                     ts = ts + delta_time
@@ -164,7 +164,7 @@ def gen_log_lose(case, dts , game):
                     insert_val(s.sensor_id, ts, 0)
                 else:
                     delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
-                    ts = dts + delta_time
+                    ts = ts + delta_time
                     insert_val(s.sensor_id, ts, 0)
                     delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
                     ts = ts + delta_time
@@ -187,7 +187,7 @@ def gen_log_lose(case, dts , game):
             insert_val(s.sensor_id, ts, 0)
         else:
             delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
-            ts = dts + delta_time
+            ts = ts + delta_time
             insert_val(s.sensor_id, ts, 0)
             delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
             ts = ts + delta_time

@@ -150,7 +150,7 @@ class Game(models.Model):
         data = self.pull_game_summary(self)
         if self.game_details.solved == 0:
             return 60.0
-        return data["general_info"]["time_finished_duration"]
+        return round(data["general_info"]["time_finished_duration"], 1)
     @property
     def get_final_duration(self):
         data = self.pull_game_summary(self)
