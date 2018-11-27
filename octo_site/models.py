@@ -448,6 +448,7 @@ class Game(models.Model):
                 data['value'] = '1'
             else:
                 data['value'] = '0'
+            data['sensor_name'] = sensor.sensor_name
         return dataset_logs
     @staticmethod
     def pull_game_summary(self):
@@ -484,14 +485,16 @@ class Game(models.Model):
             average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
 
         tf = time_finished + (game.get_num_clues_asked*5)
-        if tf >= 30 and tf < 51:
-            skill_bracket = "Normal"
-        elif tf >= 51:
-            skill_bracket = "Low"
-        elif tf < 30:
-            skill_bracket = "High"
+
         if game.is_solved == False:
             skill_bracket = "Low"
+        else:
+            if tf >= 30 and tf < 51:
+                skill_bracket = "Normal"
+            elif tf >= 51:
+                skill_bracket = "Low"
+            elif tf < 30:
+                skill_bracket = "High"
 
         data_return["sensor_info"] = data_tally
         data_return["general_info"] = {

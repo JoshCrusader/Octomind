@@ -121,11 +121,10 @@ let config = {
         }
     };
 function initData() {
-   sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
-   sensor_data.done(function(results){
+    sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
+    sensor_data.done(function(results){
         obj = results.sensors;
 
-        console.log("gotten d sensors {{ game.game_id }}",obj);
         newYAxis = null;
         for (i in obj)
         {
@@ -160,9 +159,30 @@ function initData() {
            config.options.scales.xAxes.push(newXAxis);
            window.myLine.update()
         }
+
+        window.myLine.update();
+
+        console.log("gotten d sensors {{ game.game_id }}",obj);
+        callData();
    });
-   let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
-   game_data.done(function(results){
+
+
+
+    window.myLine.update();
+    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
+    summary_data.done(function(results){
+        console.log(results.data);
+        $("#time_finished").html(results.data.general_info.time_finished_duration);
+        $("#skill_bracket").html(results.data.general_info.skill_bracket);
+        $("#avg_time").html(results.data.general_info.average_time);
+
+    });
+}
+</script>
+<script>
+function callData(){
+    let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
+    game_data.done(function(results){
        let obj = results.data;
        let prev_ts=null;
         for (obx in obj)
@@ -219,6 +239,8 @@ function initData() {
            }
            window.myLine.update()
         }
+
+        window.myLine.update();
         console.log("lbl",config.data.labels);
         console.log("datset",config.data.datasets);
    });
@@ -260,16 +282,8 @@ function initData() {
                 }
                 }
 
+                window.myLine.update();
+
            });
-
-    window.myLine.update();
-    let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
-    summary_data.done(function(results){
-        console.log(results.data);
-        $("#time_finished").html(results.data.general_info.time_finished_duration);
-        $("#skill_bracket").html(results.data.general_info.skill_bracket);
-        $("#avg_time").html(results.data.general_info.average_time);
-
-    });
 }
 </script>

@@ -41,14 +41,10 @@ def game_logs_detail(request,game_id):
     senlogs = g.pull_data_fr_game(g)
 
     date_now = datetime.now().strftime("%Y-%m-%d")
-    for d in senlogs:
-        sensor = Sensor.objects.get(sensor_id=d['sensor_id'])
-        d['sensor_name'] = sensor.sensor_name
-        d['rpi_id'] = sensor.rpi_id
-        d['sensor_type_id'] = sensor.sensor_type_id
+
+
     return render(request, 'octo_site/game_logs/game_logs_detail.html',
                   {'logs':senlogs,
-                   'all_time_data':g.room.get_all_time_data,
                    'clues':clues,
                    'dt_now':date_now,
                    'clues_len':len(clues),
