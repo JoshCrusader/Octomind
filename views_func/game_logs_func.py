@@ -29,7 +29,7 @@ def game_logs(request):
             pass
 
     for ag in all_g:
-        if ag.game_id not in cur_inds:
+        if ag.game_id not in cur_inds and ag.game_details.timestart is not None:
             all_g2.append(ag)
     return render(request, 'octo_site/game_logs/game_logs.html', {'games': all_g2, 'cur_games': cur_games})
 

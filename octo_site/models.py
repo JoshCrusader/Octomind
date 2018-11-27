@@ -194,20 +194,7 @@ class Game(models.Model):
     @property
     def get_num_error(self):
         return GameErrorLog.objects.filter(game_id=self).count()
-        '''
-        if sequence not equal to you know, my sensor
-        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
-        my_seq = self.get_sensor_trigger_sequence
-        index_add = len(real_seq) - len(my_seq)
-        if index_add != 0:
-            index_add = real_seq[-1*index_add:]
-            for i in index_add:
-                my_seq.append(i)
 
-        if str(my_seq) == str(real_seq):
-            return False
-        return True
-        '''
     @property
     def get_error_points_sensors(self):
         problem_sensors =[]
@@ -424,6 +411,7 @@ class Game(models.Model):
 
         data_return = []
         # execute the SQL query using execute() method.
+
         cursor.execute(
             "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
                 f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")

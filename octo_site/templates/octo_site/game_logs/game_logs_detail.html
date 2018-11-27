@@ -250,6 +250,7 @@
                                                             <td align="right">{{ data.time_solved_clean }}<p style="display: inline" id="ts_{{ data.sensor_id }}"></p></td>
                                                             <td align="right">{{ data.ts}}</td>
                                                         </tr>
+                                                        {% if data.ts is not None %}
                                                         <script>
                                                         sensor{{ data.sensor_id }}_comp =  $.get("/octo_site/api/get_all_time_data_sensor/{{ data.sensor_id }}/");
                                                         sensor{{ data.sensor_id }}_comp.done(function(results){
@@ -267,7 +268,8 @@
                                                             }
 
                                                        });
-                                                    </script>
+                                                       </script>
+                                                       {% endif %}
 
 
                                                     {% endfor %}
