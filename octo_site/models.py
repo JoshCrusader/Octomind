@@ -156,8 +156,8 @@ class Game(models.Model):
         data = self.pull_game_summary(self)
 
         if self.game_details.solved == 0:
-            return 60.0+(5*self.get_num_clues_asked)
-        return data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked)
+            return round(60.0+(5*self.get_num_clues_asked),2)
+        return round(data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked), 2)
     @property
     def get_num_clues_asked(self):
         return Clues.objects.filter(game_id=self.game_id).count()
@@ -555,8 +555,9 @@ class GameErrorLog(models.Model):
         datetime_object = self.timestamp
         clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
         time_diff = datetime_object - clean_date
-        if self.game_id == 243:
-            print(self.timestamp,self.game.game_details.timestart,round(time_diff / timedelta(minutes=1),2))
+        if round(time_diff / timedelta(minutes=1),2) > 60:
+            print(self.game_error_id,"gamol ako",self.game_id)
+            return 0
         return round(time_diff / timedelta(minutes=1),2)
     @staticmethod
     def error_log_not_existing(game_id, sensor_id):
@@ -582,6 +583,11 @@ class GameWarningLog(models.Model):
         datetime_object = self.timestamp
         clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
         time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
+
+        if round(time_diff / timedelta(minutes=1), 2) > 60:
+            print(self.game.game_details.timestart)
+            print(self.game_warning_id,"gamol ako", self.game_id)
+            return 0
         return round(time_diff / timedelta(minutes=1),2)
     @staticmethod
     def warning_log_not_existing(game_id, sensor_id):
