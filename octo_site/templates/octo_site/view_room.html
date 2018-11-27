@@ -193,6 +193,7 @@ function addClue(target){
 }
 
 function endGame(target, yesend){
+
     var gid = target.getAttribute("gameid");
     $.ajax({
             type:"POST",
@@ -202,11 +203,18 @@ function endGame(target, yesend){
                 'end': yesend
             },
             success: function(data){
-                location.reload();
+                if (data.data === "ended"){
+                    window.location.reload();
+                }
+                else{
+                    UIkit.notification(data.data, {pos: 'top-center'});
+                }
+
             }
     });
+
 }
-var times = 0
+var times = 0;
 function loop(){
     setInterval(() => {
         var timestamps = document.getElementsByClassName("spanTimestamp");

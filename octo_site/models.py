@@ -174,7 +174,12 @@ class Game(models.Model):
         if self.game_details.solved == 0:
                 return False
         return True
-
+    @property
+    def is_all_puzzle_finished(self):
+        for g in self.pull_data_game(self):
+            if g['time_solved'] == 0:
+                return False
+        return True
     @property
     def is_ongoing(self):
         if self.is_solved == False and self.game_details.timeend is None:
