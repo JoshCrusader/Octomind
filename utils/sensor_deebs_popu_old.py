@@ -137,19 +137,13 @@ def gen_log_lose(case, dts , game):
     if case == 1:
         ss =sensors[:-1]
         cs = case_3_sensors[:-1]
-
-        if gen_random(100) <= 60:
+        if gen_random(100) <= 50:
             ss = sensors[:-2]
             cs = case_3_sensors[:-2]
-
-        if gen_random(100) <= 10:
-            ss = sensors[:-3]
-            cs = case_3_sensors[:-3]
-
-        if gen_random(100) <= 90:
+        if gen_random(100) <= 70:
             for s in ss:
                 print("case!",case)
-                min_solve = gen_r_random(4,20)
+                min_solve = gen_r_random(4,15)
                 cum_solve_time += min_solve
                 delta_time = timedelta(minutes=cum_solve_time, seconds=gen_r_random(0, 58))
                 ts = dts + delta_time
@@ -164,7 +158,17 @@ def gen_log_lose(case, dts , game):
                 if s.sensor_id == case_3_sensors[1].sensor_id:
                     gen_error(ts,"Sensor "+s.sensor_name+" not in sequence",game,s.sensor_id,case_3_sensors)
                 print("case!",case)
-
+                if gen_random(100) <= 50:
+                    delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                else:
+                    delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 0)
+                    delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+                    ts = ts + delta_time
+                    insert_val(s.sensor_id, ts, 1)
     elif case == 2:
         if gen_random(100) <= 80:
             s=sensors[0]
@@ -177,24 +181,60 @@ def gen_log_lose(case, dts , game):
         ts = dts + delta_time
         insert_val(s.sensor_id, ts, 1)
 
+        if gen_random(100) <= 50:
+            delta_time = timedelta(minutes=gen_r_random(0, 9), seconds=gen_r_random(0, 58))
+            ts = ts + delta_time
+            insert_val(s.sensor_id, ts, 0)
+        else:
+            delta_time = timedelta(minutes=gen_r_random(0, 2), seconds=gen_r_random(0, 58))
+            ts = ts + delta_time
+            insert_val(s.sensor_id, ts, 0)
+            delta_time = timedelta(minutes=gen_r_random(1, 3), seconds=gen_r_random(0, 58))
+            ts = ts + delta_time
+            insert_val(s.sensor_id, ts, 1)
 
 def main_start():
     print("zuc starting")
-    games = Game.objects.filter(room_id=3)
+    games = Game.objects.filter(room_id=2)
     for game in games:
         detail = game.game_details
         sensors = game.room.get_all_sensors
         dts = detail.timestart
 
-        if(detail.solved ==0 and detail.timestart is not None):
-            r2 = gen_r_random(1, 100)
-            if r2 > 0 and r2 <= 70:  # case 1
-                gen_log_lose(1, dts, game)
+        for s in sensors:
+            insert_val(s.sensor_id, dts, 0)
+        if(detail.solved ==1):
+            r2 = gen_r_random(1,100)
+            if r2 > 0 and r2 <= 65:     #case 1
+                gen_log_db(1, dts, game)
+            elif r2 > 66 and r2 <= 92:  #case2
+                gen_log_db(2, dts, game)
             else:
-                gen_log_lose(2, dts, game)
+                gen_log_db(3, dts,game)
+                #cases 3 & 4
                 pass
+        else:
+            if game.get_game_conclusion == "forfeit":
+                #upto sensor 1 or 2 only
+                r2 = gen_r_random(1, 100)
+                if r2 > 0 and r2 <= 70:  # case 1
+                    gen_log_lose(4, dts, game)
+                else:
+                    gen_log_lose(5, dts, game)
+                    # cases 3 & 4
+                    pass
+            else:
+                r2 = gen_r_random(1, 100)
+                if r2 > 0 and r2 <= 85:  # case 1
+                    gen_log_lose(1, dts, game)
+                elif r2 > 85 and r2 <= 98:  # case2
+                    gen_log_lose(2, dts, game)
+                else:
+                    pass
 
 
+
+    print('done')
 def dupe():
     games = Game.objects.filter(room_id=2)
     for game in games:

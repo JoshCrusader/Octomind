@@ -258,6 +258,7 @@
        let notif_data = $.get("/octo_site/api/check_notifs/");
        notif_data.done(function(results){
        obj = results.data;
+       console.log(obj);
        spanz = '<span id="spanz" class="uk-text-warning uk-badge">!</span>';
        if (obj[0].new_notif === true){
             $("#new_notif_icon").addClass("uk-text-warning").append(spanz);
