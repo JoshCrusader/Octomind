@@ -83,12 +83,13 @@
                    }
 
                });
-
+                //// SUMTHING WONG WITH CLUE :'(
                {% for game in games %}
                clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
                clue_data.done(function(results){
                     let obj = results.data;
-                    if (obj.length !=0){
+                    if (obj.length !== 0){
+                    console.log("clue info", results.data);
                        for (ob in obj)
                        {
                            bubbleChartData.datasets[bubbleChartData.datasets.length-2].data.push({x:obj[ob].minute_asked, y:0.0});
