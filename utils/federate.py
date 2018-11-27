@@ -20,28 +20,17 @@ def sync():
         sheets = client.open_by_key("1EyGxqQzNaXmbvU61LTvKAbYjXMTcDvIrl0oJ9rgtVs0").worksheet("Registration")
 
         beg_col = 1
-        beg_row = 1
+        beg_row = Game.objects.all().count()
         end_row = sheets.row_count
         end_col = sheets.col_count
         #end_col = num_col
-        num_g = Game.objects.all().count()
-        data = sheets.range(beg_row+1,beg_col,end_row,end_col)
+        data = sheets.range(beg_row+2,beg_col,end_row,end_col)
 
         now_datetime = timezone.now() + timezone.timedelta(hours=8)
         curr_row = 0
         erow = 0
         data_obj = {}
         player_cnt = 0
-        for cell in data:
-            if(cell.row != curr_row):
-                curr_row = cell.row
-                erow =curr_row
-                if(cell.value == ''):
-                    break
-        new_players = erow-num_g-2
-        ep = new_players+2
-        print('cuuurr roowww')
-        print(ep)
         
         for cell in data:
             if(cell.row != curr_row):
@@ -59,8 +48,6 @@ def sync():
                 curr_row = cell.row
                 data_obj = {}
                 if(cell.value == ''):
-                    break
-                if(cell.row == ep):
                     break
                 # elif(cell.col == 1):
                 #     data_obj['timestart'] = cell.value)
