@@ -812,12 +812,12 @@ class Sensor(models.Model):
                 if d["sensor_id"] == self.sensor_id:
                     if d["min_stamped"] != None:
                         min_stamped += d["min_stamped"]
+                        time_solved += d["time_solved"]
                     else:
                         deduc += 1
-                    time_solved += d["time_solved"]
-
-        return {"average_min_stamped": round(min_stamped / len(all_games)-deduc, 2),
-                "average_time_solved": round(time_solved / len(all_games)-deduc, 2)}
+        print("all time time solved of ",self.phase_name,round(time_solved / (len(all_games)-deduc), 2))
+        return {"average_min_stamped": round(min_stamped / (len(all_games)-deduc), 2),
+                "average_time_solved": round(time_solved / (len(all_games)-deduc), 2)}
 
     @property
     def get_sequence_number(self):

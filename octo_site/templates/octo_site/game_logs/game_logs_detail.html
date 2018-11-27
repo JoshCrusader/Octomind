@@ -253,6 +253,7 @@
                                                         <script>
                                                         sensor{{ data.sensor_id }}_comp =  $.get("/octo_site/api/get_all_time_data_sensor/{{ data.sensor_id }}/");
                                                         sensor{{ data.sensor_id }}_comp.done(function(results){
+                                                            console.log(results);
                                                             clean = parseFloat({{ data.time_solved }}-results.average_time_solved).toFixed(2);
                                                             clean = Math.abs(clean);
                                                             sec = Math.round((clean % 1)*60);
