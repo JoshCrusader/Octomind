@@ -275,12 +275,14 @@
                                                         <span data-uk-icon="icon: git-fork" class="uk-text-{%  if room.num_sensor_plotted != 0 %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{{ room.room_page_response }}" href=""></span>
                                                         <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}" href=""></span>
                                                         <a class="uk-icon-link uk-text-success" id="edit-{{ room.room_id }}" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
+                                                        <!--
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="room_delete">
                                                             <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                             <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
                                                             {% csrf_token %}
                                                         </form>
+                                                        -->
                                                     </td>
                                                     <td>{{ room.branch.name }}</td>
                                                     <td>{{ room.num_sensors }}</td>
@@ -306,7 +308,6 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Address</th>
-                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -314,10 +315,6 @@
                                                 <tr>
                                                     <td>{{ branch.name }}</td>
                                                     <td>{{ branch.address }}</td>
-                                                    <td>
-                                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>

@@ -196,6 +196,8 @@ class Game(models.Model):
         return True
     @property
     def is_ongoing(self):
+        if self.game_details.timestart is None:
+            return False
         if self.is_solved == False and self.game_details.timeend is None:
             utc = pytz.UTC
             diff = datetime.now().replace(tzinfo=utc) - self.game_details.timestart.replace(tzinfo=utc)
