@@ -397,7 +397,11 @@
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'minutes triggered',
+                        labelString: 'minute triggered',
+                        max: 60
+                    },
+                    ticks:{
+                        beginAtZero: true,
                         max: 60
                     }
                 }],
@@ -467,6 +471,9 @@
                         scaleLabel: {
                             display: true,
                             labelString: 'minutes',
+                        },
+                        ticks:{
+                            beginAtZero: true,
                             max: 60
                         }
                     }],
