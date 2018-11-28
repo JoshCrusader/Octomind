@@ -6,6 +6,27 @@
 <button onClick="addmins()"> Add 5 minutes to: </button>
 <input id = "gid" type = "Number"> </input>
 </div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="addclue()"> Add Clue: </button>
+<input id = "clue_gid" type = "Number"> </input>
+<input id = "minute" type = "Number" placeholder="Minute asked"> </input>
+</div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="insertLog(1)"> Case 1 Logs: Solved, No Anomalies </button>
+<input id = "gid_1" type = "Number"> </input>
+</div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="insertLog(2)"> Case 2 Logs: Solved, Anomalies[Sequence Error]</button>
+<input id = "gid_2" type = "Number"> </input>
+</div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="insertLog(3)"> Case 3 Logs: Unsolved, Timeout</button>
+<input id = "gid_3" type = "Number"> </input>
+</div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="insertLog(4)"> Case 4 Logs: Unsolved, Forfeited</button>
+<input id = "gid_4" type = "Number"> </input>
+</div>
 <script>
 function addmins(){
     $.ajax({
@@ -19,4 +40,30 @@ function addmins(){
             }
     });
 }
+function insertLog(case_number) {
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/scripts/add_logs/",
+            data: {
+                'gid': $("#gid_"+case_number).val(),
+                'case_num': case_number,
+            },
+            success: function(data){
+                alert(data.response)
+            }
+    });
+}function addclue() {
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/scripts/add_clue/",
+            data: {
+                'gid': $("#clue_gid").val(),
+                'min': $("#minute").val(),
+            },
+            success: function(data){
+                alert(data.response)
+            }
+    });
+}
 </script>
+

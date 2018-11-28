@@ -24,7 +24,7 @@ from utils import federate, ajax_helper,sensor_deebs_popu,script_helper
 from django.http import HttpResponse
 from views_func import *
 from api_func import *
-
+import random
 def handler404(request, template_name="octo_site/handler404.html"):
     response = render_to_response(template_name)
     response.status_code = 404
@@ -340,3 +340,73 @@ def script_helper_v(request):
 @csrf_exempt
 def add_mins(request):
     return script_helper.add_mins(request)
+@csrf_exempt
+def add_script_logs(request):
+    print("scripts are being added to game ",request.POST['gid'])
+    game = Game.objects.get(game_id=request.POST['gid'])
+    sensors = game.room.get_all_sensors
+    division = round(60/len(sensors),2)
+    cum_time = 0
+    for s in sensors:
+        insert_val(s.sensor_id, game.game_details.timestart, 0)
+    if request.POST['case_num'] == '1':
+        for s in sensors:
+            cum_time += gen_r_random(6, division)
+            ts = game.game_details.timestart + timedelta(minutes=cum_time, seconds=math.ceil(random.random() * 59))
+            insert_val(s.sensor_id,ts,1)
+    elif request.POST['case_num'] == '2':
+        for i,s in enumerate(sensors):
+            cur_s = s
+            if i == 0:
+                cur_s = sensors[1]
+            elif i == 1:
+                cur_s = sensors[0]
+            cum_time += gen_r_random(6, division)
+            ts = game.game_details.timestart + timedelta(minutes=cum_time, seconds=math.ceil(random.random() * 59))
+            insert_val(cur_s.sensor_id,ts,1)
+    elif request.POST['case_num'] == '3':
+        sensor_deducted = sensors[:-1]
+        for s in sensor_deducted:
+            cum_time += gen_r_random(6, division)
+            ts = game.game_details.timestart + timedelta(minutes=cum_time, seconds=math.ceil(random.random() * 59))
+            insert_val(s.sensor_id,ts,1)
+    elif request.POST['case_num'] == '4':
+        sensor_deducted = sensors[:-2]
+        for s in sensor_deducted:
+            cum_time += gen_r_random(5, division*1.45)
+            ts = game.game_details.timestart + timedelta(minutes=cum_time, seconds=math.ceil(random.random() * 59))
+            insert_val(s.sensor_id, ts, 1)
+    return JsonResponse({"response":'logs are inserted'})
+@csrf_exempt
+def add_script_clue(request):
+    game = Game.objects.get(game_id=request.POST['gid'])
+    delta_time = timedelta(minutes=int(request.POST['min']), seconds=math.ceil(random.random() * 59))
+    cd = ClueDetails(detail='henlo dogging',timestamp=game.game_details.timestart + delta_time)
+    cd.save()
+    clue = Clues(clue_details_id=cd.clue_details_id, game_id=game.game_id)
+    clue.save()
+    return JsonResponse({"response":'clue added'})
+
+def gen_r_random(x, y):
+    return x + math.ceil(random.random() * (y - x))
+
+def insert_val(sid,ts,val):
+    print("hinserting")
+    ts = str(ts.strftime("%Y-%m-%d %H:%M:%S"))
+    conn = MySQLdb.connect(host="localhost",
+                           user="root",
+                           passwd="root",
+                           db="sensorDB")
+    x = conn.cursor()
+    try:
+        x.execute("INSERT INTO `sensorDB`.`sensor_log` (`log_id`,`sensor_id`, `timestamp`, `value`) VALUES (null, %s, %s, %s);", (sid, ts, val))
+        conn.commit()
+
+        print("executed")
+    except Exception as e:
+        print(e)
+
+        print("ayawq na");
+        conn.rollback()
+    conn.close()
+    return None
