@@ -1,0 +1,22 @@
+{% load staticfiles %}
+{% load get_attr %}
+        {% include 'octo_site/includes/header.html' %}
+
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="addmins()"> Add 5 minutes to: </button>
+<input id = "gid" type = "Number"> </input>
+</div>
+<script>
+function addmins(){
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/scripts/add_mins/",
+            data: {
+                'gid': $("#gid").val(),
+            },
+            success: function(data){
+                console.log("ADDED 5 mins")
+            }
+    });
+}
+</script>

@@ -6,7 +6,7 @@ import datetime
 import json
 def control_panel(request):
     if request.method == 'GET':
-        federate.sync()
+        # federate.sync()
         game_details = []
         now_datetime = timezone.now()
         finish_time = now_datetime - timezone.timedelta(hours = 1)
@@ -30,7 +30,7 @@ def control_panel(request):
                 games[i.room_id]['players'].append(Players.objects.get(players_id = team.players_players_id))
             ## CLUES
             clues = Clues.objects.filter(game_id = i.game_id)
-            games[i.room_id]['clues'] = range(0, 3-len(clues))
+            games[i.room_id]['clues'] = range(0, len(clues))
             games[i.room_id]['mystery'] = range(0, len(clues))
             print(len(clues))
         #for i in games[3]['players']:

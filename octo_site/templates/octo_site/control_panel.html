@@ -102,7 +102,7 @@
                                     {% endif %}
                                 {% endwith %}
                             {% endwith %}
-                            <div class = "clue-button" onClick = "">?</div>
+                            {% comment %} <div class = "clue-button" onClick = "">?</div> {% endcomment %}
                         </div>    
                         <div class="uk-card-body">
                             <div class = "playerContainer" style = "height: 70px;">
@@ -117,9 +117,9 @@
                                 <div class = "clueContainer">
                                     <div class = "clueHeader">Clues:</div>
 
-                                    {% for clueLength in specGame|attr:"mystery" %}
+                                    {% comment %} {% for clueLength in specGame|attr:"mystery" %}
                                         <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-close.png' %}"></div>
-                                    {% endfor %}
+                                    {% endfor %} {% endcomment %}
                                     {% for clueLength in specGame|attr:"clues" %}
                                         <div class = "div-lock"><img class = "div-lock-img" src = "{% static 'octo_site/assets/img/clue-open.png' %}"></div>
                                     {% endfor %}
