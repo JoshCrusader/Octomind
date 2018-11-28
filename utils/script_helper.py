@@ -10,7 +10,7 @@ def add_mins(request):
         gid = request.POST['gid']
         game = Game.objects.get(game_id = gid)
         gd = game.game_details
-        gd.timestart -= timezone.timedelta(hours = 1)
+        gd.timestart -= timezone.timedelta(minutes = 5)
         gd.save()
 
     return JsonResponse({"data": "YES"})
