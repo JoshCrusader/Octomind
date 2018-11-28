@@ -459,9 +459,6 @@
             }
         }
     }
-
-
-
     function printDiv(div) {
         var printStr = "<script>"+"window.print();</"+"script>";
         var printCont = document.getElementById(div);
@@ -471,7 +468,7 @@
                printCont.innerHTML+
                '</body></html>'+printStr;
         var WindowObject =window.open('',"Print Window",
-            "width=5,height=5,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+            "width=1000,height=1000,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
         WindowObject.document.writeln(html);
         WindowObject.document.close();
         WindowObject.focus();

@@ -58,6 +58,8 @@
                         </div>
                         <div class="uk-width-expand uk-text-right pad">
                             <button class="uk-button uk-button-warning uk-button-small" onclick="window.location.href = '{% url 'game_logs' %}';" ><span data-uk-icon="icon: arrow-left"></span> BACK</button>
+                            <button class="uk-button uk-button-warning uk-button-small" ><a href="#" uk-tooltip="Export data to CSV" onclick="exportData()" ><span data-uk-icon="icon: download"></span> CSV</a></button>
+                            <button class="uk-button uk-button-warning uk-button-small" ><a href="#" onclick="printDiv('print_area')" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a></button>
                         </div>
 
 
@@ -68,6 +70,7 @@
                                         <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
                                         <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
+                                        <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: file-text"></span> Overview</a></li>
                                     </ul>
                                 </div>
                                 <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
@@ -80,6 +83,86 @@
                                         <li style="height: 75vh">
                                             <div class="chart-container" style="height:20vh;width:95%" >
                                                 <canvas class="uk-align-center" id="log_sum" ></canvas>
+                                            </div>
+                                        </li>
+                                        <li>
+
+                                        </li>
+                                        <li style="min-height: 75vh">
+                                            <div class="uk-align-center uk-text-left uk-width-1-1" style="width: 90%" id="print_area">
+                                                <p style="font-size: 12px">Report generated at {{ dt_now }}</p>
+                                                <hr class="uk-divider-icon"/>
+                                                <h3 class="uk-margin-remove">Overview: Games Analytics Report</h3>
+                                                <p class="uk-margin-remove uk-text-small">For games {% for game in games %}{{ game.match_id }} {% endfor %}</p>
+                                                <table class="uk-table uk-table-striped" style="border: 1px solid black;width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="bdr">Match ID</th>
+                                                            <th class="bdr">Player Size</th>
+                                                            <th class="bdr">Game Duration</th>
+                                                            <th class="bdr">Clues Asked</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for game in games %}
+                                                        <tr>
+                                                            <td class="bdr" align="center">{{ game.match_id }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_team_size }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_duration }}</td>
+                                                            <td class="bdr" align="center">{{ game.get_num_clues_asked }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                <h4 class="uk-margin-remove">* Game Phases Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left" >Sensor Name</th>
+                                                            <th align="center">Minute Triggered Average</th>
+                                                            <th align="center">Time Solved Average</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="ov_phase_tbl">
+
+                                                    </tbody>
+                                                </table>
+                                                <hr>
+                                                <div id="ov_clues">
+                                                <h4 class="uk-margin-remove">* Clues Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Match ID</th>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="center">Detail</th>
+                                                            <th align="right">Minute Recorded</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="ov_clues_tbl">
+
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                                <h4 class="uk-margin-remove">* List of Log Summary</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="left">Sensor Name</th>
+                                                            <th align="left">Time Solved</th>
+                                                            <th align="left">Minute Triggered</th>
+                                                            <th align="left">Times Triggered</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="ov_sum_tbl">
+
+                                                    </tbody>
+                                                </table>
+
+                                                <center><h3>------------------- END OF REPORT -------------------</h3></center>
+
                                             </div>
                                         </li>
                                     </ul>
@@ -114,7 +197,73 @@
     </section>
 </div>
 
+<script>
+    function exportData() {
+        exportToCsv('insight_report.csv', data_export);
+    }
+    function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            for (var j = 0; j < row.length; j++) {
+                var innerValue = row[j] === null ? '' : row[j].toString();
+                if (row[j] instanceof Date) {
+                    innerValue = row[j].toLocaleString();
+                };
+                var result = innerValue.replace(/"/g, '""');
+                if (result.search(/("|,|\n)/g) >= 0)
+                    result = '"' + result + '"';
+                if (j > 0)
+                    finalVal += ',';
+                finalVal += result;
+            }
+            return finalVal + '\n';
+        };
 
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+    function printDiv(div) {
+        var printStr = "<script>"+"window.print();</"+"script>";
+        var printCont = document.getElementById(div);
+        var html = '<html><head>'+
+               '<title>Report For Game {{ game.match_id }}</title>'+
+               '</head><style>@page { size: auto;  margin-top: 0mm;margin-left:1vw;margin-right:1vw }</style><body style="background:#ffffff;">'+
+               printCont.innerHTML+
+               '</body></html>'+printStr;
+        var WindowObject =window.open('',"Print Window",
+            "width=1200,height=1200,top=650, left=650, toolbars=no, scrollbars=no,resizable=no");
+        WindowObject.document.writeln(html);
+        WindowObject.document.close();
+        WindowObject.focus();
+        WindowObject.print();
+        WindowObject.close();
+
+    }
+    function fillOverview() {
+        $('#ov_sum_tbl');
+        $('#ov_clues_tbl');
+        $('#ov_phase_tbl');
+    }
+</script>
 <script>
     var color = Chart.helpers.color;
     let chartColors = {

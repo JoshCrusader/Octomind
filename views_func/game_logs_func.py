@@ -50,6 +50,7 @@ def game_logs_detail(request,game_id):
 def analyze_game_logs(request,game_ids):
     gids = game_ids.split("-")
     games = []
+    date_now = datetime.now().strftime("%Y-%m-%d")
     try:
         gids = [int(i) for i in gids]
         room_id = Game.objects.get(game_id=game_ids.split("-")[0]).room_id
@@ -66,4 +67,10 @@ def analyze_game_logs(request,game_ids):
     for g in gids:
         games.append(Game.objects.get(game_id=g))
     return render(request, 'octo_site/game_logs/game_logs_analysis.html',
-                  {"room_id":games[0].room_id,"room": games[0].room, "id_slugs": game_ids, "game_count":len(games),'game_ids': gids, "games": games})
+                  {"room_id":games[0].room_id,
+                   "room": games[0].room,
+                   "id_slugs": game_ids,
+                   "game_count":len(games),
+                   'dt_now':date_now,
+                   'game_ids': gids,
+                   "games": games})

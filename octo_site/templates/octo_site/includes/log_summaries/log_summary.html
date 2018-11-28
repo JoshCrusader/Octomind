@@ -71,7 +71,6 @@
                         fill: false,
                    };
                    window.myLogSummary.update();
-                   console.log("data",bubbleChartData.datasets);
                    bubbleChartData.datasets.push(newdt);
 
                    for(ob in obj){
@@ -79,30 +78,24 @@
                            .data
                            .push({x: obj[ob].avg_min_stamped, y: obj[ob].avg_time_solved,});
                        bubbleChartData.sensor_names[ob] = obj[ob].sensor_name;
+
+                       str_app = '<tr>';
+                       str_app += '<td align="left">'+obj[ob].sensor_name+'</td>';
+                       str_app += '<td align="center">'+obj[ob].avg_min_stamped+'</td>';
+                       str_app += '<td align="center">'+obj[ob].avg_time_solved+'</td>';
+                       str_app +='</tr>';
+                       $('#ov_phase_tbl').append(str_app);
+
+
                        window.myLogSummary.update();
                    }
-
+                   initClue();
+                   console.log("data",bubbleChartData.datasets);
                });
-                //// SUMTHING WONG WITH CLUE :'(
-               {% for game in games %}
-               clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
-               clue_data.done(function(results){
-                    let obj = results.data;
-                    if (obj.length !== 0){
-                    console.log("clue info", results.data);
-                       for (ob in obj)
-                       {
-                           bubbleChartData.datasets[bubbleChartData.datasets.length-2].data.push({x:obj[ob].minute_asked, y:0.0});
-                           bubbleChartData.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
-                           window.myLogSummary.update();
-                       }
-                    }
-                });
-               {% endfor %}
+
                window.myLogSummary.update()
 
            });
-             console.log(bubbleChartData.dataset_game_ids);
            // Populate data in the datasets
 
          {% for game in games %}
@@ -121,10 +114,53 @@
                            });
                        bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
                        bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
-                       window.myLogSummary.update()
+                       window.myLogSummary.update();
+                       str_app = '<tr>';
+                       str_app += '<td align="left">'+obj[i].phase_name+'</td>';
+                       str_app += '<td align="left">'+obj[i].sensor_name+'</td>';
+                       str_app += '<td align="left">'+obj[i].time_solved+'</td>';
+                       str_app += '<td align="left">'+obj[i].min_stamped+'</td>';
+                       str_app += '<td align="left">'+obj[i].times_triggered+'</td>';
+                       str_app +='</tr>';
+                       $('#ov_sum_tbl').append(str_app);
+                   }else{
+                       str_app = '<tr>';
+                       str_app += '<td align="left">'+obj[i].phase_name+'</td>';
+                       str_app += '<td align="left">'+obj[i].sensor_name+'</td>';
+                       str_app += '<td align="left">Not Solved</td>';
+                       str_app += '<td align="left">None</td>';
+                       str_app += '<td align="left">None</td>';
+                       str_app +='</tr>';
+                       $('#ov_sum_tbl').append(str_app);
                    }
                 }
             });
          {% endfor %}
         }
+</script>
+<script>
+    function initClue() {
+        {% for game in games %}
+               clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
+               clue_data.done(function(results){
+                    let obj = results.data;
+                    if (obj.length !== 0){
+                    console.log("clue info", results.data);
+                       for (ob in obj)
+                       {
+                           bubbleChartData.datasets[bubbleChartData.datasets.length-2].data.push({x:obj[ob].minute_asked, y:0.0});
+                           bubbleChartData.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
+                           window.myLogSummary.update();
+                           str_app = '<tr>';
+                           str_app += '<td align="left">'+obj[ob].match_id+'</td>';
+                           str_app += '<td align="left">'+obj[ob].phase_name+'</td>';
+                           str_app += '<td align="center">'+obj[ob].detail+'</td>';
+                           str_app += '<td align="right">'+obj[ob].minute_asked+'</td>';
+                           str_app +='</tr>';
+                           $('#ov_clues_tbl').append(str_app);
+                       }
+                    }
+                });
+               {% endfor %}
+    }
 </script>

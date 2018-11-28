@@ -382,7 +382,7 @@
                     },
                     beforeFooter: function(tooltipItem, data) {
                         if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            //console.log("sensor_names",data.sensor_names);
+                            console.log("waw gago");
                             return null;
                         }
 
@@ -449,8 +449,6 @@
                         return 'Ano daw';
                     },
                     title: function(tooltipItem, data) {
-                        // console.log(data);
-                        // console.log(tooltipItem[0].datasetIndex);
 
                         game_id = parseInt(data.datasets[tooltipItem[0].datasetIndex].label)-10000;
                         return data.sensor_names[game_id][tooltipItem[0].index];

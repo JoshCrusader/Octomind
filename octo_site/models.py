@@ -152,6 +152,20 @@ class Game(models.Model):
             return 60.0
         return round(data["general_info"]["time_finished_duration"], 1)
     @property
+    def get_skill_bracket(self):
+        tf = self.get_final_duration
+        skill_bracket= None
+        if self.is_solved == False:
+            skill_bracket = "Low"
+        else:
+            if tf >= 30 and tf < 51:
+                skill_bracket = "Normal"
+            elif tf >= 51:
+                skill_bracket = "Low"
+            elif tf < 30:
+                skill_bracket = "High"
+        return skill_bracket
+    @property
     def get_final_duration(self):
         data = self.pull_game_summary(self)
 
@@ -232,6 +246,7 @@ class Game(models.Model):
                 'sensor_id':c.clue_details.get_sensor_asked,
                 'phase_name':s.phase_name,
                 'game_id':self.game_id,
+                'match_id':self.match_id,
                 'timestamp':c.clue_details.timestamp,
                 'ts': c.clue_details.timestamp.strftime('%H:%M:%S'),
                 'minute_asked':c.clue_details.get_minute_asked,
