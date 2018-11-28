@@ -79,6 +79,10 @@ urlpatterns = [
     #handlers
     path('error404/', views.handler404, name='error404'),
     path('admin/', admin.site.urls),
+
+    #Sscripts
+    path('scripts/script_helper', views.script_helper_v, name = "script_helper"),
+    path('scripts/add_mins/', views.add_mins, name = "add_mins")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

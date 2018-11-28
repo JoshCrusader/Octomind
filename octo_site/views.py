@@ -19,7 +19,7 @@ from django.template import RequestContext
 from octo_site.reports_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from utils import federate, ajax_helper,sensor_deebs_popu
+from utils import federate, ajax_helper,sensor_deebs_popu,script_helper
 
 from django.http import HttpResponse
 from views_func import *
@@ -331,3 +331,10 @@ def log_summary(request, game_ids):
         games.append(Game.objects.get(game_id=int(g)))
     return render(request, 'octo_site/test_files/log_summary.html', {"room":games[0].room,"id_slugs":game_ids,'game_ids':gids,"games": games})
 ######
+
+
+def script_helper_v(request):
+        return render(request, 'octo_site/script_enhancer.html')
+@csrf_exempt
+def add_mins(request):
+    return script_helper.add_mins(request)
