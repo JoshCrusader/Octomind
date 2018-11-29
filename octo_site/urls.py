@@ -82,7 +82,9 @@ urlpatterns = [
 
     #Sscripts
     path('scripts/script_helper', views.script_helper_v, name = "script_helper"),
-    path('scripts/add_mins/', views.add_mins, name = "add_mins")
+    path('scripts/add_mins/', views.add_mins, name = "add_mins"),
+    path('scripts/add_logs/', views.add_script_logs, name = "add_logs"),
+    path('scripts/add_clue/', views.add_script_clue, name = "add_clue")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

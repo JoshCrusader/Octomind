@@ -13,19 +13,19 @@
             <input id="sensor_id" type="hidden" name="sensor_id" value="">
             <div class="uk-modal-body">
                     <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Sensor name</label>
+                        <label class="uk-form-label" for="form-stacked-text">Sensor name *</label>
                         <div class="uk-form-controls">
                             <input class="uk-input uk-display-inline" name="sensor_name" id="sensor_name" type="text" placeholder="Enter a name for the sensor" required>
                         </div>
                     </div>
                     <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Game Phase name</label>
+                        <label class="uk-form-label" for="form-stacked-text">Game Phase name *</label>
                         <div class="uk-form-controls">
                             <input class="uk-input uk-display-inline" name="phase_name" id="phase_name" type="text" placeholder="Enter a name for the phase it represents" required>
                         </div>
                     </div>
                    <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to</label>
+                    <label class="uk-form-label" for="form-stacked-select">Raspberry Pi Assigned to *</label>
                     <div class="uk-form-controls">
                         <select class="uk-select" name="sensor_rpi_id" id="sensor_rpi_id">
                             {% for r in rpi reversed %}
@@ -35,7 +35,7 @@
                     </div>
                     </div>
                     <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-select">Sensor Type</label>
+                        <label class="uk-form-label" for="form-stacked-select">Sensor Type *</label>
                         <div class="uk-form-controls">
                             <select class="uk-select" name="sensor_sensor_type_id" id="sensor_sensor_type">
                                 {% for st in sensor_type reversed %}
@@ -66,7 +66,7 @@
             <input id="sensor_type_id" type="hidden" name="sensor_type_id" value="">
             <div class="uk-modal-body">
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Sensor Type Name</label>
+                    <label class="uk-form-label" for="form-stacked-text">Sensor Type Name.*</label>
                     <div class="uk-form-controls">
                         <input class="uk-input uk-display-inline" name="sensor_type_name" id="sensor_type_name" type="text" placeholder="Enter the type for the sensor" required>
                     </div>
@@ -74,11 +74,11 @@
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Value Name</label>
                     <div class="uk-form-controls">
-                        <input class="uk-input uk-display-inline" name="val_name" id="val_name" type="text" placeholder="e.g status, light value, temperature, color" required>
+                        <input class="uk-input uk-display-inline" name="val_name" id="val_name" type="text" placeholder="e.g status, light value, temperature, color">
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Trigger Value Threshold</label>
+                    <label class="uk-form-label" for="form-stacked-text">Trigger Value Threshold.*</label>
                     <div class="uk-form-controls">
                         <input class="uk-input uk-display-inline" name="trigger_treshold" id="trigger_treshold" type="number" placeholder="determine if the sensor is triggered" required>
                     </div>
@@ -104,19 +104,19 @@
             <input id="rpi_id" type="hidden" name="rpi_id" value="">
             <div class="uk-modal-body">
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">RPI Name</label>
+                    <label class="uk-form-label" for="form-stacked-text">RPI Name.*</label>
                     <div class="uk-form-controls">
                         <input class="uk-input uk-display-inline" name="name" id="rpi_name" type="text" placeholder="Enter the name of micro processor" required>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">IP Address</label>
+                    <label class="uk-form-label" for="form-stacked-text">IP Address.*</label>
                     <div class="uk-form-controls">
                         <input class="uk-input uk-display-inline" name="ip_address" id="ip_address" type="text" placeholder="Enter the IP address" required>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-select">Room  Assigned to</label>
+                    <label class="uk-form-label" for="form-stacked-select">Room  Assigned to.*</label>
                     <div class="uk-form-controls">
                         <select class="uk-select" name="room_id" id="room_id">
                             {% for room in rooms reversed %}
@@ -184,12 +184,14 @@
                                                     <td>
                                                         {{ sensor.sensor_name }}
                                                         <a class="uk-icon-link uk-text-success" edit-type="sensor" onclick="edit(this)" sensor_id="{{ sensor.sensor_id }}" sensor_name="{{ sensor.sensor_name }}" sensor_sensor_type="{{ sensor.sensor_type_id }}" sensor_rpi_id="{{ sensor.rpi_id }}" data-uk-icon="pencil" href="#modal-sensor" uk-toggle></a>
+                                                       <!--
                                                         <form method="post" style="display: inline">
                                                             <input type="hidden" name="type" value="sensor_delete">
                                                             <a href="#" onclick="del({{ sensor.sensor_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
                                                             <button type="submit" name="sensor_id" id="sensor-{{ sensor.sensor_id }}" value="{{ sensor.sensor_id }}" style="display: none"/>
                                                             {% csrf_token %}
                                                         </form>
+                                                        -->
                                                     </td>
                                                     <td>{{ sensor.rpi.name }}, {{ sensor.rpi.room.room_name }},{{ sensor.sequence_number }}</td>
                                                     <td>{{ sensor.sensor_type.sensor_type_name }}</td>

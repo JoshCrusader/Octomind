@@ -102,12 +102,13 @@ def get_monthly_exception(request, room):
         if det.timestart.month == month.month:
             g = Game.objects.get(game_id=det.game_details_id)
             if g.room_id == room.room_id:
-                games.append(g)
-                s = g.get_sensor_asked(g)
-                if s not in orig:
-                    orig.append(s)
-                rep.append(s)
-                s_f.append(s)
+                if g.get_game_conclusion == 'forfeit':
+                    games.append(g)
+                    s = g.get_sensor_asked(g)
+                    if s not in orig:
+                        orig.append(s)
+                    rep.append(s)
+                    s_f.append(s)
 
     for er in error_logs:
         if er.timestamp.month == month.month:
@@ -122,12 +123,12 @@ def get_monthly_exception(request, room):
     for wa in warning_logs:
         if wa.timestamp.month == month.month:
             g = Game.objects.get(game_id=wa.game_id)
-        if g.room_id == room.room_id:
-            warnings.append(wa)
-            if wa.sensor_id not in orig:
-                orig.append(wa.sensor_id)
-            rep.append(wa.sensor_id)
-            s_w.append(wa.sensor_id)
+            if g.room_id == room.room_id:
+                warnings.append(wa)
+                if wa.sensor_id not in orig:
+                    orig.append(wa.sensor_id)
+                rep.append(wa.sensor_id)
+                s_w.append(wa.sensor_id)
 
     for o in orig:
         sensor_ids[o] = 0
@@ -169,12 +170,13 @@ def get_yearly_exception(request, room):
     for det in gamedet:
         g = Game.objects.get(game_id=det.game_details_id)
         if g.room_id == room.room_id:
-            games.append(g)
-            s = g.get_sensor_asked(g)
-            if s not in orig:
-                orig.append(s)
-            rep.append(s)
-            s_f.append(s)
+            if g.get_game_conclusion == 'forfeit':
+                games.append(g)
+                s = g.get_sensor_asked(g)
+                if s not in orig:
+                    orig.append(s)
+                rep.append(s)
+                s_f.append(s)
     for er in error_logs:
         g = Game.objects.get(game_id=er.game_id)
         if g.room_id == room.room_id:
@@ -234,12 +236,13 @@ def get_daily_exception(request, room):
     for det in gamedet:
         g = Game.objects.get(game_id=det.game_details_id)
         if g.room_id == room.room_id:
-            games.append(g)
-            s = g.get_sensor_asked(g)
-            if s not in orig:
-                orig.append(s)
-            rep.append(s)
-            s_f.append(s)
+            if g.get_game_conclusion == 'forfeit':
+                games.append(g)
+                s = g.get_sensor_asked(g)
+                if s not in orig:
+                    orig.append(s)
+                rep.append(s)
+                s_f.append(s)
     for er in error_logs:
         g = Game.objects.get(game_id=er.game_id)
         if g.room_id == room.room_id:

@@ -139,6 +139,7 @@
                                         <li>
                                             <div class="uk-align-center uk-text-center uk-width-1-1">
                                                 <h2 class="uk-text-danger">Sequence Error Logs</h2>
+                                                {% if errors.count != 0 %}
                                                 <table class="uk-table uk-table-divider uk-table-hover" style="width:100%;">
                                                     <thead>
                                                         <tr>
@@ -163,7 +164,11 @@
                                                     {% endfor %}
                                                     </tbody>
                                                 </table>
+                                                {% else %}
+                                                    <p class="uk-text-small"> No errors found</p>
+                                                {% endif %}
                                                 <h2 class="uk-text-danger">Warning Logs</h2>
+                                            {% if warnings.count != 0 %}
                                                 <table class="uk-table uk-table-divider uk-table-hover" style="width:100%;">
                                                     <thead>
                                                         <tr>
@@ -188,6 +193,9 @@
                                                     {% endfor %}
                                                     </tbody>
                                                 </table>
+                                            {% else %}
+                                                    <p class="uk-text-small"> No warnings found</p>
+                                            {% endif %}
                                             </div>
                                         </li>
                                         <li>
@@ -242,9 +250,11 @@
                                                             <td align="right">{{ data.time_solved_clean }}<p style="display: inline" id="ts_{{ data.sensor_id }}"></p></td>
                                                             <td align="right">{{ data.ts}}</td>
                                                         </tr>
+                                                        {% if data.ts is not None %}
                                                         <script>
                                                         sensor{{ data.sensor_id }}_comp =  $.get("/octo_site/api/get_all_time_data_sensor/{{ data.sensor_id }}/");
                                                         sensor{{ data.sensor_id }}_comp.done(function(results){
+                                                            console.log(results);
                                                             clean = parseFloat({{ data.time_solved }}-results.average_time_solved).toFixed(2);
                                                             clean = Math.abs(clean);
                                                             sec = Math.round((clean % 1)*60);
@@ -256,9 +266,9 @@
                                                             else {
                                                                 $("#ts_{{ data.sensor_id }}").html("(-"+ clean +")⬇");
                                                             }
-
                                                        });
-                                                    </script>
+                                                       </script>
+                                                       {% endif %}
 
 
                                                     {% endfor %}
@@ -449,9 +459,6 @@
             }
         }
     }
-
-
-
     function printDiv(div) {
         var printStr = "<script>"+"window.print();</"+"script>";
         var printCont = document.getElementById(div);
@@ -461,7 +468,7 @@
                printCont.innerHTML+
                '</body></html>'+printStr;
         var WindowObject =window.open('',"Print Window",
-            "width=5,height=5,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
+            "width=1000,height=1000,top=200, left=200, toolbars=no, scrollbars=no,resizable=no");
         WindowObject.document.writeln(html);
         WindowObject.document.close();
         WindowObject.focus();
@@ -470,6 +477,7 @@
 
     }
 </script>
+
 <script>
 
     let to_add=[];
@@ -496,19 +504,15 @@
         let live_ctx = document.getElementById('live_monitor').getContext('2d');
         window.LiveLine = new Chart(live_ctx, live_config);
         window.myLine = new Chart(ctx, config);
-        initMonData();
         initData();
+        initMonData();
         setTimeout(() => {
             $("#s_plot").hide().css("opacity",1);
-        },3500);
+        },5000);
     };
 </script>
 
-
-{% include 'octo_site/includes/all_time/game_logs_detail_summary.html' %}
 {% include 'octo_site/includes/game_summaries/game_summary_detail.html' %}
 {% include 'octo_site/includes/live_sandboxes/live_sandbox_detail.html' %}
+{% include 'octo_site/includes/all_time/game_logs_detail_summary.html' %}
 {% include 'octo_site/includes/game_summaries/game_monitor_detail.html' %}
-
-{% include 'octo_site/includes/offcanvas.html' %}
-

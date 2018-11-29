@@ -28,7 +28,6 @@
 												<th>User Type</th>
 												<th>Last Login</th>
 												<th>Date Created</th>
-                                                <th>Action</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -40,10 +39,6 @@
 												<td>{{ user.groups.all.0.name }}</td>
 												<td>{{ user.last_login }}</td>
 												<td>{{ user.date_joined }}</td>
-                                                <td>
-													<a href="#" class="uk-icon-link uk-text-success" data-uk-icon="pencil"></a>
-													<a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-												</td>
                                             </tr>
                                         {% endfor %}
 										</tbody>

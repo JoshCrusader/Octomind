@@ -152,6 +152,20 @@ class Game(models.Model):
             return 60.0
         return round(data["general_info"]["time_finished_duration"], 1)
     @property
+    def get_skill_bracket(self):
+        tf = self.get_final_duration
+        skill_bracket= None
+        if self.is_solved == False:
+            skill_bracket = "Low"
+        else:
+            if tf >= 30 and tf < 51:
+                skill_bracket = "Normal"
+            elif tf >= 51:
+                skill_bracket = "Low"
+            elif tf < 30:
+                skill_bracket = "High"
+        return skill_bracket
+    @property
     def get_final_duration(self):
         data = self.pull_game_summary(self)
 
@@ -174,9 +188,16 @@ class Game(models.Model):
         if self.game_details.solved == 0:
                 return False
         return True
-
+    @property
+    def is_all_puzzle_finished(self):
+        for g in self.pull_data_game(self):
+            if g['time_solved'] == 0:
+                return False
+        return True
     @property
     def is_ongoing(self):
+        if self.game_details.timestart is None:
+            return False
         if self.is_solved == False and self.game_details.timeend is None:
             utc = pytz.UTC
             diff = datetime.now().replace(tzinfo=utc) - self.game_details.timestart.replace(tzinfo=utc)
@@ -194,20 +215,7 @@ class Game(models.Model):
     @property
     def get_num_error(self):
         return GameErrorLog.objects.filter(game_id=self).count()
-        '''
-        if sequence not equal to you know, my sensor
-        real_seq = Room.objects.get(room_id=self.room_id).get_sensor_sequence
-        my_seq = self.get_sensor_trigger_sequence
-        index_add = len(real_seq) - len(my_seq)
-        if index_add != 0:
-            index_add = real_seq[-1*index_add:]
-            for i in index_add:
-                my_seq.append(i)
 
-        if str(my_seq) == str(real_seq):
-            return False
-        return True
-        '''
     @property
     def get_error_points_sensors(self):
         problem_sensors =[]
@@ -240,6 +248,7 @@ class Game(models.Model):
                 'sensor_id':c.clue_details.get_sensor_asked,
                 'phase_name':s.phase_name,
                 'game_id':self.game_id,
+                'match_id':self.match_id,
                 'timestamp':c.clue_details.timestamp,
                 'ts': c.clue_details.timestamp.strftime('%H:%M:%S'),
                 'minute_asked':c.clue_details.get_minute_asked,
@@ -424,6 +433,7 @@ class Game(models.Model):
 
         data_return = []
         # execute the SQL query using execute() method.
+
         cursor.execute(
             "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
                 f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")
@@ -448,6 +458,7 @@ class Game(models.Model):
                 data['value'] = '1'
             else:
                 data['value'] = '0'
+            data['sensor_name'] = sensor.sensor_name
         return dataset_logs
     @staticmethod
     def pull_game_summary(self):
@@ -484,14 +495,16 @@ class Game(models.Model):
             average_times_bet_sensors = round((float(avg_sum) / float(ctr_avg)), 2)
 
         tf = time_finished + (game.get_num_clues_asked*5)
-        if tf >= 30 and tf < 51:
-            skill_bracket = "Normal"
-        elif tf >= 51:
-            skill_bracket = "Low"
-        elif tf < 30:
-            skill_bracket = "High"
+
         if game.is_solved == False:
             skill_bracket = "Low"
+        else:
+            if tf >= 30 and tf < 51:
+                skill_bracket = "Normal"
+            elif tf >= 51:
+                skill_bracket = "Low"
+            elif tf < 30:
+                skill_bracket = "High"
 
         data_return["sensor_info"] = data_tally
         data_return["general_info"] = {
@@ -809,12 +822,12 @@ class Sensor(models.Model):
                 if d["sensor_id"] == self.sensor_id:
                     if d["min_stamped"] != None:
                         min_stamped += d["min_stamped"]
+                        time_solved += d["time_solved"]
                     else:
                         deduc += 1
-                    time_solved += d["time_solved"]
-
-        return {"average_min_stamped": round(min_stamped / len(all_games)-deduc, 2),
-                "average_time_solved": round(time_solved / len(all_games)-deduc, 2)}
+        print("all time time solved of ",self.phase_name,round(time_solved / (len(all_games)-deduc), 2))
+        return {"average_min_stamped": round(min_stamped / (len(all_games)-deduc), 2),
+                "average_time_solved": round(time_solved / (len(all_games)-deduc), 2)}
 
     @property
     def get_sequence_number(self):

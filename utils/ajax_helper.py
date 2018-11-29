@@ -52,25 +52,29 @@ def start_game(request):
 def end_game(request):
     if(request.method == 'POST'):
         gid = request.POST['game_id']
-        now_datetime = timezone.now()
-        game_detail = GameDetails.objects.get(game_details_id = gid)
-        game_detail.timeend = now_datetime
-        print(request.POST)
-        if(request.POST['end'] == '1'):
-            print('solved')
-            game_detail.solved = 1
-        else:
-            game_detail.solved = 0
         game = Game.objects.get(game_details_id = gid)
-        notifs_detail = "Game " + str(game.match_id) + " @ " + game.room.room_name + " ended."
-        Notifs.objects.create(
-            details=notifs_detail,
-            timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            viewed=0,
-            game_id=game.game_id
-        )
-        game_detail.save()
-    return JsonResponse({"data": "done"})
+        if game.is_all_puzzle_finished or request.POST['end'] == '0':
+
+            print("endval: ", request.POST['end'])
+            now_datetime = timezone.now()
+            game_detail = GameDetails.objects.get(game_details_id = gid)
+            game_detail.timeend = now_datetime
+            print(request.POST)
+            if(request.POST['end'] == '1'):
+                print('solved')
+                game_detail.solved = 1
+            else:
+                game_detail.solved = 0
+            notifs_detail = "Game " + str(game.match_id) + " @ " + game.room.room_name + " ended."
+            Notifs.objects.create(
+                details=notifs_detail,
+                timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                viewed=0,
+                game_id=game.game_id
+            )
+            game_detail.save()
+            return JsonResponse({"data": "ended"})
+        return JsonResponse({"data": "Cannot end a game if a puzzle is unsolved. Please consider forfeiting or wait for the game to end."})
 
 
 def add_clue(request):
