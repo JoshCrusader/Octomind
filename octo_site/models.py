@@ -568,7 +568,7 @@ class GameErrorLog(models.Model):
         datetime_object = self.timestamp
         clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
         time_diff = datetime_object - clean_date
-        if round(time_diff / timedelta(minutes=1),2) > 60:
+        if round(time_diff / timedelta(minutes=1),2) > 60 or round(time_diff / timedelta(minutes=1),2) < 0:
             print(self.game_error_id,"gamol ako",self.game_id)
             return 0
         return round(time_diff / timedelta(minutes=1),2)
@@ -597,7 +597,7 @@ class GameWarningLog(models.Model):
         clean_date = datetime.strptime(self.game.game_details.timestart.strftime(f), f)
         time_diff = datetime_object.replace(tzinfo=utc) - clean_date.replace(tzinfo=utc)
 
-        if round(time_diff / timedelta(minutes=1), 2) > 60:
+        if round(time_diff / timedelta(minutes=1), 2) > 60 or round(time_diff / timedelta(minutes=1), 2) <0:
             print(self.game.game_details.timestart)
             print(self.game_warning_id,"gamol ako", self.game_id)
             return 0

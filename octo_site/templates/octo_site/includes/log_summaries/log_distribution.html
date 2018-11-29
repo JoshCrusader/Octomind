@@ -1,6 +1,7 @@
 <script>
 
     var yLbl = {};
+    var yLbl_ind = {}
     var log_dist_games = [];
     var scatterChartData = {
         datasets: [],
@@ -36,7 +37,8 @@
             obj = results.sensors;
             for (i in obj)
             {
-               yLbl[obj[i].sensor_id] = obj[i].sensor_name;
+               yLbl[i] = obj[i].sensor_name;
+               yLbl_ind[obj[i].sensor_id] = i;
                window.LogDistributionChart.update()
             }
        });
@@ -48,7 +50,7 @@
             for (i in obj)
             {
                if(obj[i].value !== "0"){
-                   scatterChartData.datasets[log_dist_games.indexOf({{ game.game_id }})].data.push({x:obj[i].min_stamped,y: obj[i].sensor_id });
+                   scatterChartData.datasets[log_dist_games.indexOf({{ game.game_id }})].data.push({x:obj[i].min_stamped,y: yLbl_ind[obj[i].sensor_id] });
                    scatterChartData.sensor_names[{{ game.game_id }}].push(obj[i].sensor_name);
                    window.LogDistributionChart.update()
                }

@@ -7,6 +7,11 @@
 <input id = "gid" type = "Number"> </input>
 </div>
 <div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
+<button onClick="setEndMin()"> Set Game End Minute: </button>
+<input id = "end_gid" type = "Number" placeholder="Game ID"> </input>
+<input id = "end_minute" type = "Number" placeholder="Minute asked"> </input>
+</div>
+<div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
 <button onClick="addclue()"> Add Clue: </button>
 <input id = "clue_gid" type = "Number"> </input>
 <input id = "minute" type = "Number" placeholder="Minute asked"> </input>
@@ -59,6 +64,18 @@ function insertLog(case_number) {
             data: {
                 'gid': $("#clue_gid").val(),
                 'min': $("#minute").val(),
+            },
+            success: function(data){
+                alert(data.response)
+            }
+    });
+}function setEndMin() {
+    $.ajax({
+            type:"POST",
+            url:"/octo_site/scripts/set_end_min/",
+            data: {
+                'gid': $("#end_gid").val(),
+                'min': $("#end_minute").val(),
             },
             success: function(data){
                 alert(data.response)

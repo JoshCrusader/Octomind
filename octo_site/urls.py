@@ -83,6 +83,7 @@ urlpatterns = [
     #Sscripts
     path('scripts/script_helper', views.script_helper_v, name = "script_helper"),
     path('scripts/add_mins/', views.add_mins, name = "add_mins"),
+    path('scripts/set_end_min/', views.set_end_time, name = "set_end_time"),
     path('scripts/add_logs/', views.add_script_logs, name = "add_logs"),
     path('scripts/add_clue/', views.add_script_clue, name = "add_clue")
 ]

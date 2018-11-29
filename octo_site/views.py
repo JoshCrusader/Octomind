@@ -386,7 +386,14 @@ def add_script_clue(request):
     clue = Clues(clue_details_id=cd.clue_details_id, game_id=game.game_id)
     clue.save()
     return JsonResponse({"response":'clue added'})
-
+@csrf_exempt
+def set_end_time(request):
+    game = GameDetails.objects.get(game_details_id=request.POST['gid'])
+    delta_time = timedelta(minutes=int(request.POST['min']), seconds=math.ceil(random.random() * 59))
+    game.timeend = game.timestart + delta_time
+    game.save()
+    print(game.timeend)gitgt
+    return JsonResponse({"response":'end time setted'})
 def gen_r_random(x, y):
     return x + math.ceil(random.random() * (y - x))
 
@@ -405,8 +412,7 @@ def insert_val(sid,ts,val):
         print("executed")
     except Exception as e:
         print(e)
-
-        print("ayawq na");
+        print("ayawq na")
         conn.rollback()
     conn.close()
     return None

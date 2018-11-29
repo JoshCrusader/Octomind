@@ -489,11 +489,11 @@
                             display: true,
                         },
                         ticks: {
-                            beginAtZero: true,
+                            beginAtZero: false,
                             steps: 0,
                             min: 0,
                             stepValue: 1,
-                            max: {{ room.num_sensors }} + 0.3,
+                            max: {{ room.num_sensors }} - 0.9,
                             callback: function(value, index, values){
                                 return yLbl[value];
                             }
