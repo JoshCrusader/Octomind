@@ -392,7 +392,7 @@ def set_end_time(request):
     delta_time = timedelta(minutes=int(request.POST['min']), seconds=math.ceil(random.random() * 59))
     game.timeend = game.timestart + delta_time
     game.save()
-    print(game.timeend)gitgt
+    print(game.timeend)
     return JsonResponse({"response":'end time setted'})
 def gen_r_random(x, y):
     return x + math.ceil(random.random() * (y - x))
@@ -412,6 +412,10 @@ def insert_val(sid,ts,val):
         print("executed")
     except Exception as e:
         print(e)
+<<<<<<< HEAD
+=======
+
+>>>>>>> e1f0bfb17c27c123182c9505cda89185a4fef4d3
         print("ayawq na")
         conn.rollback()
     conn.close()
