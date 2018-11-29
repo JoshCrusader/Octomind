@@ -381,7 +381,7 @@ def add_script_logs(request):
 def add_script_clue(request):
     game = Game.objects.get(game_id=request.POST['gid'])
     delta_time = timedelta(minutes=int(request.POST['min']), seconds=math.ceil(random.random() * 59))
-    cd = ClueDetails(detail='henlo dogging',timestamp=game.game_details.timestart + delta_time)
+    cd = ClueDetails(detail='Sample Clue Given',timestamp=game.game_details.timestart + delta_time)
     cd.save()
     clue = Clues(clue_details_id=cd.clue_details_id, game_id=game.game_id)
     clue.save()
