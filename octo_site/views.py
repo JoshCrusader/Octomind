@@ -412,11 +412,6 @@ def insert_val(sid,ts,val):
         print("executed")
     except Exception as e:
         print(e)
-<<<<<<< HEAD
-=======
-
->>>>>>> e1f0bfb17c27c123182c9505cda89185a4fef4d3
-        print("ayawq na")
         conn.rollback()
     conn.close()
     return None
