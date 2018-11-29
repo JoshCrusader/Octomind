@@ -406,7 +406,7 @@ def insert_val(sid,ts,val):
     except Exception as e:
         print(e)
 
-        print("ayawq na");
+        print("ayawq na")
         conn.rollback()
     conn.close()
     return None

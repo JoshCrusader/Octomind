@@ -36,7 +36,7 @@
     function setPathContent(sensors){
         dom = document.getElementById("path_sequence_plot");
         str = "";
-        senlogs = final_results.data.slice(4, final_results.data.length); //sensor logs
+        senlogs = final_results.data.slice(sensors.length, final_results.data.length); //sensor logs
 
         matrix = {};
         max = 1;
