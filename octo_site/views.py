@@ -136,6 +136,12 @@ def get_sensors_by_room_id(request,room_id):
         data_return.append({"sensor_id":sensor.sensor_id,"sensor_name": sensor.sensor_name, "top_coordinate": sensor.top_coordinate,"left_coordinate": sensor.left_coordinate,"rpi_id": sensor.rpi_id, "sensor_type_id": sensor.sensor_type_id, "sequence_number": sensor.sequence_number})
     return JsonResponse({"sensors":data_return})
 @csrf_exempt
+def get_clues_list_by_room(request,room_id):
+    data_return = []
+    for clue_item in ClueItem.objects.filter(room_id=room_id):
+        data_return.append({"detail":clue_item.detail})
+    return JsonResponse({"items":data_return})
+@csrf_exempt
 def get_sensor_by_game(request, game_id):
     data_return = []
     for sensor in Game.objects.get(game_id=game_id).get_sensors_on_trigger_sequence:

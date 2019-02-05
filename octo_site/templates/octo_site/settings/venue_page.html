@@ -199,6 +199,47 @@
         </form>
     </div>
 </div>
+<div id="modal-room-clues" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h3 class="uk-text-center">ADD CLUES <span data-uk-icon="icon: plus-circle; ratio: 1.5"></span></h3>
+        </div>
+
+        <form class="uk-form" method="post" autocomplete="off">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="add_clue_item">
+
+            <input type="hidden" name="room_id" id="add-clue-room_id" value="">
+            <div class="uk-modal-body">
+                <div class="uk-child-width-1-1@m" uk-grid>
+                    <div>
+                        <hr class="uk-divider-icon">
+                        <dl class="uk-description-list">
+                            <dt><span data-uk-icon="icon: settings"></span> <b id="room-clue-name"></b>Clue List</dt>
+                            <dd><small>You can preselect clues when there is an ongoing game. the list is displayed below</small>
+                        </dl>
+                    </div>
+                    <div class="uk-margin">
+                            <textarea class="uk-textarea" rows="5" name="clue_detail" placeholder="Textarea"></textarea>
+                            <button type="submit" class="uk-button uk-button-default">Create Clue</button>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Items</label>
+                    <ul class="uk-list uk-list-striped" id="clue-list-holder">
+                        <li></li>
+                    </ul>
+                </div>
+
+
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div id="modal-branch-edit" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -208,7 +249,7 @@
 
         <form class="uk-form" method="post" autocomplete="off" action="" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="hidden" name="type" value="room">
+            <input type="hidden" name="type" value="branch_edit">
 
             <div class="uk-modal-body">
                 <div class="uk-margin">
@@ -227,7 +268,6 @@
         </form>
     </div>
 </div>
-
 <div id="content" style="padding: 0 0 0 0; margin-left: 240px;">
     <section class="uk-section uk-article" style="background-color: white;padding: 10px" >
         <div class="uk-container uk-container-medium" style="margin-top: 3vh">
@@ -275,14 +315,8 @@
                                                         <span data-uk-icon="icon: git-fork" class="uk-text-{%  if room.num_sensor_plotted != 0 %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{{ room.room_page_response }}" href=""></span>
                                                         <span class="uk-text-{%  if room.has_game_sequence %}primary{% else %}danger{% endif %}" data-uk-icon="settings" uk-tooltip="{%  if room.has_game_sequence %}Has game Sequence{% else %}Has no game sequence yet{% endif %}" href=""></span>
                                                         <a class="uk-icon-link uk-text-success" id="edit-{{ room.room_id }}" uk-tooltip="Edit Game room" has-sequence="{{ room.has_game_sequence }}"  onclick="edit_room(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" room-branch-id="{{ room.branch.branch_id }}" room-img="/static/media/{{ room.header_img }}" data-uk-icon="pencil" href="#modal-room-edit" uk-toggle></a>
-                                                        <!--
-                                                        <form method="post" style="display: inline">
-                                                            <input type="hidden" name="type" value="room_delete">
-                                                            <a href="#" uk-tooltip="Delete Game room" onclick="delete_room({{ room.room_id }})" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                                            <button type="submit" name="room_id" id="room-{{ room.room_id }}" value="{{ room.room_id }}" style="display: none"/>
-                                                            {% csrf_token %}
-                                                        </form>
-                                                        -->
+                                                        <a class="uk-text-primary" data-uk-icon="lock" uk-tooltip="View and add clues" onclick="clues_list(this)" room-name="{{ room.room_name }}" room-id="{{ room.room_id }}" href="#modal-room-clues" uk-toggle></a>
+
                                                     </td>
                                                     <td>{{ room.branch.name }}</td>
                                                     <td>{{ room.num_sensors }}</td>
@@ -592,6 +626,19 @@
             $("#has_seq").css("display","none");
             $("#has_no_seq").css("display","block");
         }
+    }
+    function clues_list(obj) {
+        $("#room-clue-name").html($(obj).attr('room-name'));
+        $("#add-clue-room_id").val($(obj).attr('room-id'));
+            $("#clue-list-holder").empty();
+            let clues =  $.get("/octo_site/api/get_clues_list_by_room/"+$(obj).attr('room-id')+"/");
+            clues.done(function(results){
+               console.log(results);
+               for(i in results.results){
+                   let str_append = '<li>'+results.items[i].detail+'</li>';
+                       $("#clue-list-holder").append(str_append);
+               }
+            });
     }
     function handleFile(file) {
         console.log("i here, handling file!");

@@ -41,9 +41,15 @@ def page_venue(request):
             edit_branch(request)
         elif request.POST['type'] == "branch_delete":
             delete_branch(request)
+        elif request.POST['type'] == "add_clue_item":
+            add_clue_item(request)
         return HttpResponseRedirect(reverse('page_venue'))
     return render(request, 'octo_site/settings/venue_page.html',
                   {"branches":Branch.objects.all(),"rooms":Room.objects.all(),"room_form":RoomForm(),"edit_room_form":EditRoomForm()})
+
+def add_clue_item(request):
+    clue_item = ClueItem(detail=request.POST['clue_detail'],room_id=request.POST['room_id'])
+    clue_item.save()
 
 def add_room(request):
     if RoomForm(request.POST, request.FILES).is_valid():
