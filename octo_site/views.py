@@ -13,6 +13,8 @@ from django.contrib.auth.models import User,Group
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
 import sys
+import os
+from django.conf import settings
 from octo_site.db_conf import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -311,6 +313,21 @@ def data_vis_v2(request, game_id):
 def live_monitoring(request, game_id):
     room = Room.objects.get(room_id=Game.objects.get(game_id=game_id).room.room_id)
     return render(request, 'octo_site/test_files/live_monitoring_data.html', {"room":room, "game":Game.objects.get(game_id=game_id)})
+
+def live_monitoring_iot(request):
+    timestart=datetime.now()
+    room = Room.objects.get(room_id=2)
+    return render(request, 'octo_site/test_files/iot/live_monitoring_data.html',{"timestart":timestart})
+@csrf_exempt
+def sensor_data_iot(request,timestart):
+    date = timestart.split("_")[0]
+    time = timestart.split("_")[1]
+    time = time.replace("-",":")
+    st = date + " " + time
+    print(st)
+    array = []
+    data = pull_data_live_control_panel_iot()
+    return JsonResponse({"data": data})
 
 def log_percentage_complete(request, game_ids):
     gids = game_ids.split("-")

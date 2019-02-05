@@ -149,6 +149,7 @@
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
             <li class="{% if request.resolver_match.view_name ==  'game_logs' %}uk-active uk-open{% endif %}"><a href="{% url 'game_logs' %}">Game Logs</a></li>
+
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner" or request.user.groups.all.0.name == "Operations Supervisor"%}
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: calendar"></span>Game Analytics</li>
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: gitter"></span> Room Analysis</a></li>
@@ -164,6 +165,7 @@
             <li class="{% if request.resolver_match.view_name ==  'list_user' %}uk-active{% endif %}"><a href="{% url 'list_user' %}"><span class="uk-margin-small-left" data-uk-icon="icon: users"></span> Users List</a></li>
 
         {% endif %}
+
         </ul>
     </div>
     <div class="uk-position-bottom bar-bottom">
@@ -220,9 +222,6 @@
                         </ul>
                     </div>
                 </li>
-                    <!--
-                <li><a class="uk-navbar-toggle" data-uk-toggle data-uk-navbar-toggle-icon href="#offcanvas-nav"></a></li>
-                -->
                 </ul>
             </div>
         </nav>
@@ -232,7 +231,7 @@
 <script>
     initNotif();
 
-    let checkingNotif = setInterval(checkNotif, 1000);
+    //let checkingNotif = setInterval(checkNotif, 1000);
 
     function checkNotif() {
         let notif_data = $.get("/octo_site/api/check_notifs/");
@@ -252,7 +251,7 @@
         let notif_data = $.get("/octo_site/api/open_notifs/");
             $("#new_notif_icon").removeClass("uk-text-warning");
             $("#spanz").remove();
-        checkingNotif = setInterval(checkNotif, 1000);
+        //checkingNotif = setInterval(checkNotif, 1000);
     }
     function initNotif(){
        let notif_data = $.get("/octo_site/api/check_notifs/");

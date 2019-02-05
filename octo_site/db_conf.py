@@ -1,6 +1,8 @@
 import MySQLdb
 from octo_site.models import *
 import math
+from django.conf import settings
+import os
 from datetime import datetime,timedelta
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
@@ -22,7 +24,19 @@ def pull_data_live_control_panel(game_id):
     check_seq(g)
     check_anomaly(g)
     return g.pull_data_fr_game(g)
-
+def pull_data_live_control_panel_iot():
+        array =[]
+        dataset_logs=[]
+        with open(os.path.join(settings.ROOT_PATH, 'testfile.txt'), "r") as ins:
+            for line in ins:
+                array.append(line[0:-1])
+        for a in array:
+            dataset_logs.append({"sensor_id":int(a.split(",")[0]),"timestamp":a.split(",")[1],"value":int(a.split(",")[2])})
+        for data in dataset_logs:
+            sensor = Sensor.objects.get(sensor_id=data["sensor_id"])
+            data['sensor_name'] = sensor.sensor_name
+        print(dataset_logs)
+        return dataset_logs
 # CAN THEY CHANGE TIME SOLVED?
 def check_anomaly(game):
     data = game.pull_data_game(game)

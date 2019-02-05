@@ -1,0 +1,207 @@
+<!doctype html>
+{% load staticfiles %}
+<head>
+	<title>Line Chart</title>
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+		<div style="width:75%;">
+			<canvas id="canvas"></canvas>
+		</div>
+		<div id="logs">
+			
+		</div>
+		<br>
+		<br>
+		<script>
+			let to_add=[];
+			let sensors=[];
+	
+			let color = Chart.helpers.color;
+			let sensor_data;
+			let sensor_data_len;
+			let chartColors = {
+			  red: 'rgb(255, 99, 132)',
+			  orange: 'rgb(255, 159, 64)',
+			  yellow: 'rgb(255, 205, 86)',
+			  green: 'rgb(75, 192, 192)',
+			  blue: 'rgb(54, 162, 235)',
+			  purple: 'rgb(153, 102, 255)',
+			  grey: 'rgb(231,233,237)',
+			  black: 'rgb(0,0,0)',
+			};
+			let colorNames = Object.keys(window.chartColors);
+			let start_time=new Date ("2018-12-10 19:11:50");
+			console.log(start_time);
+			let config = {
+				type: 'line',
+				data: {
+					start_time: start_time,
+					labels: [],
+					datasets: [],
+					statuses:[],
+				},
+				options: {
+					elements:{
+						line: {
+							tension: 0
+						}
+					},
+					spanGaps:true,
+					responsive: true,
+					legend: {
+						position: 'bottom',
+					},
+					title: {
+						display: true,
+						text: '{{ room.room_name }} Game #69'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+						footerFontStyle: 'normal'
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: false
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							type: 'time',
+							scaleLabel: {
+								display: true,
+								labelString: 'Time'
+							}
+						}],
+						yAxes: [{
+	
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Activation Status'
+							},
+							ticks: {
+									beginAtZero: true,
+									steps: 0,
+									min:0,
+									stepValue: 5,
+									max: 1.0001
+								}
+						}]
+					}
+				}
+			};
+			window.onload = function() {
+				var ctx = document.getElementById('canvas').getContext('2d');
+				window.myLine = new Chart(ctx, config);
+				initData();
+				console.log("started");
+				window.setInterval(reloadData, 1000);
+			};
+			function reloadData() {
+				console.log("reading");
+				sensor_data =  $.get("/octo_site/sensor_data_iot/{{ timestart | date:'Y-m-d' }}_{{ timestart | date:'H-i-s' }}");
+				sensor_data.done(function(results){
+					if (sensor_data_len < results.data.length){
+						let to_pop = results.data.length % sensor_data_len;
+						for(let i=0;i<to_pop;i++){
+							to_add.push(results.data.pop());
+						}
+						for (i in to_add){
+							config.data.labels.push(new Date(to_add[i].timestamp));
+							for(let x =0; x < sensors.length;x++){
+								if(to_add[i].sensor_id === sensors[x]){
+									config.data.datasets[x].data.push(to_add[i].value);
+								}
+								else{
+									config.data.datasets[x].data.push(null);
+								}
+							}
+							window.myLine.update();
+						}
+						sensor_data_len += to_pop;
+						window.myLine.update();
+					}
+				});
+			}
+			function initData() {
+			   let time = start_time;
+			   let newDataset;
+			   let newXAxis;
+			   let colorName;
+			   let newColor;
+			   sensor_data =  $.get("/octo_site/api/get_sensor_by_room_id/2/");
+			   sensor_data.done(function(results){
+				  let obj = results.sensors;
+				   for (i in obj)
+				   {
+					   colorName = colorNames[config.data.datasets.length % colorNames.length];
+					   newColor = window.chartColors[colorName];
+					   newXAxis = {
+							id: "id-"+i,
+							type: 'time',
+							position: 'bottom',
+							display: false,
+							ticks: {
+	
+							min: 0,
+							max: 168,
+							stepSize: 1000
+							}
+	
+					   };
+					   newDataset = {
+							type: 'line',
+							label: obj[i].sensor_name,
+							xAxisID:"id-"+i,
+							steppedLine: true,
+							pointStyle: 'circle',
+							backgroundColor: color(newColor).alpha(0.2).rgbString(),
+							borderColor: newColor,
+							data: [],
+							fill: false
+					   };
+					   config.data.datasets.push(newDataset);
+					   sensors.push(obj[i].sensor_id);
+					   config.options.scales.xAxes.push(newXAxis);
+					   window.myLine.update()
+				   }
+	
+			   });
+			   sensor_data =  $.get("/octo_site/sensor_data_iot/{{ timestart | date:'Y-m-d' }}_{{ timestart | date:'H-i-s' }}");
+			   sensor_data.done(function(results){
+				   sensor_data_len = results.data.length;
+				   obj = results.data;
+				   console.log(obj);
+				   for (ob in obj)
+					{
+						config.data.labels.push(new Date(obj[ob].timestamp));
+						for(let x =0; x < sensors.length;x++){
+							if(obj[ob].sensor_id === sensors[x]){
+								config.data.datasets[x].data.push(obj[ob].value);
+							}
+							else{
+								config.data.datasets[x].data.push(null);
+							}
+						}
+						window.myLine.update();
+						str = '<b>'+obj[ob].sensor_name+" | "+obj[ob].timestamp+" | "+obj[ob].value+'</b><br>'; 
+						$("#logs").append(str);
+					}
+			   });
+			}
+		</script>
+</body>
+
