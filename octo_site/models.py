@@ -548,6 +548,38 @@ class GameDetails(models.Model):
     @property
     def get_max_endtime(self):
         return self.timestart + timedelta(hours=1)
+
+class AuthUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.IntegerField()
+    username = models.CharField(unique=True, max_length=150)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    date_joined = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+    @property
+    def branch(self):
+        return Branch.objects.get(branch_id=EmployeeBranch.objects.get(user=self).branch_id)
+
+
+class EmployeeBranch(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+    branch = models.ForeignKey(Branch, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'employee_branch'
+
 class GameErrorLog(models.Model):
     game_error_id = models.AutoField(primary_key=True)
     game = models.ForeignKey(Game, models.DO_NOTHING)

@@ -37,6 +37,11 @@ def control_panel(request):
         #    print(i.firstname)
         properties = {}
         properties['h'] = 5
-        properties['rooms'] = Room.objects.all()
+        if request.user.groups.all()[0].name == "Administrator" or request.user.groups.all()[0].name == "Owner":
+            properties['rooms'] = Room.objects.all()
+        else:
+            branch_id = EmployeeBranch.objects.get(user_id=request.user.id).branch_id
+            properties['rooms'] = Room.objects.filter(branch_id=branch_id)
+
         properties['games'] = games
         return render(request,'octo_site/control_panel.html', properties)
