@@ -86,15 +86,6 @@ class ClueItem(models.Model):
         db_table = 'clue_item'
 
 
-class Clues(models.Model):
-    clue_details = models.ForeignKey(ClueDetails, models.DO_NOTHING)
-    game = models.ForeignKey('Game', models.DO_NOTHING)
-    clue_id = models.AutoField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'clues'
-
 
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)

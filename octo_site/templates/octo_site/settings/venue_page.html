@@ -214,19 +214,18 @@
             <div class="uk-modal-body">
                 <div class="uk-child-width-1-1@m" uk-grid>
                     <div>
-                        <hr class="uk-divider-icon">
                         <dl class="uk-description-list">
-                            <dt><span data-uk-icon="icon: settings"></span> <b id="room-clue-name"></b>Clue List</dt>
+                            <dt><span data-uk-icon="icon: settings"></span> <b id="room-clue-name"></b> Clue List</dt>
                             <dd><small>You can preselect clues when there is an ongoing game. the list is displayed below</small>
                         </dl>
                     </div>
-                    <div class="uk-margin">
+                    <div class="uk-margin" style="display: none" id="add_clue_div">
+                            <hr class="uk-divider-icon">
                             <textarea class="uk-textarea" rows="5" name="clue_detail" placeholder="Textarea"></textarea>
                             <button type="submit" class="uk-button uk-button-default">Create Clue</button>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Items</label>
                     <ul class="uk-list uk-list-striped" id="clue-list-holder">
                         <li></li>
                     </ul>
@@ -235,6 +234,7 @@
 
             </div>
             <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-primary bord_rad" type="button" onclick="add_clue()">Add Clue</button>
                 <button class="uk-button uk-button-default uk-modal-close bord_rad" type="button">Close</button>
             </div>
         </form>
@@ -627,14 +627,21 @@
             $("#has_no_seq").css("display","block");
         }
     }
+    function add_clue() {
+        $("#add_clue_div").css('display','block');
+    }
     function clues_list(obj) {
+
+        $("#add_clue_div").css('display','none');
         $("#room-clue-name").html($(obj).attr('room-name'));
         $("#add-clue-room_id").val($(obj).attr('room-id'));
             $("#clue-list-holder").empty();
             let clues =  $.get("/octo_site/api/get_clues_list_by_room/"+$(obj).attr('room-id')+"/");
             clues.done(function(results){
                console.log(results);
-               for(i in results.results){
+               for(i in results.items){
+
+               console.log(results.items[i].detail);
                    let str_append = '<li>'+results.items[i].detail+'</li>';
                        $("#clue-list-holder").append(str_append);
                }
