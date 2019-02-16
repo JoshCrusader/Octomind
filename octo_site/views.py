@@ -102,6 +102,8 @@ def view_room(request, game_id):
     print("viewing room")
     return view_room_func.view_room(request, game_id)
 
+def tv_monitor(request, game_id):
+    return tv_monitor_func.tv_monitor(request, game_id)
 def sandbox_analysis(request, room_id):
     return sandbox_analysis_func.sandbox_analysis(request, room_id)
 
