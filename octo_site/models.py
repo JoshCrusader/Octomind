@@ -97,6 +97,29 @@ class Game(models.Model):
         managed = False
         db_table = 'game'
         unique_together = (('game_id', 'game_details'),)
+    @property
+    def add_blank_logs(self):
+        connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
+        x = connection.cursor()
+        f = '%Y-%m-%d %H:%M:%S'
+        game = self
+        sensors = Game.objects.get(game_id=game.game_id).room.get_all_sensors
+        sensors_id = []
+        sensors_id_included = []
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        for s in sensors:
+            try:
+                x.execute(
+                    "INSERT INTO `sensorDB`.`sensor_log` (`log_id`,`sensor_id`, `timestamp`, `value`) VALUES (null, %s, %s, %s);",
+                    (s.sensor_id, ts, 0))
+                connection.commit()
+                print("inserted!")
+            except Exception as e:
+                print(e)
+                print("wats")
+                connection.rollback()
+        data_return = []
+        # execute the SQL query using execute() method.
 
     @property
     def get_time_ago(self):
