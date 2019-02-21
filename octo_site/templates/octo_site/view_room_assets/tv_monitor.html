@@ -1,0 +1,95 @@
+{% load staticfiles %}
+<html>
+<head>
+    <link rel="stylesheet" href = "{% static 'styles/tv_monitor.css' %}" type = "text/css">
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            font-size: 100%;
+        }
+        .black{
+            background-color: red;
+            width: 100%;
+            height: 100%;
+            background-image: url("tv_test.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+        }
+        .block{
+            width: 60%;
+            border: 5px solid rgba(255,0,0,0);
+            margin-left: 10%;
+            height: 80%
+        }
+        .timer{
+            color: red;
+            font-size: 5em;
+            text-align: center;
+            margin-top: 25%;
+        }
+        .clue{
+            font-size: 5em; 
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div onclick ="fullscreenme()" id = "all" style = "background-image: url('{% static 'media/' %}imgs/tv_test.png')">
+        <div class = "block">
+            <div class = "timer">TimeLeft: 
+                <span class="hours">
+                    <span class = " uk-margin-remove spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                        {{ minutes }}:{{ seconds }}
+                    </span>
+                    </span>
+            </div>
+            <div class = "clue" id = "clueid" ></div>
+        </div>
+    </div>
+
+    <script>
+        function fullscreenme(){
+            elem = document.getElementById("all");
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+
+        var times = 0;
+        function loop(){
+            setInterval(() => {
+                var timestamps = document.getElementsByClassName("spanTimestamp");
+                for(var i = 0; i < timestamps.length; i++)
+                {
+                    var ts = timestamps.item(i);
+                    var tmins = ts.getAttribute("minutes");
+                    var tsecs = Number(ts.getAttribute("seconds"));
+                    var totalsecs =  tmins*60 + tsecs;
+                    totalsecs = totalsecs - times;
+                    if(totalsecs < 0){
+                        location.reload();
+                    }
+                    tmins = Math.floor(totalsecs/60);
+                    tsecs = totalsecs%60;
+                    tmins = tmins < 10 ? "0"+tmins : tmins;
+                    tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
+                    ts.innerHTML = tmins+":"+tsecs;
+                }
+
+                times = times+1
+            }, 1000);
+        }
+        loop();
+    </script>
+</body>
+</html>

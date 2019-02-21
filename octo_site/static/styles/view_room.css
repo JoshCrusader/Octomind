@@ -127,3 +127,12 @@ html {
 #content{
 
 }
+
+.open-game-window{
+    cursor: pointer;
+    font-size: 14px;
+    float: left;
+    padding: 5px;
+    background-color: #222;
+    margin: 3px;
+}

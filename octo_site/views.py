@@ -78,6 +78,9 @@ def register(request):
 def list_user(request):
     return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
 
+def registration(request):
+    return registration_func.registration(request)
+
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 
@@ -102,6 +105,8 @@ def view_room(request, game_id):
     print("viewing room")
     return view_room_func.view_room(request, game_id)
 
+def tv_monitor(request, game_id):
+    return tv_monitor_func.tv_monitor(request, game_id)
 def sandbox_analysis(request, room_id):
     return sandbox_analysis_func.sandbox_analysis(request, room_id)
 

@@ -15,6 +15,7 @@ urlpatterns = [
     path('log_in/', views.log_in, name='log_in'),
     path('register/', views.register, name='register'),
     path('list_user/', views.list_user, name='list_user'),
+    path('registration/', views.registration, name='registration'),
     #game dets
     path('game_logs/', views.game_logs, name='game_logs'),
     path('game_logs/game/<int:game_id>/', views.game_logs_detail, name='game_logs_detail'),
@@ -30,6 +31,10 @@ urlpatterns = [
 
     path('api/game_summary/<int:game_id>/', views.game_summary, name='game_summary'),
     path('api/game_tally/<int:game_id>/', views.game_tally, name='game_tally'),
+
+    #view room screen
+    path('tv_monitor/', views.tv_monitor, name='tv_monitor'),
+    path('tv_monitor/<int:game_id>/', views.tv_monitor, name='tv_monitor_screen'),
     #ajax functions
     path('api/update_plot/', views.update_plot, name='update_plot'),
     path('api/get_sensor_by_game/<int:game_id>/', views.get_sensor_by_game, name='get_sensor_by_game'),

@@ -77,7 +77,9 @@ h1{
                                 <span class="hours">
                                     <span class = " uk-margin-remove spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
                                         {{ minutes }}:{{ seconds }}
-                                    </span>
+                                    </span><br>
+                                    <div onclick="openMonitor()" class = "open-game-window">open monitor</div>
+                                    <div onclick="fullMonitor()" class = "open-game-window">full screen</div>
                                   </span>
                               </div>
                             </div>
@@ -175,9 +177,33 @@ h1{
 <!-- SCRIPTS -->
 <script>
 
+var tv_monitor_window = null;
+function openMonitor() {
+    tv_monitor_window = open("{% url 'tv_monitor' %}{{ gameid }}", "myWindow", "width=1500,height=1000");
+    // myWindow.document.write(elem);
+    // myWindow.document.html(elem);
+    //myWindow.opener.document.write("<p>This is the source window!</p>");
+}
+
+function fullMonitor(){
+    var elem = tv_monitor_window.document.getElementById("all");
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        console.log("shet");
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+    }
+    console.log("HEHE");
+}
+
 function addClue(target){
     var gameid  = target.getAttribute("gameid");
     var clueval = $("#clue-desc")[0].value;
+    
     $.ajax({
             type:"POST",
             url:"/octo_site/api/add_clue/",
@@ -191,6 +217,9 @@ function addClue(target){
                 //location.reload();
             }
     });
+    if(tv_monitor_window){
+        tv_monitor_window.document.getElementById("clueid").innerHTML = clueval;
+    }
 }
 
 function endGame(target, yesend){
