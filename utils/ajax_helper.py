@@ -45,6 +45,7 @@ def start_game(request):
             viewed=0,
             game_id=game.game_id
         )
+
         game_detail.save()
 
     return JsonResponse({"data": "done"})
