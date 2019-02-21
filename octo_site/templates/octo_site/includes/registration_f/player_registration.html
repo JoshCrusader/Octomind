@@ -1,0 +1,52 @@
+<div class = "frame{{ curr }} fframe frameclose">
+    <div class = "frametitle">Player #{{ frame }}</div>
+    
+    <div style = "font-size: 11px;">The protection of your personal information will be our utmost promise. If you wish to provide us with your information, we are pleased for we will use it to further understand our players' preferences and to designing future rooms.</div>
+    <hr>
+    <div class = "inputdiv">
+        First Name
+        <input type = "text" placeholder = "Your answer" name = "fname{{ frame }}">
+    </div>
+    <div class = "inputdiv">
+        Last Name
+        <input type = "text" placeholder = "Your answer" name = "lname{{ frame }}">
+    </div>
+    <div class = "inputdiv">
+        Email
+        <input type = "text" placeholder = "Your answer" name = "email{{ frame }}">
+    </div>
+    <div class = "inputdiv">
+        Contact Number
+        <input type = "number" placeholder = "Your answer" name = "cnumber{{ frame }}">
+    </div>
+
+    <div class = "inputdiv">
+        Is this your first time?<br>
+        <input type="radio" name="firsttime{{ frame }}" value="Yes" style = "width: auto; height: 26px;"> Yes<br>
+        <input type="radio" name="firsttime{{ frame }}" value="No" style = "width: auto; height: 26px;"> No
+    </div>
+    <div class = "inputdiv">
+        City of Origin
+
+        <select name = "loc{{ frame }}">
+        {% for loc in locs %}
+            <option value="{{ loc.loc_dictionary_id }}">{{ loc.loc_title }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <div class = "inputdiv">
+        Age
+        <input type = "number" placeholder = "Your answer" name = "age{{ frame }}">
+    </div>
+    <div class = "inputdiv">
+        Gender<br>
+        <input type="radio" name="gender{{ frame }}" value="0" style = "width: auto; height: 26px;"> Male<br>
+        <input type="radio" name="gender{{ frame }}" value="1" style = "width: auto; height: 26px;"> Female
+    </div>
+    <button class="uk-button uk-button-secondary" onclick = "onNext(event, '.frame{{ curr }}', '.frame{{ frame }}')">Prev</button>
+    {% if frame != 6 %}
+    <button class="uk-button uk-button-secondary" onclick = "onNext(event, '.frame{{ curr }}', '.frame{{ next }}')">Next</button>
+    {% else %}
+    <input type = "submit" class="uk-button uk-button-primary" value = "Submit" style = "width: auto; padding: 0;">
+    {% endif %}
+</div>

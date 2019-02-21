@@ -9,3 +9,4 @@ from .player_analysis_report_func import *
 from .market_analysis_func import *
 from .exception_report_func import *
 from .tv_monitor_func import *
+from .registration_func import *

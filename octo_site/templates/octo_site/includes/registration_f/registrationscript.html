@@ -1,0 +1,13 @@
+<script>
+    function onNext(e,x,y){
+        e.preventDefault();
+        window.scrollTo(0, 0);
+        $(x).addClass("frameclose");
+        $(y).removeClass("frameclose");
+
+    }
+
+    {% for loc in locs %}
+        console.log("{{ loc.loc_title }}");
+    {% endfor %}
+</script>

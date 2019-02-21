@@ -78,6 +78,9 @@ def register(request):
 def list_user(request):
     return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
 
+def registration(request):
+    return registration_func.registration(request)
+
 def dashboard(request):
     return render(request,'octo_site/dashboard.html')
 

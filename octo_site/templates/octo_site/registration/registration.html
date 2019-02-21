@@ -1,0 +1,121 @@
+{% load staticfiles %}
+<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Mystery Manila - Octomind </title>
+		<link rel="icon" href="{% static 'octomindlogo.png' %}">
+
+		<!-- CSS FILES -->
+
+		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/uikit.min.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/uikit/css/dashboard.css' %}">
+
+		<link rel="stylesheet" type="text/css" href="{% static 'octo_site/res/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+
+		<!-- JS FILES
+		<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+
+    	<script src="{% static 'octo_site/res/uikit/jq_dataTable.js' %}"></script>
+    	<script src="{% static 'octo_site/res/uikit/ul_dataTable.js' %}"></script>
+
+        -->
+
+
+		<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+
+
+		<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
+		<script src="{% static 'octo_site/res/uikit/js/uikit-icons.min.js' %}"></script>
+
+        <script src="{% static 'octo_site/res/uikit/jq_dataTable.js' %}"></script>
+        <script src="{% static 'octo_site/res/uikit/ul_dataTable.js' %}"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.uikit.min.css">
+
+        <link rel="stylesheet" href = "{% static 'styles/registration.css' %}" type = "text/css">
+<!-- CONTENT -->
+<style>
+
+</style>
+</head>
+
+<body>
+
+<div style = "font-size: 30px;text-align:center; width: 100%; font-weight: bold;">Mystery Manila Registration Form</div>
+<div id="content" style="padding-left: 50px;padding-right: 50px; max-width: 700px; margin: auto; margin-top: 20px;">
+
+    <div>
+        
+        <div>
+            <div class = "card-lite uk-card-hover">
+            </div>
+        </div>
+        <form method = "post">
+            {% csrf_token %}
+
+            <div class = "frame1 fframe">
+                <div class = "frametitle">Team Info</div><hr>
+                <div class = "inputdiv">
+                    Operations Supervisor Name
+                    <input type = "text" placeholder = "Your answer" name = "supervisor">
+                </div>
+
+                <div class = "inputdiv">
+                    Mystery to be Played
+                    <select name = "room">
+                        {% for room in rooms %}
+                            <option value="{{ room.room_id }}">{{ room.room_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class = "inputdiv">
+                    Number of Members
+                    <input type = "number" name = "membs" placeholder = "Your answer">
+                </div>
+
+                <div class = "inputdiv">
+                    Team Name
+                    <input type = "text" placeholder = "Your answer" name = "teamname">
+                </div>
+
+                <div class = "inputdiv">
+                    How did you learn of our establishment<br>
+                    <input type="checkbox" name="howuknow" value="Social Media" style = "width: auto; height: 26px;"> Social Media<br>
+                    <input type="checkbox" name="howuknow" value="Fliers" style = "width: auto; height: 26px;"> Fliers<br>
+                    <input type="checkbox" name="howuknow" value="Billboard" style = "width: auto; height: 26px;"> Billboard<br>
+                    <input type="checkbox" name="howuknow" value="Referrals" style = "width: auto; height: 26px;"> Referrals<br>
+                    <input type="checkbox" name="howuknow" value="Commercials" style = "width: auto; height: 26px;"> Commercials<br>
+                    <input type="checkbox" name="howuknow" value="Reccomendations" style = "width: auto; height: 26px;"> Recommendations<br>
+                    <input type="checkbox" name="howuknow" value="Reccomendations" style = "width: auto; height: 26px;"><input type = "text" placeholder = "others" style = "width: auto;">
+                </div>
+
+                <button class="uk-button uk-button-secondary" onclick = "onNext(event, '.frame1', '.frame2')">Next</button>
+            </div>
+            {% with curr=2 frame=1 next=3 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+            {% with curr=3 frame=2 next=4 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+            {% with curr=4 frame=3 next=5 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+            {% with curr=5 frame=4 next=6 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+            {% with curr=6 frame=5 next=7 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+            {% with curr=7 frame=6 next=7 %}
+                {% include 'octo_site/includes/registration_f/player_registration.html' %}
+            {% endwith %}
+        </form>
+    </div>
+</div>
+
+{% include 'octo_site/includes/registration_f/registrationscript.html' %}
+</body>
+
+
+
