@@ -452,7 +452,7 @@ CREATE TABLE `game` (
   CONSTRAINT `fk_game_auth_user1` FOREIGN KEY (`game_keeper_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_details1` FOREIGN KEY (`game_details_id`) REFERENCES `game_details` (`game_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_room1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=253 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,6 +461,7 @@ CREATE TABLE `game` (
 
 LOCK TABLES `game` WRITE;
 /*!40000 ALTER TABLE `game` DISABLE KEYS */;
+INSERT INTO `game` VALUES (253,1,11,253),(254,1,11,254),(255,1,11,255),(256,1,11,256),(257,1,11,257),(258,1,11,258),(259,1,11,259),(260,1,11,260),(261,1,11,261);
 /*!40000 ALTER TABLE `game` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -478,7 +479,7 @@ CREATE TABLE `game_details` (
   `teamname` varchar(45) DEFAULT NULL,
   `solved` tinyint(2) DEFAULT '0',
   PRIMARY KEY (`game_details_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=253 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,6 +488,7 @@ CREATE TABLE `game_details` (
 
 LOCK TABLES `game_details` WRITE;
 /*!40000 ALTER TABLE `game_details` DISABLE KEYS */;
+INSERT INTO `game_details` VALUES (253,'2019-02-10 17:30:00','2019-02-10 18:25:00','Gamolgasaur',1),(254,'2019-02-10 18:30:00','2019-02-10 19:25:30','Null Void',1),(255,'2019-02-11 13:30:00','2019-02-11 14:28:30','Shobelyns',1),(256,'2019-02-13 13:30:00','2019-02-13 14:25:00','yeahRight',1),(257,'2019-02-13 17:30:00',NULL,'Panic!',0),(258,'2019-02-14 15:30:00','2019-02-14 16:24:09','Blackjac',1),(259,'2019-02-14 17:30:00','2019-02-14 18:20:00','Henl0',1),(260,'2019-02-14 19:30:00',NULL,'Champs101',1),(261,'2019-02-14 20:30:00','2019-02-14 21:24:07','Mariamaria',1);
 /*!40000 ALTER TABLE `game_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -634,6 +636,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
+INSERT INTO `players` VALUES (9,'Ebow','Crowfoot','7809971217',1,'Ebow_Crowfoot@gmail.com',30,48,1),(10,'Daren','Clover','2839601675',1,'Daren_Clover@gmail.com',30,41,1),(11,'Gael','Futrell','5274398835',0,'Gael_Futrell@gmail.com',19,24,1),(12,'Thorfinn','Outhwaite','5572739802',1,'Thorfinn_Outhwaite@gmail.com',57,65,1),(13,'Marko','Huxtable','796162709',1,'Marko_Huxtable@gmail.com',21,24,1),(14,'Orlaith','Rockett','1578817654',0,'Orlaith_Rockett@gmail.com',21,24,1),(15,'Dylin','Crofts','7452789597',1,'Dylin_Crofts@gmail.com',9,48,1),(16,'Shannon','Mosedale','1397473884',1,'Shannon_Mosedale@gmail.com',47,41,1),(17,'Kitana','Lillis','7752908593',0,'Kitana_Lillis@gmail.com',32,42,1),(18,'Dennan','Considine','7112149652',1,'Dennan_Considine@gmail.com',35,41,1),(19,'Kaydn','Woffindin','1355384690',1,'Kaydn_Woffindin@gmail.com',28,19,1),(20,'Cassie','Codd','7561388015',0,'Cassie_Codd@gmail.com',26,48,1),(21,'Jena','Heathcote','2214413899',0,'Jena_Heathcote@gmail.com',48,41,1),(22,'Macaulay','Hordern','8236200488',1,'Macaulay_Hordern@gmail.com',58,73,1),(23,'Stephanie-Anne','Tribute','1622216987',0,'Stephanie-Anne_Tribute@gmail.com',29,48,1),(24,'Eva','Fieldstead','461177813',0,'Eva_Fieldstead@gmail.com',28,41,1),(25,'Eryk','Davies','2220343794',1,'Eryk_Davies@gmail.com',25,48,1),(26,'Aleksander','Atnicle?','8855596153',1,'Aleksander_Atnicle?@gmail.com',34,41,1),(27,'Calum-James','Bryer','7645768670',1,'Calum-James_Bryer@gmail.com',26,48,1),(28,'Sawdah','Stroud','3840291668',0,'Sawdah_Stroud@gmail.com',42,48,1),(29,'Harold','Edelston','6792238955',1,'Harold_Edelston@gmail.com',29,16,1);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -724,7 +727,7 @@ CREATE TABLE `sensor` (
 
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
-INSERT INTO `sensor` VALUES (1,'Control Panel Sensor',1,1,1,66,93,'Cube Board Assembly'),(2,'Assembly Board Pin',1,1,2,3,75,'Galactice Decipher'),(3,'Ball Maze Sensor',1,1,3,48,20,'Ball Maze Phase'),(4,'Alien Head Sensor',1,2,4,4,16,'Translator Gear'),(5,'Pedestal Collision Sensor',3,3,1,63,66,'Altar Code'),(6,'Dial Ground Pin',3,4,2,13,46,'Dial Configuration'),(7,'Book Sequence Sensor',4,3,3,19,8,'Sequence Books'),(8,'Chest Sensor',4,1,4,85,13,'Unlock Secret Book'),(9,'Shamans Orb',4,3,5,28,83,'Unlocking Secret Room'),(10,'Worn Brick Sensor',5,3,1,70,2,'Find Hidden Brick'),(11,'Painting Sensor',5,4,2,65,89,'Decode Mysterious Painting'),(12,'Light Stand Sensor',5,3,3,39,73,'Activate Light Stand'),(13,'Unlock Tome',5,4,4,7,6,'Unlocking Pirates Tome'),(14,'Orifice Sensor',5,4,5,24,36,'Invoking Entity'),(15,'Pirates Chest Sensor',5,4,6,2,92,'Devils Key'),(16,'Keyhole Sensor',6,4,1,72,83,'Underfloor Keyhole'),(17,'Rock Chest Sensor',6,4,2,49,83,'Unlock Hard Chest'),(18,'Phone Dial Sensor',6,4,3,51,6,'Phone Code Dial'),(19,'Test Tube Sensor',6,4,4,9,85,'Test Tube Arrangement'),(20,'Haunted Chest Sensor',7,4,1,65,87,'Unlock Revelation'),(21,'Lever Sensor',7,4,2,4,43,'Pull Lever'),(22,'Room Light Switch Sensor',7,4,3,71,30,'Switch Combination'),(23,'Hidden Key Sensor',7,3,4,0,30,'Hidden Key'),(24,'Ace Sensoe ',8,4,2,85,9,'dfg'),(25,'Cggguh',8,4,1,8,86,'a'),(26,'Power Supply Panel',9,4,1,68,94,'Ship Activation'),(27,'Dial Discs Panel',9,1,2,85,45,'Decoding Message'),(28,'Maze Map Sensor',9,4,3,47,21,'Galatic Maze Map'),(29,'Translator Sensor',9,4,4,3,15,'Chair Translator');
+INSERT INTO `sensor` VALUES (1,'Control Panel Sensor',1,1,1,66,93,'Cube Board Assembly'),(2,'Assembly Board Pin',1,1,2,3,75,'Galactice Decipher'),(3,'Ball Maze Sensor',1,1,3,48,20,'Ball Maze Phase'),(4,'Alien Head Sensor',1,2,4,4,16,'Translator Gear'),(5,'Pedestal Collision Sensor',3,3,1,63,66,'Altar Code'),(6,'Dial Ground Pin',3,4,2,13,46,'Dial Configuration'),(7,'Book Sequence Sensor',4,3,3,19,8,'Sequence Books'),(8,'Chest Sensor',4,1,4,85,13,'Unlock Secret Book'),(9,'Shamans Orb',4,3,5,28,83,'Unlocking Secret Room'),(10,'Worn Brick Sensor',5,3,1,70,2,'Find Hidden Brick'),(11,'Painting Sensor',5,4,2,65,89,'Decode Mysterious Painting'),(12,'Light Stand Sensor',5,3,3,39,73,'Activate Light Stand'),(13,'Unlock Tome',5,4,4,7,6,'Unlocking Pirates Tome'),(14,'Orifice Sensor',5,4,5,24,36,'Invoking Entity'),(15,'Pirates Chest Sensor',5,4,6,2,92,'Devils Key'),(16,'Keyhole Sensor',6,4,1,72,83,'Underfloor Keyhole'),(17,'Rock Chest Sensor',6,4,2,49,83,'Unlock Hard Chest'),(18,'Phone Dial Sensor',6,4,3,51,6,'Phone Code Dial'),(19,'Test Tube Sensor',6,4,4,9,85,'Test Tube Arrangement'),(20,'Haunted Chest Sensor',7,4,1,65,87,'Unlock Revelation'),(21,'Lever Sensor',7,4,2,4,43,'Pull Lever'),(22,'Room Light Switch Sensor',7,4,3,71,30,'Switch Combination'),(23,'Hidden Key Sensor',7,3,4,0,30,'Hidden Key'),(24,'Ace Sensoe ',8,4,2,85,9,'dfg'),(25,'Cggguh',8,4,1,8,86,'a'),(26,'Power Supply Panel',9,4,1,68,94,'Ship Activation'),(27,'Dial Discs Panel',9,1,2,84,44,'Decoding Message'),(28,'Maze Map Sensor',9,4,3,0,70,'Galatic Maze Map'),(29,'Translator Sensor',9,4,4,3,15,'Chair Translator');
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -770,7 +773,7 @@ CREATE TABLE `teams` (
   KEY `fk_players_id1_idx` (`players_players_id`),
   CONSTRAINT `fk_game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_players_id1` FOREIGN KEY (`players_players_id`) REFERENCES `players` (`players_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1045 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1080 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -779,6 +782,7 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
+INSERT INTO `teams` VALUES (253,9,1045),(254,10,1046),(254,11,1047),(254,12,1048),(254,13,1049),(255,14,1050),(255,15,1051),(255,16,1052),(256,17,1067),(256,18,1068),(257,19,1069),(257,20,1070),(258,21,1071),(258,22,1072),(258,23,1073),(259,24,1074),(259,25,1075),(260,26,1076),(260,27,1077),(261,28,1078),(261,29,1079);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -795,4 +799,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-21 22:06:54
+-- Dump completed on 2019-02-21 23:07:41
