@@ -146,6 +146,7 @@
     </div>
     <div class="bar-content uk-position-relative">
         <ul class="uk-nav-default uk-nav-parent-icon" data-uk-nav>
+
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
             <li class="{% if request.resolver_match.view_name ==  'game_logs' %}uk-active uk-open{% endif %}"><a href="{% url 'game_logs' %}">Game Logs</a></li>
@@ -155,6 +156,10 @@
             <li class="{% if request.resolver_match.view_name ==  'room_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'room_analysis' %}"><span class="uk-margin-small-right" data-uk-icon="icon: gitter"></span> Room Analysis</a></li>
             <li class="{% if request.resolver_match.view_name ==  'exception_report' %}uk-active uk-open{% endif %}"><a href="{% url 'exception_report' %}"><span class="uk-margin-small-right" data-uk-icon="icon: warning"></span> Exception Report </a></li>
             <li class="{% if request.resolver_match.view_name ==  'market_analysis' %}uk-active uk-open{% endif %}"><a href="{% url 'market_analysis' %}"> <span class="uk-margin-small-right" data-uk-icon="icon: world"></span> Market Analysis</a></li>
+        {% endif %}
+        {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Gamekeeper" or request.user.groups.all.0.name == "Operations Supervisor"%}
+
+        <li class="uk-nav-header"><a href="{% url 'registration' %}"><span data-uk-icon="icon: file-edit"></span> Registration</a></li>
         {% endif %}
         {% if  request.user.groups.all.0.name == "Administrator" or request.user.groups.all.0.name == "Owner"%}
 

@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/get_player_list/', views.get_player_list, name = 'get_player_list'),
     path('api/start_game/', views.start_game, name = 'start_game'),
     path('api/end_game/', views.end_game, name = 'end_game'),
+    path('api/confirm_end_game/', views.confirm_end_game, name = 'confirm_end_game'),
     path('api/add_clue/', views.add_clue, name = 'add_clue'),
     path('api/get_clues_by_game/<int:game_id>/', views.get_clues_by_game, name = 'get_clues_by_game'),
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),

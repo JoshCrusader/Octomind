@@ -219,6 +219,9 @@ def start_game(request):
 @csrf_exempt
 def end_game(request):
     return ajax_helper.end_game(request)
+@csrf_exempt
+def confirm_end_game(request):
+    return ajax_helper.confirm_end_game(request)
 
 @csrf_exempt
 def add_clue(request):

@@ -47,72 +47,77 @@ h1{
             <div class="uk-width-expand uk-grid-medium" style="padding:15px;background-color: rgba(12,0,0,0.85)" uk-grid>
                 <div class="uk-width-1-4">
                     <h2 class="uk-text-warning uk-margin-remove uk-text-break">{{ roomname }} </h2>
-                    <p class="uk-text-muted uk-margin-remove">Game {{ matchid }}</p>
-                </div>
 
-                <div {% if player.count > 3 %}class="uk-column-1-2"{% endif %}>
-
-                    <h3 class="uk-text-primary uk-margin-remove">{{ details.teamname }} </h3>
-                    <div class = "m-team-mems">
+                    <div class="uk-inline">
+                    <a class="uk-margin-remove">Game {{ matchid }}</a>
+                    <div uk-dropdown>
+                        <ul class="uk-nav uk-dropdown-nav">
+                            <li class="uk-nav-header">{{ details.teamname }}</li>
+                            <li class="uk-nav-divider"></li>
                         {% for i in players %}
-                        <div class = "m-member uk-text-muted uk-text-small" style="color: white">{{i.firstname}} {{i.lastname}}</div>
+                            <li>{{i.firstname}} {{i.lastname}}</li>
                         {% endfor %}
+                        </ul>
                     </div>
                 </div>
-                <div>
-                        <div>
-                            <div class="uk-text-primary"><b>Clues</b>: </div>
-                            {% for clue in clues %}
-                                <p class="uk-text-small uk-text-muted uk-margin-remove" uk-tooltip="{{ clue.timestamp|date:'H:i:s'}}">
-                                <span data-uk-icon="icon: unlock"></span>{{ clue.detail }}
-                                </p>
-                            {% endfor %}
-                        </div>
                 </div>
-                <div class="uk-text-center uk-width-expand ">
-                    <div class = " uk-text-success timeLeft" style="font-size: 30px;">
+                <div>
+                    <div class="uk-text-primary"><b>Clues</b>: </div>
+                    {% for clue in clues %}
+                        <p class="uk-text-small uk-text-muted uk-margin-remove" uk-tooltip="title: {{ clue.timestamp|date:'H:i:s'}}">
+                            <span data-uk-icon="icon: unlock"></span>{{ clue.detail }}
+                        </p>
+                    {% endfor %}
+                </div>
+                <div class="uk-width-expand">
+                <center>
+                    <div class = " uk-text-success timeLeft" style="align-content: center;width:100%;font-size: 30px;">
                         {% if done == False %}
-                            <div id="clockdiv">
+                            <div id="clockdiv" style="width: 100%">
                               <div>
-                                <span class="hours">
-                                    <span class = " uk-margin-remove spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
+                                <span class="hours" style="width:10vw;" >
+                                    <span style="width: 100%" class = " uk-margin-remove spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
                                         {{ minutes }}:{{ seconds }}
                                     </span><br>
-                                    <div onclick="openMonitor()" class = "open-game-window">open monitor</div>
-                                    <div onclick="fullMonitor()" class = "open-game-window">full screen</div>
                                   </span>
+
                               </div>
+                            </div>
+
+                            <div>
+                            <button class = "uk-button uk-button-secondary uk-button-small bord_rad" onclick="openMonitor()" type="button" uk-tooltip="title: Open New Screen"><span uk-icon="desktop"></span></button>
+                            <button class = "uk-button uk-button-secondary uk-button-small bord_rad" onclick="fullMonitor()" type="button" uk-tooltip="title: Full screen"><span uk-icon="expand"></span></button>
                             </div>
                         {% else %}
                             <div id="clockdiv">
                               <div>
                                 <span class="hours">
-                                    <h2 class="uk-text-success uk-margin-remove">Game is Finished </h2>
+                                    <h2 class="uk-text-success uk-margin-remove">Game Ended</h2>
                                 </span>
                               </div>
                             </div>
                         {% endif %}
                     </div>
-
+                </center>
                 </div>
             </div>
             <div class = "uk-width-1-5" style="padding:15px;background-color: rgba(12,0,0,0.85)">
                 {% if done == False %}
                     <div id = "endgameb" style="margin-bottom: 1vh">
                         <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this, 1)">
-                             <span uk-icon="icon: check"></span> End Game
+                             <span uk-icon="icon: check"></span> End
                         </button>
                     </div>
                     <div style="margin-bottom: 1vh">
                         <a href ="#modal-example"  uk-toggle class = "atag">
                             <button class = "uk-button uk-button-secondary uk-button-medium" type="button">
-                                <span uk-icon="icon: lifesaver"></span> Give Clue
+                                <span uk-icon="icon: lifesaver"></span> Clue
                             </button>
                         </a>
                     </div>
                     <div id = "forfeitgameb" style="margin-bottom: 1vh">
                         <button class = "uk-button uk-button-secondary uk-button-medium" type="button" gameid = "{{details.game_details_id}}" onClick = "endGame(this, 0)">
-                             <span uk-icon="icon: close"></span> Forfeit Game
+                             <span uk-icon="icon: close"></span> Forfeit
                         </button>
                     </div>
                 {% else %}
@@ -129,10 +134,9 @@ h1{
     </div>
 
     <div class = "m-content-wrapper">
-        
-        <div class = "m-sensor-content">
-            <div class = "m-sensor-div card-lite uk-card-hover">
-                <canvas id="canvas"></canvas>
+        <div class = "m-sensor-content" style="width: 49vw;">
+            <div style="width: 49vw;" class = "m-sensor-div card-lite uk-card-hover">
+                <canvas style="width: 49vw;" id="canvas"></canvas>
             </div>
         </div>
 
@@ -149,21 +153,30 @@ h1{
                 <!-- Things get appended here thru setSandBox() -->
             </div>
             <img id="img_sensor_layout"  src="{% static 'media/' %}{{ blueprint }}" alt="" style="width: 100%;height: 100%;">
-            
             </div>
-
         </div>
     </div>
 </div>
-
-
 <!-- Modal -->
 <div id="modal-example" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
-        <h2 class="uk-modal-title">Add Clue</h2>
+        <h2 class="uk-modal-title">Give Clue</h2>
         <div class="uk-inline uk-width-1-1">
             <div class="uk-margin uk-width-1-1">
-                <input id = "clue-desc" class="uk-input" type="text" placeholder="Clue Description">
+                <select id="clueitem_hldr" class="uk-select" onchange="chooseItem()">
+                    <option disabled>Select a clue</option>
+                    {% for clueitem in clueitems %}
+                        <option>{{ clueitem.detail }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <center>
+                <button class="uk-button uk-button-default bord_rad" onclick="$('#clue-desc').removeAttr('disabled');" type="button">
+                    Add New Clue
+                </button>
+            </center>
+            <div class="uk-margin uk-width-1-1">
+                <input id = "clue-desc" class="uk-input" type="text" placeholder="Clue Description" disabled>
             </div>
         </div>
         <p class="uk-text-right">
@@ -223,8 +236,32 @@ function addClue(target){
 }
 
 function endGame(target, yesend){
-
-    var gid = target.getAttribute("gameid");
+    let gid = target.getAttribute("gameid");
+    if (yesend === 1){
+        $.ajax({
+            type:"POST",
+            url:"/octo_site/api/confirm_end_game/",
+            data: {
+                'game_id': gid,
+                'end': yesend
+            },
+            success: function(data){
+                if (data.data === "cleared"){
+                    endendGame(gid,yesend);
+                }
+                else{
+                    if(confirm("All Sensors are not solved, are you want to end the game.")) {
+                        endendGame(gid,yesend);
+                    }
+                }
+            }
+        });
+    }
+    else{
+        endendGame(gid,yesend)
+    }
+}
+function endendGame(gid,yesend){
     $.ajax({
             type:"POST",
             url:"/octo_site/api/end_game/",
@@ -241,9 +278,12 @@ function endGame(target, yesend){
                 }
 
             }
-    });
-
+        });
 }
+function chooseItem(){
+        $('#clue-desc').val($('#clueitem_hldr').find('option:selected').text());
+}
+
 var times = 0;
 function loop(){
     setInterval(() => {

@@ -38,6 +38,7 @@ def start_game(request):
         game = Game.objects.get(game_id = gid)
         game_detail = GameDetails.objects.get(game_details_id = game.game_details_id)
         game_detail.timestart = now_datetime
+        game.add_blank_logs
         notifs_detail = "Game " + str(game.match_id) + " @ " + game.room.room_name + " started."
         Notifs.objects.create(
             details=notifs_detail,
@@ -54,29 +55,32 @@ def end_game(request):
     if(request.method == 'POST'):
         gid = request.POST['game_id']
         game = Game.objects.get(game_details_id = gid)
-        if game.is_all_puzzle_finished or request.POST['end'] == '0':
+        now_datetime = timezone.now()
+        game_detail = GameDetails.objects.get(game_details_id = gid)
+        game_detail.timeend = now_datetime
+        print(request.POST)
+        if(request.POST['end'] == '1'):
+            print('solved')
+            game_detail.solved = 1
+        else:
+            game_detail.solved = 0
+        notifs_detail = "Game " + str(game.match_id) + " @ " + game.room.room_name + " ended."
+        Notifs.objects.create(
+            details=notifs_detail,
+            timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            viewed=0,
+            game_id=game.game_id
+        )
+        game_detail.save()
+        return JsonResponse({"data": "ended"})
 
-            print("endval: ", request.POST['end'])
-            now_datetime = timezone.now()
-            game_detail = GameDetails.objects.get(game_details_id = gid)
-            game_detail.timeend = now_datetime
-            print(request.POST)
-            if(request.POST['end'] == '1'):
-                print('solved')
-                game_detail.solved = 1
-            else:
-                game_detail.solved = 0
-            notifs_detail = "Game " + str(game.match_id) + " @ " + game.room.room_name + " ended."
-            Notifs.objects.create(
-                details=notifs_detail,
-                timestamp=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                viewed=0,
-                game_id=game.game_id
-            )
-            game_detail.save()
-            return JsonResponse({"data": "ended"})
-        return JsonResponse({"data": "Cannot end a game if a puzzle is unsolved. Please consider forfeiting or wait for the game to end."})
-
+def confirm_end_game(request):
+    gid = request.POST['game_id']
+    game = Game.objects.get(game_details_id = gid)
+    if game.is_all_puzzle_finished:
+        return JsonResponse({"data": "cleared"})
+    else:
+        return JsonResponse({"data": "not_cleared"})
 
 def add_clue(request):
     if(request.method == 'POST'):

@@ -104,9 +104,7 @@ class Game(models.Model):
         f = '%Y-%m-%d %H:%M:%S'
         game = self
         sensors = Game.objects.get(game_id=game.game_id).room.get_all_sensors
-        sensors_id = []
-        sensors_id_included = []
-        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ts = (datetime.now() + timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S")
         for s in sensors:
             try:
                 x.execute(
@@ -118,8 +116,7 @@ class Game(models.Model):
                 print(e)
                 print("wats")
                 connection.rollback()
-        data_return = []
-        # execute the SQL query using execute() method.
+        return None
 
     @property
     def get_time_ago(self):

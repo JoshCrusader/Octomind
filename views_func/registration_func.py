@@ -4,7 +4,7 @@ from octo_site.models import *
 import json
 
 def registration(request):
-
+    properties = {}
     if(request.method == 'POST'):
         # supr = request.POST['supervisor']
         keeperid = 1
