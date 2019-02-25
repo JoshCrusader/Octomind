@@ -127,7 +127,7 @@
                                         <li><a href="#" onclick="$('#s_plot').hide()">Summary Data</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()">Log Digital Signals</a></li>
                                         <li><a href="#" onclick="$('#s_plot').show()">Sensor Plot Simulation</a></li>
-                                        <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-warning" style="font-size: 22px; {% if game.has_error %}color:red{% endif %}"></i> Anomaly Detection</a></li>
+                                        <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-warning" style="font-size: 22px; {% if game.has_error or game.has_warning %}color:red{% endif %}"></i> Anomaly Detection</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><i class="fa fa-file" style="font-size: 22px"></i> Overview</a></li>
                                     </ul>
                                 </div>

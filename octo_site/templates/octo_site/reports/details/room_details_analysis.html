@@ -21,6 +21,22 @@
       background-color: cornflowerblue;
     }
 	</style>
+
+<!-- MODALS -->
+<div id="modal-example" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">Clue Breakdown</h2>
+            <div class="uk-inline uk-width-1-1">
+
+            </div>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
+        </p>
+    </div>
+</div>
+<!-- /MODALS -->
+
+
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
         {% if report_data.has_result %}
@@ -114,32 +130,55 @@
             <br>
             -->
         </div>
-        <div class="uk-grid-divider  uk-child-width-1-4 uk-child-width-1-6@l uk-child-width-1-5@xl" id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
-                    <div style="padding-left: 2vw;width: auto">
+        <div id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
+                    <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
-                        <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
+                        <center>
+                            <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
+                        </center>
+                    </div>
+
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Avg Clues</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
+                        </center>
+                    </div>
+
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Avg Duration</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
+                        </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-success"></span>Completion Rate</span>
-                        <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
+                        </center>
                     </div>
                     <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Avg Clues Asked</span>
-                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
-                    </div>
-
-                    <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-
-                        <h3 class="uk-margin-remove uk-text-primary">{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
+                        <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-success"></span>Retention Rate </span>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-success">23.5%</h3>
+                        </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}%</h3>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}%</h3>
+                        </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}%</h3>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}%</h3>
+                        </center>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:search" class="uk-margin-small-right uk-text-success"></span>Game Phase with Most Clues asked </span>
+
+                        <h4 class="uk-margin-remove "><a href = "#modal-example" uk-toggle><span data-uk-icon="icon:code" class="uk-margin-small-right"></span></a> Ship Activation</h4>
                     </div>
                 </div>
         <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">
