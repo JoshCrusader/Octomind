@@ -61,14 +61,6 @@ h1{
                     </div>
                 </div>
                 </div>
-                <div>
-                    <div class="uk-text-primary"><b>Clues</b>: </div>
-                    {% for clue in clues %}
-                        <p class="uk-text-small uk-text-muted uk-margin-remove" uk-tooltip="title: {{ clue.timestamp|date:'H:i:s'}}">
-                            <span data-uk-icon="icon: unlock"></span>{{ clue.detail }}
-                        </p>
-                    {% endfor %}
-                </div>
                 <div class="uk-width-expand">
                 <center>
                     <div class = " uk-text-success timeLeft" style="align-content: center;width:100%;font-size: 30px;">
@@ -99,6 +91,14 @@ h1{
                         {% endif %}
                     </div>
                 </center>
+                </div>
+                <div style="margin-bottom: 2vh;margin-top: 0vh">
+                    <div class="uk-text-primary "><b>Clues</b>: </div>
+                    {% for clue in clues %}
+                        <p class="uk-text-small uk-text-muted uk-text-truncate uk-margin-remove">
+                            <span data-uk-icon="icon: unlock"></span><b>{{ clue.timestamp|date:'H:i:s'}}</b> {{ clue.detail }}
+                        </p>
+                    {% endfor %}
                 </div>
             </div>
             <div class = "uk-width-1-5" style="padding:15px;background-color: rgba(12,0,0,0.85)">

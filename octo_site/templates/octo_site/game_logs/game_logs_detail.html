@@ -83,17 +83,32 @@
                             </div>
                             <div class="uk-text-center  uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-                                <h3 class="uk-margin-remove txt_white">{{ game.get_duration }}<small class="uk-text-small">min</small></h3>
+                                <h3 class="uk-margin-remove txt_white" id="dur"><div id="dur_spinner"uk-spinner></div></h3>
                                 <div class="uk-text-small uk-margin-remove" style="display: inline;" id="avg_duration"><div uk-spinner></div></div>
+                                <script>
+                                    game_comp =  $.get("/octo_site/api/get_game_duration/{{ game.game_id }}/");
+                                    game_comp.done(function(results){
+                                        console.log(results);
+                                        let clean = parseFloat(results.duration).toFixed(2);
+                                        $("#dur_spinner").remove();
+                                        $("#fdur_spinner").remove();
+                                        $("#dur").text(clean).append('<small class="uk-text-small">min</small>');
+                                        $("#bdr_dur").text(clean);
+                                        $("#final_dur").text(results.final_duration).append('<small class="uk-text-small">min</small>');
+                                    });
+                                </script>
                             </div>
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-primary"></span>Final Duration </span>
-                                <h3 class="uk-margin-remove  txt_white">{{ game.get_final_duration }}<small class="uk-text-small">min</small></h3>
+                                <h3 class="uk-margin-remove  txt_white" id="final_dur"><div id="fdur_spinner" uk-spinner></div></h3>
+
                             </div>
+                            <!--
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Avg. Time Solve </span>
-                                <h3 class="uk-margin-remove txt_white">{{ general_info.average_time }}<small class="uk-text-small">/sensor</small></h3></h3>
+                                <h3 class="uk-margin-remove txt_white">{ general_info.average_time }}<small class="uk-text-small">/sensor</small></h3></h3>
                             </div>
+                            -->
                             <div class="uk-text-center uk-padding-remove">
                                 <span class="uk-text-small txt_light_gray"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-warning"></span># of Clues </span>
                                 <h3 class="uk-margin-remove  txt_white">{{ game.get_num_clues_asked }}</h3>
@@ -217,7 +232,6 @@
                                                             <th class="bdr">Skill Bracket</th>
                                                             <th class="bdr">Player Size</th>
                                                             <th class="bdr">Game Duration</th>
-                                                            <th class="bdr">Average Duration/Sensor</th>
                                                             <th class="bdr">Clues Asked</th>
                                                         </tr>
                                                     </thead>
@@ -225,8 +239,8 @@
                                                         <tr>
                                                             <td class="bdr" align="center">{{ general_info.skill_bracket }}</td>
                                                             <td class="bdr" align="center">{{ game.get_team_size }}</td>
-                                                            <td class="bdr" align="center">{{ game.get_duration }}</td>
-                                                            <td class="bdr" align="center">{{ general_info.average_time }}</td>
+                                                            <td class="bdr" align="center" id="bdr_dur"></td>
+
                                                             <td class="bdr" align="center">{{ game.get_num_clues_asked }}</td>
                                                         </tr>
                                                     </tbody>
@@ -383,7 +397,7 @@
     var data_export = [['Overview','{% if game.is_solved == True %}Solved{% else %}Unsolved{% endif %}','{{ game.match_id }}']
         ,
         ['Skill Bracket','Player Size','Game Duration','Clues Asked','Date'],
-        ['{{ general_info.skill_bracket }}','{{ game.get_team_size }}','{{ game.get_duration }}','{{ game.get_num_clues_asked }},{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %}' ],
+        ['{{ general_info.skill_bracket }}','{{ game.get_team_size }}','','{{ game.get_num_clues_asked }},{{ game.game_details.timestart|date:'M d Y H:i:s'  }} - {% if game.is_solved == True %} {{ game.game_details.timeend|date:'H:i:s' }}{% else %}{{ game.game_details.get_max_endtime |date:'H:i:s'}}{% endif %}' ],
         ['','""',''],
         ['Game Phase Analysis'],
         ['Phase Name','Sensor Name','Time Solved','Timestamp'],

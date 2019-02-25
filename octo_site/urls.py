@@ -38,6 +38,8 @@ urlpatterns = [
     #ajax functions
     path('api/update_plot/', views.update_plot, name='update_plot'),
     path('api/get_sensor_by_game/<int:game_id>/', views.get_sensor_by_game, name='get_sensor_by_game'),
+
+    path('api/get_game_duration/<int:game_id>/', views.get_game_duration, name='get_game_duration'),
     path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
     path('api/get_clues_list_by_room/<int:room_id>/', views.get_clues_list_by_room, name='get_clues_list_by_room'),
     path('api/get_room_by_room_id/<int:room_id>/', views.get_room_by_room_id, name='get_room_by_room_id'),

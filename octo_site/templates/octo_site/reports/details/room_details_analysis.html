@@ -118,45 +118,28 @@
                     <div style="padding-left: 2vw;width: auto">
                         <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
                         <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-success" data-uk-icon="icon: triangle-up">15%</span> vs all time avg.
-                        </div>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-success"></span>Completion Rate</span>
                         <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
                     </div>
                     <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Clues Asked</span>
+                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Avg Clues Asked</span>
                         <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> vs all time avg.
-                        </div>
                     </div>
+
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> vs all time avg.
-                        </div>
 
+                        <h3 class="uk-margin-remove uk-text-primary">{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
+                        <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}%</h3>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
+                        <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}%</h3>
                     </div>
                 </div>
         <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">
@@ -167,7 +150,6 @@
                 </div>
 
                 <div class="uk-width-expand uk-text-right">
-                    <label uk-tooltip="Show all time statistics vs metrics"><input class="uk-checkbox" type="checkbox" onclick="show_stats(this)"> All-time Stats</label> |
                     <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
                     <label uk-tooltip="Show summary insights"><input class="uk-checkbox" type="checkbox"  onclick="show_summary(this)" checked> Summary</label> |
                     <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>

@@ -128,6 +128,10 @@ def access_room(request):
         pass
 # AJAX FUNCTIONS
 @csrf_exempt
+def get_game_duration(request,game_id):
+    game = Game.objects.get(game_id=game_id)
+    return JsonResponse({"duration":game.get_duration,"final_duration":game.get_final_duration})
+@csrf_exempt
 def update_plot(request):
     return plot_func.update_plot(request)
 @csrf_exempt
