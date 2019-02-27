@@ -78,6 +78,7 @@ class Clues(models.Model):
         db_table = 'clues'
 
 class ClueItem(models.Model):
+    id = models.AutoField(primary_key=True)
     detail = models.TextField(blank=True, null=True)
     room = models.ForeignKey('Room', models.DO_NOTHING, blank=True, null=True)
 
@@ -85,6 +86,15 @@ class ClueItem(models.Model):
         managed = False
         db_table = 'clue_item'
 
+
+class ClueItemDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    clue = models.ForeignKey('Clues', models.DO_NOTHING, blank=True, null=True)
+    clue_item = models.ForeignKey(ClueItem, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'clue_item_details'
 
 
 class Game(models.Model):

@@ -91,6 +91,15 @@ def add_clue(request):
         cdetail.save()
         clue = Clues(clue_details_id = cdetail.clue_details_id, game_id = gid)
         clue.save()
+
+        if request.POST['opt'] == 'new':
+            citem = ClueItem(detail=request.POST['clue_desc'],room_id=Game.objects.get(game_id=request.POST['gameid']).room_id)
+            citem.save()
+        else:
+            citem = ClueItem.objects.get(id=request.POST['clue_item_id'])
+
+        citem_detail = ClueItemDetails(clue_id=clue.id,clue_item_id=citem.id)
+        citem_detail.save()
     return JsonResponse({"data": "done"})
 
 def get_clues_by_game(game_id):

@@ -27,7 +27,27 @@
     <div class="uk-modal-dialog uk-modal-body">
         <h2 class="uk-modal-title">Clue Breakdown</h2>
             <div class="uk-inline uk-width-1-1">
-
+                <h4 class="uk-margin-remove">* Clues Summary</h4>
+                <table class="uk-table uk-table-divider" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th align="left">Clue #</th>
+                            <th align="left">Phase Name</th>
+                            <th align="left">Detail</th>
+                            <th align="left">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in clues %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ c.phase_name }}</td>
+                            <td>{{ c.detail}}</td>
+                            <td>{{ c.ts }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         <p class="uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>

@@ -162,16 +162,18 @@ h1{
     <div class="uk-modal-dialog uk-modal-body">
         <h2 class="uk-modal-title">Give Clue</h2>
         <div class="uk-inline uk-width-1-1">
+            <input type="hidden" id="clue_type" value="">
             <div class="uk-margin uk-width-1-1">
                 <select id="clueitem_hldr" class="uk-select" onchange="chooseItem()">
-                    <option disabled>Select a clue</option>
+                    <option selected disabled>Select a clue</option>
                     {% for clueitem in clueitems %}
-                        <option>{{ clueitem.detail }}</option>
+                        <option value="{{ clueitem.id }}">{{ clueitem.detail }}</option>
                     {% endfor %}
                 </select>
             </div>
             <center>
-                <button class="uk-button uk-button-default bord_rad" onclick="$('#clue-desc').removeAttr('disabled');" type="button">
+                <button class="uk-button uk-button-default bord_rad"
+                        onclick="$('#clue-desc').removeAttr('disabled'); $('#clue_type').val('new');" type="button">
                     Add New Clue
                 </button>
             </center>
@@ -221,13 +223,13 @@ function addClue(target){
             type:"POST",
             url:"/octo_site/api/add_clue/",
             data: {
+                'opt':$('#clue_type').val(),
                 'clue_desc': clueval,
+                'clue_item_id': $('#clueitem_hldr').find('option:selected').val(),
                 'gameid': gameid
             },
             success: function(data){
                 location.reload();
-                //alert("cool");
-                //location.reload();
             }
     });
     if(tv_monitor_window){
