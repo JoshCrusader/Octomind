@@ -25,25 +25,22 @@
 <!-- MODALS -->
 <div id="modal-example" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
-        <h2 class="uk-modal-title">Clue Breakdown</h2>
             <div class="uk-inline uk-width-1-1">
-                <h4 class="uk-margin-remove">* Clues Summary</h4>
+                <h4 class="uk-margin-remove">Clues Summary</h4>
                 <table class="uk-table uk-table-divider" style="width:100%;">
                     <thead>
                         <tr>
-                            <th align="left">Clue #</th>
-                            <th align="left">Phase Name</th>
+                            <th align="left">Item ID #</th>
                             <th align="left">Detail</th>
-                            <th align="left">Timestamp</th>
+                            <th align="left">Count</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for c in clues %}
+                    {% for c in report_data.clueitem_breakdown %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ c.phase_name }}</td>
-                            <td>{{ c.detail}}</td>
-                            <td>{{ c.ts }}</td>
+                            <td>{{ c.id }}</td>
+                            <td>{{ c.details }}</td>
+                            <td>{{ c.count}}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -197,8 +194,7 @@
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:search" class="uk-margin-small-right uk-text-success"></span>Game Phase with Most Clues asked </span>
-
-                        <h4 class="uk-margin-remove "><a href = "#modal-example" uk-toggle><span data-uk-icon="icon:code" class="uk-margin-small-right"></span></a> Ship Activation</h4>
+                        <h4 class="uk-margin-remove "><a href = "#modal-example" uk-toggle><span data-uk-icon="icon:code" class="uk-margin-small-right"></span></a> {{ report_data.sensor_most_clue_asked.phase_name }}</h4>
                     </div>
                 </div>
         <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">

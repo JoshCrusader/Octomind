@@ -15,9 +15,25 @@ def compute_report_data(games):
                    "avg_duration":0,
                    "has_errors":0,
                    "warnings":0,
+                   "sensor_most_clue_asked":'',
+                   "sensor_asked_breakdown":'',
+                   "clueitem_most_asked": '',
+                   "clueitem_breakdown":'',
                    "has_result": True
                    }
+    clues = {}
+    sensors = {}
+    report_clue=[]
+    report_sensors=[]
+    for sensor in Room.objects.get(room_id=games[0].room_id).get_all_sensors:
+        sensors[sensor.sensor_id] = 0
+    for ci in ClueItem.objects.filter(room_id=games[0].room_id):
+        clues[ci.id] = 0
+
     for g in games:
+        for clue in Clues.objects.filter(game_id=g.game_id):
+            clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
+            sensors[clue.clue_details.get_sensor_asked] += 1
         if g.is_solved:
             report_data["win"] += 1
         else:
@@ -31,6 +47,29 @@ def compute_report_data(games):
         report_data["avg_duration"] += g.get_duration
 
     try:
+        for key,value in clues.items():
+            if value >0:
+                report_clue.append({"id":key,"details":ClueItem.objects.get(id=key).detail,"count":value})
+        for key,value in sensors.items():
+            if value >0:
+                report_sensors.append({"id":key,
+                                       "phase_name":Sensor.objects.get(sensor_id=key).phase_name,
+                                       "count":value})
+
+        max_value = max(clues.values())  # maximum value
+        max_keys = [k for k, v in clues.items() if v == max_value]
+
+        report_data['clueitem_most_asked'] = {"id":ClueItem.objects.get(id=max_keys[0]).id,
+                                              "details":ClueItem.objects.get(id=max_keys[0]).detail,
+                                              "count":max_value}
+        max_value = max(sensors.values())  # maximum value
+        max_keys = [k for k, v in sensors.items() if v == max_value]
+        report_data['sensor_most_clue_asked'] = {"id": Sensor.objects.get(sensor_id=max_keys[0]).sensor_id,
+                                              "phase_name": Sensor.objects.get(sensor_id=max_keys[0]).phase_name,
+                                              "count": max_value}
+        report_data['clueitem_breakdown'] = report_clue
+        report_data['sensor_asked_breakdown'] = report_sensors
+
         report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
         report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
         report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
@@ -38,6 +77,8 @@ def compute_report_data(games):
         report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
     except Exception as e:
         print(e)
+        report_data['clueitem_most_asked'] = None
+        report_data['clueitem_breakdown'] = None
         report_data["completion_rate"] = None
         report_data["avg_clues_asked"] = None
         report_data["avg_duration"] = None
