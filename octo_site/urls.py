@@ -25,7 +25,7 @@ urlpatterns = [
     path('venue/', views.page_venue, name='page_venue'),
     path('sensor_data/<int:game_id>/',views.sensor_data, name='sensor_data'),
     path('all_sensor_data/',views.all_sensor_data, name='all_sensor_data'),
-
+        #settings api
     path('api/get_log_distribution/<slug:game_ids>/', views.get_log_distribution, name='get_log_distribution'),
     path('api/get_log_summary/<slug:game_ids>/', views.get_log_summary, name='get_log_summary'),
 

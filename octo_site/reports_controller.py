@@ -51,21 +51,24 @@ def compute_report_data(games):
             if value >0:
                 report_clue.append({"id":key,"details":ClueItem.objects.get(id=key).detail,"count":value})
         for key,value in sensors.items():
-            if value >0:
-                report_sensors.append({"id":key,
-                                       "phase_name":Sensor.objects.get(sensor_id=key).phase_name,
-                                       "count":value})
+                sensor = Sensor.objects.get(sensor_id=key)
+                report_sensors.append({"id": sensor.sensor_id,
+                                         "sensor_name": sensor.sensor_name,
+                                        "phase_name": sensor.phase_name,
+                                        "count": value})
 
         max_value = max(clues.values())  # maximum value
         max_keys = [k for k, v in clues.items() if v == max_value]
-
-        report_data['clueitem_most_asked'] = {"id":ClueItem.objects.get(id=max_keys[0]).id,
-                                              "details":ClueItem.objects.get(id=max_keys[0]).detail,
+        clue_item = ClueItem.objects.get(id=max_keys[0])
+        report_data['clueitem_most_asked'] = {"id":clue_item.id,
+                                              "details":clue_item.detail,
                                               "count":max_value}
         max_value = max(sensors.values())  # maximum value
         max_keys = [k for k, v in sensors.items() if v == max_value]
-        report_data['sensor_most_clue_asked'] = {"id": Sensor.objects.get(sensor_id=max_keys[0]).sensor_id,
-                                              "phase_name": Sensor.objects.get(sensor_id=max_keys[0]).phase_name,
+        sensor = Sensor.objects.get(sensor_id=max_keys[0])
+        report_data['sensor_most_clue_asked'] = {"id": sensor.sensor_id,
+                                                 "sensor_name": sensor.sensor_name,
+                                              "phase_name": sensor.phase_name,
                                               "count": max_value}
         report_data['clueitem_breakdown'] = report_clue
         report_data['sensor_asked_breakdown'] = report_sensors

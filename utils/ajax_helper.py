@@ -98,7 +98,7 @@ def add_clue(request):
         else:
             citem = ClueItem.objects.get(id=request.POST['clue_item_id'])
 
-        citem_detail = ClueItemDetails(clue_id=clue.id,clue_item_id=citem.id)
+        citem_detail = ClueItemDetails(clue_id=clue.clue_id,clue_item_id=citem.id)
         citem_detail.save()
     return JsonResponse({"data": "done"})
 
