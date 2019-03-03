@@ -170,7 +170,7 @@
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
                         <center>
-                            <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
+                            <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b> <small class="uk-text-small">({{ report_data.completion_rate }}%)</small></h3>
                         </center>
                     </div>
 
@@ -184,19 +184,19 @@
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Avg Duration</span>
                         <center>
-                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
-                        </center>
-                    </div>
-                    <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-success"></span>Completion Rate</span>
-                        <center>
-                            <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
+                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }} <small class="uk-text-small">min</small></h3>
                         </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-success"></span>Retention Rate </span>
                         <center>
-                            <h3 class="uk-margin-remove  uk-text-success">23.5%</h3>
+                            <h3 class="uk-margin-remove  uk-text-success">{{ report_data.retention_rate }}%</h3>
+                        </center>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:tag" class="uk-margin-small-right uk-text-success"></span>Redemption Rate</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-success">{{ report_data.redemption_rate }}%</h3>
                         </center>
                     </div>
                     <div>

@@ -48,6 +48,7 @@ def compute_report_data(games):
             report_data["warnings"] += 1
         if g.with_voucher:
             report_data["redemption_rate"] += 1
+
         total_team_size += g.get_team_size_int
 
         report_data["retention_rate"] += g.get_loyal_players
@@ -83,7 +84,7 @@ def compute_report_data(games):
 
         report_data["redemption_rate"] = round((report_data["redemption_rate"] / float(len(games))) * 100, 2)
 
-        report_data["retention_rate"] = round((report_data["retention_rate"] / float(len(total_team_size))) * 100, 2)
+        report_data["retention_rate"] = round((report_data["retention_rate"] / float(total_team_size)) * 100, 2)
         report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
         report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
         report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
