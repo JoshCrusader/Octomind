@@ -15,6 +15,8 @@ def compute_report_data(games):
                    "avg_duration":0,
                    "has_errors":0,
                    "warnings":0,
+                   "retention_rate": 0,
+                   "redemption_rate": 0,
                    "sensor_most_clue_asked":'',
                    "sensor_asked_breakdown":'',
                    "clueitem_most_asked": '',
@@ -25,6 +27,8 @@ def compute_report_data(games):
     sensors = {}
     report_clue=[]
     report_sensors=[]
+    total_team_size = 0
+
     for sensor in Room.objects.get(room_id=games[0].room_id).get_all_sensors:
         sensors[sensor.sensor_id] = 0
     for ci in ClueItem.objects.filter(room_id=games[0].room_id):
@@ -42,7 +46,11 @@ def compute_report_data(games):
             report_data["has_errors"] += 1
         if g.has_warning:
             report_data["warnings"] += 1
+        if g.with_voucher:
+            report_data["redemption_rate"] += 1
+        total_team_size += g.get_team_size_int
 
+        report_data["retention_rate"] += g.get_loyal_players
         report_data["avg_clues_asked"] += g.get_num_clues_asked
         report_data["avg_duration"] += g.get_duration
 
@@ -73,6 +81,9 @@ def compute_report_data(games):
         report_data['clueitem_breakdown'] = report_clue
         report_data['sensor_asked_breakdown'] = report_sensors
 
+        report_data["redemption_rate"] = round((report_data["redemption_rate"] / float(len(games))) * 100, 2)
+
+        report_data["retention_rate"] = round((report_data["retention_rate"] / float(len(total_team_size))) * 100, 2)
         report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
         report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
         report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)

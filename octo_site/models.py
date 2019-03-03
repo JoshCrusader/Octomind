@@ -156,6 +156,15 @@ class Game(models.Model):
     def get_team_size_int(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
         return sz
+
+    @property
+    def get_loyal_players(self):
+        ct = 0
+        for team in Teams.objects.filter(game_id=self.game_id):
+           if team.players_players.is_repeating:
+               ct+=1
+        return ct
+
     @property
     def get_team_size(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
@@ -276,6 +285,7 @@ class Game(models.Model):
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
+
     @property
     def get_num_warning(self):
         return GameWarningLog.objects.filter(game_id=self).count()
