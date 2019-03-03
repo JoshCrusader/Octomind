@@ -21,10 +21,16 @@
     </div>
 
     <div class = "inputdiv">
-        Is this your first time?<br>
-        <input type="radio" name="firsttime{{ frame }}" value="Yes" style = "width: auto; height: 26px;"> Yes<br>
-        <input type="radio" name="firsttime{{ frame }}" value="No" style = "width: auto; height: 26px;"> No
+        Is this your first time to play in Mystery Manila?<br>
+        <input type="radio" name="firsttime{{ frame }}" onclick="$('#manytime{{ frame }}').css('display','none')" value="Yes" style = "width: auto; height: 26px;"> Yes<br>
+        <input type="radio" name="firsttime{{ frame }}" onclick="$('#manytime{{ frame }}').css('display','block')" value="No" style = "width: auto; height: 26px;"> No
     </div>
+    <div class = "inputdiv" id="manytime{{ frame }}" style="display: none">
+        How many times have you played before?<br>
+        <input type="number" name="manytime{{ frame }}" value="0" style = "width: auto; height: 26px;"><br>
+    </div>
+
+
     <div class = "inputdiv">
         City of Origin
 
