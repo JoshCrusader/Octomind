@@ -102,6 +102,7 @@ class Game(models.Model):
     game_keeper = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     room = models.ForeignKey('Room', models.DO_NOTHING)
     game_details = models.ForeignKey('GameDetails', models.DO_NOTHING)
+    with_voucher = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -698,12 +699,17 @@ class Players(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     loc_dictionary = models.ForeignKey(LocDictionary, models.DO_NOTHING, blank=True, null=True)
-    
+    times_repeat = models.IntegerField(blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'players'
 
-
+    @property
+    def is_repeating(self):
+        if self.times_repeat >=3 :
+            return True
+        return False
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=45, blank=True, null=True)
