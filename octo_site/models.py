@@ -156,7 +156,25 @@ class Game(models.Model):
     def get_team_size_int(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
         return sz
+    @property
+    def get_current_phase(self):
+        if self.has_error:
+            return "Game experienced errors"
+        if self.is_ongoing:
+            sensors = self.get_sensors_on_trigger_sequence
+            room_sensors = self.room.get_all_sensors
+            try:
+                if len(sensors) == 0:
+                    return room_sensors[0]
+                else:
+                    return room_sensors[len(sensors)-1]
+            except:
+                print("errordar")
+        return "N/A"
 
+    @property
+    def get_progress_bar(self):
+        return round(len(self.self.get_sensors_on_trigger_sequence)/len(self.room.get_all_sensors),2) * 100
     @property
     def get_loyal_players(self):
         ct = 0
