@@ -511,7 +511,8 @@
         };
     let color = Chart.helpers.color;
     let start_time=new Date ("{{ game.game_details.timestart |date:'Y-m-d H:i:s' }}");
-    console.log(start_time);
+    let end_time=new Date ("{{ game.last_time |date:'Y-m-d H:i:s' }}");
+    console.log(start_time,end_time);
     let colorNames = Object.keys(chartColors);
     window.onload = function() {
         var ctx = document.getElementById('game_summary').getContext('2d');
