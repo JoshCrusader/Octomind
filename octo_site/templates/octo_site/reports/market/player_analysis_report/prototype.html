@@ -1,0 +1,86 @@
+{% include 'octo_site/includes/header_reports.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+<div id = 'toimport'>
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'styles/sales.css' %}">
+</div>
+<script>
+    Chart.defaults.global.defaultFontColor = "#fff";
+    Chart.defaults.scale.gridLines.color = "rgba(255,255,255,0.3)";
+</script>
+
+<div class = "sec" >
+    <div class = "sec2">
+        <div class = "title">
+            Market Report as of {DATE}<br>
+            General Report
+        </div>
+        <div class = "top-graph1 left">
+            <div class = "mm-card sale-sum left">
+                {% include 'octo_site/reports/market/player_analysis_report/cards/salesgroupcard.html' %}
+            </div>
+            <div class = "mm-card right tsalescontainer">
+                <div class = "sales-frame">
+                    {% include 'octo_site/reports/market/player_analysis_report/games-played-graph.html' %}
+                </div>
+            </div>
+            <div class = "left">
+            <div class = "mm-card left costcontainer grpahcontainer lefthospace">
+                <div class = "sales-frame">
+                    {% include 'octo_site/reports/market/player_analysis_report/cost-graph.html' %}
+                </div>
+            </div>
+            <div class = "mm-card right roomsalescontainer grpahcontainer">
+                <div class = "sales-frame">
+                    {% include 'octo_site/reports/market/player_analysis_report/graphs/roomsales.html' %}
+                </div>
+            </div>
+            <div class = "mm-card left woncontainer grpahcontainer">
+                <div class = "sales-frame">
+                    {% include 'octo_site/reports/market/player_analysis_report/graphs/gendersales.html' %}
+                </div>
+            </div>
+            </div>
+            <div class = "mm-card sale-sum left grpahcontainer lefthospace agebrute">
+                {% include 'octo_site/reports/market/player_analysis_report/cards/ageougrouplabel.html' %}
+            </div>
+            <div class = "mm-card right agesalescontainer">
+                <div class = "sales-frame">
+                    {% include 'octo_site/reports/market/player_analysis_report/graphs/agesales.html' %}
+                </div>
+            </div>
+        </div>
+        
+        <div class = "allw left"> </div>
+        <div class = "roomchoose left">
+            <div> Show Room: </div>
+            
+            <div class = "roombot left filter1" onclick = "showroom(this, 1)">Alien Assault</div>
+        </div>
+        <div class = "roomcard rc1">
+            <div class = "left rimg">
+                <div class = "cardimg">img here</div>
+                <div class = "infocard">info here</div>
+            </div>
+
+            <div class = "right rgraph">
+                <div class = "rsales left">Sales graph here</div>
+                <div class = "osales right">
+                    <div class = "rgendergraph">gender</div>
+                    <div class = "ragegraph">age</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+let salesdata = {{ sales_graph | safe}}
+console.log(salesdata);
+</script>
+{% include 'octo_site/reports/market/player_analysis_report/load_data.html' %}
+{% include 'octo_site/reports/market/player_analysis_report/filterscripts.html' %}

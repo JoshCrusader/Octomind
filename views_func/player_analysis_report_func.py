@@ -62,6 +62,7 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][i] = {}
             data['sales'][i]['count'] = 0
             data['sales'][i]['sales'] = 0
+            data['sales'][i]['costs'] = 0
             data['sales'][i]['title'] = i
     elif(c == 'range'):
         sd = datetime.strptime(reqsd + " 00:00:00", '%Y-%m-%d %H:%M:%S')
@@ -72,6 +73,7 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][datekey] = {}
             data['sales'][datekey]['count'] = 0
             data['sales'][datekey]['sales'] = 0
+            data['sales'][datekey]['costs'] = 0
             data['sales'][datekey]['title'] = datekey
             data['sales']['labels'].append(datekey)
 
@@ -83,8 +85,16 @@ def setup_sales_count(c, data, gamedet, teamlen, price_dict):
         m = gamedet.timestart.day
     else:
         m = str(gamedet.timestart.year)+'-'+str(gamedet.timestart.month)+'-'+str(gamedet.timestart.day)
+
+    if(gamedet.solved == 1):
+        sub = gamedet.timeend - gamedet.timestart
+        if(sub <= timedelta(minutes = 20)):
+            data['costs'] += 150*teamlen
+            data['sales'][m]['costs'] += 150*teamlen
+
     data['sales'][m]['count'] += 1
     data['sales'][m]['sales'] += price_dict[teamlen]
+    data['totalsales'] += price_dict[teamlen]
 
 def get_game_sales(games, req):
     data = {}
@@ -92,6 +102,19 @@ def get_game_sales(games, req):
     data['sales']['labels'] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     data['teamcount'] = {}
     data['ages'] = {}
+    data['totalsales'] = 0
+    data['costs'] = 0
+    data['totalsolved'] = 0
+    data['totalfailed'] = 0
+    data['totalage'] = 0
+    data['gendersales'] = [0, 0]
+    data['rooms'] = {}
+
+    for i in Room.objects.all():
+        data['rooms'][i.room_id] = {}
+        data['rooms'][i.room_id]['label'] = i.room_name
+        data['rooms'][i.room_id]['sales'] = 0
+
     price_dict = {
         1: 1100,
         2: 1100,
@@ -100,6 +123,15 @@ def get_game_sales(games, req):
         5: 2000,
         6: 2400
     }
+    solo_dict = {
+        1: 1100,
+        2: 550,
+        3: 500,
+        4: 450,
+        5: 400,
+        6: 400
+    }
+
     age_dict = ['0-17', '18-22', '23-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65', '66+']
     stat = 12
 
@@ -109,6 +141,7 @@ def get_game_sales(games, req):
         data['ages'][age_group]['count'] = 0
         data['ages'][age_group]['success'] = 0
         data['ages'][age_group]['fail'] = 0
+        data['ages'][age_group]['sales'] = 0
 
     for i in range(0, 7):
         data['teamcount'][i+1] = {}
@@ -120,6 +153,7 @@ def get_game_sales(games, req):
         gamedet = game.game_details
         solved = gamedet.solved
         m = gamedet.timestart.month
+        rooom = game.room
         teams = Teams.objects.filter(game_id = game.game_id)
         teamlen = len(teams)
         if(teamlen == 0):
@@ -127,10 +161,13 @@ def get_game_sales(games, req):
         data['teamcount'][teamlen]['count'] += 1
         if(solved == 1):
             data['teamcount'][teamlen]['success'] += 1
+            data['totalsolved'] += 1
         else:
             data['teamcount'][teamlen]['fail'] += 1
+            data['totalfailed'] += 1
             
         setup_sales_count(req.POST['report_cat'], data, gamedet, teamlen, price_dict)
+        data['rooms'][rooom.room_id]['sales'] += price_dict[teamlen]
         for team in teams:
             player = team.players_players
             age = player.age
@@ -158,13 +195,19 @@ def get_game_sales(games, req):
             else:
                 mg = '66+'
             
-            data['ages'][mg]['count'] += 1
+            if(player.gender == 0):
+                data['gendersales'][0] += solo_dict[teamlen]
+            else:
+                data['gendersales'][1] += solo_dict[teamlen]
+
             if(solved == 1):
                 data['ages'][mg]['success'] += 1
             else:
                 data['ages'][mg]['fail'] += 1
 
+            data['ages'][mg]['sales'] += solo_dict[teamlen]
             data['ages'][mg]['count'] += 1
+            data['totalage'] += 1
 
 
     return data
@@ -184,7 +227,15 @@ def player_analysis_report(request):
             print("what")
         print(request.POST)
     
+    
     properties = {}
-    properties['sales_graph'] = json.dumps(get_game_sales(games, request))
+    detobj = get_game_sales(games, request)
+    properties['sales_graph'] = json.dumps(detobj)
+    properties['totalsales'] = detobj['totalsales']
+    properties['totalcosts'] = detobj['costs']
+    properties['agedict'] = detobj['ages']
+    properties['totalage'] = detobj['totalage']
+    properties['totalsolved'] = detobj['totalsolved']
+    properties['totalfailed'] = detobj['totalfailed']
     properties['lengames'] = len(games)
-    return render(request, 'octo_site/reports/market/player_analysis_report/main.html', properties)
+    return render(request, 'octo_site/reports/market/player_analysis_report/prototype.html', properties)

@@ -26,12 +26,12 @@
 </table>
 -->
 <div>
-<canvas id = "games_played_graph"></canvas>
+<canvas id = "cost_graph"></canvas>
 </div>
 
 
 <script>
-games_played_data = {
+cost_data = {
     datasets: [{
         data: [11,22,58,31, 119, 84],
 
@@ -50,7 +50,7 @@ games_played_data = {
     ],
 };
 
-games_played_options = {
+cost_options = {
     responsive: true,
     title:{
         display: true,
@@ -96,11 +96,11 @@ games_played_options = {
         }]
     }
 }
-var ctx = document.getElementById('games_played_graph').getContext('2d');
-window.gamesPlayedChart = new Chart(ctx,{
+var ctx = document.getElementById('cost_graph').getContext('2d');
+window.costChart = new Chart(ctx,{
     type: 'line',
-    data: games_played_data,
-    options: games_played_options
+    data: cost_data,
+    options: cost_options
 });
 
 </script>

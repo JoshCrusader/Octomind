@@ -1,0 +1,186 @@
+.sec{
+    max-width: 1080px; 
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    border-radius: 4px;
+}
+
+.sec2{
+    float: left;
+    background-color: #f7f7f7;
+    width: 100%;
+    padding: 20px; 
+}
+.title{
+    text-align: center;
+}
+
+.mm-card{
+    background-color: #222;
+    color: white;
+    padding: 15px;
+}
+
+.sale-sum{
+    min-width: 350px;
+    height: 300px;
+}
+
+.sale__port{
+    border-bottom: 0.5px solid rgba(255,255,255, 0.5);
+    padding: 2px;
+    margin-bottom: 15px;
+}
+
+.sale__port__child{
+    float: right;
+    font-size: 17px;
+    font-weight: bold;
+    color: orange;
+}
+
+.sale__port__mini{
+    font-size: 13px;
+    color: green;
+}
+
+.right{
+    float: right;
+    position: relative;
+}
+.left{
+    float: left;
+    position: relative;
+}
+.top-graph1{
+    width: 100%;
+    background-color: #444444;
+}
+
+
+.sales-frame{
+    height: 100%;
+    width: 100%;
+    color: black;
+}
+
+
+.tsalescontainer{
+    width: 630px;
+    height: 300px;
+}
+
+.woncontainer{
+    min-width: 350px;
+    height: 250px;
+}
+
+.costcontainer{
+    min-width: 350px;
+    height: 200px;
+}
+
+
+.roomsalescontainer{
+    width: 630px;
+    height: 520px;
+}
+.grpahcontainer{
+    margin-top: 40px;
+}
+
+.lefthospace{
+    margin-top: 40px;
+}
+.agesalescontainer{
+    width: 630px;
+    height: 500px;
+    margin-top: 40px;
+}
+
+
+.roomchoose{
+    margin-top: 65px;
+}
+
+.roombot{
+    background-color: #222;
+    height: 40px;
+    line-height: 40px;
+    color: white;
+    margin-right: 20px;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.4s;
+}
+.roombot:hover{
+    background-color: rgb(74, 74, 74);
+}
+.roomcard{
+    float: left;
+    width: 100%;
+    height: 500px;
+    margin-top: 20px;
+    background-color: green;
+    padding: 15px;
+    display: block;
+}
+
+.rimg{
+    width: 300px;
+    height: 100%;
+    background-color: white;
+}
+
+.rgraph{
+    height: 100%;
+    width: 750px;
+    background-color: red;
+
+}
+.rsales{
+    height: 100%;
+    width: 400px;
+    background-color: white;
+}
+.osales{
+    height: 100%;
+    width: 300px;
+    background-color: white;
+}
+
+.rgendergraph{
+    width: 100%;
+    height: 50%;
+}
+.ragegraph{
+    width: 100%;
+    height: 50%;
+}
+
+.allw{
+    width: 100%;
+    height: 10px;
+}
+.filteractive{
+    background-color: orange;
+    color: white;
+}
+.filteractive:hover{
+    background-color: orange;
+    color: white;
+}
+
+.cardactive{
+    display: block;
+}
+
+.cardimg{
+    width: 100%;
+    height: 50%;
+}
+
+.agebrute{
+    height: auto;
+}

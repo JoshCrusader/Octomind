@@ -179,31 +179,41 @@ h1{
 
 var tv_monitor_window = null;
 function openMonitor() {
-    tv_monitor_window = open("{% url 'tv_monitor' %}{{ gameid }}", "myWindow", "width=1500,height=1000");
+    if(sessionStorage['istv{{ gameid }}']){
+        console.log("meron na");
+    }
+    else{
+        console.log("make boi");
+        tv_monitor_window = open("{% url 'tv_monitor' %}{{ gameid }}", "myWindow", "width=1500,height=1000");
+        sessionStorage['istv{{ gameid }}'] = tv_monitor_window;
+    }
     // myWindow.document.write(elem);
     // myWindow.document.html(elem);
     //myWindow.opener.document.write("<p>This is the source window!</p>");
 }
 
 function fullMonitor(){
-    var elem = tv_monitor_window.document.getElementById("all");
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) { /* Firefox */
-        elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        console.log("shet");
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { /* IE/Edge */
-        elem.msRequestFullscreen();
+    let trueval = localStorage.getItem("full{{ gameid }}");
+    if(localStorage.getItem("full{{ gameid }}") != null){
+        if(trueval == "false" || trueval == false){
+            localStorage.setItem("full{{ gameid }}", true);
+        }
+        else{
+            localStorage.setItem("full{{ gameid }}", false);
+        }
     }
-    console.log("HEHE");
+    else{
+        localStorage.setItem("full{{ gameid }}", true);
+    }
+    console.log(localStorage.getItem("full{{ gameid }}"));
 }
 
 function addClue(target){
     var gameid  = target.getAttribute("gameid");
     var clueval = $("#clue-desc")[0].value;
     
+    localStorage.setItem("clue{{ gameid }}", clueval);
+    console.log("FK YES");
     $.ajax({
             type:"POST",
             url:"/octo_site/api/add_clue/",
@@ -217,8 +227,9 @@ function addClue(target){
                 //location.reload();
             }
     });
-    if(tv_monitor_window){
-        tv_monitor_window.document.getElementById("clueid").innerHTML = clueval;
+    if(sessionStorage['istv{{ gameid }}']){
+        //sessionStorage['istv{{ gameid }}'].getElementById("clueid").innerHTML = clueval;
+        // localStorage.setItem("clue{{ gameid }}", clueval)
     }
 }
 
