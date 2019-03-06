@@ -77,7 +77,7 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][datekey]['title'] = datekey
             data['sales']['labels'].append(datekey)
 
-def setup_sales_count(c, data, gamedet, teamlen, price_dict):
+def setup_sales_count(c, data, gamedet, teamlen, price_dict, propr, rooom):
     m = 1
     if(c == 'yearly'):
         m = gamedet.timestart.month
@@ -91,12 +91,13 @@ def setup_sales_count(c, data, gamedet, teamlen, price_dict):
         if(sub <= timedelta(minutes = 20)):
             data['costs'] += 150*teamlen
             data['sales'][m]['costs'] += 150*teamlen
+            propr['roomdata'][rooom.room_id]['costs'] += 150*teamlen
 
     data['sales'][m]['count'] += 1
     data['sales'][m]['sales'] += price_dict[teamlen]
     data['totalsales'] += price_dict[teamlen]
 
-def get_game_sales(games, req):
+def get_game_sales(games, req, propr):
     data = {}
     data['sales'] = {}
     data['sales']['labels'] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -114,6 +115,12 @@ def get_game_sales(games, req):
         data['rooms'][i.room_id] = {}
         data['rooms'][i.room_id]['label'] = i.room_name
         data['rooms'][i.room_id]['sales'] = 0
+        propr['roomdata'][i.room_id] = {}
+        propr['roomdata'][i.room_id]['sales'] = 0
+        propr['roomdata'][i.room_id]['costs'] = 0
+        propr['roomdata'][i.room_id]['gamelen'] = 0
+        propr['roomdata'][i.room_id]['totalsolved'] = 0
+        propr['roomdata'][i.room_id]['totalfailed'] = 0
 
     price_dict = {
         1: 1100,
@@ -162,12 +169,17 @@ def get_game_sales(games, req):
         if(solved == 1):
             data['teamcount'][teamlen]['success'] += 1
             data['totalsolved'] += 1
+            propr['roomdata'][rooom.room_id]['totalsolved'] += 1
         else:
             data['teamcount'][teamlen]['fail'] += 1
             data['totalfailed'] += 1
+            propr['roomdata'][rooom.room_id]['totalfailed'] += 1
             
-        setup_sales_count(req.POST['report_cat'], data, gamedet, teamlen, price_dict)
+        setup_sales_count(req.POST['report_cat'], data, gamedet, teamlen, price_dict, propr, rooom)
         data['rooms'][rooom.room_id]['sales'] += price_dict[teamlen]
+        propr['roomdata'][rooom.room_id]['sales'] += price_dict[teamlen]
+        propr['roomdata'][rooom.room_id]['gamelen'] += 1
+
         for team in teams:
             player = team.players_players
             age = player.age
@@ -229,7 +241,8 @@ def player_analysis_report(request):
     
     
     properties = {}
-    detobj = get_game_sales(games, request)
+    properties['roomdata'] = {}
+    detobj = get_game_sales(games, request, properties)
     properties['sales_graph'] = json.dumps(detobj)
     properties['totalsales'] = detobj['totalsales']
     properties['totalcosts'] = detobj['costs']
@@ -238,4 +251,5 @@ def player_analysis_report(request):
     properties['totalsolved'] = detobj['totalsolved']
     properties['totalfailed'] = detobj['totalfailed']
     properties['lengames'] = len(games)
+    properties['rooms'] = Room.objects.all()
     return render(request, 'octo_site/reports/market/player_analysis_report/prototype.html', properties)

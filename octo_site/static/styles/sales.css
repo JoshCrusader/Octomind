@@ -110,6 +110,7 @@
     line-height: 40px;
     color: white;
     margin-right: 20px;
+    margin-top: 20px;
     padding: 5px;
     cursor: pointer;
     transition: background-color 0.4s;
@@ -122,9 +123,9 @@
     width: 100%;
     height: 500px;
     margin-top: 20px;
-    background-color: green;
+    background-color: #222;
     padding: 15px;
-    display: block;
+    display: none;
 }
 
 .rimg{
@@ -138,11 +139,6 @@
     width: 750px;
     background-color: red;
 
-}
-.rsales{
-    height: 100%;
-    width: 400px;
-    background-color: white;
 }
 .osales{
     height: 100%;
@@ -165,11 +161,11 @@
 }
 .filteractive{
     background-color: orange;
-    color: white;
+    color: #222;
 }
 .filteractive:hover{
     background-color: orange;
-    color: white;
+    color: #222;
 }
 
 .cardactive{
@@ -179,8 +175,37 @@
 .cardimg{
     width: 100%;
     height: 50%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 
 .agebrute{
     height: auto;
+}
+
+.infocard{
+    height: 50%;
+}
+.mm-mini{
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    min-width: inherit;
+    padding: 0;
+}
+.rsales{
+    height: 100%;
+    width: 400px;
+    background-color: white;
+    position: relative;
+}
+
+.rsalescontainer{
+    width: 100%;
+    height: 300px;
+    background-color: blue;
+    display: table-cell;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }

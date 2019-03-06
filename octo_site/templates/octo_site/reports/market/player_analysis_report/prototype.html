@@ -57,23 +57,34 @@
         <div class = "roomchoose left">
             <div> Show Room: </div>
             
-            <div class = "roombot left filter1" onclick = "showroom(this, 1)">Alien Assault</div>
-        </div>
-        <div class = "roomcard rc1">
+            {% for room in rooms %}
+                <div class = "roombot left filter{{room.room_id}}" onclick = "showroom(this, {{room.room_id}})">{{ room.room_name }}</div>
+            {% endfor %}
+        </div> 
+
+        {% for room in rooms %}
+        <div class = "roomcard rc{{room.room_id}}">
             <div class = "left rimg">
-                <div class = "cardimg">img here</div>
-                <div class = "infocard">info here</div>
+                <div class = "cardimg" style = "background-image: url('{% static 'media/' %}{{ room.header_img }}')"></div>
+                <div class = "infocard">
+                    <div class = "mm-card mm-mini sale-sum left">
+                        {{ room.room_name }}
+                        {% include 'octo_site/reports/market/player_analysis_report/roomcomponents/infocard.html' %}
+                    </div>
+                </div>
             </div>
 
             <div class = "right rgraph">
-                <div class = "rsales left">Sales graph here</div>
+                <div class = "rsales left">
+                    <div class = "rsalescontainer left">sales graph here</div>
+                </div>
                 <div class = "osales right">
                     <div class = "rgendergraph">gender</div>
                     <div class = "ragegraph">age</div>
                 </div>
             </div>
-
         </div>
+        {% endfor %}
     </div>
 
 </div>
