@@ -126,7 +126,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-02-21 08:12:31.159337',1,'admin','Arianna','Grande','p@gmail.com',1,1,'2018-09-18 17:09:01.940340'),(2,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-02-05 13:34:32.850378',0,'gk_cperez','Carlo','Perez','',0,1,'2018-09-24 16:19:25.705940'),(3,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-02-05 13:35:21.401328',0,'os_jlazada','Jcrux','Lazada','',0,1,'2018-09-25 08:05:57.788519'),(4,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-01-21 14:07:34.334523',0,'own_cdang','Chuck','Dang','',0,1,'2018-10-03 01:12:13.170811');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-03-02 10:36:04.555946',1,'admin','Arianna','Grande','p@gmail.com',1,1,'2018-09-18 17:09:01.940340'),(2,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-03-02 01:20:41.252609',0,'gk_cperez','Carlo','Perez','',0,1,'2018-09-24 16:19:25.705940'),(3,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-03-02 01:24:30.587572',0,'os_jlazada','Jcrux','Lazada','',0,1,'2018-09-25 08:05:57.788519'),(4,'pbkdf2_sha256$100000$mmlkBLqCEbts$eUQ1qBH1dye79/HAk457DMBw4dWf/w1xk8qequ4ouzE=','2019-03-02 01:28:00.587598',0,'own_cdang','Chuck','Dang','',0,1,'2018-10-03 01:12:13.170811');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -221,13 +221,13 @@ DROP TABLE IF EXISTS `clue_details`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clue_details` (
   `clue_details_id` int(11) NOT NULL AUTO_INCREMENT,
-  `detail` varchar(45) DEFAULT NULL,
+  `detail` text,
   `timestamp` datetime DEFAULT NULL,
   `clue_item_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`clue_details_id`),
   KEY `clue_details_clue_item_id_fk` (`clue_item_id`),
   CONSTRAINT `clue_details_clue_item_id_fk` FOREIGN KEY (`clue_item_id`) REFERENCES `clue_item` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1589 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1615 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,6 +236,7 @@ CREATE TABLE `clue_details` (
 
 LOCK TABLES `clue_details` WRITE;
 /*!40000 ALTER TABLE `clue_details` DISABLE KEYS */;
+INSERT INTO `clue_details` VALUES (1589,'Locate a tool that would help you view white screen','2019-02-22 13:34:05',NULL),(1590,'Secure ciphers to decode 3 missing characters','2019-02-22 14:00:50',NULL),(1591,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-10 17:40:40',NULL),(1592,'Locate a tool that would help you view white screen','2019-02-10 17:49:27',NULL),(1593,'Unlock the first room with the ship\'s serial number','2019-02-10 17:56:06',NULL),(1594,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-10 18:15:37',NULL),(1595,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-10 18:35:57',NULL),(1596,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-10 19:05:11',NULL),(1597,'Locate a tool that would help you view white screen','2019-02-11 13:46:37',NULL),(1598,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-11 13:55:42',NULL),(1599,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-11 14:15:56',NULL),(1600,'What is the shortest term for invasion','2019-02-13 13:50:43',NULL),(1601,'Locate a tool that would help you view white screen','2019-02-13 17:35:06',NULL),(1602,'Unlock the first room with the ship\'s serial number','2019-02-13 17:53:58',NULL),(1603,'Secure ciphers to decode 3 missing characters','2019-02-13 18:00:53',NULL),(1604,'What is the shortest term for invasion','2019-02-13 18:08:44',NULL),(1605,'Unlock the first room with the ship\'s serial number','2019-02-14 15:56:03',NULL),(1606,'Locate a tool that would help you view white screen','2019-02-14 17:38:09',NULL),(1607,'Secure ciphers to decode 3 missing characters','2019-02-14 17:56:47',NULL),(1608,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 18:01:12',NULL),(1609,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 20:01:58',NULL),(1610,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 21:03:52',NULL),(1611,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-03-01 13:47:18',NULL),(1612,'There are three inverted triangles. Red Blue Yellow. These Shaded circle represent activated switches.','2019-03-01 13:49:10',NULL),(1613,'What is the shortest term for invasion. Three letter word.','2019-03-01 14:08:21',NULL),(1614,'pyramid side open','2019-03-01 14:14:34',NULL);
 /*!40000 ALTER TABLE `clue_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -253,7 +254,7 @@ CREATE TABLE `clue_item` (
   PRIMARY KEY (`id`),
   KEY `clue_item_room_room_id_fk` (`room_id`),
   CONSTRAINT `clue_item_room_room_id_fk` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +263,37 @@ CREATE TABLE `clue_item` (
 
 LOCK TABLES `clue_item` WRITE;
 /*!40000 ALTER TABLE `clue_item` DISABLE KEYS */;
+INSERT INTO `clue_item` VALUES (2,'Locate a tool that would help you view white screen',11),(3,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors',11),(4,'Unlock the first room with the ship\'s serial number',11),(5,'Secure ciphers to decode 3 missing characters',11),(6,'What is the shortest term for invasion',11),(7,'pyramid side open',11),(8,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR',11),(9,'There are three inverted triangles. Red Blue Yellow. These Shaded circle represent activated switches.',11),(10,'What is the shortest term for invasion. Three letter word.',11);
 /*!40000 ALTER TABLE `clue_item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clue_item_details`
+--
+
+DROP TABLE IF EXISTS `clue_item_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clue_item_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `clue_id` int(11) DEFAULT NULL,
+  `clue_item_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `clue_item_details_clue_item_id_fk` (`clue_item_id`),
+  KEY `clue_item_details_clues_clue_id_fk` (`clue_id`),
+  CONSTRAINT `clue_item_details_clue_item_id_fk` FOREIGN KEY (`clue_item_id`) REFERENCES `clue_item` (`id`),
+  CONSTRAINT `clue_item_details_clues_clue_id_fk` FOREIGN KEY (`clue_id`) REFERENCES `clues` (`clue_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clue_item_details`
+--
+
+LOCK TABLES `clue_item_details` WRITE;
+/*!40000 ALTER TABLE `clue_item_details` DISABLE KEYS */;
+INSERT INTO `clue_item_details` VALUES (1,1589,2),(2,1590,5),(3,1591,3),(4,1592,2),(5,1593,4),(6,1594,8),(7,1595,3),(8,1596,8),(9,1597,2),(10,1598,3),(11,1599,8),(12,1600,6),(13,1601,2),(14,1602,4),(15,1603,5),(16,1604,6),(17,1605,4),(18,1606,2),(19,1607,5),(20,1608,8),(21,1609,8),(22,1610,8),(23,1611,3),(24,1612,9),(25,1613,10),(26,1614,7);
+/*!40000 ALTER TABLE `clue_item_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -281,7 +312,7 @@ CREATE TABLE `clues` (
   KEY `game_id1_idx` (`game_id`),
   CONSTRAINT `clues_details_id1` FOREIGN KEY (`clue_details_id`) REFERENCES `clue_details` (`clue_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1589 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1615 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,6 +321,7 @@ CREATE TABLE `clues` (
 
 LOCK TABLES `clues` WRITE;
 /*!40000 ALTER TABLE `clues` DISABLE KEYS */;
+INSERT INTO `clues` VALUES (1589,262,1589),(1590,262,1590),(1591,253,1591),(1592,253,1592),(1593,253,1593),(1594,253,1594),(1595,254,1595),(1596,254,1596),(1597,255,1597),(1598,255,1598),(1599,255,1599),(1600,256,1600),(1601,257,1601),(1602,257,1602),(1603,257,1603),(1604,257,1604),(1605,258,1605),(1606,259,1606),(1607,259,1607),(1608,259,1608),(1609,260,1609),(1610,261,1610),(1611,264,1611),(1612,264,1612),(1613,264,1613),(1614,264,1614);
 /*!40000 ALTER TABLE `clues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,7 +432,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('1su8efsntktbveggqppy3btd3wj17551','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-07 15:40:20.366977'),('2o12atgu31yr5zhpl9lub7jwzpvem9xf','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-13 13:08:37.022793'),('3fn9f0t20fjdlnsllswtxd8nvs39u8fh','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:35:39.240225'),('58bgiowy964uix50e97l8cpsc2ar75a5','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:25:26.452038'),('5l3z0dtrp2bjdv7t7yahh08sput85q9c','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-08 23:50:25.911558'),('6wllzxgel05ab70n98xyy91em0pk1a43','NWJhODQ2OTc0YTI4YmY5NTI1OWQxYjAzOWU3NDlmNzdiMzAwNjNiODp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiNTAyYjQxYzMxNzNlZDQ2NjlmYjgyZmFmODA2NDFhMGI4ZjIyMTg0YSJ9','2018-12-07 09:18:16.726379'),('6zj3s26cddxkuura6pkzbhuqzvzy02v7','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-03 07:33:25.001681'),('9tow3ectc0szb473oll9sm7zyk9zpy94','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-15 07:36:06.017212'),('bi6l6x2yceqf8gnltt3skqnn7sja9mas','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:12:18.022597'),('c620o0fhd7514t6unput8bj82c5x7ylu','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2019-03-07 08:12:31.168366'),('ekktbaa8y51zkimklzosdi1x4hyktk16','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-24 17:29:05.019601'),('fxkhfhv76we50g58w748a1apfj4hm3in','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2019-02-20 09:32:28.516863'),('iipbaj2tayzz9fvhmqool1vykxoi44up','Mzc0OWE2NWExMTYzNGY3NjU5YzE4ZmZlOTNlMjAzZjgyODBjYzc4NTp7InVzZXJuYW1lIjoib3duX2NkYW5nIiwiZ3Vlc3QiOnRydWUsImxvZ2dlZCI6dHJ1ZSwiX2F1dGhfdXNlcl9pZCI6IjQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaGFzaCI6Ijg2ZjI0MDdmOGIxY2I2OTVjZWI3YTkzNTA1NTQwOWNmYjI5ZmE4MDAifQ==','2019-02-04 14:07:34.339788'),('k8u745rx1v1h3tffpzkr9q4mhu6x8nsz','OWZjMWEwMTA4ZjNmYzcxYTkwZWYyYjM0ZGJlZTExMTgwNWJhMjEyMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzdhZDBiMjY0MTBjNjgyYWQ1NjM0ZTdhNDNmNjEwYmM2NzM2MDgzMyJ9','2018-11-24 09:42:18.770886'),('q4ggay5vnqqg478v0exegdi8b77d5y3e','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-26 21:17:58.028608'),('r45mjn75g3cux6589a8ilvi5akxtafai','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:32:28.568515'),('shlcjblt0a94oxagl1yyy8hvnqga9elx','YjdjNWNiMmJhNjU1ZDk0N2YzYjQ1N2YwYmUwODBmZjc4Zjg4M2ViMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzc3MGE5YzExZGJkMjQ1YTgyMTk4NmE3ODJiMDI2NzZmZjQ3MTljMCJ9','2018-11-14 11:08:59.131083'),('twlddsx9qp0yo9rut5j4ypsc16gh9hgq','OWZjMWEwMTA4ZjNmYzcxYTkwZWYyYjM0ZGJlZTExMTgwNWJhMjEyMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzdhZDBiMjY0MTBjNjgyYWQ1NjM0ZTdhNDNmNjEwYmM2NzM2MDgzMyJ9','2018-11-26 11:18:02.196526'),('zkmh1sowk3iit9ui9t3qfdqqk82uibdu','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-06 13:41:13.539922');
+INSERT INTO `django_session` VALUES ('1su8efsntktbveggqppy3btd3wj17551','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-07 15:40:20.366977'),('2o12atgu31yr5zhpl9lub7jwzpvem9xf','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-13 13:08:37.022793'),('3fn9f0t20fjdlnsllswtxd8nvs39u8fh','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:35:39.240225'),('58bgiowy964uix50e97l8cpsc2ar75a5','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:25:26.452038'),('5l3z0dtrp2bjdv7t7yahh08sput85q9c','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-08 23:50:25.911558'),('6wllzxgel05ab70n98xyy91em0pk1a43','NWJhODQ2OTc0YTI4YmY5NTI1OWQxYjAzOWU3NDlmNzdiMzAwNjNiODp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiNTAyYjQxYzMxNzNlZDQ2NjlmYjgyZmFmODA2NDFhMGI4ZjIyMTg0YSJ9','2018-12-07 09:18:16.726379'),('6zj3s26cddxkuura6pkzbhuqzvzy02v7','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-03 07:33:25.001681'),('9tow3ectc0szb473oll9sm7zyk9zpy94','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-10-15 07:36:06.017212'),('bi6l6x2yceqf8gnltt3skqnn7sja9mas','MGM1MWNjNjhmMTZhZGEwODQwMjU2YmI1NWNiMTQ0NjQwZjRmY2U0Yjp7InVzZXJuYW1lIjoiamMwMHgiLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiNCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYWNlNjU1ZDE1YmVmOWQ2YzhiZTNiYjc1ZmMyYjUxYmJkMDJiN2Y2NSJ9','2018-10-17 01:12:18.022597'),('ekktbaa8y51zkimklzosdi1x4hyktk16','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-24 17:29:05.019601'),('fxkhfhv76we50g58w748a1apfj4hm3in','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2019-02-20 09:32:28.516863'),('iipbaj2tayzz9fvhmqool1vykxoi44up','Mzc0OWE2NWExMTYzNGY3NjU5YzE4ZmZlOTNlMjAzZjgyODBjYzc4NTp7InVzZXJuYW1lIjoib3duX2NkYW5nIiwiZ3Vlc3QiOnRydWUsImxvZ2dlZCI6dHJ1ZSwiX2F1dGhfdXNlcl9pZCI6IjQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaGFzaCI6Ijg2ZjI0MDdmOGIxY2I2OTVjZWI3YTkzNTA1NTQwOWNmYjI5ZmE4MDAifQ==','2019-02-04 14:07:34.339788'),('k8u745rx1v1h3tffpzkr9q4mhu6x8nsz','OWZjMWEwMTA4ZjNmYzcxYTkwZWYyYjM0ZGJlZTExMTgwNWJhMjEyMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzdhZDBiMjY0MTBjNjgyYWQ1NjM0ZTdhNDNmNjEwYmM2NzM2MDgzMyJ9','2018-11-24 09:42:18.770886'),('q4ggay5vnqqg478v0exegdi8b77d5y3e','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2018-12-26 21:17:58.028608'),('r45mjn75g3cux6589a8ilvi5akxtafai','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-11 06:32:28.568515'),('shlcjblt0a94oxagl1yyy8hvnqga9elx','YjdjNWNiMmJhNjU1ZDk0N2YzYjQ1N2YwYmUwODBmZjc4Zjg4M2ViMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzc3MGE5YzExZGJkMjQ1YTgyMTk4NmE3ODJiMDI2NzZmZjQ3MTljMCJ9','2018-11-14 11:08:59.131083'),('twlddsx9qp0yo9rut5j4ypsc16gh9hgq','OWZjMWEwMTA4ZjNmYzcxYTkwZWYyYjM0ZGJlZTExMTgwNWJhMjEyMjp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzdhZDBiMjY0MTBjNjgyYWQ1NjM0ZTdhNDNmNjEwYmM2NzM2MDgzMyJ9','2018-11-26 11:18:02.196526'),('vjjhfpivoc5rje7ak7wbxsem5oc3cuo4','MmEzNzA2ZjVkZTI0OWQ2OWJkZTcyZDc1ZTI1MzNhYmUwNGM0NWYwMDp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiODZmMjQwN2Y4YjFjYjY5NWNlYjdhOTM1MDU1NDA5Y2ZiMjlmYTgwMCJ9','2019-03-16 10:36:04.561690'),('zkmh1sowk3iit9ui9t3qfdqqk82uibdu','MzZmOWFhODg1ZGZlMDBhMjAxZjlkMjNlOWIyMTIzYjYxNzVkZTJiNTp7InVzZXJuYW1lIjoiYWRtaW4iLCJndWVzdCI6dHJ1ZSwibG9nZ2VkIjp0cnVlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiZjVhMDkyYjg2MzBkOTE0ZDU4ZGY3OTg4MGQyMDdlOTM4NWQ3NGYxYSJ9','2018-11-06 13:41:13.539922');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -452,7 +484,7 @@ CREATE TABLE `game` (
   CONSTRAINT `fk_game_auth_user1` FOREIGN KEY (`game_keeper_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_details1` FOREIGN KEY (`game_details_id`) REFERENCES `game_details` (`game_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_room1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,7 +493,7 @@ CREATE TABLE `game` (
 
 LOCK TABLES `game` WRITE;
 /*!40000 ALTER TABLE `game` DISABLE KEYS */;
-INSERT INTO `game` VALUES (253,1,11,253),(254,1,11,254),(255,1,11,255),(256,1,11,256),(257,1,11,257),(258,1,11,258),(259,1,11,259),(260,1,11,260),(261,1,11,261);
+INSERT INTO `game` VALUES (253,1,11,253),(254,1,11,254),(255,1,11,255),(256,1,11,256),(257,1,11,257),(258,1,11,258),(259,1,11,259),(260,1,11,260),(261,1,11,261),(262,1,11,262),(264,1,11,264),(266,1,11,266),(267,1,11,267),(268,1,11,268),(269,1,11,269),(270,1,11,270),(271,1,11,271),(272,1,11,272),(273,1,11,273),(274,1,11,274),(275,1,11,275),(276,1,11,276),(277,1,11,277),(278,1,11,278),(279,1,11,279),(280,1,11,280),(281,1,11,281),(282,1,11,282),(283,1,11,283),(284,1,11,284),(285,1,11,285),(286,1,11,286),(287,1,11,287),(288,1,11,288),(289,1,11,289);
 /*!40000 ALTER TABLE `game` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -479,7 +511,7 @@ CREATE TABLE `game_details` (
   `teamname` varchar(45) DEFAULT NULL,
   `solved` tinyint(2) DEFAULT '0',
   PRIMARY KEY (`game_details_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,7 +520,7 @@ CREATE TABLE `game_details` (
 
 LOCK TABLES `game_details` WRITE;
 /*!40000 ALTER TABLE `game_details` DISABLE KEYS */;
-INSERT INTO `game_details` VALUES (253,'2019-02-10 17:30:00','2019-02-10 18:25:00','Gamolgasaur',1),(254,'2019-02-10 18:30:00','2019-02-10 19:25:30','Null Void',1),(255,'2019-02-11 13:30:00','2019-02-11 14:28:30','Shobelyns',1),(256,'2019-02-13 13:30:00','2019-02-13 14:25:00','yeahRight',1),(257,'2019-02-13 17:30:00',NULL,'Panic!',0),(258,'2019-02-14 15:30:00','2019-02-14 16:24:09','Blackjac',1),(259,'2019-02-14 17:30:00','2019-02-14 18:20:00','Henl0',1),(260,'2019-02-14 19:30:00',NULL,'Champs101',1),(261,'2019-02-14 20:30:00','2019-02-14 21:24:07','Mariamaria',1);
+INSERT INTO `game_details` VALUES (253,'2019-02-10 17:30:00','2019-02-10 18:25:00','Gamolgasaur',1),(254,'2019-02-10 18:30:00','2019-02-10 19:25:30','Null Void',1),(255,'2019-02-11 13:30:00','2019-02-11 14:28:30','Shobelyns',1),(256,'2019-02-13 13:30:00','2019-02-13 14:25:00','yeahRight',1),(257,'2019-02-13 17:30:00',NULL,'Panic!',0),(258,'2019-02-14 15:30:00','2019-02-14 16:24:09','Blackjac',1),(259,'2019-02-14 17:30:00','2019-02-14 18:20:00','Henl0',1),(260,'2019-02-14 19:30:00',NULL,'Champs101',0),(261,'2019-02-14 20:30:00','2019-02-14 21:24:07','Mariamaria',1),(262,'2019-02-22 13:26:36','2019-02-22 14:16:34','Emirates',1),(264,'2019-03-01 13:28:49',NULL,'Team 1',0),(266,NULL,NULL,'Kyleanga',0),(267,NULL,NULL,'Assd',0),(268,'2019-02-15 18:30:00',NULL,'Danny\'s Angel',0),(269,'2019-02-15 20:15:00',NULL,'Adelie',0),(270,'2019-02-16 20:30:00','2019-02-16 21:27:12','We Are Young',1),(271,'2019-02-16 14:30:00','2019-02-16 15:26:20','Tanner Port',1),(272,'2019-02-16 20:30:00','2019-02-16 21:25:43','Myself, I',1),(273,'2019-02-17 12:30:00',NULL,'You Move',0),(274,'2019-02-17 14:30:00',NULL,'Someones',0),(275,'2019-02-18 15:30:00',NULL,'Restless Bois',0),(276,'2019-02-19 18:30:00',NULL,'Winneir',0),(277,'2019-02-20 16:30:00','2019-02-20 17:23:01','ComeThru',1),(278,'2019-02-22 19:30:00',NULL,'Team Mystery',0),(279,'2019-02-23 15:30:00','2019-02-23 16:27:23','Songerz',1),(280,'2019-02-23 16:30:00','2019-02-23 17:25:20','FEU SOlverz',1),(281,'2019-02-24 17:30:00','2019-02-24 18:27:23','Leroys',1),(282,'2019-02-24 19:30:00','2019-02-24 20:20:23','Sanchez Clan',0),(283,'2019-02-24 20:30:00','2019-02-24 21:28:30','ADulting',1),(284,'2019-02-25 15:30:00','2019-02-25 16:08:23','Payong Academy',1),(285,'2019-02-25 16:30:00','2019-02-24 17:13:00','Wasakan',0),(286,'2019-02-25 17:30:00',NULL,'Graduates',0),(287,'2019-02-25 19:30:00','2019-02-24 20:11:00','TwoTeeNine',0),(288,'2019-02-28 16:30:00',NULL,'Seventeen6',0),(289,'2019-02-28 18:30:00',NULL,'Sharks',0);
 /*!40000 ALTER TABLE `game_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -511,7 +543,7 @@ CREATE TABLE `game_error_log` (
   KEY `sensor_id_idx` (`sensor_id`),
   CONSTRAINT `game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=265 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=269 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -520,6 +552,7 @@ CREATE TABLE `game_error_log` (
 
 LOCK TABLES `game_error_log` WRITE;
 /*!40000 ALTER TABLE `game_error_log` DISABLE KEYS */;
+INSERT INTO `game_error_log` VALUES (265,261,28,'Maze Map Sensor not in sequence','2019-02-22 08:00:14','[26, 28, 29]'),(266,261,29,'Translator Sensor not in sequence','2019-02-22 08:00:15','[26, 28, 29]'),(267,274,26,'Power Supply Panel not in sequence','2019-03-02 18:36:04','[27, 26, 28, 29]'),(268,274,27,'Dial Discs Panel not in sequence','2019-03-02 18:36:04','[27, 26, 28, 29]');
 /*!40000 ALTER TABLE `game_error_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,7 +575,7 @@ CREATE TABLE `game_warning_log` (
   KEY `game_id_idx` (`game_id`),
   CONSTRAINT `log_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `log_sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -551,6 +584,7 @@ CREATE TABLE `game_warning_log` (
 
 LOCK TABLES `game_warning_log` WRITE;
 /*!40000 ALTER TABLE `game_warning_log` DISABLE KEYS */;
+INSERT INTO `game_warning_log` VALUES (69,262,27,'27 solved super fast','2019-02-22 14:10:49',1.85),(70,262,28,'28 solved super fast','2019-02-22 14:13:03',2.22),(71,262,29,'29 solved super fast','2019-02-22 14:16:11',3.13);
 /*!40000 ALTER TABLE `game_warning_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -595,7 +629,7 @@ CREATE TABLE `notifs` (
   PRIMARY KEY (`notif_id`),
   KEY `notif_game_game_id_fk` (`game_id`),
   CONSTRAINT `notif_game_game_id_fk` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -604,6 +638,7 @@ CREATE TABLE `notifs` (
 
 LOCK TABLES `notifs` WRITE;
 /*!40000 ALTER TABLE `notifs` DISABLE KEYS */;
+INSERT INTO `notifs` VALUES (95,'Sensor Sequence Error Detected at game 100261','2019-02-22 08:00:15',1,261),(96,'Sensor Sequence Error Detected at game 100261','2019-02-22 08:00:15',1,261),(97,'Game 100262 @ Alien Assault CCM started.','2019-02-22 13:26:36',1,262),(98,'Game Anomaly Detected at game 100262','2019-02-22 14:10:49',1,262),(99,'Game Anomaly Detected at game 100262','2019-02-22 14:13:03',1,262),(100,'Game Anomaly Detected at game 100262','2019-02-22 14:16:11',1,262),(101,'Game 100262 @ Alien Assault CCM ended.','2019-02-22 14:16:34',1,262),(103,'Game 100264 @ Alien Assault CCM started.','2019-03-01 13:28:48',1,264),(105,'Sensor Sequence Error Detected at game 100274','2019-03-02 18:36:04',1,274),(106,'Sensor Sequence Error Detected at game 100274','2019-03-02 18:36:04',1,274);
 /*!40000 ALTER TABLE `notifs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,7 +662,7 @@ CREATE TABLE `players` (
   PRIMARY KEY (`players_id`),
   KEY `fk_loc_id_idx` (`loc_dictionary_id`),
   CONSTRAINT `fk_loc_id` FOREIGN KEY (`loc_dictionary_id`) REFERENCES `loc_dictionary` (`loc_dictionary_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1050 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1143 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -636,7 +671,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (9,'Ebow','Crowfoot','7809971217',1,'Ebow_Crowfoot@gmail.com',30,48,1),(10,'Daren','Clover','2839601675',1,'Daren_Clover@gmail.com',30,41,1),(11,'Gael','Futrell','5274398835',0,'Gael_Futrell@gmail.com',19,24,1),(12,'Thorfinn','Outhwaite','5572739802',1,'Thorfinn_Outhwaite@gmail.com',57,65,1),(13,'Marko','Huxtable','796162709',1,'Marko_Huxtable@gmail.com',21,24,1),(14,'Orlaith','Rockett','1578817654',0,'Orlaith_Rockett@gmail.com',21,24,1),(15,'Dylin','Crofts','7452789597',1,'Dylin_Crofts@gmail.com',9,48,1),(16,'Shannon','Mosedale','1397473884',1,'Shannon_Mosedale@gmail.com',47,41,1),(17,'Kitana','Lillis','7752908593',0,'Kitana_Lillis@gmail.com',32,42,1),(18,'Dennan','Considine','7112149652',1,'Dennan_Considine@gmail.com',35,41,1),(19,'Kaydn','Woffindin','1355384690',1,'Kaydn_Woffindin@gmail.com',28,19,1),(20,'Cassie','Codd','7561388015',0,'Cassie_Codd@gmail.com',26,48,1),(21,'Jena','Heathcote','2214413899',0,'Jena_Heathcote@gmail.com',48,41,1),(22,'Macaulay','Hordern','8236200488',1,'Macaulay_Hordern@gmail.com',58,73,1),(23,'Stephanie-Anne','Tribute','1622216987',0,'Stephanie-Anne_Tribute@gmail.com',29,48,1),(24,'Eva','Fieldstead','461177813',0,'Eva_Fieldstead@gmail.com',28,41,1),(25,'Eryk','Davies','2220343794',1,'Eryk_Davies@gmail.com',25,48,1),(26,'Aleksander','Atnicle?','8855596153',1,'Aleksander_Atnicle?@gmail.com',34,41,1),(27,'Calum-James','Bryer','7645768670',1,'Calum-James_Bryer@gmail.com',26,48,1),(28,'Sawdah','Stroud','3840291668',0,'Sawdah_Stroud@gmail.com',42,48,1),(29,'Harold','Edelston','6792238955',1,'Harold_Edelston@gmail.com',29,16,1);
+INSERT INTO `players` VALUES (9,'Ebow','Crowfoot','7809971217',1,'Ebow_Crowfoot@gmail.com',30,48,1),(10,'Daren','Clover','2839601675',1,'Daren_Clover@gmail.com',30,41,1),(11,'Gael','Futrell','5274398835',0,'Gael_Futrell@gmail.com',19,24,1),(12,'Thorfinn','Outhwaite','5572739802',1,'Thorfinn_Outhwaite@gmail.com',57,65,1),(13,'Marko','Huxtable','796162709',1,'Marko_Huxtable@gmail.com',21,24,1),(14,'Orlaith','Rockett','1578817654',0,'Orlaith_Rockett@gmail.com',21,24,1),(15,'Dylin','Crofts','7452789597',1,'Dylin_Crofts@gmail.com',9,48,1),(16,'Shannon','Mosedale','1397473884',1,'Shannon_Mosedale@gmail.com',47,41,1),(17,'Kitana','Lillis','7752908593',0,'Kitana_Lillis@gmail.com',32,42,1),(18,'Dennan','Considine','7112149652',1,'Dennan_Considine@gmail.com',35,41,1),(19,'Kaydn','Woffindin','1355384690',1,'Kaydn_Woffindin@gmail.com',28,19,1),(20,'Cassie','Codd','7561388015',0,'Cassie_Codd@gmail.com',26,48,1),(21,'Jena','Heathcote','2214413899',0,'Jena_Heathcote@gmail.com',48,41,1),(22,'Macaulay','Hordern','8236200488',1,'Macaulay_Hordern@gmail.com',53,73,1),(23,'Stephanie-Anne','Tribute','1622216987',0,'Stephanie-Anne_Tribute@gmail.com',29,48,1),(24,'Eva','Fieldstead','461177813',0,'Eva_Fieldstead@gmail.com',28,41,1),(25,'Eryk','Davies','2220343794',1,'Eryk_Davies@gmail.com',25,48,1),(26,'Aleksander','Atnicle?','8855596153',1,'Aleksander_Atnicle?@gmail.com',34,41,1),(27,'Calum-James','Bryer','7645768670',1,'Calum-James_Bryer@gmail.com',26,48,1),(28,'Sawdah','Stroud','3840291668',0,'Sawdah_Stroud@gmail.com',42,48,1),(29,'Harold','Edelston','6792238955',1,'Harold_Edelston@gmail.com',29,16,1),(1050,'Emir','Mendoza','09055165548',0,'suraba@gmail.com',16,48,1),(1051,'Chingona','Kunyo','09881233767',0,'suraba@gmail.com',20,12,1),(1052,'Harkan','Aju','09055165548',0,'leebet@gmail.com',19,12,1),(1053,'Justinz','Sarjun','09011223344',0,'ll@gmail.com',20,25,1),(1054,'Chingona','AM','123',0,'suraba@gmail.com',12,48,1),(1055,'Markk','kk','123',0,'leebet12@gmail.com',12,12,1),(1056,'The DOG','G0ud','123',0,'Dao@gmail.com',23,25,1),(1057,'dalaga','Pipi','09055165548',0,'as@gmail.com',19,5,1),(1058,'Arkansa','Soadheim','0922333159',0,'ii@gmail.com',20,5,1),(1059,'Makita','Yeh','09002234112',0,'f@mgil.com',19,12,1),(1060,'Arkham','Bait','12',0,'suraba@gmail.com',12,12,1),(1061,'Karambol','Jakol','23',0,'sdf@gmail.com',15,12,1),(1062,'Hambol','Safa','25',1,'sdf@gmail.com',20,12,1),(1063,'Ozzy','Hataki','23',0,'sdf@gmail.com',11,5,1),(1064,'Garamouche','Santos','21',1,'sdf@gmail.com',12,48,1),(1065,'Firad','Santos','32',1,'sdf@gmail.com',13,12,1),(1066,'Farash','Reyes','21',0,'sdf@gmail.com',15,5,1),(1067,'Muhamad','Jeyol','23',0,'sdf@gmail.com',21,48,1),(1068,'Hamady','Mako','25',1,'sdf@gmail.com',15,48,1),(1069,'Almaty','Hambi','16',0,'sdf@gmail.com',27,48,1),(1070,'Gaza','Teta','14',1,'sdf@gmail.com',28,48,1),(1071,'Federico','Miguel','12',0,'sdf@gmail.com',12,5,1),(1072,'Tambuch','Gabriel','26',0,'sdf@gmail.com',13,12,1),(1073,'Mark','Gambol','24',1,'sdf@gmail.com',16,5,1),(1074,'James','Gasol','27',0,'sdf@gmail.com',14,12,1),(1075,'Eman','Gumbol','28',1,'sdf@gmail.com',15,48,1),(1076,'Ian','Mirafi','21',0,'sdf@gmail.com',15,48,1),(1077,'Brian','Mirafuent','21',0,'sdf@gmail.com',11,12,1),(1078,'Lemuel','Ocasio','15',0,'sdf@gmail.com',12,5,1),(1079,'Gadaf','Cortez','16',1,'sdf@gmail.com',13,12,1),(1080,'Shardambol','Mahad','17',0,'sdf@gmail.com',14,12,1),(1081,'Josie','Mahalip','19',1,'sdf@gmail.com',15,5,1),(1082,'Jamie','Chua','20',1,'sdf@gmail.com',17,12,1),(1083,'Mark','Omar','21',0,'sdf@gmail.com',16,12,1),(1084,'Garp','tan','22',1,'sdf@gmail.com',18,48,1),(1085,'Monke','Pe','23',0,'sdf@gmail.com',19,12,1),(1086,'Akke','Te','24',1,'sdf@gmail.com',20,48,1),(1087,'Genit','Ten','25',0,'sdf@gmail.com',21,5,1),(1088,'larabab','Hua','28',0,'sdf@gmail.com',15,12,1),(1089,'Austin','Smoth','28',1,'sdf@gmail.com',26,12,1),(1090,'Texas','Jones','27',0,'sdf@gmail.com',29,12,1),(1091,'Kara','Moris','28',1,'sdf@gmail.com',25,48,1),(1092,'Karol','Rogers','15',0,'sdf@gmail.com',23,48,1),(1093,'Karl','Price','16',1,'sdf@gmail.com',28,12,1),(1094,'Kambing','Bennet','17',0,'sdf@gmail.com',31,12,1),(1095,'Camry','Cook','18',1,'sdf@gmail.com',23,48,1),(1096,'Cardu','Morgan','18',1,'sdf@gmail.com',24,48,1),(1097,'Land',' Cooper','19',0,'sdf@gmail.com',27,12,1),(1098,'Labo','Rogder','20',0,'sdf@gmail.com',29,12,1),(1099,'Lavash','Cox','21',0,'sdf@gmail.com',15,48,1),(1100,'Sanya','Ward','21',1,'sdf@gmail.com',17,12,1),(1101,'Sanay','Hua','20',1,'sdf@gmail.com',28,12,1),(1102,'Gupta','Mitche','21',0,'sdf@gmail.com',27,48,1),(1103,'Arat','Carer','20',1,'sdf@gmail.com',23,12,1),(1104,'Merili','Zhang','15',1,'sdf@gmail.com',17,48,1),(1105,'Gamal','Ling','8',0,'sdf@gmail.com',15,12,1),(1106,'Meryl','Zao','14',1,'sdf@gmail.com',12,48,1),(1107,'Maria','Chan','10',1,'sdf@gmail.com',23,24,1),(1108,'Mathilda','Chen','12',0,'sdf@gmail.com',21,48,1),(1109,'Marila','Yang','12',1,'sdf@gmail.com',23,12,1),(1110,'Marell','Zhu','13',0,'sdf@gmail.com',21,48,1),(1111,'Pharel','Zwang','13',1,'sdf@gmail.com',18,49,1),(1112,'Gamel','Mao','14',1,'sdf@gmail.com',17,12,1),(1113,'Gilgamesh','Ma','16',0,'sdf@gmail.com',16,48,1),(1114,'Franswa','Zeit','17',1,'sdf@gmail.com',14,24,1),(1115,'Far','San','12',1,'sdf@gmail.com',12,24,1),(1116,'Faruk','See','23',1,'sdf@gmail.com',15,12,1),(1117,'Farud','Li','28',0,'sdf@gmail.com',15,24,1),(1118,'Farid','Cheung','28',0,'sdf@gmail.com',15,24,1),(1119,'Fama','Tong','28',0,'sdf@gmail.com',15,48,1),(1120,'Larad','Chong','28',0,'sdf@gmail.com',15,12,1),(1121,'Lar','Vong','28',0,'sdf@gmail.com',15,48,1),(1122,'Larav','FOng','28',0,'sdf@gmail.com',15,12,1),(1123,'Pporn','Huang','28',0,'sdf@gmail.com',15,48,1),(1124,'Sako','Wong','28',0,'sdf@gmail.com',15,12,1),(1125,'Koron','Yong','28',0,'sdf@gmail.com',15,24,1),(1126,'larabab','Lau','28',0,'sdf@gmail.com',15,12,1),(1127,'Jupiter','Lao','28',0,'sdf@gmail.com',15,24,1),(1128,'Jups','Tong','28',0,'sdf@gmail.com',15,12,1),(1129,'Pyuter','Sun','28',0,'sdf@gmail.com',15,48,1),(1130,'Pweder','Xung','28',0,'sdf@gmail.com',15,48,1),(1131,'Schmi','Wukong','28',0,'sdf@gmail.com',15,12,1),(1132,'Garrosh','Chiu','28',0,'sdf@gmail.com',15,64,1),(1133,'Garom','CHu','28',0,'sdf@gmail.com',15,37,1),(1134,'Gagari','Be','28',0,'sdf@gmail.com',15,64,1),(1135,'Alein','Mar','28',0,'sdf@gmail.com',15,47,1),(1136,'Yuri','Chew','28',0,'sdf@gmail.com',15,12,1),(1137,'Lynet','Theu','28',0,'sdf@gmail.com',15,55,1),(1138,'Ament','Guo','28',0,'sdf@gmail.com',15,12,1),(1139,'Mary','Oh','28',0,'sdf@gmail.com',15,12,1),(1140,'Mary','Gaw','28',0,'sdf@gmail.com',21,48,1),(1141,'Mary','Tongwa','28',0,'sdf@gmail.com',19,48,1),(1142,'Lina Mae','Song','28',0,'sdf@gmail.com',18,47,1);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -665,7 +700,7 @@ CREATE TABLE `room` (
 
 LOCK TABLES `room` WRITE;
 /*!40000 ALTER TABLE `room` DISABLE KEYS */;
-INSERT INTO `room` VALUES (2,'Alien Azsult Room',4,'imgs/download.jpeg','imgs/Alien_Assault.png'),(3,'Rebeccas Room',4,'imgs/images.jpeg','imgs/Rebeccas_Haunting.png'),(4,'Patrick\'s Rock',4,'imgs/ROCK.png','imgs/Patrick\'s_Rock.png'),(8,'Pirates Dungeon',2,'imgs/dead_pirate.jpeg','imgs/Pirates_Dungeon_Room.png'),(9,'Aztec Escape',4,'imgs/download_Bzgm7CJ.jpeg','imgs/Aztec_Escape_Room.png'),(10,'Anime Room',2,'imgs/imgages_3.jpeg','imgs/images_1.jpeg'),(11,'Alien Assault CCM',4,'imgs/treant_splash-590x334.jpg','imgs/Alien_Assault_Room_Blueprint_dPpse1u.jpg');
+INSERT INTO `room` VALUES (2,'OLD Alien Azsult Room',4,'imgs/treant_splash-590x334.jpg','imgs/Alien_Assault.png'),(3,'Rebeccas Room',4,'imgs/images.jpeg','imgs/Rebeccas_Haunting.png'),(4,'Patrick\'s Rock',4,'imgs/ROCK.png','imgs/Patrick\'s_Rock.png'),(8,'Pirates Dungeon',2,'imgs/dead_pirate.jpeg','imgs/Pirates_Dungeon_Room.png'),(9,'Aztec Escape',4,'imgs/download_Bzgm7CJ.jpeg','imgs/Aztec_Escape_Room.png'),(10,'Dark Forrest',2,'imgs/imgages_3.jpeg','imgs/images_1.jpeg'),(11,'Alien Assault CCM',4,'imgs/download.jpeg','imgs/Alien_Assault_CCM_New.png');
 /*!40000 ALTER TABLE `room` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -773,7 +808,7 @@ CREATE TABLE `teams` (
   KEY `fk_players_id1_idx` (`players_players_id`),
   CONSTRAINT `fk_game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_players_id1` FOREIGN KEY (`players_players_id`) REFERENCES `players` (`players_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1080 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1224 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -782,7 +817,7 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
-INSERT INTO `teams` VALUES (253,9,1045),(254,10,1046),(254,11,1047),(254,12,1048),(254,13,1049),(255,14,1050),(255,15,1051),(255,16,1052),(256,17,1067),(256,18,1068),(257,19,1069),(257,20,1070),(258,21,1071),(258,22,1072),(258,23,1073),(259,24,1074),(259,25,1075),(260,26,1076),(260,27,1077),(261,28,1078),(261,29,1079);
+INSERT INTO `teams` VALUES (253,9,1045),(254,10,1046),(254,11,1047),(254,12,1048),(254,13,1049),(255,14,1050),(255,15,1051),(255,16,1052),(256,17,1067),(256,18,1068),(257,19,1069),(257,20,1070),(258,21,1071),(258,22,1072),(258,23,1073),(259,24,1074),(259,25,1075),(260,26,1076),(260,27,1077),(261,28,1078),(261,29,1079),(262,1050,1080),(262,1051,1081),(264,1054,1084),(264,1055,1085),(266,1057,1087),(266,1058,1088),(266,1059,1089),(267,1060,1090),(267,1061,1091),(268,1062,1092),(268,1063,1093),(268,1064,1094),(269,1065,1095),(269,1066,1096),(270,1067,1097),(270,1068,1098),(271,1070,1099),(270,1069,1100),(271,1071,1101),(272,1072,1102),(272,1073,1103),(273,1074,1104),(273,1075,1105),(274,1076,1106),(275,1077,1107),(275,1078,1108),(276,1079,1109),(276,1080,1110),(276,1081,1111),(277,1082,1112),(277,1083,1113),(277,1084,1114),(277,1085,1115),(278,1089,1170),(278,1090,1171),(279,1091,1172),(279,1092,1173),(279,1093,1174),(279,1094,1175),(280,1095,1176),(280,1096,1177),(280,1097,1178),(281,1098,1179),(281,1099,1180),(281,1100,1181),(281,1101,1182),(281,1102,1183),(282,1103,1184),(282,1104,1185),(282,1105,1186),(282,1106,1187),(282,1107,1188),(282,1108,1189),(283,1109,1190),(283,1110,1191),(283,1111,1192),(283,1112,1193),(284,1113,1194),(284,1114,1195),(284,1115,1196),(284,1116,1197),(284,1117,1198),(285,1118,1199),(285,1119,1200),(285,1120,1201),(285,1121,1202),(285,1122,1203),(286,1123,1204),(286,1124,1205),(286,1125,1206),(286,1126,1207),(287,1127,1208),(287,1128,1209),(287,1129,1210),(287,1130,1211),(287,1131,1212),(288,1132,1213),(288,1133,1214),(288,1134,1215),(288,1135,1216),(288,1136,1217),(289,1137,1218),(289,1138,1219),(289,1139,1220),(289,1140,1221),(289,1141,1222),(289,1142,1223);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -799,4 +834,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-21 23:07:41
+-- Dump completed on 2019-03-03 18:26:19

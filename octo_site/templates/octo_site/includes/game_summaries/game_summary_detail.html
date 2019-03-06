@@ -4,6 +4,7 @@ let config = {
         type: 'line',
         data: {
             start_time: start_time,
+            end_time: end_time,
             labels: [],
             datasets: [],
             statuses:[],
@@ -240,6 +241,8 @@ function callData(){
            window.myLine.update()
         }
 
+        config.data.labels.push(end_time);
+        window.myLine.update();
         window.myLine.update();
         console.log("lbl",config.data.labels);
         console.log("datset",config.data.datasets);

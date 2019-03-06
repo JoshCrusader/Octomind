@@ -15,9 +15,29 @@ def compute_report_data(games):
                    "avg_duration":0,
                    "has_errors":0,
                    "warnings":0,
+                   "retention_rate": 0,
+                   "redemption_rate": 0,
+                   "sensor_most_clue_asked":'',
+                   "sensor_asked_breakdown":'',
+                   "clueitem_most_asked": '',
+                   "clueitem_breakdown":'',
                    "has_result": True
                    }
+    clues = {}
+    sensors = {}
+    report_clue=[]
+    report_sensors=[]
+    total_team_size = 0
+
+    for sensor in Room.objects.get(room_id=games[0].room_id).get_all_sensors:
+        sensors[sensor.sensor_id] = 0
+    for ci in ClueItem.objects.filter(room_id=games[0].room_id):
+        clues[ci.id] = 0
+
     for g in games:
+        for clue in Clues.objects.filter(game_id=g.game_id):
+            clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
+            sensors[clue.clue_details.get_sensor_asked] += 1
         if g.is_solved:
             report_data["win"] += 1
         else:
@@ -26,11 +46,45 @@ def compute_report_data(games):
             report_data["has_errors"] += 1
         if g.has_warning:
             report_data["warnings"] += 1
+        if g.with_voucher:
+            report_data["redemption_rate"] += 1
 
+        total_team_size += g.get_team_size_int
+
+        report_data["retention_rate"] += g.get_loyal_players
         report_data["avg_clues_asked"] += g.get_num_clues_asked
         report_data["avg_duration"] += g.get_duration
 
     try:
+        for key,value in clues.items():
+            if value >0:
+                report_clue.append({"id":key,"details":ClueItem.objects.get(id=key).detail,"count":value})
+        for key,value in sensors.items():
+                sensor = Sensor.objects.get(sensor_id=key)
+                report_sensors.append({"id": sensor.sensor_id,
+                                         "sensor_name": sensor.sensor_name,
+                                        "phase_name": sensor.phase_name,
+                                        "count": value})
+
+        max_value = max(clues.values())  # maximum value
+        max_keys = [k for k, v in clues.items() if v == max_value]
+        clue_item = ClueItem.objects.get(id=max_keys[0])
+        report_data['clueitem_most_asked'] = {"id":clue_item.id,
+                                              "details":clue_item.detail,
+                                              "count":max_value}
+        max_value = max(sensors.values())  # maximum value
+        max_keys = [k for k, v in sensors.items() if v == max_value]
+        sensor = Sensor.objects.get(sensor_id=max_keys[0])
+        report_data['sensor_most_clue_asked'] = {"id": sensor.sensor_id,
+                                                 "sensor_name": sensor.sensor_name,
+                                              "phase_name": sensor.phase_name,
+                                              "count": max_value}
+        report_data['clueitem_breakdown'] = report_clue
+        report_data['sensor_asked_breakdown'] = report_sensors
+
+        report_data["redemption_rate"] = round((report_data["redemption_rate"] / float(len(games))) * 100, 2)
+
+        report_data["retention_rate"] = round((report_data["retention_rate"] / float(total_team_size)) * 100, 2)
         report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
         report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
         report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
@@ -38,6 +92,8 @@ def compute_report_data(games):
         report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
     except Exception as e:
         print(e)
+        report_data['clueitem_most_asked'] = None
+        report_data['clueitem_breakdown'] = None
         report_data["completion_rate"] = None
         report_data["avg_clues_asked"] = None
         report_data["avg_duration"] = None

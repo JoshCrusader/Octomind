@@ -38,5 +38,11 @@ def room_details_analysis(request):
         else:
             print("what")
             
-    return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"room_id":request.POST['room_id'],"id_slugs": game_ids,"records_len":len(games), "rep_cat": request.POST['report_cat'], "date" : a_date, "sd": a_sd, "ed": a_ed})
+    return render(request, 'octo_site/reports/details/room_details_analysis.html',
+    {"report_data":report_data,
+     "msg":msg,"games":games,
+     "room":room,"room_id":request.POST['room_id'],
+     "id_slugs": game_ids,"records_len":len(games),
+     "rep_cat": request.POST['report_cat'],
+     "date" : a_date, "sd": a_sd, "ed": a_ed})
     #return render(request, 'octo_site/reports/details/room_details_analysis.html',{"report_data":report_data,"msg":msg,"games":games,"room":room,"room_id":request.POST['room_id'],"id_slugs": game_ids,"records_len":len(games)})

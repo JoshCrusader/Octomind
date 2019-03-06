@@ -25,7 +25,7 @@ urlpatterns = [
     path('venue/', views.page_venue, name='page_venue'),
     path('sensor_data/<int:game_id>/',views.sensor_data, name='sensor_data'),
     path('all_sensor_data/',views.all_sensor_data, name='all_sensor_data'),
-
+        #settings api
     path('api/get_log_distribution/<slug:game_ids>/', views.get_log_distribution, name='get_log_distribution'),
     path('api/get_log_summary/<slug:game_ids>/', views.get_log_summary, name='get_log_summary'),
 
@@ -38,6 +38,8 @@ urlpatterns = [
     #ajax functions
     path('api/update_plot/', views.update_plot, name='update_plot'),
     path('api/get_sensor_by_game/<int:game_id>/', views.get_sensor_by_game, name='get_sensor_by_game'),
+
+    path('api/get_game_duration/<int:game_id>/', views.get_game_duration, name='get_game_duration'),
     path('api/get_sensor_by_room_id/<int:room_id>/', views.get_sensors_by_room_id, name='get_sensors_by_room_id'),
     path('api/get_clues_list_by_room/<int:room_id>/', views.get_clues_list_by_room, name='get_clues_list_by_room'),
     path('api/get_room_by_room_id/<int:room_id>/', views.get_room_by_room_id, name='get_room_by_room_id'),
@@ -46,6 +48,7 @@ urlpatterns = [
     path('api/get_player_list/', views.get_player_list, name = 'get_player_list'),
     path('api/start_game/', views.start_game, name = 'start_game'),
     path('api/end_game/', views.end_game, name = 'end_game'),
+    path('api/confirm_end_game/', views.confirm_end_game, name = 'confirm_end_game'),
     path('api/add_clue/', views.add_clue, name = 'add_clue'),
     path('api/get_clues_by_game/<int:game_id>/', views.get_clues_by_game, name = 'get_clues_by_game'),
     path('api/get_players_data/', views.get_players_data, name = 'get_players_data'),

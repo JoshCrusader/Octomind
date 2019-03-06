@@ -221,13 +221,13 @@ DROP TABLE IF EXISTS `clue_details`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clue_details` (
   `clue_details_id` int(11) NOT NULL AUTO_INCREMENT,
-  `detail` varchar(45) DEFAULT NULL,
+  `detail` text,
   `timestamp` datetime DEFAULT NULL,
   `clue_item_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`clue_details_id`),
   KEY `clue_details_clue_item_id_fk` (`clue_item_id`),
   CONSTRAINT `clue_details_clue_item_id_fk` FOREIGN KEY (`clue_item_id`) REFERENCES `clue_item` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1589 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1611 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,6 +236,7 @@ CREATE TABLE `clue_details` (
 
 LOCK TABLES `clue_details` WRITE;
 /*!40000 ALTER TABLE `clue_details` DISABLE KEYS */;
+INSERT INTO `clue_details` VALUES (1589,'Locate a tool that would help you view white screen','2019-02-22 13:34:05',NULL),(1590,'Secure ciphers to decode 3 missing characters','2019-02-22 14:00:50',NULL),(1591,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-10 17:40:40',NULL),(1592,'Locate a tool that would help you view white screen','2019-02-10 17:49:27',NULL),(1593,'Unlock the first room with the ship\'s serial number','2019-02-10 17:56:06',NULL),(1594,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-10 18:15:37',NULL),(1595,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-10 18:35:57',NULL),(1596,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-10 19:05:11',NULL),(1597,'Locate a tool that would help you view white screen','2019-02-11 13:46:37',NULL),(1598,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors','2019-02-11 13:55:42',NULL),(1599,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-11 14:15:56',NULL),(1600,'What is the shortest term for invasion','2019-02-13 13:50:43',NULL),(1601,'Locate a tool that would help you view white screen','2019-02-13 17:35:06',NULL),(1602,'Unlock the first room with the ship\'s serial number','2019-02-13 17:53:58',NULL),(1603,'Secure ciphers to decode 3 missing characters','2019-02-13 18:00:53',NULL),(1604,'What is the shortest term for invasion','2019-02-13 18:08:44',NULL),(1605,'Unlock the first room with the ship\'s serial number','2019-02-14 15:56:03',NULL),(1606,'Locate a tool that would help you view white screen','2019-02-14 17:38:09',NULL),(1607,'Secure ciphers to decode 3 missing characters','2019-02-14 17:56:47',NULL),(1608,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 18:01:12',NULL),(1609,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 20:01:58',NULL),(1610,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR','2019-02-14 21:03:52',NULL);
 /*!40000 ALTER TABLE `clue_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -253,7 +254,7 @@ CREATE TABLE `clue_item` (
   PRIMARY KEY (`id`),
   KEY `clue_item_room_room_id_fk` (`room_id`),
   CONSTRAINT `clue_item_room_room_id_fk` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +263,37 @@ CREATE TABLE `clue_item` (
 
 LOCK TABLES `clue_item` WRITE;
 /*!40000 ALTER TABLE `clue_item` DISABLE KEYS */;
+INSERT INTO `clue_item` VALUES (2,'Locate a tool that would help you view white screen',11),(3,'Rotate the filter of the scope to figure out which switches needed to be ON for the colors',11),(4,'Unlock the first room with the ship\'s serial number',11),(5,'Secure ciphers to decode 3 missing characters',11),(6,'What is the shortest term for invasion',11),(7,'pyramid side open',11),(8,'These are the symbols on the map OC-ZD-RC-USS-SD-CyR',11);
 /*!40000 ALTER TABLE `clue_item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clue_item_details`
+--
+
+DROP TABLE IF EXISTS `clue_item_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clue_item_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `clue_id` int(11) DEFAULT NULL,
+  `clue_item_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `clue_item_details_clue_item_id_fk` (`clue_item_id`),
+  KEY `clue_item_details_clues_clue_id_fk` (`clue_id`),
+  CONSTRAINT `clue_item_details_clue_item_id_fk` FOREIGN KEY (`clue_item_id`) REFERENCES `clue_item` (`id`),
+  CONSTRAINT `clue_item_details_clues_clue_id_fk` FOREIGN KEY (`clue_id`) REFERENCES `clues` (`clue_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clue_item_details`
+--
+
+LOCK TABLES `clue_item_details` WRITE;
+/*!40000 ALTER TABLE `clue_item_details` DISABLE KEYS */;
+INSERT INTO `clue_item_details` VALUES (1,1589,2),(2,1590,5),(3,1591,3),(4,1592,2),(5,1593,4),(6,1594,8),(7,1595,3),(8,1596,8),(9,1597,2),(10,1598,3),(11,1599,8),(12,1600,6),(13,1601,2),(14,1602,4),(15,1603,5),(16,1604,6),(17,1605,4),(18,1606,2),(19,1607,5),(20,1608,8),(21,1609,8),(22,1610,8);
+/*!40000 ALTER TABLE `clue_item_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -281,7 +312,7 @@ CREATE TABLE `clues` (
   KEY `game_id1_idx` (`game_id`),
   CONSTRAINT `clues_details_id1` FOREIGN KEY (`clue_details_id`) REFERENCES `clue_details` (`clue_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1589 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1611 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,6 +321,7 @@ CREATE TABLE `clues` (
 
 LOCK TABLES `clues` WRITE;
 /*!40000 ALTER TABLE `clues` DISABLE KEYS */;
+INSERT INTO `clues` VALUES (1589,262,1589),(1590,262,1590),(1591,253,1591),(1592,253,1592),(1593,253,1593),(1594,253,1594),(1595,254,1595),(1596,254,1596),(1597,255,1597),(1598,255,1598),(1599,255,1599),(1600,256,1600),(1601,257,1601),(1602,257,1602),(1603,257,1603),(1604,257,1604),(1605,258,1605),(1606,259,1606),(1607,259,1607),(1608,259,1608),(1609,260,1609),(1610,261,1610);
 /*!40000 ALTER TABLE `clues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -452,7 +484,7 @@ CREATE TABLE `game` (
   CONSTRAINT `fk_game_auth_user1` FOREIGN KEY (`game_keeper_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_details1` FOREIGN KEY (`game_details_id`) REFERENCES `game_details` (`game_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_room1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=264 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,7 +493,7 @@ CREATE TABLE `game` (
 
 LOCK TABLES `game` WRITE;
 /*!40000 ALTER TABLE `game` DISABLE KEYS */;
-INSERT INTO `game` VALUES (253,1,11,253),(254,1,11,254),(255,1,11,255),(256,1,11,256),(257,1,11,257),(258,1,11,258),(259,1,11,259),(260,1,11,260),(261,1,11,261);
+INSERT INTO `game` VALUES (253,1,11,253),(254,1,11,254),(255,1,11,255),(256,1,11,256),(257,1,11,257),(258,1,11,258),(259,1,11,259),(260,1,11,260),(261,1,11,261),(262,1,11,262);
 /*!40000 ALTER TABLE `game` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -479,7 +511,7 @@ CREATE TABLE `game_details` (
   `teamname` varchar(45) DEFAULT NULL,
   `solved` tinyint(2) DEFAULT '0',
   PRIMARY KEY (`game_details_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=264 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,7 +520,7 @@ CREATE TABLE `game_details` (
 
 LOCK TABLES `game_details` WRITE;
 /*!40000 ALTER TABLE `game_details` DISABLE KEYS */;
-INSERT INTO `game_details` VALUES (253,'2019-02-10 17:30:00','2019-02-10 18:25:00','Gamolgasaur',1),(254,'2019-02-10 18:30:00','2019-02-10 19:25:30','Null Void',1),(255,'2019-02-11 13:30:00','2019-02-11 14:28:30','Shobelyns',1),(256,'2019-02-13 13:30:00','2019-02-13 14:25:00','yeahRight',1),(257,'2019-02-13 17:30:00',NULL,'Panic!',0),(258,'2019-02-14 15:30:00','2019-02-14 16:24:09','Blackjac',1),(259,'2019-02-14 17:30:00','2019-02-14 18:20:00','Henl0',1),(260,'2019-02-14 19:30:00',NULL,'Champs101',1),(261,'2019-02-14 20:30:00','2019-02-14 21:24:07','Mariamaria',1);
+INSERT INTO `game_details` VALUES (253,'2019-02-10 17:30:00','2019-02-10 18:25:00','Gamolgasaur',1),(254,'2019-02-10 18:30:00','2019-02-10 19:25:30','Null Void',1),(255,'2019-02-11 13:30:00','2019-02-11 14:28:30','Shobelyns',1),(256,'2019-02-13 13:30:00','2019-02-13 14:25:00','yeahRight',1),(257,'2019-02-13 17:30:00',NULL,'Panic!',0),(258,'2019-02-14 15:30:00','2019-02-14 16:24:09','Blackjac',1),(259,'2019-02-14 17:30:00','2019-02-14 18:20:00','Henl0',1),(260,'2019-02-14 19:30:00',NULL,'Champs101',0),(261,'2019-02-14 20:30:00','2019-02-14 21:24:07','Mariamaria',1),(262,'2019-02-22 13:26:36','2019-02-22 14:16:34','Emirates',1);
 /*!40000 ALTER TABLE `game_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -511,7 +543,7 @@ CREATE TABLE `game_error_log` (
   KEY `sensor_id_idx` (`sensor_id`),
   CONSTRAINT `game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=265 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -520,6 +552,7 @@ CREATE TABLE `game_error_log` (
 
 LOCK TABLES `game_error_log` WRITE;
 /*!40000 ALTER TABLE `game_error_log` DISABLE KEYS */;
+INSERT INTO `game_error_log` VALUES (265,261,28,'Maze Map Sensor not in sequence','2019-02-22 08:00:14','[26, 28, 29]'),(266,261,29,'Translator Sensor not in sequence','2019-02-22 08:00:15','[26, 28, 29]');
 /*!40000 ALTER TABLE `game_error_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,7 +575,7 @@ CREATE TABLE `game_warning_log` (
   KEY `game_id_idx` (`game_id`),
   CONSTRAINT `log_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `log_sensor_id` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -551,6 +584,7 @@ CREATE TABLE `game_warning_log` (
 
 LOCK TABLES `game_warning_log` WRITE;
 /*!40000 ALTER TABLE `game_warning_log` DISABLE KEYS */;
+INSERT INTO `game_warning_log` VALUES (69,262,27,'27 solved super fast','2019-02-22 14:10:49',1.85),(70,262,28,'28 solved super fast','2019-02-22 14:13:03',2.22),(71,262,29,'29 solved super fast','2019-02-22 14:16:11',3.13);
 /*!40000 ALTER TABLE `game_warning_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -595,7 +629,7 @@ CREATE TABLE `notifs` (
   PRIMARY KEY (`notif_id`),
   KEY `notif_game_game_id_fk` (`game_id`),
   CONSTRAINT `notif_game_game_id_fk` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -604,6 +638,7 @@ CREATE TABLE `notifs` (
 
 LOCK TABLES `notifs` WRITE;
 /*!40000 ALTER TABLE `notifs` DISABLE KEYS */;
+INSERT INTO `notifs` VALUES (95,'Sensor Sequence Error Detected at game 100261','2019-02-22 08:00:15',1,261),(96,'Sensor Sequence Error Detected at game 100261','2019-02-22 08:00:15',1,261),(97,'Game 100262 @ Alien Assault CCM started.','2019-02-22 13:26:36',1,262),(98,'Game Anomaly Detected at game 100262','2019-02-22 14:10:49',1,262),(99,'Game Anomaly Detected at game 100262','2019-02-22 14:13:03',1,262),(100,'Game Anomaly Detected at game 100262','2019-02-22 14:16:11',1,262),(101,'Game 100262 @ Alien Assault CCM ended.','2019-02-22 14:16:34',1,262);
 /*!40000 ALTER TABLE `notifs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,7 +662,7 @@ CREATE TABLE `players` (
   PRIMARY KEY (`players_id`),
   KEY `fk_loc_id_idx` (`loc_dictionary_id`),
   CONSTRAINT `fk_loc_id` FOREIGN KEY (`loc_dictionary_id`) REFERENCES `loc_dictionary` (`loc_dictionary_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1050 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1054 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -636,7 +671,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (9,'Ebow','Crowfoot','7809971217',1,'Ebow_Crowfoot@gmail.com',30,48,1),(10,'Daren','Clover','2839601675',1,'Daren_Clover@gmail.com',30,41,1),(11,'Gael','Futrell','5274398835',0,'Gael_Futrell@gmail.com',19,24,1),(12,'Thorfinn','Outhwaite','5572739802',1,'Thorfinn_Outhwaite@gmail.com',57,65,1),(13,'Marko','Huxtable','796162709',1,'Marko_Huxtable@gmail.com',21,24,1),(14,'Orlaith','Rockett','1578817654',0,'Orlaith_Rockett@gmail.com',21,24,1),(15,'Dylin','Crofts','7452789597',1,'Dylin_Crofts@gmail.com',9,48,1),(16,'Shannon','Mosedale','1397473884',1,'Shannon_Mosedale@gmail.com',47,41,1),(17,'Kitana','Lillis','7752908593',0,'Kitana_Lillis@gmail.com',32,42,1),(18,'Dennan','Considine','7112149652',1,'Dennan_Considine@gmail.com',35,41,1),(19,'Kaydn','Woffindin','1355384690',1,'Kaydn_Woffindin@gmail.com',28,19,1),(20,'Cassie','Codd','7561388015',0,'Cassie_Codd@gmail.com',26,48,1),(21,'Jena','Heathcote','2214413899',0,'Jena_Heathcote@gmail.com',48,41,1),(22,'Macaulay','Hordern','8236200488',1,'Macaulay_Hordern@gmail.com',58,73,1),(23,'Stephanie-Anne','Tribute','1622216987',0,'Stephanie-Anne_Tribute@gmail.com',29,48,1),(24,'Eva','Fieldstead','461177813',0,'Eva_Fieldstead@gmail.com',28,41,1),(25,'Eryk','Davies','2220343794',1,'Eryk_Davies@gmail.com',25,48,1),(26,'Aleksander','Atnicle?','8855596153',1,'Aleksander_Atnicle?@gmail.com',34,41,1),(27,'Calum-James','Bryer','7645768670',1,'Calum-James_Bryer@gmail.com',26,48,1),(28,'Sawdah','Stroud','3840291668',0,'Sawdah_Stroud@gmail.com',42,48,1),(29,'Harold','Edelston','6792238955',1,'Harold_Edelston@gmail.com',29,16,1);
+INSERT INTO `players` VALUES (9,'Ebow','Crowfoot','7809971217',1,'Ebow_Crowfoot@gmail.com',30,48,1),(10,'Daren','Clover','2839601675',1,'Daren_Clover@gmail.com',30,41,1),(11,'Gael','Futrell','5274398835',0,'Gael_Futrell@gmail.com',19,24,1),(12,'Thorfinn','Outhwaite','5572739802',1,'Thorfinn_Outhwaite@gmail.com',57,65,1),(13,'Marko','Huxtable','796162709',1,'Marko_Huxtable@gmail.com',21,24,1),(14,'Orlaith','Rockett','1578817654',0,'Orlaith_Rockett@gmail.com',21,24,1),(15,'Dylin','Crofts','7452789597',1,'Dylin_Crofts@gmail.com',9,48,1),(16,'Shannon','Mosedale','1397473884',1,'Shannon_Mosedale@gmail.com',47,41,1),(17,'Kitana','Lillis','7752908593',0,'Kitana_Lillis@gmail.com',32,42,1),(18,'Dennan','Considine','7112149652',1,'Dennan_Considine@gmail.com',35,41,1),(19,'Kaydn','Woffindin','1355384690',1,'Kaydn_Woffindin@gmail.com',28,19,1),(20,'Cassie','Codd','7561388015',0,'Cassie_Codd@gmail.com',26,48,1),(21,'Jena','Heathcote','2214413899',0,'Jena_Heathcote@gmail.com',48,41,1),(22,'Macaulay','Hordern','8236200488',1,'Macaulay_Hordern@gmail.com',58,73,1),(23,'Stephanie-Anne','Tribute','1622216987',0,'Stephanie-Anne_Tribute@gmail.com',29,48,1),(24,'Eva','Fieldstead','461177813',0,'Eva_Fieldstead@gmail.com',28,41,1),(25,'Eryk','Davies','2220343794',1,'Eryk_Davies@gmail.com',25,48,1),(26,'Aleksander','Atnicle?','8855596153',1,'Aleksander_Atnicle?@gmail.com',34,41,1),(27,'Calum-James','Bryer','7645768670',1,'Calum-James_Bryer@gmail.com',26,48,1),(28,'Sawdah','Stroud','3840291668',0,'Sawdah_Stroud@gmail.com',42,48,1),(29,'Harold','Edelston','6792238955',1,'Harold_Edelston@gmail.com',29,16,1),(1050,'Emir','Mendoza','09055165548',0,'suraba@gmail.com',16,48,1),(1051,'Chingona','Kunyo','09881233767',0,'suraba@gmail.com',20,12,1),(1052,'Harkan','Aju','09055165548',0,'leebet@gmail.com',19,12,1),(1053,'Justinz','Sarjun','09011223344',0,'ll@gmail.com',20,25,1);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -665,7 +700,7 @@ CREATE TABLE `room` (
 
 LOCK TABLES `room` WRITE;
 /*!40000 ALTER TABLE `room` DISABLE KEYS */;
-INSERT INTO `room` VALUES (2,'Alien Azsult Room',4,'imgs/download.jpeg','imgs/Alien_Assault.png'),(3,'Rebeccas Room',4,'imgs/images.jpeg','imgs/Rebeccas_Haunting.png'),(4,'Patrick\'s Rock',4,'imgs/ROCK.png','imgs/Patrick\'s_Rock.png'),(8,'Pirates Dungeon',2,'imgs/dead_pirate.jpeg','imgs/Pirates_Dungeon_Room.png'),(9,'Aztec Escape',4,'imgs/download_Bzgm7CJ.jpeg','imgs/Aztec_Escape_Room.png'),(10,'Anime Room',2,'imgs/imgages_3.jpeg','imgs/images_1.jpeg'),(11,'Alien Assault CCM',4,'imgs/treant_splash-590x334.jpg','imgs/Alien_Assault_Room_Blueprint_dPpse1u.jpg');
+INSERT INTO `room` VALUES (2,'OLD Alien Azsult Room',4,'imgs/treant_splash-590x334.jpg','imgs/Alien_Assault.png'),(3,'Rebeccas Room',4,'imgs/images.jpeg','imgs/Rebeccas_Haunting.png'),(4,'Patrick\'s Rock',4,'imgs/ROCK.png','imgs/Patrick\'s_Rock.png'),(8,'Pirates Dungeon',2,'imgs/dead_pirate.jpeg','imgs/Pirates_Dungeon_Room.png'),(9,'Aztec Escape',4,'imgs/download_Bzgm7CJ.jpeg','imgs/Aztec_Escape_Room.png'),(10,'Dark Forrest',2,'imgs/imgages_3.jpeg','imgs/images_1.jpeg'),(11,'Alien Assault CCM',4,'imgs/download.jpeg','imgs/Alien_Assault_CCM_New.png');
 /*!40000 ALTER TABLE `room` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -773,7 +808,7 @@ CREATE TABLE `teams` (
   KEY `fk_players_id1_idx` (`players_players_id`),
   CONSTRAINT `fk_game_id1` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_players_id1` FOREIGN KEY (`players_players_id`) REFERENCES `players` (`players_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1080 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1084 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -782,7 +817,7 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
-INSERT INTO `teams` VALUES (253,9,1045),(254,10,1046),(254,11,1047),(254,12,1048),(254,13,1049),(255,14,1050),(255,15,1051),(255,16,1052),(256,17,1067),(256,18,1068),(257,19,1069),(257,20,1070),(258,21,1071),(258,22,1072),(258,23,1073),(259,24,1074),(259,25,1075),(260,26,1076),(260,27,1077),(261,28,1078),(261,29,1079);
+INSERT INTO `teams` VALUES (253,9,1045),(254,10,1046),(254,11,1047),(254,12,1048),(254,13,1049),(255,14,1050),(255,15,1051),(255,16,1052),(256,17,1067),(256,18,1068),(257,19,1069),(257,20,1070),(258,21,1071),(258,22,1072),(258,23,1073),(259,24,1074),(259,25,1075),(260,26,1076),(260,27,1077),(261,28,1078),(261,29,1079),(262,1050,1080),(262,1051,1081);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -799,4 +834,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-21 23:07:41
+-- Dump completed on 2019-02-28 22:55:19

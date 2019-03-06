@@ -21,6 +21,58 @@
       background-color: cornflowerblue;
     }
 	</style>
+
+<!-- MODALS -->
+<div id="modal-example" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+            <div class="uk-inline uk-width-1-1">
+                <h4 class="uk-margin-remove">Game Phase Summary</h4>
+                <table class="uk-table uk-table-divider" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th align="left">Phase Name</th>
+                            <th align="left">Sensor Name</th>
+                            <th align="left">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in report_data.sensor_asked_breakdown %}
+                        <tr>
+                            <td>{{ c.phase_name }}</td>
+                            <td>{{ c.sensor_name }}</td>
+                            <td>{{ c.count}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <h4 class="uk-margin-remove">Clues Summary</h4>
+                <table class="uk-table uk-table-divider" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th align="left">Item ID</th>
+                            <th align="left">Detail</th>
+                            <th align="left">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in report_data.clueitem_breakdown %}
+                        <tr>
+                            <td>{{ c.id }}</td>
+                            <td>{{ c.details }}</td>
+                            <td>{{ c.count}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
+        </p>
+    </div>
+</div>
+<!-- /MODALS -->
+
+
 <div id="content" style="padding: 0 0 0 0; margin-left: 0px;" uk-height-viewport>
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
         {% if report_data.has_result %}
@@ -114,49 +166,54 @@
             <br>
             -->
         </div>
-        <div class="uk-grid-divider  uk-child-width-1-4 uk-child-width-1-6@l uk-child-width-1-5@xl" id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
-                    <div style="padding-left: 2vw;width: auto">
+        <div id="summary_container" style="background-color:#f7f7f7;padding-top: 10px;margin-top: 10vh;margin-bottom:1vh;margin-left:0;padding-left: 0px" data-uk-grid>
+                    <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Win / Loss Ratio</span>
-                        <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b></h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-success" data-uk-icon="icon: triangle-up">15%</span> vs all time avg.
-                        </div>
+                        <center>
+                            <h3 class="uk-margin-remove"><b class="uk-text-primary">{{ report_data.win }}</b> / <b class="uk-text-warning">{{ report_data.loss }}</b> <small class="uk-text-small">({{ report_data.completion_rate }}%)</small></h3>
+                        </center>
                     </div>
-                    <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:future" class="uk-margin-small-right uk-text-success"></span>Completion Rate</span>
-                        <h3 class="uk-margin-remove uk-text-success">{{ report_data.completion_rate }}%</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
-                    </div>
-                    <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Clues Asked</span>
-                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> vs all time avg.
-                        </div>
-                    </div>
-                    <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Duration</span>
-                        <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }}<small class="uk-text-small">min</small></h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> vs all time avg.
-                        </div>
 
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:unlock" class="uk-margin-small-right uk-text-primary"></span>Avg Clues</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_clues_asked }}</h3>
+                        </center>
+                    </div>
+
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Avg Duration</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }} <small class="uk-text-small">min</small></h3>
+                        </center>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-success"></span>Retention Rate </span>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-success">{{ report_data.retention_rate }}%</h3>
+                        </center>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:tag" class="uk-margin-small-right uk-text-success"></span>Redemption Rate</span>
+                        <center>
+                            <h3 class="uk-margin-remove uk-text-success">{{ report_data.redemption_rate }}%</h3>
+                        </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}%</h3>
+                        </center>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
-                        <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}</h3>
-                        <div class="uk-text-small">
-                            <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> vs all time avg.
-                        </div>
+                        <center>
+                            <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}%</h3>
+                        </center>
+                    </div>
+                    <div>
+                        <span class="uk-text-small"><span data-uk-icon="icon:search" class="uk-margin-small-right uk-text-success"></span>Game Phase with Most Clues asked </span>
+                        <h4 class="uk-margin-remove "><a href = "#modal-example" uk-toggle><span data-uk-icon="icon:code" class="uk-margin-small-right"></span></a> {{ report_data.sensor_most_clue_asked.phase_name }}</h4>
                     </div>
                 </div>
         <div class="uk-width-1-1" style="padding-right: 2vw;padding-left: 2vw;padding-top: 1vh;padding-bottom: 2vh;background-color: white ">
@@ -167,7 +224,6 @@
                 </div>
 
                 <div class="uk-width-expand uk-text-right">
-                    <label uk-tooltip="Show all time statistics vs metrics"><input class="uk-checkbox" type="checkbox" onclick="show_stats(this)"> All-time Stats</label> |
                     <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
                     <label uk-tooltip="Show summary insights"><input class="uk-checkbox" type="checkbox"  onclick="show_summary(this)" checked> Summary</label> |
                     <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>

@@ -13,7 +13,8 @@
 </div>
 <div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
 <button onClick="addclue()"> Add Clue: </button>
-<input id = "clue_gid" type = "Number"> </input>
+<input id = "clue_gid" type = "Number" placeholder="game ID"> </input>
+<input id = "clue_item" type = "Number" placeholder="clue item"> </input>
 <input id = "minute" type = "Number" placeholder="Minute asked"> </input>
 </div>
 <div id="content" style="padding: 0px 0 0 0; margin-left: 240px;">
@@ -64,6 +65,7 @@ function insertLog(case_number) {
             data: {
                 'gid': $("#clue_gid").val(),
                 'min': $("#minute").val(),
+                'ci_id':$("#clue_item").val(),
             },
             success: function(data){
                 alert(data.response)

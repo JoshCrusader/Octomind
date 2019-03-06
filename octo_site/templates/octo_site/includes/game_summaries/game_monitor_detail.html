@@ -4,6 +4,7 @@
         type: 'line',
         data: {
             start_time: start_time,
+            end_time: end_time,
             labels: [],
             datasets: [],
             statuses:[],
@@ -21,7 +22,7 @@
             },
             title: {
                 display: true,
-                text: '{{ room.room_name }} Game #{{ game.match_id }}'
+                text: '{{ game.room.room_name }} Game #{{ game.match_id }}'
             },
             tooltips: {
                 mode: 'index',
@@ -112,6 +113,7 @@
                 for (ob in obj)
                 {
                     live_config.data.labels.push(new Date(obj[ob].timestamp));
+
                     for(let x =0; x < sensors.length;x++){
                         if(obj[ob].sensor_id === sensors[x]){
                             live_config.data.datasets[x].data.push(obj[ob].value);
@@ -120,9 +122,13 @@
                             live_config.data.datasets[x].data.push(null);
                         }
                     }
+
                     window.LiveLine.update()
                 }
 
+                live_config.data.labels.push(end_time);
+
+                    window.LiveLine.update()
            });
         let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
             summary_data.done(function(results){

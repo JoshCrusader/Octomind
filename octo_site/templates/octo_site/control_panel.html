@@ -166,6 +166,10 @@
 <div id="modal-example" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
         <h2 class="uk-modal-title">Assign Team</h2>
+        <div style="margin-bottom: 2vh;">
+        <button class = "uk-button uk-button-secondary uk-button-small bord_rad" onclick="openMonitor()" type="button" uk-tooltip="title: Open New Screen"><span uk-icon="desktop"></span></button>
+        <button class = "uk-button uk-button-secondary uk-button-small bord_rad" onclick="fullMonitor()" type="button" uk-tooltip="title: Full screen"><span uk-icon="expand"></span></button>
+        </div>
         <div class="uk-inline uk-width-1-1">
             <button class="uk-button uk-button-default uk-width-1-1" type="button">Select team</button>
             <div uk-dropdown="pos: bottom-justify" class = "uk-width-1-1">
@@ -203,6 +207,29 @@
 <script>
 var selectedg = null;
 var selectedgd = null;
+var tv_monitor_window = null;
+function openMonitor() {
+    tv_monitor_window = open("{% url 'tv_monitor' %}262", "myWindow", "width=1500,height=1000");
+    // myWindow.document.write(elem);
+    // myWindow.document.html(elem);
+    //myWindow.opener.document.write("<p>This is the source window!</p>");
+}
+
+function fullMonitor(){
+    var elem = tv_monitor_window.document.getElementById("all");
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        console.log("shet");
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+    }
+    console.log("HEHE");
+}
+
 function setModal(target){
     var rid = target.getAttribute("roomid");
     $.ajax({

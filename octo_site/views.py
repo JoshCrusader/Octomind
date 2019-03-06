@@ -128,6 +128,10 @@ def access_room(request):
         pass
 # AJAX FUNCTIONS
 @csrf_exempt
+def get_game_duration(request,game_id):
+    game = Game.objects.get(game_id=game_id)
+    return JsonResponse({"duration":game.get_duration,"final_duration":game.get_final_duration})
+@csrf_exempt
 def update_plot(request):
     return plot_func.update_plot(request)
 @csrf_exempt
@@ -219,6 +223,9 @@ def start_game(request):
 @csrf_exempt
 def end_game(request):
     return ajax_helper.end_game(request)
+@csrf_exempt
+def confirm_end_game(request):
+    return ajax_helper.confirm_end_game(request)
 
 @csrf_exempt
 def add_clue(request):
@@ -409,10 +416,19 @@ def add_script_logs(request):
 def add_script_clue(request):
     game = Game.objects.get(game_id=request.POST['gid'])
     delta_time = timedelta(minutes=int(request.POST['min']), seconds=math.ceil(random.random() * 59))
-    cd = ClueDetails(detail='Sample Clue Given',timestamp=game.game_details.timestart + delta_time)
+
+
+
+    citem = ClueItem.objects.get(id=request.POST['ci_id'])
+
+    cd = ClueDetails(detail=citem.detail, timestamp=game.game_details.timestart + delta_time)
     cd.save()
+
     clue = Clues(clue_details_id=cd.clue_details_id, game_id=game.game_id)
     clue.save()
+
+    citem_detail = ClueItemDetails(clue_id=clue.clue_id, clue_item_id=citem.id)
+    citem_detail.save()
     return JsonResponse({"response":'clue added'})
 @csrf_exempt
 def set_end_time(request):

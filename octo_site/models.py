@@ -10,6 +10,7 @@ from django.db import models
 from django.conf import settings
 import MySQLdb
 import math
+from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 import pytz
 from utils.numToWords import int_to_en as numToWords
@@ -78,6 +79,7 @@ class Clues(models.Model):
         db_table = 'clues'
 
 class ClueItem(models.Model):
+    id = models.AutoField(primary_key=True)
     detail = models.TextField(blank=True, null=True)
     room = models.ForeignKey('Room', models.DO_NOTHING, blank=True, null=True)
 
@@ -86,12 +88,22 @@ class ClueItem(models.Model):
         db_table = 'clue_item'
 
 
+class ClueItemDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    clue = models.ForeignKey('Clues', models.DO_NOTHING, blank=True, null=True)
+    clue_item = models.ForeignKey(ClueItem, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'clue_item_details'
+
 
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
     game_keeper = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     room = models.ForeignKey('Room', models.DO_NOTHING)
     game_details = models.ForeignKey('GameDetails', models.DO_NOTHING)
+    with_voucher = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -104,9 +116,7 @@ class Game(models.Model):
         f = '%Y-%m-%d %H:%M:%S'
         game = self
         sensors = Game.objects.get(game_id=game.game_id).room.get_all_sensors
-        sensors_id = []
-        sensors_id_included = []
-        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ts = (datetime.now() + timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S")
         for s in sensors:
             try:
                 x.execute(
@@ -118,8 +128,7 @@ class Game(models.Model):
                 print(e)
                 print("wats")
                 connection.rollback()
-        data_return = []
-        # execute the SQL query using execute() method.
+        return None
 
     @property
     def get_time_ago(self):
@@ -148,6 +157,33 @@ class Game(models.Model):
     def get_team_size_int(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
         return sz
+    @property
+    def get_current_phase(self):
+        if self.has_error:
+            return "Game experienced errors"
+        if self.is_ongoing:
+            sensors = self.get_sensors_on_trigger_sequence
+            room_sensors = self.room.get_all_sensors
+            try:
+                if len(sensors) == 0:
+                    return room_sensors[0]
+                else:
+                    return room_sensors[len(sensors)-1]
+            except:
+                print("errordar")
+        return "N/A"
+
+    @property
+    def get_progress_bar(self):
+        return round(len(self.self.get_sensors_on_trigger_sequence)/len(self.room.get_all_sensors),2) * 100
+    @property
+    def get_loyal_players(self):
+        ct = 0
+        for team in Teams.objects.filter(game_id=self.game_id):
+           if team.players_players.is_repeating:
+               ct+=1
+        return ct
+
     @property
     def get_team_size(self):
         sz = Teams.objects.filter(game_id=self.game_id).count()
@@ -248,7 +284,9 @@ class Game(models.Model):
     @property
     def get_num_error(self):
         return GameErrorLog.objects.filter(game_id=self).count()
-
+    @property
+    def last_time(self):
+        return self.game_details.timestart + timezone.timedelta(hours=1) + timezone.timedelta(minutes=1)
     @property
     def get_error_points_sensors(self):
         problem_sensors =[]
@@ -268,6 +306,7 @@ class Game(models.Model):
     @property
     def has_warning(self):
         return True if GameWarningLog.objects.filter(game_id=self).count() > 0 else False
+
     @property
     def get_num_warning(self):
         return GameWarningLog.objects.filter(game_id=self).count()
@@ -311,7 +350,7 @@ class Game(models.Model):
         # execute the SQL query using execute() method.
         cursor.execute(
             "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
-                f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")
+                f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL '59:59' MINUTE_SECOND);")
 
         # fetch all of the rows from the query
         data = cursor.fetchall()
@@ -467,11 +506,16 @@ class Game(models.Model):
         data_return = []
         # execute the SQL query using execute() method.
 
-        cursor.execute(
-            "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
-                f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL 1 HOUR);")
-        # fetch all of the rows from the query
-        data = cursor.fetchall()
+        try:
+            cursor.execute(
+                "select * from sensor_log where sensor_id in " + str_sensor_ids + " and " + " timestamp between '" + game.game_details.timestart.strftime(
+                    f) + "' and DATE_ADD('" + game.game_details.timestart.strftime(f) + "', INTERVAL '59:59' MINUTE_SECOND);")
+            # fetch all of the rows from the query
+            data = cursor.fetchall()
+        except:
+            print("errordar")
+            return None
+
         for row in data:
             f = '%Y-%m-%d %H:%M:%S'
             utc = pytz.UTC
@@ -691,12 +735,17 @@ class Players(models.Model):
     gender = models.IntegerField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     loc_dictionary = models.ForeignKey(LocDictionary, models.DO_NOTHING, blank=True, null=True)
-    
+    times_repeat = models.IntegerField(blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'players'
 
-
+    @property
+    def is_repeating(self):
+        if self.times_repeat >=3 :
+            return True
+        return False
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=45, blank=True, null=True)
@@ -715,29 +764,31 @@ class Room(models.Model):
         complet =0
         has_e= 0
         has_w = 0
+        deduc = 0
         for game in all_games:
-
-            t_solved += game.get_duration
-            c_asked += game.get_num_clues_asked
-            p_size += game.get_team_size_int
-            error += game.get_num_error
-            warning += game.get_num_warning
-            if game.game_details.solved == 1:
-                complet += 1
-            if game.has_error:
-                has_e += 1
-            if game.has_warning:
-                has_w += 1
-
+            if game.game_details.timestart != None:
+                t_solved += game.get_duration
+                c_asked += game.get_num_clues_asked
+                p_size += game.get_team_size_int
+                error += game.get_num_error
+                warning += game.get_num_warning
+                if game.game_details.solved == 1:
+                    complet += 1
+                if game.has_error:
+                    has_e += 1
+                if game.has_warning:
+                    has_w += 1
+            else:
+                deduc +=1
         return{
-            "average_duration": round(t_solved/len(all_games),2),
-            "average_completion_rate": round(complet/len(all_games),2)*100,
-            "average_clues_asked": round(c_asked/len(all_games),2),
-            "average_errors": round(float(error/len(all_games)),2),
-            "average_error_rate": round(float(has_e / len(all_games)), 2)*100,
-            "average_warnings": round(float(warning/len(all_games)),2),
-            "average_warning_rate": round(float(has_w / len(all_games)), 2)*100,
-            "average_team_size":round(p_size/len(all_games),2),
+            "average_duration": round(t_solved/len(all_games)-deduc,2),
+            "average_completion_rate": round(complet/len(all_games)-deduc,2)*100,
+            "average_clues_asked": round(c_asked/len(all_games)-deduc,2),
+            "average_errors": round(float(error/len(all_games)-deduc),2),
+            "average_error_rate": round(float(has_e / len(all_games)-deduc), 2)*100,
+            "average_warnings": round(float(warning/len(all_games)-deduc),2),
+            "average_warning_rate": round(float(has_w / len(all_games)-deduc), 2)*100,
+            "average_team_size":round(p_size/len(all_games)-deduc,2),
                        }
     @property
     def has_game_sequence(self):
@@ -883,13 +934,14 @@ class Sensor(models.Model):
         min_stamped = 0
         time_solved = 0
         for game in all_games:
-            for d in game.pull_data_game(game):
-                if d["sensor_id"] == self.sensor_id:
-                    if d["min_stamped"] != None:
-                        min_stamped += d["min_stamped"]
-                        time_solved += d["time_solved"]
-                    else:
-                        deduc += 1
+            if game.game_details.timestart != None:
+                for d in game.pull_data_game(game):
+                    if d["sensor_id"] == self.sensor_id:
+                        if d["min_stamped"] != None:
+                            min_stamped += d["min_stamped"]
+                            time_solved += d["time_solved"]
+                        else:
+                            deduc += 1
         print("all time time solved of ",self.phase_name,round(time_solved / (len(all_games)-deduc), 2))
         return {"average_min_stamped": round(min_stamped / (len(all_games)-deduc), 2),
                 "average_time_solved": round(time_solved / (len(all_games)-deduc), 2)}

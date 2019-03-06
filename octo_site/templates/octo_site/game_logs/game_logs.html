@@ -95,9 +95,11 @@
                                                                 {% if game.has_warning %}
                                                                     <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
                                                                 {% endif %}
-                                                                {% if game.has_error == False and game.has_warning == False %}
+                                                            <!--
+                                                                { if game.has_error == False and game.has_warning == False %}
                                                                     <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                                {% endif %}
+                                                                { endif %}
+                                                                -->
                                                             </p>
                                                         {% else %}
                                                             <p class="uk-margin-remove"><b style="color: #ffb843">Unsolved</b>
@@ -107,9 +109,11 @@
                                                                 {% if game.has_warning %}
                                                                     <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
                                                                 {% endif %}
-                                                                {% if game.has_error == False and game.has_warning == False %}
+                                                            <!--
+                                                                { if game.has_error == False and game.has_warning == False %}
                                                                     <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                                {% endif %}
+                                                                { endif %}
+                                                                -->
                                                             </p>
                                                         {% endif %}
                                                         <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.room.room_name }}</p>
@@ -128,16 +132,30 @@
 
                                                     </td>
                                                     <td>
-                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
-                                                        <div class="myProgress">
+                                                        <p class="txt_light_gray uk-margin-remove" style="display: inline">
+                                                            <b style="color: orange;display: inline" id="dur_{{ forloop.counter }}"></b>
+                                                            <div id="spinner_{{ forloop.counter }}" uk-spinner></div> minutes
+
+
+                                                        <div class="myProgress" style="margin-top:0;">
                                                         {% if game.get_game_conclusion == "solved" %}
-                                                            <div class="myBar" style="width: {{ game.get_duration }}px"></div>
+                                                            <div class="myBar" id="bar_{{ forloop.counter }}" style="margin-top:0;display: none;width: 0;"></div>
                                                         {% elif game.get_game_conclusion == "unsolved" %}
-                                                            <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: black">UNSOLVED</p></div>
+                                                            <div class="myBar" id="bar_{{ forloop.counter }}" style="margin-top:0;background-color: orange;display: none;width: 0;"><p style="font-size: 10px;color: black">UNSOLVED</p></div>
                                                         {% elif game.get_game_conclusion == "forfeit" %}
-                                                            <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: dimgray">FORFEIT</p></div>
+                                                            <div class="myBar" id="bar_{{ forloop.counter }}" style="margin-top:0;background-color: orange;display: none;width: 0;"><p style="font-size: 10px;color: dimgray">FORFEIT</p></div>
                                                         {% endif %}
                                                         </div>
+                                                        <script>
+                                                            game{{ game.game_id }}_comp =  $.get("/octo_site/api/get_game_duration/{{ game.game_id }}/");
+                                                            game{{ game.game_id }}_comp.done(function(results){
+                                                            console.log(results);
+                                                            let clean = parseFloat(results.duration).toFixed(2);
+                                                            $("#spinner_{{ forloop.counter }}").empty();
+                                                            $("#dur_{{ forloop.counter }}").text(clean);
+                                                            $("#bar_{{ forloop.counter }}").css('display','block').animate({'width': "+="+clean});
+                                                       });
+                                                        </script>
                                                     </td>
 
                                                 </tr>

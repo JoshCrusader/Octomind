@@ -33,6 +33,7 @@ def view_room(request, game_id):
             # for i in sensors:
             #     pass
             now_datetime = timezone.now()
+            properties['clueitems'] = ClueItem.objects.filter(room_id=game.room_id)
             properties['timeend'] = details.timestart + timezone.timedelta(hours=1)+ timezone.timedelta(minutes=1)
             if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
                 properties['done'] = False
