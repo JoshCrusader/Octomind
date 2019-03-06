@@ -61,6 +61,8 @@ urlpatterns = [
     path('api/check_notifs/', views.check_notif, name='check_notif'),
     path('api/open_notifs/', views.open_notif, name='open_notif'),
 
+    path('api/get_cur_phase/<int:game_id>/', views.get_cur_phase, name='get_cur_phase'),
+
     path('api/get_all_time_data_sensor/<int:sensor_id>/', views.get_all_time_data_sensor, name='get_all_time_data_sensor'),
     #reports
     path('reports/room_analysis', views.room_analysis, name='room_analysis'),

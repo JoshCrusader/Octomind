@@ -36,6 +36,9 @@
                                         $('#avg_duration').attr("uk-tooltip","longer than the average");
                                     }
                                     if({{ game.get_num_clues_asked }}-results.average_clues_asked > 0){
+                                        console.log("num_clues asked {{ game.get_num_clues_asked }}");
+
+                                        console.log("avg ded "+results.average_clues_asked);
                                         $("#avg_clues").html("(+"+parseFloat({{ game.get_num_clues_asked }}-results.average_clues_asked).toFixed(2)+")").addClass("uk-text-success");
                                         $("#avg_clues").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
                                         $('#avg_clues').attr("uk-tooltip","asked more than the average");
@@ -45,6 +48,10 @@
                                         $('#avg_clues').attr("uk-tooltip","equal to all time average");
                                     }
                                     else{
+
+                                        console.log("num_clues asked {{ game.get_num_clues_asked }}");
+
+                                        console.log("avg ded "+results.average_clues_asked);
                                         $("#avg_clues").html("("+parseFloat({{ game.get_num_clues_asked }}-results.average_clues_asked*-1).toFixed(2)+")").addClass("uk-text-warning");
                                         $("#avg_clues").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
                                         $('#avg_clues').attr("uk-tooltip","asked less than the average");

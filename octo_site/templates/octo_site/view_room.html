@@ -59,6 +59,8 @@ h1{
                         {% endfor %}
                         </ul>
                     </div>
+                        <p class="uk-text-primary ">Current Phase: <b style="color:white" id="curr_phase"></b></p>
+
                 </div>
                 </div>
                 <div class="uk-width-expand">
@@ -92,7 +94,7 @@ h1{
                     </div>
                 </center>
                 </div>
-                <div style="margin-bottom: 2vh;margin-top: 0vh">
+                <div class="uk-width-1-1" style="margin-bottom: 2vh;margin-top: 0vh">
                     <div class="uk-text-primary "><b>Clues</b>: </div>
                     {% for clue in clues %}
                         <p class="uk-text-small uk-text-muted uk-text-truncate uk-margin-remove">
@@ -317,9 +319,20 @@ function loop(){
             tsecs = tsecs < 10 ? "0"+tsecs : tsecs;
             ts.innerHTML = tmins+":"+tsecs;
         }
+        times = times+1;
 
-        times = times+1
+        $.ajax({
+            type:"GET",
+            url:"/octo_site/api/get_cur_phase/{{ gameid }}/",
+            success: function(data){
+                if ($("#curr_phase").html() !== data.phase){
+                    $("#curr_phase").html(data.phase);
+                }
+            }
+
+    });
     }, 1000);
+
 }
 loop();
 </script>
