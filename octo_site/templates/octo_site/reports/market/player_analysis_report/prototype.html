@@ -62,6 +62,11 @@
             {% endfor %}
         </div> 
 
+        <script>
+        let salesdata = {{ sales_graph | safe}}
+        console.log(salesdata);
+        </script>
+
         {% for room in rooms %}
         <div class = "roomcard rc{{room.room_id}}">
             <div class = "left rimg">
@@ -75,12 +80,18 @@
             </div>
 
             <div class = "right rgraph">
-                <div class = "rsales left">
-                    <div class = "rsalescontainer left">sales graph here</div>
+                <div class = "rsales">
+                    <div class = "rsalescontainer left">
+                        {% include 'octo_site/reports/market/player_analysis_report/roomcomponents/rsalesgraph.html' %}
+                    </div>
+                    <div class = "rgendergraph right">
+                        {% include 'octo_site/reports/market/player_analysis_report/roomcomponents/rgendergraph.html' %}
+                    </div>
                 </div>
-                <div class = "osales right">
-                    <div class = "rgendergraph">gender</div>
-                    <div class = "ragegraph">age</div>
+                <div class = "osales">
+                    <div class = "ragegraph">
+                        {% include 'octo_site/reports/market/player_analysis_report/roomcomponents/ragegraph.html' %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,9 +100,5 @@
 
 </div>
 
-<script>
-let salesdata = {{ sales_graph | safe}}
-console.log(salesdata);
-</script>
 {% include 'octo_site/reports/market/player_analysis_report/load_data.html' %}
 {% include 'octo_site/reports/market/player_analysis_report/filterscripts.html' %}

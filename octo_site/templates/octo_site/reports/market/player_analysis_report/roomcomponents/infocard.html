@@ -12,16 +12,18 @@
 <div class = "sale__port">
     TOTAL WON GAMES: 
         <span class = "sale__port__child"> 
-
-            <span class = "sale__port__mini"> ({{ totalsolved|perc:lengames }}%)</span>
-            {{ totalsolved }}
+            {% with totAllen=roomdata|attr:room.room_id|attr:'gamelen'%}
+            <span class = "sale__port__mini"> ({{ roomdata|attr:room.room_id|attr:'totalsolved'|perc:totAllen }}%)</span>
+            {% endwith %}
+            {{ roomdata|attr:room.room_id|attr:'totalsolved' }}
         </span>
 </div>
 <div class = "sale__port">
     TOTAL LOST GAMES: 
     <span class = "sale__port__child"> 
-
-        <span class = "sale__port__mini"> ({{ totalfailed|perc:lengames }}%)</span>
-        {{ totalfailed }}
+        {% with totAllen=roomdata|attr:room.room_id|attr:'gamelen'%}
+        <span class = "sale__port__mini"> ({{ roomdata|attr:room.room_id|attr:'totalfailed'|perc:totAllen }}%)</span>
+        {% endwith %}
+        {{ roomdata|attr:room.room_id|attr:'totalfailed' }}
     </span>
 </div>

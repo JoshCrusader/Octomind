@@ -1,42 +1,15 @@
-<!--
-<table class="uk-table uk-table-striped">
-    <caption> Yearly Games Played</caption>
-    <thead>
-        <tr>
-            <th>Size 1</th>
-            <th>Size 2</th>
-            <th>Size 3</th>
-            <th>Size 4</th>
-            <th>Size 5</th>
-            <th>Size 6</th>
-            <th>Size 7</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>20%</td>
-            <td>52%</td>
-            <td>68%</td>
-            <td>36%</td>
-            <td>79%</td>
-            <td>64%</td>
-            <td>42%</td>
-        </tr>
-    </tbody>
-</table>
--->
 <div>
-<canvas id = "cost_graph"></canvas>
+<canvas id = "r_sales_graph{{room.room_id}}"></canvas>
 </div>
 
 
 <script>
-cost_data = {
+r_sales_data{{room.room_id}} = {
     datasets: [{
         data: [11,22,58,31, 119, 84],
 
         backgroundColor: "rgba(255, 99, 132, 1)",
-        label: "Cost of Prices"
+        label: "Sales"
     },],
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
@@ -50,11 +23,11 @@ cost_data = {
     ],
 };
 
-cost_options = {
+r_sales_options{{room.room_id}} = {
     responsive: true,
     title:{
         display: true,
-        text: "Cost of producing prices for Winning teams"
+        text: "Sales earned by the Room"
     },
     xAxes: [{
         afterTickToLabelConversion: function(data){
@@ -96,11 +69,25 @@ cost_options = {
         }]
     }
 }
-var ctx = document.getElementById('cost_graph').getContext('2d');
-window.costChart = new Chart(ctx,{
+var ctx = document.getElementById('r_sales_graph{{room.room_id}}').getContext('2d');
+window.rsalesGraph{{room.room_id}} = new Chart(ctx,{
     type: 'line',
-    data: cost_data,
-    options: cost_options
+    data: r_sales_data{{room.room_id}},
+    options: r_sales_options{{room.room_id}}
 });
 
+
+function load_rsales{{room.room_id}}(data){
+    const labels = data.labels;
+    let sales_count = []
+    for(i in data){
+        if(i != 'labels'){
+            sales_count.push(data[i]['roomsales{{room.room_id}}']);
+        }
+    }
+    r_sales_data{{room.room_id}}.labels = labels;
+    r_sales_data{{room.room_id}}.datasets[0].data = sales_count;
+    window.rsalesGraph{{room.room_id}}.update();
+}
+load_rsales{{room.room_id}}(salesdata['sales']);
 </script>

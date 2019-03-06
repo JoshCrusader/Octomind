@@ -131,28 +131,12 @@
 .rimg{
     width: 300px;
     height: 100%;
-    background-color: white;
 }
 
 .rgraph{
     height: 100%;
     width: 750px;
-    background-color: red;
 
-}
-.osales{
-    height: 100%;
-    width: 300px;
-    background-color: white;
-}
-
-.rgendergraph{
-    width: 100%;
-    height: 50%;
-}
-.ragegraph{
-    width: 100%;
-    height: 50%;
 }
 
 .allw{
@@ -194,18 +178,26 @@
     padding: 0;
 }
 .rsales{
-    height: 100%;
-    width: 400px;
-    background-color: white;
-    position: relative;
+    height: 50%;
+    width: 700px;
+}
+.osales{
+    height: 50%;
+    width: 100%;
+    background-color: #222;
 }
 
 .rsalescontainer{
-    width: 100%;
-    height: 300px;
-    background-color: blue;
-    display: table-cell;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 50%;
+    height: 100%;
+}
+
+.rgendergraph{
+    width: 50%;
+    height: 100%;
+}
+
+.ragegraph{
+    width: 70%;
+    height: 100%;
 }

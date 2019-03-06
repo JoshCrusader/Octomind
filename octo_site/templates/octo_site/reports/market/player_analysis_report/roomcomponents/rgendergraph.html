@@ -1,0 +1,55 @@
+<div>
+<canvas id = "rgender_sales_graph{{room.room_id}}"></canvas>
+</div>
+
+
+
+<script>
+rgender_sales_data{{room.room_id}} = {
+    datasets: [{
+        data: [10, 20],
+
+        backgroundColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        borderColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        hoverBorderColor: [
+            "orange",
+            "orange"
+        ]
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Male',
+        'Female',
+    ],
+};
+
+rgender_sales_options{{room.room_id}} = {
+    legend:{
+        position: 'right'
+    },
+    title:{
+        display: true,
+        text: "Gender Sales Distribution for the Room"
+    }
+}
+var ctx = document.getElementById('rgender_sales_graph{{room.room_id}}').getContext('2d');
+window.rgenderSalesPieChart{{room.room_id}} = new Chart(ctx,{
+    type: 'pie',
+    data: rgender_sales_data{{room.room_id}},
+    options: rgender_sales_options{{room.room_id}}
+});
+
+function rload_gender_sales{{room.room_id}}(data){
+    let sales_count = data;
+    rgender_sales_data{{room.room_id}}.datasets[0].data = sales_count;
+    window.rgenderSalesPieChart{{room.room_id}}.update();
+}
+rload_gender_sales{{room.room_id}}(salesdata['rooms'][{{room.room_id}}]['gendersales']);
+</script>

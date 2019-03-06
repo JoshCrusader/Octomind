@@ -48,6 +48,7 @@ def daterange(start_date, end_date):
 
 def setup_sales(c, data, cur_date, reqsd, reqed):
     stat = 0
+    rooms = Room.objects.all()
     if(c == 'yearly'):
         stat = 12
         data['sales']['labels'] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -64,6 +65,8 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][i]['sales'] = 0
             data['sales'][i]['costs'] = 0
             data['sales'][i]['title'] = i
+            for room in rooms:
+                data['sales'][i]['roomsales'+str(room.room_id)] = 0
     elif(c == 'range'):
         sd = datetime.strptime(reqsd + " 00:00:00", '%Y-%m-%d %H:%M:%S')
         ed = datetime.strptime(reqed + " 00:00:00", '%Y-%m-%d %H:%M:%S')
@@ -76,6 +79,8 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][datekey]['costs'] = 0
             data['sales'][datekey]['title'] = datekey
             data['sales']['labels'].append(datekey)
+            for room in rooms:
+                data['sales'][datekey]['roomsales'+str(room.room_id)] = 0
 
 def setup_sales_count(c, data, gamedet, teamlen, price_dict, propr, rooom):
     m = 1
@@ -95,6 +100,7 @@ def setup_sales_count(c, data, gamedet, teamlen, price_dict, propr, rooom):
 
     data['sales'][m]['count'] += 1
     data['sales'][m]['sales'] += price_dict[teamlen]
+    data['sales'][m]['roomsales'+str(rooom.room_id)] += price_dict[teamlen]
     data['totalsales'] += price_dict[teamlen]
 
 def get_game_sales(games, req, propr):
@@ -115,6 +121,7 @@ def get_game_sales(games, req, propr):
         data['rooms'][i.room_id] = {}
         data['rooms'][i.room_id]['label'] = i.room_name
         data['rooms'][i.room_id]['sales'] = 0
+        data['rooms'][i.room_id]['gendersales'] = [0, 0]
         propr['roomdata'][i.room_id] = {}
         propr['roomdata'][i.room_id]['sales'] = 0
         propr['roomdata'][i.room_id]['costs'] = 0
@@ -149,6 +156,8 @@ def get_game_sales(games, req, propr):
         data['ages'][age_group]['success'] = 0
         data['ages'][age_group]['fail'] = 0
         data['ages'][age_group]['sales'] = 0
+        for room in Room.objects.all():
+            data['ages'][age_group]['rsales'+str(room.room_id)] = 0
 
     for i in range(0, 7):
         data['teamcount'][i+1] = {}
@@ -209,14 +218,17 @@ def get_game_sales(games, req, propr):
             
             if(player.gender == 0):
                 data['gendersales'][0] += solo_dict[teamlen]
+                data['rooms'][rooom.room_id]['gendersales'][0] += solo_dict[teamlen]
             else:
                 data['gendersales'][1] += solo_dict[teamlen]
+                data['rooms'][rooom.room_id]['gendersales'][1] += solo_dict[teamlen]
 
             if(solved == 1):
                 data['ages'][mg]['success'] += 1
             else:
                 data['ages'][mg]['fail'] += 1
 
+            data['ages'][mg]['rsales'+str(rooom.room_id)] += solo_dict[teamlen]
             data['ages'][mg]['sales'] += solo_dict[teamlen]
             data['ages'][mg]['count'] += 1
             data['totalage'] += 1
