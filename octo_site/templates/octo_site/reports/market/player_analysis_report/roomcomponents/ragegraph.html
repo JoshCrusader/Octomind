@@ -1,0 +1,53 @@
+<div>
+<canvas id = "rage_sales_graph{{room.room_id}}"></canvas>
+</div>
+<script>
+rage_sales_data{{room.room_id}} = {
+    datasets: [{
+        data: [10,22,44,14,15,10,12,6,2,1,1],
+
+        backgroundColor: "#93acef",
+        label: "Number per age group"
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        '0-17',
+        '18-22',
+        '23-30',
+        '30-35',
+        '36-40',
+        '41-45',
+        '46-50',
+        '51-55',
+        '56-60',
+        '61-65',
+        '66+'
+    ],
+};
+
+rage_sales_options{{room.room_id}} = {
+    title:{
+        display: true,
+        text: "Player Age Sales Distribution for the Room"
+    },
+}
+var ctx = document.getElementById('rage_sales_graph{{room.room_id}}').getContext('2d');
+window.rageSalesPieChart{{room.room_id}} = new Chart(ctx,{
+    type: 'horizontalBar',
+    data: rage_sales_data{{room.room_id}},
+    options: rage_sales_options{{room.room_id}}
+});
+
+function rload_agesales{{room.room_id}}(data){
+    let suc_data = []
+    for(i in data){
+        suc_data.push(data[i]['rsales{{room.room_id}}']);
+        
+    }
+    rage_sales_data{{room.room_id}}.datasets[0].data = suc_data;
+    window.rageSalesPieChart{{room.room_id}}.update();
+}
+rload_agesales{{room.room_id}}(salesdata['ages']);
+
+</script>

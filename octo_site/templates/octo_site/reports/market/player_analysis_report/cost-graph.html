@@ -26,17 +26,17 @@
 </table>
 -->
 <div>
-<canvas id = "games_played_graph"></canvas>
+<canvas id = "cost_graph"></canvas>
 </div>
 
 
 <script>
-games_played_data = {
+cost_data = {
     datasets: [{
         data: [11,22,58,31, 119, 84],
 
         backgroundColor: "rgba(255, 99, 132, 1)",
-        label: "Sales"
+        label: "Cost of Prices"
     },],
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
@@ -50,11 +50,11 @@ games_played_data = {
     ],
 };
 
-games_played_options = {
+cost_options = {
     responsive: true,
     title:{
         display: true,
-        text: "Sales earned by the Rooms"
+        text: "Cost of producing prices for Winning teams"
     },
     xAxes: [{
         afterTickToLabelConversion: function(data){
@@ -96,11 +96,11 @@ games_played_options = {
         }]
     }
 }
-var ctx = document.getElementById('games_played_graph').getContext('2d');
-window.gamesPlayedChart = new Chart(ctx,{
+var ctx = document.getElementById('cost_graph').getContext('2d');
+window.costChart = new Chart(ctx,{
     type: 'line',
-    data: games_played_data,
-    options: games_played_options
+    data: cost_data,
+    options: cost_options
 });
 
 </script>

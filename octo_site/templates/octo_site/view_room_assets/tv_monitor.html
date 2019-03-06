@@ -68,6 +68,17 @@
         var times = 0;
         function loop(){
             setInterval(() => {
+                if(localStorage.getItem("clue{{ gameid }}")){
+                    document.getElementById("clueid").innerHTML = localStorage.getItem("clue{{ gameid }}");
+                }
+                if(localStorage.getItem("full{{ gameid }}") && localStorage.getItem("full{{ gameid }}") == "true"){
+                    window.focus();
+                    fullscreenme();
+                }
+                else{
+                    console.log("nega bois");
+                    console.log(localStorage.getItem("full{{ gameid }}"));
+                }
                 var timestamps = document.getElementsByClassName("spanTimestamp");
                 for(var i = 0; i < timestamps.length; i++)
                 {

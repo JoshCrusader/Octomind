@@ -1,0 +1,29 @@
+{% load get_perc %}
+{% load get_attr %}
+<div class = "sale__port">
+    TOTAL SALES: <span class = "sale__port__child">P {{ roomdata|attr:room.room_id|attr:'sales' }}</span>
+</div>
+<div class = "sale__port">
+    TOTAL COST OF PRICES: <span class = "sale__port__child">P {{ roomdata|attr:room.room_id|attr:'costs' }}</span>
+</div>
+<div class = "sale__port">
+    TOTAL NUMBER OF GAMES: <span class = "sale__port__child">{{ roomdata|attr:room.room_id|attr:'gamelen' }}</span>
+</div>
+<div class = "sale__port">
+    TOTAL WON GAMES: 
+        <span class = "sale__port__child"> 
+            {% with totAllen=roomdata|attr:room.room_id|attr:'gamelen'%}
+            <span class = "sale__port__mini"> ({{ roomdata|attr:room.room_id|attr:'totalsolved'|perc:totAllen }}%)</span>
+            {% endwith %}
+            {{ roomdata|attr:room.room_id|attr:'totalsolved' }}
+        </span>
+</div>
+<div class = "sale__port">
+    TOTAL LOST GAMES: 
+    <span class = "sale__port__child"> 
+        {% with totAllen=roomdata|attr:room.room_id|attr:'gamelen'%}
+        <span class = "sale__port__mini"> ({{ roomdata|attr:room.room_id|attr:'totalfailed'|perc:totAllen }}%)</span>
+        {% endwith %}
+        {{ roomdata|attr:room.room_id|attr:'totalfailed' }}
+    </span>
+</div>

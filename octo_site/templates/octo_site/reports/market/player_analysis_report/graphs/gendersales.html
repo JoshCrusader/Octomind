@@ -1,0 +1,49 @@
+<div>
+<canvas id = "gender_sales_graph"></canvas>
+</div>
+
+
+
+<script>
+gender_sales_data = {
+    datasets: [{
+        data: [10, 20],
+
+        backgroundColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        borderColor: [
+            "#93acef",
+            "#f685c0",
+        ],
+        hoverBorderColor: [
+            "orange",
+            "orange"
+        ]
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Male',
+        'Female',
+    ],
+};
+
+gender_sales_options = {
+    legend:{
+        position: 'right'
+    },
+    title:{
+        display: true,
+        text: "Player Gender Sales Distribution"
+    }
+}
+var ctx = document.getElementById('gender_sales_graph').getContext('2d');
+window.genderSalesPieChart = new Chart(ctx,{
+    type: 'pie',
+    data: gender_sales_data,
+    options: gender_sales_options
+});
+
+</script>

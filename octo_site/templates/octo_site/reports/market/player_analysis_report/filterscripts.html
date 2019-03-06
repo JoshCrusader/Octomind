@@ -1,0 +1,18 @@
+<script>
+
+function showroom(elem, rid){
+
+    var roomcard = document.getElementsByClassName("rc"+rid)[0];
+    if (elem.classList.contains("filteractive")) {
+        elem.classList.remove("filteractive");
+        roomcard.classList.remove("cardactive");
+    }
+    else{
+        elem.classList.add("filteractive");
+        roomcard.classList.add("cardactive");
+    }
+
+}
+
+
+</script>

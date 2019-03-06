@@ -11,6 +11,7 @@ def tv_monitor(request, game_id):
         if(game is not None):
             details = GameDetails.objects.get(game_details_id = game.game_details_id)
             now_datetime = timezone.now()
+            properties['gameid'] = game_id
             properties['timeend'] = details.timestart + timezone.timedelta(hours=1)+ timezone.timedelta(minutes=1)
             if(details.timestart + timezone.timedelta(hours=1) > now_datetime):
                 properties['done'] = False

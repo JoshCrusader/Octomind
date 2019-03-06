@@ -15,6 +15,51 @@
     }
     load_games_played(salesdata['sales']);
 
+    function load_cost(data){
+        const labels = data.labels;
+        let sales_count = []
+        for(i in data){
+            if(i != 'labels'){
+                sales_count.push(data[i]['costs']);
+            }
+        }
+        cost_data.labels = labels;
+        cost_data.datasets[0].data = sales_count;
+        window.costChart.update();
+    }
+    load_cost(salesdata['sales']);
+
+    function load_gender_sales(data){
+        let sales_count = data;
+        gender_sales_data.datasets[0].data = sales_count;
+        window.genderSalesPieChart.update();
+    }
+    load_gender_sales(salesdata['gendersales']);
+
+    function load_agesales(data){
+        let suc_data = []
+        for(i in data){
+            suc_data.push(data[i]['sales']);
+            
+        }
+        age_sales_data.datasets[0].data = suc_data;
+        window.ageSalesPieChart.update();
+    }
+    load_agesales(salesdata['ages']);
+
+    function load_room_sales(data){
+        let suc_data = [];
+        let labels = [];
+        for(i in data){
+            labels.push(data[i]['label'])
+            suc_data.push(data[i]['sales']);
+        }
+
+        room_sales_data.labels = labels;
+        room_sales_data.datasets[0].data = suc_data;
+        window.roomSalesGraph.update();
+    }
+    load_room_sales(salesdata['rooms']);
 
     function load_player_success(data){
         let suc_data = []
