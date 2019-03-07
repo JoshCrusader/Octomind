@@ -11,6 +11,23 @@
         }
         games_played_data.labels = labels;
         games_played_data.datasets[0].data = sales_count;
+
+        colordict = ["rgba(250, 190, 88, 0.7)", "rgba(147,172,239,0.7)","rgba(218,112,214,0.7)","rgba(255, 236, 139, 0.7)","rgba(255,192,203,0.7)","rgba(35, 203, 167, 0.7)"];
+        for(var i = 1; i < 7; i++){
+            var tempdata = {
+                    data: [],
+                    backgroundColor: colordict[i-1],
+                    label: "Sales with "+i+" members",
+                    hidden: true,
+            }
+            for(var d in data){
+                if(d != 'labels'){
+                    tempdata['data'].push(data[d]['sales'+i]);
+                }
+            }
+            games_played_data.datasets.push(tempdata);
+            
+        }
         window.gamesPlayedChart.update();
     }
     load_games_played(salesdata['sales']);

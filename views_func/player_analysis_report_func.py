@@ -65,6 +65,8 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][i]['sales'] = 0
             data['sales'][i]['costs'] = 0
             data['sales'][i]['title'] = i
+            for num in range(1, 7):
+                data['sales'][i]['sales'+str(num)] = 0
             for room in rooms:
                 data['sales'][i]['roomsales'+str(room.room_id)] = 0
     elif(c == 'range'):
@@ -79,6 +81,8 @@ def setup_sales(c, data, cur_date, reqsd, reqed):
             data['sales'][datekey]['costs'] = 0
             data['sales'][datekey]['title'] = datekey
             data['sales']['labels'].append(datekey)
+            for i in range(1, 7):
+                data['sales'][datekey]['sales'+str(i)] = 0
             for room in rooms:
                 data['sales'][datekey]['roomsales'+str(room.room_id)] = 0
 
@@ -100,6 +104,7 @@ def setup_sales_count(c, data, gamedet, teamlen, price_dict, propr, rooom):
 
     data['sales'][m]['count'] += 1
     data['sales'][m]['sales'] += price_dict[teamlen]
+    data['sales'][m]['sales'+str(teamlen)] += price_dict[teamlen]
     data['sales'][m]['roomsales'+str(rooom.room_id)] += price_dict[teamlen]
     data['totalsales'] += price_dict[teamlen]
 
@@ -238,13 +243,17 @@ def get_game_sales(games, req, propr):
 
 def player_analysis_report(request):
     games = []
+    properties = {}
     if(request.method == 'POST'):
         if request.POST['report_cat'] == "range":
+            properties['datereport'] = request.POST['sd']+" to "+request.POST['ed']
             games = get_range_games(request)
         elif request.POST['report_cat'] == "monthly":
             games = get_monthly_games(request)
+            properties['datereport'] = request.POST['date']
         elif request.POST['report_cat'] == "yearly":
             games = get_yearly_games(request)
+            properties['datereport'] = request.POST['date']
         elif request.POST['report_cat'] == "daily":
             games = get_daily_games(request)
         else:
@@ -252,7 +261,6 @@ def player_analysis_report(request):
         print(request.POST)
     
     
-    properties = {}
     properties['roomdata'] = {}
     detobj = get_game_sales(games, request, properties)
     properties['sales_graph'] = json.dumps(detobj)
