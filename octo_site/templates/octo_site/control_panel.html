@@ -23,6 +23,13 @@
                 right: 5px;
                 bottom: 5px;
             }
+            .timeRight{
+                position: absolute;
+                left: 5px;
+                bottom: 5px;
+                padding: 0.75vh;
+                background-color: rgba(0, 0, 0, 0.45);
+            }
             .playerContainer{
                 width: 70%;
                 float:left;
@@ -98,11 +105,15 @@
                             {% with specGame=games|attr:i.room_id%}
                                 {% with minutes=specGame|attr:"minutes" seconds=specGame|attr:"seconds" %}
                                     {% if specGame != None %}
+                                        <div class = "timeRight">Current Phase:<br>
+                                                <span id="curr_phase{{ forloop.counter }}" class = " uk-text-warning">
+                                                </span>
+                                        </div>
                                         <div class = "timeLeft">Time left: 
                                                 <span class = "spanTimestamp" minutes = {{ minutes }} seconds = {{ seconds }}>
                                                     {{ minutes }}:{{ seconds }}
                                                 </span>
-                                            </div>
+                                        </div>
                                     {% endif %}
                                 {% endwith %}
                             {% endwith %}
@@ -337,7 +348,23 @@ function loop(){
             }
         }
 
-        times = times+1
+        times = times+1;
+        {% for i in rooms reversed%}
+            {% with specGame=games|attr:i.room_id%}
+                    {% if specGame != None %}
+                        $.ajax({
+                        type:"GET",
+                        url:"/octo_site/api/get_cur_phase/{{ specGame.game_id }}/",
+                        success: function(data) {
+
+                            if ($("#curr_phase{{ forloop.counter }}").html() !== data.phase) {
+                                $("#curr_phase{{ forloop.counter }}").html(data.phase);
+                            }
+                        }
+                        });
+                    {% endif %}
+            {% endwith %}
+        {% endfor %}
     }, 1000);
 }
 loop();

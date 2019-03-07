@@ -167,6 +167,10 @@ def sensor_data(request,game_id):
         d['rpi_id'] = sensor.rpi_id
         d['sensor_type_id'] = sensor.sensor_type_id
     return JsonResponse({"data": data})
+
+@csrf_exempt
+def get_cur_phase(request, game_id):
+    return JsonResponse({"phase": Game.objects.get(game_id=game_id).get_current_phase})
 @csrf_exempt
 def all_sensor_data(request):
     data = pull_all_sensor_data()

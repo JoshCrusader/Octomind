@@ -162,13 +162,14 @@ class Game(models.Model):
         if self.has_error:
             return "Game experienced errors"
         if self.is_ongoing:
-            sensors = self.get_sensors_on_trigger_sequence
+            sensors = self.get_sensor_trigger_sequence
             room_sensors = self.room.get_all_sensors
+            print(len(sensors))
             try:
                 if len(sensors) == 0:
-                    return room_sensors[0]
+                    return room_sensors[0].phase_name
                 else:
-                    return room_sensors[len(sensors)-1]
+                    return room_sensors[len(sensors)-1].phase_name
             except:
                 print("errordar")
         return "N/A"
@@ -780,15 +781,16 @@ class Room(models.Model):
                     has_w += 1
             else:
                 deduc +=1
+
         return{
-            "average_duration": round(t_solved/len(all_games)-deduc,2),
-            "average_completion_rate": round(complet/len(all_games)-deduc,2)*100,
-            "average_clues_asked": round(c_asked/len(all_games)-deduc,2),
-            "average_errors": round(float(error/len(all_games)-deduc),2),
-            "average_error_rate": round(float(has_e / len(all_games)-deduc), 2)*100,
-            "average_warnings": round(float(warning/len(all_games)-deduc),2),
-            "average_warning_rate": round(float(has_w / len(all_games)-deduc), 2)*100,
-            "average_team_size":round(p_size/len(all_games)-deduc,2),
+            "average_duration": round(t_solved / (len(all_games)-deduc),2),
+            "average_completion_rate": round(complet / (len(all_games)-deduc),2)*100,
+            "average_clues_asked": round(c_asked / (len(all_games)-deduc),2),
+            "average_errors": round(float(error / (len(all_games)-deduc)),2),
+            "average_error_rate": round(float(has_e / (len(all_games)-deduc)), 2)*100,
+            "average_warnings": round(float(warning/ (len(all_games)-deduc)),2),
+            "average_warning_rate": round(float(has_w / (len(all_games)-deduc)), 2)*100,
+            "average_team_size":round(p_size / (len(all_games)-deduc),2),
                        }
     @property
     def has_game_sequence(self):

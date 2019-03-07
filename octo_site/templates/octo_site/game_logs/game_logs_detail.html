@@ -162,7 +162,6 @@
                                                             <th align="left">Sensor Name</th>
                                                             <th align="left">Detail</th>
                                                             <th align="left">Minute Logged</th>
-                                                            <th align="left">Sequence Recorded</th>
                                                             <th align="left">Timestamp</th>
                                                         </tr>
                                                     </thead>
@@ -173,7 +172,6 @@
                                                             <td>{{ er.sensor.sensor_name }}</td>
                                                             <td>{{ er.details}}</td>
                                                             <td>{{ er.get_minute_asked}}</td>
-                                                            <td>{{ er.cur_sensor_sequence}}</td>
                                                             <td>{{ er.timestamp }}</td>
                                                         </tr>
                                                     {% endfor %}
@@ -246,6 +244,64 @@
                                                     </tbody>
                                                 </table>
                                                 <hr>
+                                            {% if warnings.count != 0 %}
+                                                <h4 class="uk-margin-remove">* Warnings</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Game ID</th>
+                                                            <th align="left">Phase Name</th>
+                                                            <th align="left">Detail</th>
+                                                            <th align="left">Minute Logged</th>
+                                                            <th align="left">Time Solved</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for wa in warnings %}
+                                                        <tr>
+                                                            <td>{{ wa.game.match_id }}</td>
+                                                            <td>{{ wa.sensor.phase_name }}</td>
+                                                            <td>{{ wa.details}}</td>
+                                                            <td>{{ wa.get_minute_asked}}</td>
+                                                            <td>{{ wa.time_solved}}</td>
+                                                            <td>{{ wa.timestamp }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% else %}
+                                                    <p class="uk-text-small"> No warnings found</p>
+                                            {% endif %}
+
+                                                {% if errors.count != 0 %}
+                                                <h4 class="uk-margin-remove">* Errors</h4>
+                                                <table class="uk-table uk-table-divider" style="width:100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="left">Game ID</th>
+                                                            <th align="left">Sensor Name</th>
+                                                            <th align="left">Detail</th>
+                                                            <th align="left">Minute Logged</th>
+                                                            <th align="left">Timestamp</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for er in errors %}
+                                                        <tr>
+                                                            <td>{{ er.game.match_id }}</td>
+                                                            <td>{{ er.sensor.sensor_name }}</td>
+                                                            <td>{{ er.details}}</td>
+                                                            <td>{{ er.get_minute_asked}}</td>
+                                                            <td>{{ er.timestamp }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                {% else %}
+                                                    <p class="uk-text-small"> No errors found</p>
+                                                {% endif %}
+
                                                 <h4 class="uk-margin-remove">* Game Phases Summary</h4>
                                                 <table class="uk-table uk-table-divider" style="width:100%;">
                                                     <thead>
