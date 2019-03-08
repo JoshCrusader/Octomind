@@ -220,7 +220,15 @@ class Game(models.Model):
         data = self.pull_game_summary(self)
         if self.game_details.solved == 0:
             return 60.0
-        return round(data["general_info"]["time_finished_duration"], 1)
+        return round(data["general_info"]["time_finished_duration"], 2)
+
+    @property
+    def get_final_duration(self):
+        data = self.pull_game_summary(self)
+
+        if self.game_details.solved == 0:
+            return 60.0+(5.0*self.get_num_clues_asked)
+        return round(data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked), 2)
     @property
     def get_skill_bracket(self):
         tf = self.get_final_duration
@@ -235,13 +243,6 @@ class Game(models.Model):
             elif tf < 30:
                 skill_bracket = "High"
         return skill_bracket
-    @property
-    def get_final_duration(self):
-        data = self.pull_game_summary(self)
-
-        if self.game_details.solved == 0:
-            return round(60.0+(5*self.get_num_clues_asked),2)
-        return round(data["general_info"]["time_finished_duration"]+(5*self.get_num_clues_asked), 2)
     @property
     def get_num_clues_asked(self):
         return Clues.objects.filter(game_id=self.game_id).count()
