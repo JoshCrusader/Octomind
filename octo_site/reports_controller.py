@@ -128,8 +128,7 @@ def get_monthly_report(request,room):
             if g.room_id == room.room_id:
                 games.append(g)
                 game_ids.append(g.game_id)
-        else:
-            print("removed!" , det.timestart.month)
+
     msg = "month of " + month.strftime("%b") + " " + str(month.year)
     return compute_report_data(games), msg, games,"-".join(map(str,game_ids))
 def get_yearly_report(request,room):

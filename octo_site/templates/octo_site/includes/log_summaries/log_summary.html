@@ -110,8 +110,9 @@
                            {
                                x: obj[i].min_stamped,
                                y: obj[i].time_solved,
-                               r:obj[i].times_triggered*15
+                               r:obj[i].times_triggered*10
                            });
+                       console.log("pushed"+obj[i].times_triggered);
                        bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
                        bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
                        window.myLogSummary.update();
