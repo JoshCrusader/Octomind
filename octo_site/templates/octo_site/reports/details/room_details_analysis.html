@@ -402,7 +402,11 @@
                             return data.clues_data[tooltipItem[0].index].phase_name;
                         }
                         if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
-                            return null;
+                            console.log("hh"+data.sensor_names[tooltipItem[0].index]);
+                            key = Object.keys(data.sensor_names);
+                            console.log(key);
+                            console.log(tooltipItem[0].index);
+                            return data.sensor_names[key[tooltipItem[0].index]];
                         }
                         return data.datasets[tooltipItem[0].datasetIndex].label
                     },
@@ -414,7 +418,9 @@
                             //console.log("sensor_names",data.sensor_names);
                             return null;
                         }
-                        return "Game "+ (10000+data.dataset_game_ids[26][tooltipItem[0].index]);
+
+                        key = Object.keys(data.dataset_game_ids)[tooltipItem[0].datasetIndex];
+                        return "Game "+ (10000+data.dataset_game_ids[key][tooltipItem[0].index]);
                     },
                     afterBody: function(tooltipItem, data) {
                         str=["-----"];
@@ -450,9 +456,8 @@
                         if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
                             return null;
                         }
-                            console.log("ind"+tooltipItem[0].index);
-                            console.log("data set ind"+data.dataset_r_vals);
-                            return "Log Frequency: "+data.dataset_r_vals[26][tooltipItem[0].index];
+                            key = Object.keys(data.sensor_names)[tooltipItem[0].datasetIndex];
+                            return "Log Frequency: "+data.dataset_r_vals[key][tooltipItem[0].index];
                     },
 
                     // Use the footer callback to display the sum of the items showing in the tooltip
