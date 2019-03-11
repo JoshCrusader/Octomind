@@ -288,7 +288,7 @@
             responsive: true,
             title: {
                 display: true,
-                text: 'Log Summary for Game/s {{ game_ids|join:", " }}'
+                text: '{{ game_ids }} Log Summary for Game/s {{ game_ids|join:", " }}'
             },
             tooltips: {
                 mode: 'nearest',
@@ -347,8 +347,7 @@
                             //console.log("sensor_names",data.sensor_names);
                             return null;
                         }
-
-                        return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
+                        return "Game "+ (10000+data.dataset_game_ids[26][tooltipItem[0].index]);
                     },
                     afterBody: function(tooltipItem, data) {
                         str=["-----"];
@@ -377,14 +376,16 @@
                     },
                     beforeFooter: function(tooltipItem, data) {
                         if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            //console.log("sensor_names",data.sensor_names);
+                            console.log("waw gago");
                             return null;
                         }
 
                         if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
                             return null;
                         }
-                            return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
+                            console.log("ind"+tooltipItem[0].index);
+                            console.log("data set ind"+data.dataset_r_vals);
+                            return "Log Frequency: "+data.dataset_r_vals[26][tooltipItem[0].index];
                     },
 
                     // Use the footer callback to display the sum of the items showing in the tooltip
@@ -448,8 +449,6 @@
                         return 'Ano daw';
                     },
                     title: function(tooltipItem, data) {
-                        console.log(data);
-                        console.log(tooltipItem[0].datasetIndex);
 
                         game_id = parseInt(data.datasets[tooltipItem[0].datasetIndex].label)-10000;
                         return data.sensor_names[game_id][tooltipItem[0].index];
@@ -471,9 +470,6 @@
                         scaleLabel: {
                             display: true,
                             labelString: 'minutes',
-                        },
-                        ticks:{
-                            beginAtZero: true,
                             max: 60
                         }
                     }],
@@ -487,7 +483,7 @@
                             steps: 0,
                             min: 0,
                             stepValue: 1,
-                            max: {{ room.num_sensors }} + 0.3,
+                            max: {{ room.num_sensors }} - 0.9,
                             callback: function(value, index, values){
                                 return yLbl[value];
                             }
@@ -503,7 +499,8 @@
         window.LogDistributionChart.update();
         setTimeout(() => {
             $("#s_plot").hide();
-        },2000);
+            $("#s_plot").css('opacity',1.0);
+        },12000);
     };
 </script>
 

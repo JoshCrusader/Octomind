@@ -318,6 +318,8 @@ class Game(models.Model):
         clues = Clues.objects.filter(game_id=self.game_id)
         for c in clues:
             s = Sensor.objects.get(sensor_id=c.clue_details.get_sensor_asked)
+            if c.clue_details.get_minute_asked < 0:
+                print("huli ka",c.clue_id,"|",c.clue_details.get_minute_asked)
             data_return.append({
                 'sensor_id':c.clue_details.get_sensor_asked,
                 'phase_name':s.phase_name,
