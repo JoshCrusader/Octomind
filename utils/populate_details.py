@@ -23,7 +23,6 @@ def gen_clues(chance, dts, te, game):
 def gen_error(chance, dts, si, game):
     if (gen_random(100) <= chance):
         z = gen_r_random(1, 3)
-        el = Ga
         for i in range(0, z):
             cd = ClueDetails(detail='No Detail avail',
                              timestamp=dts + timedelta(minutes=gen_r_random(6, te - 2), seconds=gen_r_random(0, 58)))
@@ -33,7 +32,7 @@ def gen_error(chance, dts, si, game):
 
 
 def main_start():
-    games = Game.objects.filter(room_id = 2)
+    games = Game.objects.filter(game_id__gte=387)
     for game in games:
         
         rd = gen_random(100)
@@ -44,7 +43,7 @@ def main_start():
             r2 = gen_random(100)
             te = 60
             if(r2 <= 5):
-                te = gen_r_random(20, 35)
+                te = gen_r_random(10, 35)
                 gen_clues(5, dts, te, game)
             elif r2 <= 20:
                 te = gen_r_random(35, 45)
@@ -82,7 +81,7 @@ def main_start():
 
 
 def sec_start():
-    games = Game.objects.filter(room_id=2)
+    games = Game.objects.filter(room_id=2).filter(game_id__gte=300)
     for game in games:
         detail = game.game_details
         dts = detail.timestart

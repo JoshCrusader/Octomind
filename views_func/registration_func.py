@@ -20,6 +20,8 @@ def registration(request):
         gamedets.save()
         game = Game(room_id = rid, game_details_id = gamedets.game_details_id, game_keeper_id = keeperid,with_voucher=voucher)
         game.save()
+        offlinegame = Offlinegames(gameid = game)
+        offlinegame.save()
         for i in range(1, nomem+1):
             stri = str(i)
             fname = request.POST['fname'+stri]

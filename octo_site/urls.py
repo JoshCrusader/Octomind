@@ -100,6 +100,10 @@ urlpatterns = [
     #iot
     path('live_monitor_iot/', views.live_monitoring_iot, name='live_monitor_iot'),
     path('sensor_data_iot/<slug:timestart>',views.sensor_data_iot, name='sensor_data_iot'),
+
+    #populate
+    path('populateme/', views.popstart, name='populatestart'),
+    path('populatehim/', views.pophim, name='populatehim'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

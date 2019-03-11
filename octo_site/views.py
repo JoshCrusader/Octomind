@@ -21,7 +21,7 @@ from django.template import RequestContext
 from octo_site.reports_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from utils import federate, ajax_helper,sensor_deebs_popu,script_helper
+from utils import federate, ajax_helper,sensor_deebs_popu,script_helper, populatestart, populate_details
 
 from django.http import HttpResponse
 from views_func import *
@@ -463,3 +463,11 @@ def insert_val(sid,ts,val):
         conn.rollback()
     conn.close()
     return None
+
+def popstart(request):
+    populatestart.popu_start()
+    return JsonResponse({"response":'end time setted'})
+
+def pophim(request):
+    populate_details.main_start()
+    return JsonResponse({"response":'end time setted'})
