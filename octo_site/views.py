@@ -59,19 +59,30 @@ def register(request):
         lname = request.POST.get('lname')
         usertype = request.POST.get('usertype')
         user = User.objects.create_user(username=username, password=password, first_name=fname, last_name=lname)
+        branch = request.POST.get('branch')
+        print("ebranch: ", branch)
 
         if usertype == "os":
             group = Group.objects.get(name="Operations Supervisor")
             user.groups.add(group)
+            user.save()
+            ebranch = EmployeeBranch(user_id=user.id,branch_id=branch)
+            ebranch.save()
+            print("new userid: " , user.id)
+            print("ebranch: " , ebranch.branch_id)
+
         elif usertype == "gk":
             group = Group.objects.get(name="Gamekeeper")
             user.groups.add(group)
+            user.save()
+            ebranch = EmployeeBranch(user_id=user.id,branch_id=branch)
+            ebranch.save()
+            print("new userid: " , user.id)
+            print("ebranch: " ,ebranch.branch_id)
         elif usertype == "own":
             group = Group.objects.get(name="Owner")
             user.groups.add(group)
-
-        user.save()
-        messages.warning(request, 'Account Created.')
+            user.save()
         return redirect('index')
     return render(request, 'octo_site/user_module/register.html', {'branches':Branch.objects.all()})
 
