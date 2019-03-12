@@ -87,7 +87,15 @@ def register(request):
     return render(request, 'octo_site/user_module/register.html', {'branches':Branch.objects.all()})
 
 def list_user(request):
-    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
+    e_branches = []
+    users = User.objects.all()
+    for u in users:
+        try:
+            e_branches.append(EmployeeBranch.get_branch(user_id=u.id).name)
+        except:
+            e_branches.append("N/A")
+
+    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all(),'ebranches':e_branches})
 
 def registration(request):
     return registration_func.registration(request)

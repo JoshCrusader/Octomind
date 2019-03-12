@@ -661,6 +661,12 @@ class EmployeeBranch(models.Model):
         managed = False
         db_table = 'employee_branch'
 
+    @staticmethod
+    def get_branch(user_id):
+        br = EmployeeBranch.objects.get(user_id=user_id)
+        return Branch.objects.get(branch_id=br.branch_id)
+
+
 class GameErrorLog(models.Model):
     game_error_id = models.AutoField(primary_key=True)
     game = models.ForeignKey(Game, models.DO_NOTHING)
