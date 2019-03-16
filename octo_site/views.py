@@ -108,8 +108,7 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    return redirect('control_panel')
-    #return render(request,'octo_site/dashboard.html')
+    return render(request,'octo_site/dashboard.html')
 
 def page_sensor(request):
     return page_func.page_sensor(request)

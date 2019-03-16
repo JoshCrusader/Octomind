@@ -6,10 +6,10 @@ import datetime
 import json
 def control_panel(request):
     if request.method == 'GET':
-        federate.sync()
+        # federate.sync()
         # gamess = Game.objects.all()
         # for gamee in gamess:
-        #     offlinegame = Offlinegames(gameid = gamee)
+        #     offlinegame = Offliclsnegames(gameid = gamee)
         #     offlinegame.save()
         game_details = []
         now_datetime = timezone.now()
