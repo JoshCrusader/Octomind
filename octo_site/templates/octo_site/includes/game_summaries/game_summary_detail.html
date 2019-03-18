@@ -21,6 +21,10 @@ let config = {
                     padding:15,
                     fontSize: 13,
                     usePointStyle:true,
+                    filter: function(item, chart) {
+                          // Logic to remove a particular legend item goes here
+                          return !item.text.includes('Avg');
+                        }
                 }
             },
             title: {
@@ -42,8 +46,12 @@ let config = {
                           if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                               return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
                           }
+                          else if(tooltipItem.datasetIndex+1 > data.data_objs.length){
+                                return null;
+                          }
                           let time_solved = new Date(tooltipItem.xLabel);
                           let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+
                           if (comp_time) {return "Start time";}
                           let dat_set_label = config.data.datasets[tooltipItem.datasetIndex].label;
                           return dat_set_label+" Solved at "+time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds();
@@ -51,6 +59,9 @@ let config = {
                         title: function(tooltipItem, data) {
                           if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                               return null;
+                          }
+                          else if(tooltipItem[0].datasetIndex + 1 > config.data.data_objs.length){
+                                return config.data.datasets[tooltipItem[0].datasetIndex].label;
                           }
                             return tooltipItem[0].xLabel;
                         },
@@ -60,6 +71,7 @@ let config = {
 							let sec = null;
 							let stat = null;
 							let clu = false;
+							let avg = false;
 							let det = "";
 
 							tooltipItems.forEach(function(tooltipItem) {
@@ -67,7 +79,24 @@ let config = {
                               if(tooltipItem.datasetIndex === config.data.datasets.length-1 && config.data.clues_data.length !== 0){
                                   clu =true;
                                   det = data.clues_data[tooltipItem.index].detail
-                              }else{
+                              }
+                              else if(tooltipItem.datasetIndex > data.data_objs.length-1){
+                                    comp = data.data_objs[tooltipItem.datasetIndex-data.data_objs.length].time_solved - data.data_objs[tooltipItem.datasetIndex-data.data_objs.length].all_time_avg;
+                                    console.log(comp);
+                                    if(comp<0){
+                                        val = Math.abs(comp).toFixed(2);
+                                        sec = ((val % 1)*60).toFixed(2);
+                                        min = Math.floor(val);
+                                        det = "⬆ Faster than the average by "+min+" min "+sec+" sec";
+                                    }else if(comp>0){
+                                        val = Math.abs(comp).toFixed(2);
+                                        sec = ((val % 1)*60).toFixed(2);
+                                        min = Math.floor(val);
+                                        det = "⬇ Slower than the average by "+ min + " min "+sec+" sec";
+                                    }
+                                    avg = true;
+                              }
+                              else{
                                     val = data.data_objs[tooltipItem.datasetIndex].time_solved;
                                     sec = ((val % 1)*60).toFixed(2);
                                     min = Math.floor(val);
@@ -75,7 +104,7 @@ let config = {
                               }
 
 							});
-							if(clu){
+							if(clu || avg){
 							    return det
                             }
 							if(stat){
@@ -113,7 +142,7 @@ let config = {
                     ticks: {
                             beginAtZero: true,
                             steps: 0,
-                            min:-0.4,
+                            min:0,
                             stepValue: 5,
                             max: {{ game.room.num_sensors }}.00001
                         }
@@ -154,21 +183,44 @@ function initData() {
                 data: [],
                 fill: false
            };
-
            config.data.datasets.push(newDataset);
            sensors.push(obj[i].sensor_id);
            config.options.scales.xAxes.push(newXAxis);
            window.myLine.update()
         }
+        for (i in obj)
+                {
+                   avgXAxis = {
+                        id: "avg"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
 
+                   };
+                   avgDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name+" Avg",
+                        xAxisID:"avg"+i,
+                        display: false,
+                        borderWidth: 10,
+                        pointStyle: 'line',
+                        backgroundColor: "#134a56",
+                        borderColor: "#134a56",
+                        data: [],
+                        fill: false
+                   };
+                   config.data.datasets.push(avgDataset);
+                   config.options.scales.xAxes.push(avgXAxis);
+                   window.myLine.update()
+                }
         window.myLine.update();
-
-        console.log("gotten d sensors {{ game.game_id }}",obj);
         callData();
    });
-
-
-
     window.myLine.update();
     let summary_data =  $.get("/octo_site/api/game_summary/{{ game.game_id }}/");
     summary_data.done(function(results){
@@ -176,7 +228,6 @@ function initData() {
         $("#time_finished").html(results.data.general_info.time_finished_duration);
         $("#skill_bracket").html(results.data.general_info.skill_bracket);
         $("#avg_time").html(results.data.general_info.average_time);
-
     });
 }
 </script>
@@ -204,43 +255,77 @@ function callData(){
         for (ob in obj)
         {
            if(parseInt(obj[ob].time_solved.toFixed(2)) !== 0){
-
            config.data.data_objs.push(obj[ob]) ;
            let ind = sensors.indexOf(obj[ob].sensor_id);
+           if (obj[ob].time_solved <= obj[ob].all_time_avg){
+                config.data.datasets[ind+sensors.length].borderColor = "#218e1d";
+           }
            if(ind !== 0){
+               cur_avg = new Date(new_obj[ob]);
+               cur_avg = new Date( cur_avg.getTime() + (obj[ob].all_time_avg*60000));
                config.data.labels.push(new_obj[ob]);
                config.data.labels.push(new Date(obj[ob].timestamp));
+               config.data.labels.push(cur_avg);
+
                for(let x =0; x < sensors.length;x++){
+
+
+
                     if(obj[ob].sensor_id === sensors[x] &&  (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
                         config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                         config.data.datasets[x].data.push(sensors.length-0.75-ob);
                         config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                        config.data.datasets[x].data.push(null);
+
+                        config.data.datasets[x+sensors.length].data.push(sensors.length-0.25-ob);
+                        config.data.datasets[x+sensors.length].data.push(null);
+                        config.data.datasets[x+sensors.length].data.push(sensors.length-0.25-ob);
                     }
                     else{
                         config.data.datasets[x].data.push(null);
                         config.data.datasets[x].data.push(null);
+                        config.data.datasets[x].data.push(null);
+
+                        config.data.datasets[x+sensors.length].data.push(null);
+                        config.data.datasets[x+sensors.length].data.push(null);
+                        config.data.datasets[x+sensors.length].data.push(null);
+
                     }
                 }
            }
            else{
-               config.data.labels.push(start_time);
-               config.data.labels.push(new Date(obj[ob].timestamp));
-               for(let x =0; x < sensors.length;x++){
-                    if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
-                        config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
-                        config.data.datasets[x].data.push(sensors.length-0.75);
-                        config.data.datasets[x].data.push(sensors.length-0.75);
+                   cur_avg = new Date(start_time);
+                   cur_avg = new Date( cur_avg.getTime() + (obj[ob].all_time_avg*60000));
+                   config.data.labels.push(start_time);
+                   config.data.labels.push(new Date(obj[ob].timestamp));
+                  config.data.labels.push(cur_avg);
+
+                   for(let x =0; x < sensors.length;x++){
+                        if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
+                            config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
+                            config.data.datasets[x].data.push(sensors.length-0.75);
+                            config.data.datasets[x].data.push(sensors.length-0.75);
+                            config.data.datasets[x].data.push(null);
+
+                            config.data.datasets[x+sensors.length].data.push(sensors.length-0.25-ob);
+                            config.data.datasets[x+sensors.length].data.push(null);
+                            config.data.datasets[x+sensors.length].data.push(sensors.length-0.25-ob);
+                        }
+                        else{
+                            config.data.datasets[x].data.push(null);
+                            config.data.datasets[x].data.push(null);
+                            config.data.datasets[x].data.push(null);
+
+
+                            config.data.datasets[x+sensors.length].data.push(null);
+                            config.data.datasets[x+sensors.length].data.push(null);
+                            config.data.datasets[x+sensors.length].data.push(null);
+                        }
                     }
-                    else{
-                        config.data.datasets[x].data.push(null);
-                        config.data.datasets[x].data.push(null);
-                    }
-                }
-           }
+               }
            }
            window.myLine.update()
         }
-
         config.data.labels.push(end_time);
         window.myLine.update();
         window.myLine.update();

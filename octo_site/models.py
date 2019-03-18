@@ -407,6 +407,7 @@ class Game(models.Model):
                              "times_triggered": times_triggered,
                              "sensor_name": s.sensor_name,
                              "phase_name": s.phase_name,
+                             "all_time_avg": s.all_time_avg,
                              "min_stamped": round(min_stamped / timedelta(minutes=1),2)})
 
                         break
@@ -944,6 +945,7 @@ class Sensor(models.Model):
     left_coordinate = models.IntegerField(blank=True, null=True)
 
     phase_name = models.CharField(max_length=150, blank=True, null=True)
+    all_time_avg = models.FloatField(blank=True, null=True)
 
     @property
     def get_all_time_data(self):
@@ -960,6 +962,8 @@ class Sensor(models.Model):
                             time_solved += d["time_solved"]
                         else:
                             deduc += 1
+        self.all_time_avg = round(time_solved / (len(all_games)-deduc), 2)
+        self.save()
         print("all time time solved of ",self.phase_name,round(time_solved / (len(all_games)-deduc), 2))
         return {"average_min_stamped": round(min_stamped / (len(all_games)-deduc), 2),
                 "average_time_solved": round(time_solved / (len(all_games)-deduc), 2)}
