@@ -108,7 +108,34 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    return render(request,'octo_site/dashboard.html')
+    all_g = Game.objects.filter(game_details__timestart__isnull=False)
+    games = []
+    if request.user.groups.all()[0].name == "Gamekeeper":
+        cur_branch = EmployeeBranch.get_branch(request.user.id)
+        unstarted_games_arr = []
+        unstarted_games = Game.objects.filter(game_details__timestart__isnull=True)
+        clues = Clues.objects.all()[:10]
+        for g in reversed(all_g):
+            if len(games) >= 5:
+                break
+            if cur_branch.branch_id == g.room.branch_id:
+                games.append(g)
+        for gg in reversed(unstarted_games):
+            if len(unstarted_games_arr) >= 5:
+                break
+            if cur_branch.branch_id == gg.room.branch_id:
+                unstarted_games_arr.append(gg)
+
+        return render(request, 'octo_site/dashboards/gk_dashboard.html',{'games' : games,'clues':clues,'unst_games':unstarted_games_arr})
+    elif request.user.groups.all()[0].name == "Operations Supervisor":
+        cur_branch = EmployeeBranch.get_branch(request.user.id)
+        for g in reversed(all_g):
+            if len(games) >= 5:
+                break
+            if cur_branch.branch_id == g.room.branch_id:
+                games.append(g)
+        return render(request, 'octo_site/dashboards/os_dashboard.html',{'games' : games})
+    return render(request,'octo_site/dashboards/own_dashboard.html')
 
 def page_sensor(request):
     return page_func.page_sensor(request)
