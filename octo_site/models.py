@@ -933,6 +933,14 @@ class Notifs(models.Model):
             if n.viewed == 0:
                 return True
         return False
+
+    @staticmethod
+    def get_all_notifs_in_branch(branch_id):
+        notifs = []
+        for n in reversed(Notifs.objects.all()):
+            if n.game.room.branch_id == branch_id:
+                notifs.append(n)
+        return notifs
 class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=45, blank=True, null=True)

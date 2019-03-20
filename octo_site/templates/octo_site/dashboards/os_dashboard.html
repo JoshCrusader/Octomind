@@ -1,5 +1,16 @@
 {% include 'octo_site/includes/header.html' %}
-<!-- CONTENT -->
+{% load staticfiles %}
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+<!-- CONTENT --><style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
     <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
     <div class="uk-container uk-container-expand">
         <div class="uk-grid uk-grid-divider uk-grid-medium uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl" data-uk-grid>
@@ -35,109 +46,40 @@
             </div>
         </div>
         <hr>
-        <div class="uk-grid" data-uk-grid>
+        <div class="uk-grid-small" data-uk-grid>
             <!-- panel -->
-            <div style="margin-right: 0;" class="uk-width-2-3">
-            <div class="uk-width-1-1@l">
+            <div  class="uk-width-1-2">
+                <div style="margin-bottom: 2vh;" class="uk-width-1-1@s">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span> Recent Games</h4></div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span> Century City Mall Branch </h4></div>
                         </div>
                     </div>
                     <div class="uk-card-body">
                         <div class="uk-overflow-auto">
-                            <table id="room_tbl" class="uk-table uk-table-divider" style="width:100%">
-                                  <thead>
-                                      <tr>
-                                          <th class="uk-table-shrink uk-text-nowrap"></th>
-                                          <th class="uk-width-small">Match ID</th>
-                                          <th class="uk-width-medium">Result</th>
-                                          <th class="uk-width-small">Team</th>
-                                          <th class="uk-width-large">Time Start & End</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                  {% load static %}
-                                  {% for game in games%}
-                                        <tr class="tbl_toggle" style="cursor:pointer">
-                                            <td class="uk-text-center">
-                                                {% if game.is_ongoing == False %}
-                                                <input class="uk-checkbox disabler" game-id="{{ game.game_id }}" room-name="{{ game.room.room_name }}" room-id="{{ game.room_id }}" onchange="disable_game(this)" value="gago" name="room_to_analyze[]" type="checkbox"></td>
-                                                {% endif %}
-                                            <td>
-
-                                                {% if game.is_ongoing %}
-                                                    <b style="color: cornflowerblue">{{ game.match_id }}</b>
-                                                {% else %}
-                                                    <a href="game/{{ game.game_id }}/"><b>{{ game.match_id }}</b></a>
-                                                {% endif %}
-                                                <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
-                                            </td>
-                                            <td>
-                                                {% if game.is_ongoing %}
-                                                    <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">Ongoing</b></p>
-                                                {% else %}
-                                                    {% if game.is_solved %}
-                                                        <p class="uk-margin-remove"><b style="color: limegreen">Solved</b>
-                                                            {% if game.has_error %}
-                                                                <span class="uk-text-danger" uk-tooltip="Sequence anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            {% endif %}
-                                                            {% if game.has_warning %}
-                                                                <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            {% endif %}
-                                                        <!--
-                                                            { if game.has_error == False and game.has_warning == False %}
-                                                                <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            { endif %}
-                                                            -->
-                                                        </p>
-                                                    {% else %}
-                                                        <p class="uk-margin-remove"><b style="color: #ffb843">Unsolved</b>
-                                                            {% if game.has_error %}
-                                                                <span class="uk-text-danger" uk-tooltip="Sequence anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            {% endif %}
-                                                            {% if game.has_warning %}
-                                                                <span class="uk-text-warning" uk-tooltip="Sensor anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            {% endif %}
-                                                        <!--
-                                                            { if game.has_error == False and game.has_warning == False %}
-                                                                <span class="uk-text-success" uk-tooltip="No anomaly detected" data-uk-icon="icon: info;ratio: 1"></span>
-                                                            { endif %}
-                                                            -->
-                                                        </p>
-                                                    {% endif %}
-                                                {% endif %}
-                                                <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.room.room_name }}</p>
-                                            </td>
-                                            <td>
-                                                <p class="uk-text-emphasis uk-margin-remove "><b>{{ game.game_details.teamname }}</b></p>
-                                                <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_team_size_int }} Players</p>
-                                            </td>
-                                            <td>
-                                                <p class="uk-text-emphasis uk-margin-remove "><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
-                                                    {% if game.is_solved %}
-                                                        to
-                                                        <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
-                                                    {% endif %}
-                                                <p class="uk-text-small txt_light_gray" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
-
-                                            </td>
-                                        </tr>
-                                  {% endfor %}
-                                  </tbody>
-                             </table>
+                            <div id="container" style="width: 100%;">
+                                <canvas id="gamesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="uk-width-1-1@s ">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected/Room</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body" style="height: 40vh;overflow: scroll">
 
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- /panel -->
-            <!-- panel -->
-            </div>
-            <div style="margin-left: 0;" class="uk-width-1-3">
 
-                <div class="uk-width-1-1@s ">
+            <div style="margin-bottom: 2vh" class="uk-width-1-4@s ">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
@@ -145,55 +87,40 @@
                         </div>
                     </div>
                     <div class="uk-card-body" style="height: 40vh;overflow: scroll">
-                        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                            <thead>
-                                <tr>
-                                    <th>Match ID</th>
-                                    <th>Team Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for u in unst_games %}
-                                <tr>
-                                    <td>{{ u.match_id }}</td>
-                                    <td>{{ u.get_team_name }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-                <div style="margin-bottom: 2vh" class="uk-width-1-1@s ">
-                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                        <div class="uk-card-header">
-                            <div class="uk-grid uk-grid-small">
-                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected</h4></div>
+                        <div id="container" style="width: 100%;height: 100%">
+                                <canvas id="anomalyChart"></canvas>
                             </div>
-                        </div>
-                        <div class="uk-card-body" style="height: 40vh;overflow: scroll">
-                        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
-                            <thead>
-                                <tr>
-                                    <th>Game</th>
-                                    <th>Ago</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for c in clues %}
-                                <tr>
-                                    <td>{{ c.game.match_id }}</td>
-                                    <td>time ago</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
                     </div>
                 </div>
-                <!-- /panel -->
-                <!-- panel -->
             </div>
+            <div class="uk-width-1-4@s ">
+                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected</h4></div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                    <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
+                        <thead>
+                            <tr>
+                                <th>Game</th>
+                                <th>Ago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for c in clues %}
+                            <tr>
+                                <td>{{ c.game.match_id }}</td>
+                                <td>time ago</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <footer class="uk-section uk-section-small uk-text-center">
             <hr>
@@ -201,6 +128,110 @@
         </footer>
     </div>
 </div>
-<!-- /CONTENT -->
-{% include 'octo_site/includes/offcanvas.html' %}
+	<script>
 
+		window.onload = function() {
+			var gamesCtx = document.getElementById('gamesChart').getContext('2d');
+			var anomalyCtx = document.getElementById('anomalyChart').getContext('2d');
+			window.myHorizontalBar = new Chart(gamesCtx, {
+				type: 'bar',
+                  data: {
+                    labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+                    datasets: [{
+                      label: "Games",
+                      backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
+                      data: [11, 2, 3, 0]
+                    }]
+                  },
+
+                  options: {
+                    maintainAspectRatio: false,
+                    responsiveAnimationDuration: 500,
+                    legend: {
+                      display: false
+                    },
+                    animation: {
+                      duration: 2000
+                    },
+                    title: {
+                      display: true,
+                      text: 'Number of Games Played'
+                    }
+                  }
+			});
+			window.myAnomalyBar = new Chart(anomalyCtx, {
+              type: 'horizontalBar',
+              data: sensorChartData,
+              options: {
+                maintainAspectRatio: false,
+                responsiveAnimationDuration: 500,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  duration: 2000
+                },
+                title: {
+                  display: true,
+                  text: 'Predicted activity in 2020'
+                }
+              }
+            });
+
+		};
+		var color = Chart.helpers.color;
+		var horizontalBarChartData = {
+			labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 20,
+				data: [
+					8,
+					0,
+					0,
+					0,
+				]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				data: [
+					0,
+					12,
+					0,
+					0,
+				]
+			} ,{
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				data: [
+					0,
+					0,
+					3,
+					0,
+				]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				data: [
+					0,
+					0,
+					0,
+					2,
+				]
+			}]
+
+		};
+		var sensorChartData = {
+              labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+            datasets: [{
+              label: "Count of anomalies per chart",
+              backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
+              data: [11, 2, 3, 0]
+            }]
+		};
+</script>
