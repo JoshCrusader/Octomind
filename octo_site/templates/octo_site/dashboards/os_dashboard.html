@@ -69,43 +69,35 @@
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                         <div class="uk-card-header">
                             <div class="uk-grid uk-grid-small">
-                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected/Room</h4></div>
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Room Sales</h4></div>
                             </div>
                         </div>
-                        <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                        <div class="uk-card-body" style="height: 80vh;overflow: scroll">
 
+                        <div id="container" style="width: 100%;height: 50%">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-bottom: 2vh" class="uk-width-1-4@s ">
-                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Games Summary</h4></div>
-                        </div>
-                    </div>
-                    <div class="uk-card-body" style="height: 40vh;overflow: scroll">
-                        <div id="container" style="width: 100%;height: 100%">
-                                <canvas id="anomalyChart"></canvas>
-                            </div>
-                    </div>
-                </div>
-            </div>
             <div class="uk-width-1-4@s ">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected</h4></div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Retention Chart</h4></div>
                         </div>
                     </div>
-                    <div class="uk-card-body" style="height: 40vh;overflow: scroll">
-                    <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
+                    <div class="uk-card-body" style="height: 80vh;overflow: scroll">
+
+                        <div id="container" style="width: 100%;height: 50%">
+                            <canvas id="retentionChart"></canvas>
+                            <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
                         <thead>
                             <tr>
-                                <th>Game</th>
-                                <th>Ago</th>
+                                <th>Room</th>
+                                <th>Count</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -117,6 +109,37 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom: 2vh" class="uk-width-1-4@s ">
+                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-primary"></span> Anomalies Detected</h4></div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body" style="height: 80vh;overflow: scroll">
+                        <div id="container" style="width: 100%;height: 50%">
+                            <canvas id="anomalyChart"></canvas>
+                            <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in clues %}
+                        <tr>
+                            <td>{{ c.game.match_id }}</td>
+                            <td>time ago</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,7 +152,6 @@
     </div>
 </div>
 	<script>
-
 		window.onload = function() {
 			var gamesCtx = document.getElementById('gamesChart').getContext('2d');
 			var anomalyCtx = document.getElementById('anomalyChart').getContext('2d');
@@ -155,7 +177,7 @@
                     },
                     title: {
                       display: true,
-                      text: 'Number of Games Played'
+                      text: 'Number of Games Played this Week'
                     }
                   }
 			});
@@ -173,7 +195,7 @@
                 },
                 title: {
                   display: true,
-                  text: 'Predicted activity in 2020'
+                  text: 'Anomalies this week'
                 }
               }
             });
@@ -234,4 +256,83 @@
               data: [11, 2, 3, 0]
             }]
 		};
+		var salesChartData = document.getElementById('salesChart');
+
+new Chart(salesChartData, {
+  type: 'line',
+  data: {
+    labels: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018],
+    datasets: [{
+      data: [2004, 2000, 3200, 1200, 3450, 2300, 2200, 1200, 900, 1450],
+      label: "Africa",
+      borderColor: "#39f",
+      fill: false
+    }, {
+      data: [4500, 4800, 5200, 5000, 5200, 5500, 5900, 6500, 6800, 7200],
+      label: "Asia",
+      borderColor: "#895df6",
+      fill: false
+    }, {
+      data: [3400, 3200, 2800, 5600, 4500, 3200, 3400, 3800, 4800, 4200],
+      label: "Europe",
+      borderColor: "#3cba9f",
+      fill: false
+    }, {
+      data: [1200, 1100, 1250, 1200, 1300, 1450, 1300, 1200, 1320, 1350],
+      label: "Latin America",
+      borderColor: "#e8c3b9",
+      fill: false
+    }, {
+      data: [600, 3400, 2000, 1200, 7500, 2300, 3200, 6000, 3400, 4500],
+      label: "North America",
+      borderColor: "#c45850",
+      fill: false
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    responsiveAnimationDuration: 500,
+      legend:{
+        position:'bottom'
+      },
+    animation: {
+      duration: 2000
+    },
+    title: {
+      display: true,
+      text: 'Sales per Room this week'
+    }
+  }
+});
+
+        var retentionChartData = document.getElementById('retentionChart');
+
+new Chart(retentionChartData, {
+    type: 'doughnut',
+    data: {
+      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsiveAnimationDuration: 500,
+      animation: {
+        duration: 2000
+      },
+    legend: {
+        display: true,
+        position: 'bottom'
+    },
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+});
 </script>
