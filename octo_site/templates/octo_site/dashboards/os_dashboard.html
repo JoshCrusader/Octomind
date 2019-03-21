@@ -69,7 +69,7 @@
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                         <div class="uk-card-header">
                             <div class="uk-grid uk-grid-small">
-                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Room Sales</h4></div>
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span> Branch Room Sales</h4></div>
                             </div>
                         </div>
                         <div class="uk-card-body" style="height: 80vh;overflow: scroll">
@@ -86,7 +86,7 @@
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Retention Chart</h4></div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Retention Breakdown</h4></div>
                         </div>
                     </div>
                     <div class="uk-card-body" style="height: 80vh;overflow: scroll">
@@ -300,12 +300,12 @@ new Chart(salesChartData, {
     },
     title: {
       display: true,
-      text: 'Sales per Room this week'
+      text: 'Sales per Room in [this branch] this week'
     }
   }
 });
 
-        var retentionChartData = document.getElementById('retentionChart');
+var retentionChartData = document.getElementById('retentionChart');
 
 new Chart(retentionChartData, {
     type: 'doughnut',
@@ -331,7 +331,7 @@ new Chart(retentionChartData, {
     },
       title: {
         display: true,
-        text: 'Predicted world population (millions) in 2050'
+        text: 'Retaining Customers Per Room'
       }
     }
 });

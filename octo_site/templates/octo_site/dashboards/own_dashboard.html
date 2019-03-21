@@ -1,221 +1,113 @@
 {% include 'octo_site/includes/header.html' %}
 <!-- CONTENT -->
+{% load staticfiles %}
+
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
     <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
     <div class="uk-container uk-container-expand">
         <div class="uk-grid uk-grid-divider uk-grid-medium uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl" data-uk-grid>
             <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span>New Users</span>
-                <h1 class="uk-heading-primary uk-margin-remove  uk-text-primary">2.134</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Games Played this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">12.00</h1>
+                <div class="uk-text-small">
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> more than last week.
+                </div>
+            </div>
+            <div>
+                <span class="uk-text-small"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-danger"></span>Total Sales this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove  uk-text-primary" id="errors">2.134</h1>
                 <div class="uk-text-small">
                     <span class="uk-text-success" data-uk-icon="icon: triangle-up">15%</span> more than last week.
                 </div>
             </div>
             <div>
 
-                <span class="uk-text-small"><span data-uk-icon="icon:social" class="uk-margin-small-right uk-text-primary"></span>Social Media</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">8.490</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:question" class="uk-margin-small-right uk-text-warning"></span>Retention Rate this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="warnings">8.490</h1>
                 <div class="uk-text-small">
                     <span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> less than last week.
                 </div>
 
             </div>
             <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Traffic hours</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">12.00<small class="uk-text-small">PM</small></h1>
-                <div class="uk-text-small">
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> more than last week.
-                </div>
-            </div>
-            <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:search" class="uk-margin-small-right uk-text-primary"></span>Week Search</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">9.543</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Anomaly Rate this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">9.53<small class="uk-text-small">mins</small></h1>
                 <div class="uk-text-small">
                     <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> less than last week.
                 </div>
             </div>
-            <div class="uk-visible@xl">
-                <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-primary"></span>Lorem ipsum</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">5.284</h1>
-                <div class="uk-text-small">
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 7%</span> more than last week.
-                </div>
-            </div>
         </div>
         <hr>
-        <div class="uk-grid uk-grid-medium uk-grid-match" data-uk-grid>
+        <div class="uk-grid" data-uk-grid>
             <!-- panel -->
-            <div class="uk-width-2-3@l uk-width-1-2@xl">
-                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Geographic Chart</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
+            <div style="margin-right: 0;" class="uk-width-2-3">
+                <div class="uk-width-1-1@l" style="margin-bottom: 2vh">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body">
+                            <div class="uk-overflow-auto">
+                                <!-- GEOGRAPHIC CHART /Province-->
+                                <img src="{% static 'media/mapa1.svg' %}" alt="">
                             </div>
                         </div>
                     </div>
-                    <div class="uk-card-body">
-                        <img src="img/mapa1.svg" alt="">
-                        <p class="uk-text-muted uk-text-small uk-text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
                 </div>
-            </div>
-            <!-- /panel -->
-            <!-- panel -->
-            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-4@xl">
+                <div class="uk-width-1-1@l">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Activity</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="uk-card-body">
-                        <img src="img/mapa2.svg" alt="">
-                        <p class="uk-text-muted uk-text-small uk-text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- /panel -->
-            <!-- panel -->
-            <div class="uk-width-1-2@s uk-width-1-3@l uk-width-1-4@xl">
-                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Conversions</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="uk-card-body">
-                        <img src="img/mapa3.svg" alt="">
-                        <p class="uk-text-muted uk-text-small uk-text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- /panel -->
-            <!-- panel -->
-            <div class=" uk-width-2-3@l uk-width-1-2@xl">
-                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Consectetur sit</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
-                            </div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Total Sales/Branch</h4></div>
                         </div>
                     </div>
                     <div class="uk-card-body">
                         <div class="uk-overflow-auto">
-                        <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                            <thead>
-                                <tr>
-                                    <th class="uk-table-shrink"></th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><img src="https://picsum.photos/40/40/?random=1" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                    <td>John Doe</td>
-                                    <td>Maecenas sagittis, massa nulla luctus mauris</td>
-                                    <td>11/09/18</td>
-                                    <td>
-                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://picsum.photos/40/40/?random=2" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                    <td>Larry Boile</td>
-                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                    <td>13/09/18</td>
-                                    <td>
-                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://picsum.photos/40/40/?random=3" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                    <td>Susan Lee</td>
-                                    <td>Sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                    <td>18/09/18</td>
-                                    <td>
-                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://picsum.photos/40/40/?random=4" alt="Alt text" class="uk-border-circle uk-preserve-width "></td>
-                                    <td>Jerry Thomas</td>
-                                    <td>Maecenas sagittis, dolor id posuere finibus, massa nulla luctus mauris</td>
-                                    <td>21/09/18</td>
-                                    <td>
-                                        <a href="#" class="uk-icon-link uk-text-success" data-uk-icon="check"></a>
-                                        <a href="#" class="uk-icon-link uk-text-danger" data-uk-icon="close"></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <!-- Stacked Bar /Branch-->
+                                <canvas id="totalBranchSales"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- /panel -->
-            <!-- panel -->
-            <div class="uk-width-1-2@s uk-width-1-2@l uk-width-1-4@xl">
-                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                    <div class="uk-card-header">
-                        <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Lorem ipsum</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
+            </div>
+            <div style="margin-left: 0;" class="uk-width-1-3">
+                <div style="margin-bottom: 2vh" class="uk-width-1-1@s ">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:bell" class="uk-margin-small-right uk-text-primary"></span>Customer Distribution/City</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                            <!-- Metro City Breakdown -->
+                            <div id="container" style="width: 100%;height: 100%">
+                                <canvas id="customerCity"></canvas>
                             </div>
                         </div>
                     </div>
-                    <div class="uk-card-body">
-                        <img src="img/mapa4.svg" alt="">
-                        <p class="uk-text-muted uk-text-small uk-text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
                 </div>
-            </div>
-            <!-- /panel -->
-            <!-- panel -->
-            <div class="uk-width-1-2@s uk-width-1-2@l uk-width-1-4@xl">
+
+                <div class="uk-width-1-1@s ">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom">Ipsum dolor</h4></div>
-                            <div class="uk-width-expand uk-text-right">
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: move"></a>
-                                <a href="#" class="uk-icon-link uk-margin-small-right" data-uk-icon="icon: cog"></a>
-                                <a href="#" class="uk-icon-link" data-uk-icon="icon: close"></a>
-                            </div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span>Total Retentions/Room</h4></div>
                         </div>
                     </div>
-                    <div class="uk-card-body">
-                        <img src="img/mapa4.svg" alt="">
-                        <p class="uk-text-muted uk-text-small uk-text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                            <!-- Player Distribution -->
+                        <div id="container" style="width: 100%;height: 100%">
+                            <canvas id="totalRetentionChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- /panel -->
+            </div>
         </div>
         <footer class="uk-section uk-section-small uk-text-center">
             <hr>
@@ -223,6 +115,133 @@
         </footer>
     </div>
 </div>
-<!-- /CONTENT -->
-{% include 'octo_site/includes/offcanvas.html' %}
+<script>
+    var totalRetentionChartData = {
+          labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+        datasets: [{
+          label: "Count of anomalies per chart",
+          backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
+          data: [11, 2, 3, 0]
+        }]
+    };
+    var retentionCtx = document.getElementById('totalRetentionChart').getContext('2d');
+    var totalRetention = document.getElementById('totalRetention');
+    window.mytotalRetentionChart = new Chart(retentionCtx, {
+              type: 'horizontalBar',
+              data: totalRetentionChartData,
+              options: {
+                maintainAspectRatio: false,
+                responsiveAnimationDuration: 500,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  duration: 2000
+                },
+                title: {
+                  display: true,
+                  text: 'Retention Rates per Room this Month'
+                }
+              }
+            });
 
+
+    var customerCityCtx = document.getElementById('customerCity').getContext('2d');
+    new Chart(customerCityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ["Makati", "Manila", "Quezon City", "Alabang", "Las Pinas"],
+          datasets: [
+            {
+              label: "Population (millions)",
+              backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850"],
+              data: [2478,5267,734,784,433]
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsiveAnimationDuration: 500,
+          animation: {
+            duration: 2000
+          },
+        legend: {
+            display: true,
+            position: 'bottom'
+        },
+          title: {
+            display: true,
+            text: 'Retaining Customers Per Room'
+          }
+        }
+    });
+    var totalBranchSalesData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: "#ffb843",
+				data: [
+					null,
+					2,
+					null,
+					4,
+					null,
+					8,
+					10
+				]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: "#ff543c",
+				data: [
+					10,
+					null,
+					null,
+					null,
+					7,
+					10,
+					9
+				]
+			}, {
+				label: 'Dataset 3',
+				backgroundColor: "#2d41ff",
+				data: [
+					3,
+					2,
+					null,
+					10,
+					1,
+					null,
+					null
+				]
+			}]
+
+		};
+		window.onload = function() {
+			var totalBranchCtx = document.getElementById('totalBranchSales').getContext('2d');
+			window.myTotalBranch = new Chart(totalBranchCtx, {
+				type: 'bar',
+				data: totalBranchSalesData,
+				options: {
+					title: {
+						display: true,
+						text: 'Sales Per Branch with Room Participation this Month'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				}
+			});
+		};
+
+    
+</script>
