@@ -19,10 +19,11 @@ from octo_site.db_conf import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from octo_site.reports_controller import *
+from octo_site.dashboard_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from utils import federate, ajax_helper,sensor_deebs_popu,script_helper, populatestart, populate_details
-
+import datetime as datetime
 from django.http import HttpResponse
 from views_func import *
 from api_func import *
@@ -108,42 +109,10 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    all_g = Game.objects.filter(game_details__timestart__isnull=False)
-    games = []
     if request.user.groups.all()[0].name == "Gamekeeper":
-        cur_branch = EmployeeBranch.get_branch(request.user.id)
-        unstarted_games_arr = []
-        unstarted_games = Game.objects.filter(game_details__timestart__isnull=True)
-        for g in reversed(all_g):
-            if len(games) >= 5:
-                break
-            if cur_branch.branch_id == g.room.branch_id:
-                games.append(g)
-        for gg in reversed(unstarted_games):
-            if len(unstarted_games_arr) >= 5:
-                break
-            if cur_branch.branch_id == gg.room.branch_id:
-                unstarted_games_arr.append(gg)
-        return render(request, 'octo_site/dashboards/gk_dashboard.html',
-               {'games' : games,'acts': Notifs.get_all_notifs_in_branch(cur_branch.branch_id),
-                'unst_games':unstarted_games_arr})
+        return gk_dashboard(request)
     elif request.user.groups.all()[0].name == "Operations Supervisor":
-        cur_branch = EmployeeBranch.get_branch(request.user.id)
-        unstarted_games_arr = []
-        unstarted_games = Game.objects.filter(game_details__timestart__isnull=True)
-        clues = Clues.objects.all()[:10]
-        for g in reversed(all_g):
-            if len(games) >= 5:
-                break
-            if cur_branch.branch_id == g.room.branch_id:
-                games.append(g)
-        for gg in reversed(unstarted_games):
-            if len(unstarted_games_arr) >= 5:
-                break
-            if cur_branch.branch_id == gg.room.branch_id:
-                unstarted_games_arr.append(gg)
-        print(games)
-        return render(request, 'octo_site/dashboards/os_dashboard.html',{'games' : games,'clues':clues,'unst_games':unstarted_games_arr})
+        return os_dashboard(request)
     return render(request,'octo_site/dashboards/own_dashboard.html')
 
 def page_sensor(request):

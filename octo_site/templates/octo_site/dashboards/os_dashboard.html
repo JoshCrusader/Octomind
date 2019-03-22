@@ -11,38 +11,54 @@
 		-ms-user-select: none;
 	}
 	</style>
-    <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
+    <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;" >
     <div class="uk-container uk-container-expand">
         <div class="uk-grid uk-grid-divider uk-grid-medium uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl" data-uk-grid>
             <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Games Played Today</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">12.00</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Games Played this Week</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">{{ metrics.total_games }}</h1>
                 <div class="uk-text-small">
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up"> 19%</span> more than last week.
+                    {% if metrics.comp_total_games == 0 %}
+                    <span class="uk-text-primary">=</span> equal to last week.
+                    {% elif metrics.comp_total_games > 0 %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_games }}</span> games more than last week.
+                    {% else %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_games }}</span>less than last week.
+                    {% endif %}
                 </div>
             </div>
             <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-danger"></span>Errors Today</span>
-                <h1 class="uk-heading-primary uk-margin-remove  uk-text-primary" id="errors">2.134</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-danger"></span>Anomalies this week</span>
+                <h1 class="uk-heading-primary uk-margin-remove  uk-text-primary" id="errors">{{ metrics.total_anomalies }}</h1>
                 <div class="uk-text-small">
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">15%</span> more than last week.
+                    {% if metrics.comp_total_anomalies == 0 %}
+                    <span class="uk-text-warning">=</span> equal to last week.
+                    {% elif metrics.comp_total_anomalies > 0 %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_anomalies }}</span> errors more than last week.
+                    {% else %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_anomalies }}</span> errors less than last week.
+                    {% endif %}
                 </div>
             </div>
             <div>
-
-                <span class="uk-text-small"><span data-uk-icon="icon:question" class="uk-margin-small-right uk-text-warning"></span>Warnings Today</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="warnings">8.490</h1>
+                <span class="uk-text-small"><span data-uk-icon="icon:question" class="uk-margin-small-right uk-text-warning"></span>Retention this week</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="warnings">{{ metrics.total_retentions }}%</h1>
                 <div class="uk-text-small">
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">-15%</span> less than last week.
+                    {% if metrics.comp_total_retentions == 0 %}
+                    <span class="uk-text-warning">=</span> equal to last week.
+                    {% elif metrics.comp_total_retentions > 0 %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_retentions }}%</span> more than last week.
+                    {% else %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_retentions }}%</span> less than last week.
+                    {% endif %}
                 </div>
-
             </div>
             <div>
-                <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Retention Rate/Week</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary">9.53<small class="uk-text-small">mins</small></h1>
-                <div class="uk-text-small">
-                    <span class="uk-text-danger" data-uk-icon="icon: triangle-down"> -23%</span> less than last week.
-                </div>
+                <span class="uk-text-small"><span data-uk-icon="icon:calendar" class="uk-margin-small-right uk-text-primary"></span>CURRENT DATE</span>
+                <h2 class=" uk-margin-remove ">{{ cur_date }}</h2>
+                <span class="uk-text-primary" style="font-size: 24px" id="clock"></span>
+                <script>startTime()</script>
+                <script></script>
             </div>
         </div>
         <hr>
@@ -53,7 +69,7 @@
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span> Century City Mall Branch </h4></div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>{{ branch.name }} Branch </h4></div>
                         </div>
                     </div>
                     <div class="uk-card-body">
@@ -86,7 +102,7 @@
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
-                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:lifesaver" class="uk-margin-small-right uk-text-primary"></span> Retention Breakdown</h4></div>
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:heart" class="uk-margin-small-right uk-text-primary"></span> Retentions</h4></div>
                         </div>
                     </div>
                     <div class="uk-card-body" style="height: 80vh;overflow: scroll">
@@ -158,11 +174,11 @@
 			window.myHorizontalBar = new Chart(gamesCtx, {
 				type: 'bar',
                   data: {
-                    labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+                    labels: [{% for g in games_played_chart %} '{{ g.room_name }}',{% endfor %} ],
                     datasets: [{
                       label: "Games",
                       backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
-                      data: [11, 2, 3, 0]
+                      data: [{% for g in games_played_chart %} {{ g.games_played }}, {% endfor %} ]
                     }]
                   },
 
@@ -201,93 +217,42 @@
             });
 
 		};
-		var color = Chart.helpers.color;
-		var horizontalBarChartData = {
-			labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
-			datasets: [{
-				label: 'Dataset 1',
-				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-				borderColor: window.chartColors.red,
-				borderWidth: 20,
-				data: [
-					8,
-					0,
-					0,
-					0,
-				]
-			}, {
-				label: 'Dataset 2',
-				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
-				borderColor: window.chartColors.blue,
-				data: [
-					0,
-					12,
-					0,
-					0,
-				]
-			} ,{
-				label: 'Dataset 2',
-				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
-				borderColor: window.chartColors.blue,
-				data: [
-					0,
-					0,
-					3,
-					0,
-				]
-			}, {
-				label: 'Dataset 2',
-				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
-				borderColor: window.chartColors.blue,
-				data: [
-					0,
-					0,
-					0,
-					2,
-				]
-			}]
-
-		};
+		chartColors = {
+              0: 'rgb(255, 65, 54)',
+              1: 'rgb(239, 206, 0)',
+              2: 'rgb(61, 142, 106)',
+              3: 'rgb(28, 143, 219)',
+              4: 'rgb(255, 118, 0)',
+              5: 'rgb(153, 102, 255)',
+              6: 'rgb(231,233,237)',
+              7: 'rgb(0,0,0)',
+            };
 		var sensorChartData = {
-              labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+              labels: [{% for a in anomalies_detected %} '{{ a.room_name }}', {% endfor %}],
             datasets: [{
               label: "Count of anomalies per chart",
               backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
-              data: [11, 2, 3, 0]
+              data: [{% for a in anomalies_detected %} {{ a.anomaly_count }}, {% endfor %} ]
             }]
 		};
 		var salesChartData = document.getElementById('salesChart');
 
+        let color = Chart.helpers.color;
 new Chart(salesChartData, {
   type: 'line',
   data: {
-    labels: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018],
-    datasets: [{
-      data: [2004, 2000, 3200, 1200, 3450, 2300, 2200, 1200, 900, 1450],
-      label: "Africa",
-      borderColor: "#39f",
-      fill: false
-    }, {
-      data: [4500, 4800, 5200, 5000, 5200, 5500, 5900, 6500, 6800, 7200],
-      label: "Asia",
-      borderColor: "#895df6",
-      fill: false
-    }, {
-      data: [3400, 3200, 2800, 5600, 4500, 3200, 3400, 3800, 4800, 4200],
-      label: "Europe",
-      borderColor: "#3cba9f",
-      fill: false
-    }, {
-      data: [1200, 1100, 1250, 1200, 1300, 1450, 1300, 1200, 1320, 1350],
-      label: "Latin America",
-      borderColor: "#e8c3b9",
-      fill: false
-    }, {
-      data: [600, 3400, 2000, 1200, 7500, 2300, 3200, 6000, 3400, 4500],
-      label: "North America",
-      borderColor: "#c45850",
-      fill: false
-    }]
+    labels: [{% for s in sales_per_weekday %} {% if forloop.counter0 == 0 %}{% for day in s.week_data %} '{{ day.day }}' ,{% endfor %}{% endif %}{% endfor %}],
+    datasets: [
+        {% for s in sales_per_weekday %}
+        {
+      data: [{% for day in s.week_data %}{{ day.total }},{% endfor %}],
+      label: "{{ s.room_name }}",
+      backgroundColor: color(window.chartColors[{{ forloop.counter0 }}]).alpha(0.45).rgbString(),
+      borderColor: window.chartColors[{{ forloop.counter0 }}],
+      fill: true
+        },
+        {% endfor %}
+        ]
   },
   options: {
     maintainAspectRatio: false,
@@ -300,7 +265,7 @@ new Chart(salesChartData, {
     },
     title: {
       display: true,
-      text: 'Sales per Room in [this branch] this week'
+      text: 'Sales per Room in {{ branch.name }} this week'
     }
   }
 });
@@ -310,12 +275,12 @@ var retentionChartData = document.getElementById('retentionChart');
 new Chart(retentionChartData, {
     type: 'doughnut',
     data: {
-      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      labels: [{% for r in room_retentions %} '{{ r.room_name }}', {% endfor %}],
       datasets: [
         {
           label: "Population (millions)",
-          backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850"],
-          data: [2478,5267,734,784,433]
+          backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9"],
+          data: [{% for r in room_retentions %}{{ r.retaining_customers.1 }}, {% endfor %}]
         }
       ]
     },
@@ -336,3 +301,4 @@ new Chart(retentionChartData, {
     }
 });
 </script>
+

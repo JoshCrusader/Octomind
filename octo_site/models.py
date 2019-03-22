@@ -28,6 +28,113 @@ class Branch(models.Model):
         managed = False
         db_table = 'branch'
 
+    @staticmethod
+    def get_games_on_date(self,date,gtype, filter_room):
+        games = Game.objects.filter(room__branch=self)
+        if filter_room is not None:
+            games = games.filter(room_id=filter_room)
+        if gtype == "daily":
+            sd = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+        elif gtype == "weekly":
+            d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            sd = d - timedelta(days=d.weekday())
+            ed = sd + timedelta(days=6)
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+        return games
+
+    @staticmethod
+    def get_errors_on_date(self, date,gtype, filter_room):
+        games = GameErrorLog.objects.filter(game__room__branch=self)
+
+        if filter_room is not None:
+            games = games.filter(game__room_id=filter_room)
+        if gtype == "daily":
+            sd = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+            return games.filter(timestamp__gte=sd,timestamp__lte=ed)
+        elif gtype == "weekly":
+            d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            sd = d - timedelta(days=d.weekday())
+            ed = sd + timedelta(days=6)
+            return games.filter(timestamp__gte=sd,timestamp__lte=ed)
+    @staticmethod
+    def get_warnings_on_date(self, date,gtype, filter_room):
+        games = GameWarningLog.objects.filter(game__room__branch=self)
+
+        if filter_room is not None:
+            games = games.filter(game__room_id=filter_room)
+        if gtype == "daily":
+            sd = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+            return games.filter(timestamp__gte=sd,timestamp__lte=ed)
+        elif gtype == "weekly":
+            d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            sd = d - timedelta(days=d.weekday())
+            ed = sd + timedelta(days=6)
+            return games.filter(timestamp__gte=sd,timestamp__lte=ed)
+    @staticmethod
+    def get_retentions_on_date(self, date,gtype, filter_room):
+        games = Game.objects.filter(room__branch=self)
+        if filter_room is not None:
+            games = games.filter(room_id=filter_room)
+
+        if gtype == "daily":
+            sd = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+            total_players = 0
+            total_loyal_players = 0
+            for g in games:
+                total_loyal_players += g.get_loyal_players
+                total_players += g.get_team_size_int
+            return [round(total_loyal_players/total_players,2)*100, total_loyal_players]
+        elif gtype == "weekly":
+            d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            sd = d - timedelta(days=d.weekday())
+            ed = sd + timedelta(days=6)
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+            total_players = 0
+            total_loyal_players = 0
+            if len(games) == 0:
+                return [0,0]
+            for g in games:
+                total_loyal_players += g.get_loyal_players
+                total_players += g.get_team_size_int
+            return [round(total_loyal_players/total_players,2)*100, total_loyal_players]
+    @staticmethod
+    def get_sales_on_date(self, date,gtype, filter_room):
+        games = Game.objects.filter(room__branch=self)
+        if filter_room is not None:
+            games = games.filter(room_id=filter_room)
+
+
+        if gtype == "daily":
+            sd = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            ed = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+            total = 0
+            for g in games:
+                total += g.get_sales
+            return total
+        elif gtype == "weekly":
+            week_days = []
+            d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+            sd = d - timedelta(days=d.weekday())
+            ed = sd + timedelta(days=6)
+            games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+
+            for i in range(1, 8):
+                day_total =0
+                cur_d = sd + timedelta(days=(i-1))
+                d_sd = datetime.strptime(cur_d.strftime('%Y-%m-%d') + " 00:00:00", '%Y-%m-%d %H:%M:%S')
+                d_ed = datetime.strptime(cur_d.strftime('%Y-%m-%d') + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+                for g in games.filter(game_details__timestart__gte=d_sd, game_details__timestart__lte=d_ed):
+                    day_total += g.get_sales
+                week_days.append({"day":cur_d.strftime('%Y-%m-%d'), "total":day_total})
+            return week_days
+
 
 class ClueDetails(models.Model):
     clue_details_id = models.AutoField(primary_key=True)
@@ -110,6 +217,18 @@ class Game(models.Model):
         db_table = 'game'
         unique_together = (('game_id', 'game_details'),)
     @property
+    def get_sales(self):
+        price_dict = {
+            0: 0,
+            1: 1100,
+            2: 1100,
+            3: 1500,
+            4: 1800,
+            5: 2000,
+            6: 2400
+        }
+        return price_dict[self.get_team_size_int]
+    @property
     def add_blank_logs(self):
         connection = MySQLdb.connect(host=host, user="root", passwd="root", db="sensorDB")
         x = connection.cursor()
@@ -140,9 +259,9 @@ class Game(models.Model):
                     if diff.hours == 0:
                         if diff.minutes == 0:
                             return "moments ago"
-                        return str(diff.minutes)+" minutes ago"
+                        return str(diff.minutes)+" mins ago"
                     else:
-                        return str(diff.hours)+" hours ago"
+                        return str(diff.hours)+" hrs ago"
                 else:
                     return str(diff.days)+" days ago"
             else:
@@ -168,15 +287,18 @@ class Game(models.Model):
             try:
                 if len(sensors) == 0:
                     return room_sensors[0].phase_name
+                elif len(sensors) == len(room_sensors):
+                    return "All phases completed."
                 else:
                     return room_sensors[len(sensors)-1].phase_name
             except:
                 print("errordar")
-        return "N/A"
+        return "Game completed."
 
     @property
     def get_progress_bar(self):
-        return round(len(self.self.get_sensors_on_trigger_sequence)/len(self.room.get_all_sensors),2) * 100
+
+        return round(len(self.get_sensor_trigger_sequence)/len(self.room.get_all_sensors),2) * 100
     @property
     def get_loyal_players(self):
         ct = 0
@@ -909,7 +1031,6 @@ class Notifs(models.Model):
     class Meta:
         managed = False
         db_table = 'notifs'
-
 
     @property
     def get_time_ago(self):

@@ -81,7 +81,7 @@
                           if(tooltipItem.datasetIndex === config.data.datasets.length-1){
                               return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
                           }
-                          else if(tooltipItem.datasetIndex+1 > data.data_objs.length){
+                          else if(tooltipItem.datasetIndex > data.data_objs.length-1){
                                 return null;
                           }
                           let time_solved = new Date(tooltipItem.xLabel);
@@ -122,12 +122,12 @@
                                         val = Math.abs(comp).toFixed(2);
                                         sec = ((val % 1)*60).toFixed(2);
                                         min = Math.floor(val);
-                                        det = "⬆ Faster than the average by "+min+" min "+sec+" sec";
+                                        det = "Faster than the average by "+min+" minutes  "+sec+" seconds";
                                     }else if(comp>0){
                                         val = Math.abs(comp).toFixed(2);
                                         sec = ((val % 1)*60).toFixed(2);
                                         min = Math.floor(val);
-                                        det = "⬇ Slower than the average by "+ min + " min "+sec+" sec";
+                                        det = "Slower than the average by "+ min + " min "+sec+" sec";
                                     }
                                     avg = true;
                               }
