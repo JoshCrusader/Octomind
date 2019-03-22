@@ -58,22 +58,7 @@
         <div class="uk-grid" data-uk-grid>
             <!-- panel -->
             <div style="margin-right: 0;" class="uk-width-2-3">
-                <div class="uk-width-1-1@l" style="margin-bottom: 2vh">
-                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
-                        <div class="uk-card-header">
-                            <div class="uk-grid uk-grid-small">
-                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region</h4></div>
-                            </div>
-                        </div>
-                        <div class="uk-card-body">
-                            <div class="uk-overflow-auto">
-                                <!-- GEOGRAPHIC CHART /Province-->
-                                <img src="{% static 'media/mapa1.svg' %}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="uk-width-1-1@l">
+                <div style="margin-bottom: 2vh" class="uk-width-1-1@l">
                 <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
@@ -88,6 +73,21 @@
                     </div>
                 </div>
             </div>
+                <div class="uk-width-1-1@l" >
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body">
+                            <div class="uk-overflow-auto">
+                                <!-- GEOGRAPHIC CHART /Province-->
+                                <img src="{% static 'media/mapa1.svg' %}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div style="margin-left: 0;" class="uk-width-1-3">
                 <div style="margin-bottom: 2vh" class="uk-width-1-1@s ">
@@ -185,49 +185,37 @@
         },
           title: {
             display: true,
-            text: 'Retaining Customers Per Room'
+            text: 'Customer Count Per /City'
           }
         }
     });
+    chartColors = {
+              0: 'rgb(255, 65, 54)',
+              1: 'rgb(239, 206, 0)',
+              2: 'rgb(61, 142, 106)',
+              3: 'rgb(28, 143, 219)',
+              4: 'rgb(255, 118, 0)',
+              5: 'rgb(153, 102, 255)',
+              6: 'rgb(231,233,237)',
+              7: 'rgb(0,0,0)',
+            };
+        let color = Chart.helpers.color;
     var totalBranchSalesData = {
-			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-			datasets: [{
-				label: 'Dataset 1',
-				backgroundColor: "#ffb843",
-				data: [
-					null,
-					2,
-					null,
-					4,
-					null,
-					8,
-					10
-				]
-			}, {
-				label: 'Dataset 2',
-				backgroundColor: "#ff543c",
-				data: [
-					10,
-					null,
-					null,
-					null,
-					7,
-					10,
-					9
-				]
-			}, {
-				label: 'Dataset 3',
-				backgroundColor: "#2d41ff",
-				data: [
-					3,
-					2,
-					null,
-					10,
-					1,
-					null,
-					null
-				]
-			}]
+			labels: [{% for branch in sales_per_branch %}'{{ branch.branch_name }}',{% endfor %}],
+			datasets: [
+			    {% for branch in sales_per_branch %}
+                    {% for room in branch.room_sales %}
+                        {% if room.sales != 0 %}
+			    {
+				label: '{{ room.room_name }}',
+				backgroundColor: window.chartColors[{{ forloop.counter0 }}],
+				data: [{% for sales in room.sales_arr  %}{{ sales }},{% endfor %}
+				    ]
+			    },
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            ]
 
 		};
 		window.onload = function() {
@@ -242,7 +230,19 @@
 					},
 					tooltips: {
 						mode: 'index',
-						intersect: false
+						intersect: false,
+                        callbacks:{
+						    footer: function(tooltipItem, data) {
+						        console.log("set length: "+data.datasets.length);
+						        console.log("dat ind: "+tooltipItem[0].datasetIndex);
+						        console.log("ind: "+tooltipItem[0].index);
+						        total = 0;
+						        for(i = 0; i < data.datasets.length;i++){
+                                    total += data.datasets[i].data[tooltipItem[0].index];
+                                }
+                                return "Total Month Sales: "+total;
+                            },
+                        }
 					},
 					responsive: true,
 					scales: {

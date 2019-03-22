@@ -113,10 +113,8 @@ def own_dashboard(request):
     errors = cur_branch.get_errors_on_date(None, date, "monthly", None)
     #rooms = Room.objects.filter(branch_id=cur_branch.branch_id)
     # computing chart data
-    game_played_chart = []
     room_retentions = []
-    anomalies_detected = []
-    sales_per_weekday = []
+    sales_per_branch = cur_branch.get_sales_on_date(None, date, "monthly", "all")
     '''
     for r in rooms:
         game_played_chart.append({'room_name': r.room_name, 'games_played': len(games.filter(room_id=r.room_id))})
@@ -154,12 +152,9 @@ def own_dashboard(request):
     metrics['total_sales'] = cur_branch.get_sales_on_date(None, date, "monthly", None)
     metrics['comp_total_sales'] = metrics['total_sales'] - cur_branch.get_sales_on_date(None, yesterdate, "monthly", None)
     metrics['abs_total_sales'] = abs(metrics['comp_total_sales'])
-
-    print("sales", sales_per_weekday)
+    print(sales_per_branch)
     return render(request, 'octo_site/dashboards/own_dashboard.html',
                   {'games': games, 'metrics': metrics, 'clues': clues,
-                   'games_played_chart': game_played_chart,
+                   'sales_per_branch': sales_per_branch,
                    'room_retentions': room_retentions,
-                   'anomalies_detected': anomalies_detected,
-                   'sales_per_weekday': sales_per_weekday,
                    'branch': cur_branch, 'cur_date': cur_date_str})

@@ -160,7 +160,6 @@ class Branch(models.Model):
                 week_days = []
                 d = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S')
                 sd = d - timedelta(days=d.weekday())
-                ed = sd + timedelta(days=6)
                 for i in range(1, 8):
                     day_total = 0
                     cur_d = sd + timedelta(days=(i-1))
@@ -170,17 +169,44 @@ class Branch(models.Model):
                         day_total += g.get_sales
                     week_days.append({"day": cur_d.strftime('%Y-%m-%d'), "total":day_total})
                 return week_days
+            elif gtype == "monthly":
+                str_date = str(date).split("-")
+                total = 0
+                sd = datetime.strptime(str_date[0] + "-" + str_date[1] + "-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+                ed = datetime.strptime(str_date[0] + "-" + str_date[1] + "-"
+                                       + str(calendar.monthrange(int(str_date[0]), int(str_date[1]))[1]) + " 00:00:00",
+                                       '%Y-%m-%d %H:%M:%S')
+                for g in games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed):
+                        total += g.get_sales
+                return total
         else:
-            str_date = str(date).split("-")
-            total = 0
-            sd = datetime.strptime(str_date[0] + "-" + str_date[1] + "-01 00:00:00", '%Y-%m-%d %H:%M:%S')
-            ed = datetime.strptime(str_date[0] + "-" + str_date[1] + "-"
-                                   + str(calendar.monthrange(int(str_date[0]), int(str_date[1]))[1]) + " 00:00:00",
-                                   '%Y-%m-%d %H:%M:%S')
-            games = Game.objects.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
-            for g in games:
-                total += g.get_sales
-            return total
+            if filter_room is None:
+                str_date = str(date).split("-")
+                total = 0
+                sd = datetime.strptime(str_date[0] + "-" + str_date[1] + "-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+                ed = datetime.strptime(str_date[0] + "-" + str_date[1] + "-"
+                                       + str(calendar.monthrange(int(str_date[0]), int(str_date[1]))[1]) + " 00:00:00",
+                                       '%Y-%m-%d %H:%M:%S')
+                games = Game.objects.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+                for g in games:
+                    total += g.get_sales
+                return total
+            else:
+                sales_data =[]
+                branches = Branch.objects.all()
+                for br_index, branch in enumerate(branches):
+                    room_sales =[]
+                    for r in Room.objects.filter(branch_id=branch.branch_id):
+                        sales_val = branch.get_sales_on_date(branch,date,"monthly",r.room_id)
+                        sales_arr = []
+                        for i in range(0, len(branches)):
+                            if br_index == i:
+                                sales_arr.append(sales_val)
+                            else:
+                                sales_arr.append(0)
+                        room_sales.append({"room_name":r.room_name,"sales":sales_val,'sales_arr':sales_arr})
+                    sales_data.append({"branch_name":branch.name,"room_sales":room_sales})
+                return sales_data
 class ClueDetails(models.Model):
     clue_details_id = models.AutoField(primary_key=True)
     detail = models.CharField(max_length=45, blank=True, null=True)

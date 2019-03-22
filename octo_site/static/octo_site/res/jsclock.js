@@ -8,7 +8,6 @@ function startTime() {
   document.getElementById('clock').innerHTML =
   h + ":" + m + ":" + s;
   var t = setTimeout(startTime, 500);
-  console.log("e2 aq");
 }
 function checkTime(i) {
   if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
