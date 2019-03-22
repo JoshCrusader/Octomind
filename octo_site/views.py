@@ -113,6 +113,8 @@ def index(request):
         return gk_dashboard(request)
     elif request.user.groups.all()[0].name == "Operations Supervisor":
         return os_dashboard(request)
+    elif request.user.groups.all()[0].name == "Owner":
+        return own_dashboard(request)
     return render(request,'octo_site/dashboards/own_dashboard.html')
 
 def page_sensor(request):
