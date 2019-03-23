@@ -48,7 +48,6 @@ def os_dashboard(request):
     cur_date_str = datetime.today().strftime('%b %d, %Y')
     date = datetime.today().strftime('%Y-%m-%d')
     cur_branch = EmployeeBranch.get_branch(request.user.id)
-    clues = Clues.objects.all()[:10] # dummy val
     games = cur_branch.get_games_on_date(cur_branch, date, "weekly",None)
     retentions = cur_branch.get_retentions_on_date(cur_branch, date, "weekly",None)
     warnings = cur_branch.get_warnings_on_date(cur_branch, date, "weekly",None)
@@ -95,7 +94,7 @@ def os_dashboard(request):
 
     print("sales",sales_per_weekday)
     return render(request, 'octo_site/dashboards/os_dashboard.html',
-                  {'games': games,'metrics':metrics, 'clues': clues,
+                  {'games': games,'metrics':metrics,
                    'games_played_chart':game_played_chart,
                    'room_retentions':room_retentions,
                    'anomalies_detected':anomalies_detected,

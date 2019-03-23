@@ -115,11 +115,21 @@
                                 <th>Count</th>
                             </tr>
                         </thead>
+                            <!--
+
+                            [],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9"],
+          data: [{% for r in room_retentions %}, {% endfor %}]
+        }
+                            -->
                         <tbody>
-                        {% for c in clues %}
+                        {% for r in room_retentions %}
                             <tr>
-                                <td>{{ c.game.match_id }}</td>
-                                <td>time ago</td>
+                                <td>{{ r.room_name }}</td>
+                                <td>{{ r.retaining_customers.1 }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -141,17 +151,18 @@
                             <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" >
                     <thead>
                         <tr>
-                            <th>Game</th>
+                            <th>Room</th>
                             <th>Count</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for c in clues %}
+                    {% for a in anomalies_detected reversed%}
                         <tr>
-                            <td>{{ c.game.match_id }}</td>
-                            <td>time ago</td>
+                            <td>{{ a.room_name }}</td>
+                            <td>{{ a.anomaly_count }}</td>
                         </tr>
                     {% endfor %}
+
                     </tbody>
                 </table>
                         </div>
@@ -176,7 +187,7 @@
                     labels: [{% for g in games_played_chart %} '{{ g.room_name }}',{% endfor %} ],
                     datasets: [{
                       label: "Games",
-                      backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
+                      backgroundColor: [{% for g in games_played_chart %}"#3cba9f",{% endfor %}],
                       data: [{% for g in games_played_chart %} {{ g.games_played }}, {% endfor %} ]
                     }]
                   },
@@ -227,11 +238,11 @@
               7: 'rgb(0,0,0)',
             };
 		var sensorChartData = {
-              labels: [{% for a in anomalies_detected %} '{{ a.room_name }}', {% endfor %}],
+              labels: [{% for a in anomalies_detected reversed %} '{{ a.room_name }}', {% endfor %}],
             datasets: [{
               label: "Count of anomalies per chart",
-              backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
-              data: [{% for a in anomalies_detected %} {{ a.anomaly_count }}, {% endfor %} ]
+              backgroundColor: [{% for a in anomalies_detected  %} "#f65917", {% endfor %}],
+              data: [{% for a in anomalies_detected reversed %} {{ a.anomaly_count }}, {% endfor %} ]
             }]
 		};
 		var salesChartData = document.getElementById('salesChart');
