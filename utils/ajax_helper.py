@@ -22,6 +22,7 @@ def get_cur_games(request):
 def get_player_list(request):
     if(request.method == 'POST'):
         gid = request.POST['game_id']
+        gem = Game.objects.get(game_id = gid).game_details
         players = []
         team_query = Teams.objects.filter(game_id = gid)
         for team_item in team_query:
@@ -29,7 +30,7 @@ def get_player_list(request):
             player_obj = {}
             player_obj['name'] = player.firstname+' '+player.lastname
             players.append(player_obj)
-    return JsonResponse({"data": players})
+    return JsonResponse({"data": players, "teamname": gem.teamname})
 
 def start_game(request):
     if(request.method == 'POST'):
