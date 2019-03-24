@@ -200,13 +200,13 @@
                         </center>
                     </div>
                     <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
+                        <span class="uk-text-small"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-warning"></span>Error Rate </span>
                         <center>
                             <h3 class="uk-margin-remove  uk-text-danger">{{ report_data.has_errors }}%</h3>
                         </center>
                     </div>
                     <div>
-                        <span class="uk-text-small"><span data-uk-icon="icon:play-circle" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
+                        <span class="uk-text-small"><span data-uk-icon="icon:question" class="uk-margin-small-right uk-text-success"></span>Warning Rate </span>
                         <center>
                             <h3 class="uk-margin-remove  uk-text-warning">{{ report_data.warnings }}%</h3>
                         </center>
@@ -352,136 +352,142 @@
         type: 'bubble',
         data: bubbleChartData,
         options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Log Summary for Game/s {{ game_ids|join:", " }}'
-            },
-            tooltips: {
-                mode: 'nearest',
-                intersect: false,
-                custom: function(tooltip) {
-                if (!tooltip) return;
-                    // disable displaying the color box;
-                    tooltip.displayColors = true;
+                responsive: true,
+                title: {
+                    display: true,
+                    text: '{{ game_ids }} Log Summary for Game/s {{ game_ids|join:", " }}'
                 },
-                callbacks: {
-                    // use label callback to return the desired label
-                    label: function(tooltipItem, data) {
-                        if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-2){
-                            //console.log("sensor_names",data.sensor_names);
-                            return tooltipItem.xLabel;
-                        }
-                        if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
-                            //console.log("sensor_names",data.sensor_names);
-                            return data.sensor_names[tooltipItem.index+1];
-                        }
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                        // disable displaying the color box;
+                        tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                            if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-2){
+                                //console.log("sensor_names",data.sensor_names);
+                                return tooltipItem.xLabel;
+                            }
+                            if (tooltipItem.datasetIndex === bubbleChartData.datasets.length-1){
+                                //console.log("sensor_names",data.sensor_names);
+                                return data.sensor_names[tooltipItem.index+1];
+                            }
 
-                        val = tooltipItem.xLabel;
-                        sec = ((val % 1)*60).toFixed(2);
-                        min = Math.floor(val);
-                        if (min !== 0 || sec !== 0){
+                            val = tooltipItem.xLabel;
+                            sec = ((val % 1)*60).toFixed(2);
+                            min = Math.floor(val);
+                            if (min !== 0 || sec !== 0){
+                                if (parseInt(sec) === 0){
+                                        return min + ":00";
+                                    }
+                                if (parseInt(min) === 0){
+                                        return "00:00" + sec;
+                                    }
+                                if (Math.round(sec) < 10){
+
+                                    return min + ":0" + Math.round(sec);
+                                }
+                                return min + ":" + Math.round(sec);
+                            }
+                            return 'Ano daw';
+                        },
+                        title: function(tooltipItem, data) {
+
+                                //console.log("cdata",data.clues_data[tooltipItem[0].index].phase_name);
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                                return data.clues_data[tooltipItem[0].index].phase_name;
+                            }
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                console.log("hh"+data.sensor_names[tooltipItem[0].index]);
+                                key = Object.keys(data.sensor_names);
+                                console.log(key);
+                                console.log(tooltipItem[0].index);
+                                return data.sensor_names[key[tooltipItem[0].index]];
+                            }
+                            return data.datasets[tooltipItem[0].datasetIndex].label
+                        },
+                        afterTitle: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                return null;
+                            }
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                                //console.log("sensor_names",data.sensor_names);
+                                return null;
+                            }
+
+                            key = Object.keys(data.dataset_game_ids)[tooltipItem[0].datasetIndex];
+                            return "Game "+ (10000+data.dataset_game_ids[key][tooltipItem[0].index]);
+                        },
+                        afterBody: function(tooltipItem, data) {
+                            str=["-----"];
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+
+                                str.push("Time solved average: "+tooltipItem[0].yLabel);
+                                str.push("Minute triggered average: "+tooltipItem[0].xLabel);
+                                return str;
+                            }
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                                str.push("Details: "+data.clues_data[tooltipItem[0].index].detail);
+                                return str;
+                            }
+
+                            val = parseFloat(tooltipItem[0].yLabel);
+                            sec = ((val % 1)*60).toFixed(2);
+
+                            min = Math.floor(val);
+                            if (min !== 0 && sec !== 0){
                             if (parseInt(sec) === 0){
-                                    return min + ":00";
+                                    return 'Solved in ' + min + " min";
                                 }
-                            if (parseInt(min) === 0){
-                                    return "00:00" + sec;
-                                }
-                            if (Math.round(sec) < 10){
-
-                                return min + ":0" + Math.round(sec);
+                                return "Solved in "+min + " min and " + Math.round(sec) +" sec" ;
                             }
-                            return min + ":" + Math.round(sec);
-                        }
-                        return 'Ano daw';
-                    },
-                    title: function(tooltipItem, data) {
-
-                            //console.log("cdata",data.clues_data[tooltipItem[0].index].phase_name);
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            return data.clues_data[tooltipItem[0].index].phase_name;
-                        }
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
-                            return null;
-                        }
-                        return data.datasets[tooltipItem[0].datasetIndex].label
-                    },
-                    afterTitle: function(tooltipItem, data) {
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
-                            return null;
-                        }
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            //console.log("sensor_names",data.sensor_names);
-                            return null;
-                        }
-
-                        return "Game "+(10000+data.dataset_game_ids[1][tooltipItem[0].index]);
-                    },
-                    afterBody: function(tooltipItem, data) {
-                        str=["-----"];
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
-
-                            str.push("Time solved average: "+tooltipItem[0].yLabel);
-                            str.push("Minute triggered average: "+tooltipItem[0].xLabel);
-                            return str;
-                        }
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            str.push("Details: "+data.clues_data[tooltipItem[0].index].detail);
-                            return str;
-                        }
-
-                        val = parseFloat(tooltipItem[0].yLabel);
-                        sec = ((val % 1)*60).toFixed(2);
-
-                        min = Math.floor(val);
-                        if (min !== 0 && sec !== 0){
-                        if (parseInt(sec) === 0){
-                                return 'Solved in ' + min + " min";
+                            return 'Ano daw';
+                        },
+                        beforeFooter: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
+                                console.log("waw gago");
+                                return null;
                             }
-                            return "Solved in "+min + " min and " + Math.round(sec) +" sec" ;
-                        }
-                        return 'Ano daw';
+
+                            if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
+                                return null;
+                            }
+                                key = Object.keys(data.sensor_names)[tooltipItem[0].datasetIndex];
+                                return "Log Frequency: "+data.dataset_r_vals[key][tooltipItem[0].index];
+                        },
+
+                        // Use the footer callback to display the sum of the items showing in the tooltip
+
                     },
-                    beforeFooter: function(tooltipItem, data) {
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-2){
-                            console.log("waw gago");
-                            return null;
-                        }
-
-                        if (tooltipItem[0].datasetIndex === bubbleChartData.datasets.length-1){
-                            return null;
-                        }
-                            return "Log Frequency: "+data.dataset_r_vals[tooltipItem[0].datasetIndex+1][tooltipItem[0].index];
-                    },
-
-                    // Use the footer callback to display the sum of the items showing in the tooltip
-
-                  },
-                footerFontStyle: 'normal'
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
+                    footerFontStyle: 'normal'
+                },
+                scales: {
+                    xAxes: [{
                         display: true,
-                        labelString: 'minute triggered',
-                        max: 60
-                    },
-                    ticks:{
-                        beginAtZero: true,
-                        max: 60
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'minute triggered',
+                            max: 60
+                        },
+                        ticks:{
+                            beginAtZero: true,
+                            max: 60
+                        }
+                    }],
+                    yAxes: [{
                         display: true,
-                        labelString:'time solved (min)'
-                    }
-                }]
+                        scaleLabel: {
+                            display: true,
+                            labelString:'time solved (min)'
+                        }
+                    }]
+                }
             }
-        }
-    });
+        });
         var log_dist_ctx = document.getElementById('log_dist').getContext('2d');
         window.LogDistributionChart = Chart.Scatter(log_dist_ctx, {
             data: scatterChartData,
@@ -545,7 +551,7 @@
                             display: true,
                         },
                         ticks: {
-                            beginAtZero: false,
+                            beginAtZero: true,
                             steps: 0,
                             min: 0,
                             stepValue: 1,

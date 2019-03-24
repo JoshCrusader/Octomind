@@ -249,6 +249,15 @@ class Notifs(models.Model):
         db_table = 'notifs'
 
 
+class Offlinegames(models.Model):
+    idofflinegames = models.AutoField(primary_key=True)
+    gameid = models.ForeignKey(Game, models.DO_NOTHING, db_column='gameid', unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'offlinegames'
+
+
 class Players(models.Model):
     players_id = models.AutoField(primary_key=True)
     firstname = models.CharField(max_length=45, blank=True, null=True)
@@ -299,6 +308,7 @@ class Sensor(models.Model):
     top_coordinate = models.FloatField(blank=True, null=True)
     left_coordinate = models.FloatField(blank=True, null=True)
     phase_name = models.CharField(max_length=150, blank=True, null=True)
+    all_time_avg = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False

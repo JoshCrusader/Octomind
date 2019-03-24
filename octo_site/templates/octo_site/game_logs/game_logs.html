@@ -37,7 +37,7 @@
                             <button class="uk-button uk-button-primary uk-button-small" id="analyze_btn" onclick="submit_for_analysis()" disabled> Analyze <span data-uk-icon="icon: gitter"></span></button>
                         </div>
                         <div class="uk-card-body uk-align-center uk-width-1-1">
-                            <div class="uk-overflow-auto">
+                                <div class="uk-overflow-auto">
                                     <table id="room_tbl" class="uk-table uk-table-divider" style="width:100%">
                                           <thead>
                                               <tr>
@@ -51,34 +51,6 @@
                                           </thead>
                                           <tbody>
                                           {% load static %}
-                                          {% for game in cur_games reversed%}
-                                                <tr class="tbl_toggle" style="cursor:pointer">
-                                                    <td class="uk-text-center"><input class="uk-checkbox" value="gago" name="room_to_analyze[]" type="checkbox"></td>
-                                                    <td>
-                                                        <b style="color: cornflowerblue">{{ game.match_id }}</b>
-                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">started {{ game.get_time_ago }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">Ongoing</b></p>
-                                                        <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">started {{ game.room.room_name }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.teamname }}</b></p>
-                                                        <p class="uk-text-small uk-margin-remove txt_light_gray">{{ game.get_num_clues_asked }} clues asked</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove txt_white"><b>{{ game.game_details.timestart.time |  time:"g:i:s A" }}</b>
-                                                            {% if game.is_solved %}
-                                                                to
-                                                                <b>{{ game.game_details.timeend.time |  time:"g:i:s A" }}</b> </p>
-                                                            {% endif %}
-                                                        <p class="uk-text-small txt_light_gray" style="margin-top: 0px">{{ game.game_details.timestart.date | date:"M d, Y" }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="txt_light_gray uk-margin-remove"><b style="color: cornflowerblue">game on going .. </b></p>
-                                                    </td>
-                                                </tr>
-                                          {% endfor %}
                                           {% for game in games reversed%}
                                                 <tr class="tbl_toggle" style="cursor:pointer">
                                                     <td class="uk-text-center">
@@ -184,7 +156,7 @@
                                             $(".dataTables_filter input").addClass("uk-select tbl_sel");
                                         });
                                     </script>
-                                    </div>
+                                </div>
                             </div>
                     </div>
                 </div>

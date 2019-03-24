@@ -19,8 +19,6 @@ def room_details_analysis(request):
     a_sd = None
     a_ed = None
     if request.method == 'POST':
-        print('-#-#--#-#--#-#--#-#--#-#--#-#--#-#--#-#--#-#--#-#--#-#-')
-        print(request.POST['room_id'])
         room = Room.objects.get(room_id=request.POST['room_id'])
         if request.POST['report_cat'] == "range":
             a_sd = request.POST['sd']
@@ -37,7 +35,7 @@ def room_details_analysis(request):
             report_data, msg, games,game_ids = get_daily_report(request,room)
         else:
             print("what")
-            
+    print("game ids",game_ids)
     return render(request, 'octo_site/reports/details/room_details_analysis.html',
     {"report_data":report_data,
      "msg":msg,"games":games,

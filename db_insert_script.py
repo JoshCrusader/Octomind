@@ -2,8 +2,7 @@ import paho.mqtt.client as mqtt  # import the client1
 import time
 import MySQLdb
 import datetime
-
-# Alien Assault, 26, 27, 28, 29
+# alien assault sensors: 26,27,28,29
 def store(a, b):
     ts = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 

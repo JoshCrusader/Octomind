@@ -19,10 +19,11 @@ from octo_site.db_conf import *
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from octo_site.reports_controller import *
+from octo_site.dashboard_controller import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from utils import federate, ajax_helper,sensor_deebs_popu,script_helper, populatestart, populate_details
-
+import datetime as datetime
 from django.http import HttpResponse
 from views_func import *
 from api_func import *
@@ -59,24 +60,43 @@ def register(request):
         lname = request.POST.get('lname')
         usertype = request.POST.get('usertype')
         user = User.objects.create_user(username=username, password=password, first_name=fname, last_name=lname)
+        branch = request.POST.get('branch')
+        print("ebranch: ", branch)
 
         if usertype == "os":
             group = Group.objects.get(name="Operations Supervisor")
             user.groups.add(group)
+            user.save()
+            ebranch = EmployeeBranch(user_id=user.id,branch_id=branch)
+            ebranch.save()
+            print("new userid: " , user.id)
+            print("ebranch: " , ebranch.branch_id)
+
         elif usertype == "gk":
             group = Group.objects.get(name="Gamekeeper")
             user.groups.add(group)
+            user.save()
+            ebranch = EmployeeBranch(user_id=user.id,branch_id=branch)
+            ebranch.save()
+            print("new userid: " , user.id)
+            print("ebranch: " ,ebranch.branch_id)
         elif usertype == "own":
             group = Group.objects.get(name="Owner")
             user.groups.add(group)
-
-        user.save()
-        messages.warning(request, 'Account Created.')
+            user.save()
         return redirect('index')
     return render(request, 'octo_site/user_module/register.html', {'branches':Branch.objects.all()})
 
 def list_user(request):
-    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all()})
+    e_branches = []
+    users = User.objects.all()
+    for u in users:
+        try:
+            e_branches.append(EmployeeBranch.get_branch(user_id=u.id).name)
+        except:
+            e_branches.append("N/A")
+
+    return render(request, 'octo_site/user_module/list_user.html',{'users':User.objects.all(),'ebranches':e_branches})
 
 def registration(request):
     return registration_func.registration(request)
@@ -89,8 +109,13 @@ def signout(request):
     return redirect('index')
 
 def index(request):
-    return redirect('control_panel')
-    #return render(request,'octo_site/dashboard.html')
+    if request.user.groups.all()[0].name == "Gamekeeper":
+        return gk_dashboard(request)
+    elif request.user.groups.all()[0].name == "Operations Supervisor":
+        return os_dashboard(request)
+    elif request.user.groups.all()[0].name == "Owner":
+        return own_dashboard(request)
+    return render(request,'octo_site/dashboards/own_dashboard.html')
 
 def page_sensor(request):
     return page_func.page_sensor(request)

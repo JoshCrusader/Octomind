@@ -15,14 +15,14 @@ PARAMS:
         let sensor_data;
         let sensor_data_len;
         chartColors = {
-              red: 'rgb(255, 65, 54)',
-              yellow: 'rgb(239, 206, 0)',
-              green: 'rgb(61, 142, 106)',
-              blue: 'rgb(28, 143, 219)',
-              orange: 'rgb(255, 118, 0)',
-              purple: 'rgb(153, 102, 255)',
-              grey: 'rgb(231,233,237)',
-              black: 'rgb(0,0,0)',
+              red: 'rgb(255, 65, 54,0.45)',
+              yellow: 'rgb(239, 206, 0,0.45)',
+              green: 'rgb(61, 142, 106,0.45)',
+              blue: 'rgb(28, 143, 219,0.45)',
+              orange: 'rgb(255, 118, 0,0.45)',
+              purple: 'rgb(153, 102, 255,0.45)',
+              grey: 'rgb(231,233,237,0.45)',
+              black: 'rgb(0,0,0,0.25)',
             };
 
         color = Chart.helpers.color;
@@ -54,13 +54,13 @@ PARAMS:
 					text: '{{ roomname }}'
 				},
 				tooltips: {
-					mode: 'index',
-					intersect: false,
+					mode: 'x',
+					intersect: true,
 					footerFontStyle: 'normal'
 				},
 				hover: {
-					mode: 'nearest',
-					intersect: false
+					mode: 'x',
+					intersect: true
 				},
 				scales: {
 					xAxes: [{
@@ -82,8 +82,8 @@ PARAMS:
                                 beginAtZero: true,
                                 steps: 0,
                                 min:0,
-                                stepValue: 5,
-                                max: 1.0001
+                                stepValue: 1,
+                                stepSize: 1,
                             }
 					}]
 				}
@@ -135,6 +135,8 @@ PARAMS:
               let obj = results.sensors;
                for (i in obj)
                {
+                   console.log("aplha val: "+parseInt(i+1)/10);
+                   console.log("aplha val: "+(parseInt(i)+1));
                    colorName = colorNames[config.data.datasets.length % colorNames.length];
                    newColor = chartColors[colorName];
                    newXAxis = {
@@ -155,9 +157,12 @@ PARAMS:
                         label: obj[i].sensor_name,
                         xAxisID:"id-"+i,
                         steppedLine: true,
-                        pointStyle: 'circle',
-                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
-                        borderColor: newColor,
+                        pointStyle: 'rectRot',
+                        radius:5.5,
+                        borderWidth:4,
+                        pointRotation:90,
+                        backgroundColor: color(newColor).alpha((parseInt(i)+6)/10).rgbString(),
+                        borderColor: color(newColor).alpha((parseInt(i)+6)/10).rgbString(),
                         data: [],
                         fill: false
                    };

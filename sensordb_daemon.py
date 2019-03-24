@@ -25,7 +25,7 @@ def on_message(client, userdata, message):
     conn.close()
     pass
 
-broker_address = "192.168.8.203"
+broker_address = "192.168.1.5"
 client = mqtt.Client("P1")  # create new instance
 client.on_message = on_message  # attach function to callback
 client.connect(broker_address)  # connect to broke

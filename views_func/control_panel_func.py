@@ -9,7 +9,7 @@ def control_panel(request):
         federate.sync()
         # gamess = Game.objects.all()
         # for gamee in gamess:
-        #     offlinegame = Offlinegames(gameid = gamee)
+        #     offlinegame = Offliclsnegames(gameid = gamee)
         #     offlinegame.save()
         game_details = []
         now_datetime = timezone.now()

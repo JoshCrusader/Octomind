@@ -22,11 +22,6 @@
 	</div>
 	<br>
 	<br>
-	<button id="randomizeData">Randomize Data</button>
-	<button id="addDataset">Add Dataset</button>
-	<button id="removeDataset">Remove Dataset</button>
-	<button id="addData">Add Data</button>
-	<button id="removeData">Remove Data</button>
     <div>
         <p>time finished: </p><b id="time_finished"></b><br>
         <p>skill bracket: </p><b id="skill_bracket"></b><br>
@@ -62,6 +57,10 @@
                         padding:20,
                         fontSize: 16,
                         usePointStyle:true,
+                        filter: function(item, chart) {
+                          // Logic to remove a particular legend item goes here
+                          return !item.text.includes('Avg');
+                        }
                     }
                 },
 				title: {
@@ -82,6 +81,9 @@
                           if(tooltipItem.datasetIndex === config.data.datasets.length-1){
                               return "# "+(tooltipItem.index+1)+" @"+config.data.clues_data[tooltipItem.index].phase_name;
                           }
+                          else if(tooltipItem.datasetIndex > data.data_objs.length-1){
+                                return null;
+                          }
                           let time_solved = new Date(tooltipItem.xLabel);
                           let comp_time = (time_solved.getHours()+":"+time_solved.getMinutes()+":"+time_solved.getSeconds()) === (start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
                           if (comp_time) {return "Start time";}
@@ -90,8 +92,11 @@
                         },
                         title: function(tooltipItem, data) {
 
-                          if(tooltipItem.datasetIndex === config.data.datasets.length-1){
-                              return null;
+                          if(tooltipItem[0].datasetIndex === config.data.datasets.length-1){
+                                return null;
+                          }
+                          else if(tooltipItem[0].datasetIndex + 1 > config.data.data_objs.length){
+                                return config.data.datasets[tooltipItem[0].datasetIndex].label;
                           }
                             return tooltipItem[0].xLabel;
                         },
@@ -101,6 +106,7 @@
 							let sec = null;
 							let stat = null;
 							let clu = false;
+							let avg = false;
 							let det = "";
 
 							tooltipItems.forEach(function(tooltipItem) {
@@ -108,7 +114,24 @@
                               if(tooltipItem.datasetIndex === config.data.datasets.length-1){
                                   clu =true;
                                   det = data.clues_data[tooltipItem.index].detail
-                              }else{
+                              }
+                              else if(tooltipItem.datasetIndex > data.data_objs.length-1){
+                                    comp = data.data_objs[tooltipItem.datasetIndex-data.data_objs.length].time_solved - data.data_objs[tooltipItem.datasetIndex-data.data_objs.length].all_time_avg;
+                                    console.log(comp);
+                                    if(comp<0){
+                                        val = Math.abs(comp).toFixed(2);
+                                        sec = ((val % 1)*60).toFixed(2);
+                                        min = Math.floor(val);
+                                        det = "Faster than the average by "+min+" minutes  "+sec+" seconds";
+                                    }else if(comp>0){
+                                        val = Math.abs(comp).toFixed(2);
+                                        sec = ((val % 1)*60).toFixed(2);
+                                        min = Math.floor(val);
+                                        det = "Slower than the average by "+ min + " min "+sec+" sec";
+                                    }
+                                    avg = true;
+                              }
+                              else{
                                     val = data.data_objs[tooltipItem.datasetIndex].time_solved;
                                     sec = ((val % 1)*60).toFixed(2);
                                     min = Math.floor(val);
@@ -116,7 +139,7 @@
                               }
 
 							});
-							if(clu){
+							if(clu || avg){
 							    return det
                             }
 							if(stat){
@@ -170,7 +193,6 @@
 			//window.setInterval(reloadData, 1000);
 		};
         function initData() {
-
             sensor_data =  $.get("/octo_site/api/get_sensor_by_game/{{ game.game_id }}/");
             sensor_data.done(function(results){
                 obj = results.sensors;
@@ -202,17 +224,48 @@
                         data: [],
                         fill: false
                    };
-
                    config.data.datasets.push(newDataset);
                    sensors.push(obj[i].sensor_id);
                    config.options.scales.xAxes.push(newXAxis);
                    window.myLine.update()
                 }
+                for (i in obj)
+                {
+                   avgXAxis = {
+                        id: "avg"+i,
+                        type: 'time',
+                        position: 'bottom',
+                        display: false,
+                        ticks: {
+                        min: 0,
+                        max: 168,
+                        stepSize: 1000
+                        }
+
+                   };
+                   avgDataset = {
+                        type: 'line',
+                        label: obj[i].sensor_name+" Avg",
+                        xAxisID:"avg"+i,
+                        display: false,
+                        borderWidth: 10,
+                        pointStyle: 'line',
+                        backgroundColor: "#134a56",
+                        borderColor: "#134a56",
+                        data: [],
+                        fill: false
+                   };
+                   config.data.datasets.push(avgDataset);
+                   config.options.scales.xAxes.push(avgXAxis);
+                   window.myLine.update()
+                }
+
            });
 
             let game_data =  $.get("/octo_site/api/game_cur_logs/{{ game.game_id }}/");
             game_data.done(function(results){
                let obj = results.data;
+               console.log(obj);
                let prev_ts=null;
                 for (obx in obj)
                 {
@@ -232,44 +285,74 @@
                 for (ob in obj)
                 {
                    if(parseInt(obj[ob].time_solved.toFixed(2)) !== 0){
-
-                   config.data.data_objs.push(obj[ob]) ;
+                   config.data.data_objs.push(obj[ob]);
                    let ind = sensors.indexOf(obj[ob].sensor_id);
+                    if (obj[ob].time_solved <= obj[ob].all_time_avg){
+                        config.data.datasets[ind+sensors.length].borderColor = "#218e1d";
+                    }
                    if(ind !== 0){
+                       cur_avg = new Date(new_obj[ob]);
+                       cur_avg = new Date( cur_avg.getTime() + (obj[ob].all_time_avg*60000));
                        config.data.labels.push(new_obj[ob]);
                        config.data.labels.push(new Date(obj[ob].timestamp));
+                       config.data.labels.push(cur_avg);
+
                        for(let x =0; x < sensors.length;x++){
                             if(obj[ob].sensor_id === sensors[x] &&  (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
                                 config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
                                 config.data.datasets[x].data.push(sensors.length-0.75-ob);
+                                config.data.datasets[x].data.push(null);
+
+                                config.data.datasets[x+sensors.length].data.push(sensors.length-0.40-ob);
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(sensors.length-0.40-ob);
                             }
                             else{
                                 config.data.datasets[x].data.push(null);
                                 config.data.datasets[x].data.push(null);
+                                config.data.datasets[x].data.push(null);
+
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(null);
+
                             }
                         }
                    }
                    else{
+                       cur_avg = new Date(start_time);
+                       cur_avg = new Date( cur_avg.getTime() + (obj[ob].all_time_avg*60000));
                        config.data.labels.push(start_time);
                        config.data.labels.push(new Date(obj[ob].timestamp));
+                       config.data.labels.push(cur_avg);
+
                        for(let x =0; x < sensors.length;x++){
                             if(obj[ob].sensor_id === sensors[x] && (parseInt(obj[ob].time_solved.toFixed(2)) !== 0)){
                                 config.data.statuses[ob] = (parseInt(obj[ob].time_solved.toFixed(2)) !== 0);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
                                 config.data.datasets[x].data.push(sensors.length-0.75);
+                                config.data.datasets[x].data.push(null);
+
+                                config.data.datasets[x+sensors.length].data.push(sensors.length-0.40-ob);
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(sensors.length-0.40-ob);
                             }
                             else{
                                 config.data.datasets[x].data.push(null);
                                 config.data.datasets[x].data.push(null);
+                                config.data.datasets[x].data.push(null);
+
+
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(null);
+                                config.data.datasets[x+sensors.length].data.push(null);
                             }
                         }
                    }
                    }
                    window.myLine.update()
                 }
-                console.log("lbl",config.data.labels);
-                console.log("datset",config.data.datasets);
            });
 
             let clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
@@ -326,58 +409,27 @@
                     $("#sensor_list").append(str);
                 }
             });
-            let clues_data = $.get("/octo_site/api/get_clues_by_game/{{ game.game_id }}/");
-            clues_data.done(function(results){
+            /*
+            sensor{{ data.sensor_id }}_comp =  $.get("/octo_site/api/get_all_time_data_sensor/{{ data.sensor_id }}/");
+            sensor{{ data.sensor_id }}_comp.done(function(results){
+                console.log(results);
+                clean = parseFloat({{ data.time_solved }}-results.average_time_solved).toFixed(2);
+                clean = Math.abs(clean);
+                sec = Math.round((clean % 1)*60);
+                min = Math.floor(clean);
+                clean = min+":"+sec;
+                if({{ data.time_solved }}-results.average_time_solved > 0){
+                    $("#ts_{{ data.sensor_id }}").html("(+"+ clean +")⬆");
+                }
+                else {
+                    $("#ts_{{ data.sensor_id }}").html("(-"+ clean +")⬇");
+                }
+           });
 
-                console.log("_clues = ",results);
-            });
+            * */
         }
-		document.getElementById('randomizeData').addEventListener('click', function() {
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {
-					return randomScalingFactor();
-				});
-			});
-			window.myLine.update();
-		});
 		var colorNames = Object.keys(window.chartColors);
-		document.getElementById('addDataset').addEventListener('click', function() {
-			var colorName = colorNames[config.data.datasets.length % colorNames.length];
-			var newColor = window.chartColors[colorName];
-			var newDataset = {
-				label: 'Dataset ' + config.data.datasets.length,
-				backgroundColor: color(newColor).alpha(0.5).rgbString(),
-				borderColor: newColor,
-				data: [],
-				fill: false
-			};
-			for (var index = 0; index < config.data.labels.length; ++index) {
-				newDataset.data.push(randomScalingFactor());
-			}
-			config.data.datasets.push(newDataset);
-			window.myLine.update();
-		});
-		document.getElementById('addData').addEventListener('click', function() {
-			if (config.data.datasets.length > 0) {
-				var month = MONTHS[config.data.labels.length % MONTHS.length];
-				config.data.labels.push(month);
-				config.data.datasets.forEach(function(dataset) {
-					dataset.data.push(randomScalingFactor());
-				});
-				window.myLine.update();
-			}
-		});
-		document.getElementById('removeDataset').addEventListener('click', function() {
-			config.data.datasets.splice(0, 1);
-			window.myLine.update();
-		});
-		document.getElementById('removeData').addEventListener('click', function() {
-			config.data.labels.splice(-1, 1); // remove the label first
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();
-			});
-			window.myLine.update();
-		});
+
 	</script>
 </body>
 

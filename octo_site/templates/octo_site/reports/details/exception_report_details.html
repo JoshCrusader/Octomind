@@ -197,7 +197,9 @@
 <script>
 		var color = Chart.helpers.color;
 		var forfeitChartData = {
-			datasets: []
+			datasets: [],
+            game_ids: [],
+            dataset_game_ids:[],
 		};
 		var breakdownChartData = {
 			type: 'doughnut',
@@ -274,6 +276,35 @@
 		};
 
         var anomalyChartData = {
+
+
+
+            dataset_error_game_ids:[
+                    {% for error in errors %}
+                        {{error.game.match_id}},
+                    {% endfor %}
+            ],
+            dataset_error_phase_names:[
+                    {% for error in errors %}
+                        '{{error.sensor.phase_name}}',
+                    {% endfor %}],
+            dataset_error_details:[
+                    {% for error in errors %}
+                        '{{error.details}}',
+                    {% endfor %}],
+
+            dataset_warning_game_ids:[
+                    {% for warning in warnings %}
+                        {{warning.game.match_id}},
+                    {% endfor %}],
+            dataset_warning_phase_names:[
+                    {% for warning in warnings %}
+                        '{{warning.sensor.phase_name}}',
+                    {% endfor %}],
+            dataset_warning_details:[
+                    {% for warning in warnings %}
+                        'solved in {{warning.time_solved}} mins',
+                    {% endfor %}],
 			datasets: [{
 				label: 'Errors',
 				borderColor: chartColors.blue,
@@ -282,7 +313,7 @@
 				backgroundColor: color(chartColors.blue).alpha(0.2).rgbString(),
 				data: [
                     {% for error in errors %}
-                    {x:{{error.get_minute_asked}},y:1},
+                        {x:{{error.get_minute_asked}},y:1},
                     {% endfor %}
                 ]
 			}, {
@@ -324,9 +355,28 @@
                         display: false
                      },
                     tooltips: {
-                        mode: 'nearest',
-                        intersect: false,
+                    mode: 'nearest',
+                    intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                        // disable displaying the color box;
+                        tooltip.displayColors = true;
                     },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                            return 'Forfeited at '+tooltipItem.xLabel+' mins';
+                        },
+                        afterTitle: function(tooltipItem, data) {
+                            return "Game "+ data.dataset_game_ids[tooltipItem[0].datasetIndex];
+                        },
+                        afterBody: function(tooltipItem, data) {
+                            return 'Clues asked: '+tooltipItem[0].yLabel;
+                        },
+
+                    },
+                    footerFontStyle: 'normal'
+                },
                     hover: {
                         mode: 'nearest',
                         intersect: true
@@ -368,6 +418,50 @@
 					},gridLines:{
                         display: false
                     },
+                    tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                    custom: function(tooltip) {
+                    if (!tooltip) return;
+                        // disable displaying the color box;
+                        tooltip.displayColors = true;
+                    },
+                    callbacks: {
+                        // use label callback to return the desired label
+                        label: function(tooltipItem, data) {
+                                return 'Logged at '+tooltipItem.xLabel+' min'
+                        },
+                        title: function(tooltipItem, data) {
+                            if (tooltipItem.datasetIndex === 0){
+                                    return "Game "+ data.dataset_error_game_ids[tooltipItem[0].index];
+                            }
+                            else{
+                                    return "Game "+ data.dataset_warning_game_ids[tooltipItem[0].index];
+                            }
+
+                        },
+                        afterTitle: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === 0){
+                                    return data.dataset_error_phase_names[tooltipItem[0].index];
+                            }
+                            else{
+                                    return data.dataset_warning_phase_names[tooltipItem[0].index];
+                            }
+                        },
+                        beforeFooter: function(tooltipItem, data) {
+                            if (tooltipItem[0].datasetIndex === 0){
+                                    return data.dataset_error_details[tooltipItem[0].index];
+                            }
+                            else{
+                                    return data.dataset_warning_details[tooltipItem[0].index];
+                            }
+                        },
+
+
+                    },
+                    footerFontStyle: 'normal'
+                },
+
                     scales: {
                         xAxes: [{
                             display: true,
@@ -401,11 +495,12 @@
            dt= {
                 label: {{ game.match_id }},
                 borderColor: newColor,
-               pointRadius: 10,
+                pointRadius: 10,
                 pointHoverRadius: 10,
                 backgroundColor: color(newColor).alpha(0.2).rgbString(),
                 data: [{x:{{ game.get_game_lasted }},y:{{ game.get_num_clues_asked }}}]
             };
+            forfeitChartData.dataset_game_ids.push({{ game.match_id }});
             forfeitChartData.datasets.push(dt);
             highest_clue.push({{ game.get_num_clues_asked }});
             window.myForfeitChart.update();

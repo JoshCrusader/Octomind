@@ -8,19 +8,6 @@
                                         $("#avg_team_size").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');
                                         $('#avg_team_size').attr("uk-tooltip","more than all time average ");
                                     }
-                                    else if({{ game.get_team_size_int }}-results.average_team_size === 0){
-                                        /*
-                                        $("#avg_team_size").html("(=)").addClass("uk-text-primary");
-                                        $('#avg_team_size').attr("uk-tooltip","equal to all time average");
-                                        */
-                                    }
-                                    else{
-                                        /*
-                                        $("#avg_team_size").html("("+parseFloat({{ game.get_team_size_int }}-results.average_team_size*-1).toFixed(2)+")").addClass("uk-text-warning");
-                                        $("#avg_team_size").append('<span class="uk-text-warning" data-uk-icon="icon:triangle-down"></span>');
-                                        $('#avg_team_size').attr("uk-tooltip","more than all time average ");
-                                        */
-                                    }
                                     if({{ game.get_duration }}-results.average_duration < 0){
                                         $("#avg_duration").html("(+"+parseFloat({{ game.get_duration }}-results.average_duration).toFixed(2)*-1+")").addClass("uk-text-success");
                                         $("#avg_duration").append('<span class="uk-text-success" data-uk-icon="icon:triangle-up"></span>');

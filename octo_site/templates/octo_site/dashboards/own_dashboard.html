@@ -1,0 +1,261 @@
+{% include 'octo_site/includes/header.html' %}
+<!-- CONTENT -->
+{% load staticfiles %}
+
+	<script src="{% static 'octo_site/res/Chart.js/Chart.bundle.js' %}"></script>
+	<script src="{% static 'octo_site/res/Chart.js/samples/utils.js' %}"></script>
+    <script src="{% static 'octo_site/res/jquery.js' %}"></script>
+    <script src="{% static 'octo_site/res/jsocket.js' %}"></script>
+    <div id="content" style="padding: 10px 0 0 0; margin-left: 240px;">
+    <div class="uk-container uk-container-expand">
+        <div class="uk-grid uk-grid-divider uk-grid-medium uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl" data-uk-grid>
+            <div>
+                <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Games Played this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">{{ metrics.total_games }}</h1>
+                <div class="uk-text-small">
+                    {% if metrics.comp_total_games == 0 %}
+                    <span class="uk-text-primary">=</span> equal to last month.
+                    {% elif metrics.comp_total_games > 0 %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_games }}</span> games more than last month.
+                    {% else %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_games }}</span>less than last month.
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Sales this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">{{ metrics.total_sales }}</h1>
+                <div class="uk-text-small">
+                    {% if metrics.comp_total_sales == 0 %}
+                    <span class="uk-text-primary">=</span> equal to last month.
+                    {% elif metrics.comp_total_sales > 0 %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_sales }}</span> games more than last month.
+                    {% else %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_sales }}</span>less than last month.
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <span class="uk-text-small"><span data-uk-icon="icon:warning" class="uk-margin-small-right uk-text-danger"></span>Total Anomalies this Month</span>
+                <h1 class="uk-heading-primary uk-margin-remove  uk-text-primary" id="errors">{{ metrics.total_anomalies }}</h1>
+                <div class="uk-text-small">
+                    {% if metrics.comp_total_anomalies == 0 %}
+                    <span class="uk-text-warning">=</span> equal to last month.
+                    {% elif metrics.comp_total_anomalies > 0 %}
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_anomalies }}</span> errors more than last month.
+                    {% else %}
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_anomalies }}</span> errors less than last month.
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <span class="uk-text-small"><span data-uk-icon="icon:calendar" class="uk-margin-small-right uk-text-primary"></span>CURRENT DATE</span>
+                <h2 class=" uk-margin-remove ">{{ cur_date }}</h2>
+                <span class="uk-text-primary" style="font-size: 24px" id="clock"></span>
+                <script>startTime()</script>
+            </div>
+        </div>
+        <div class="uk-grid" data-uk-grid>
+            <!-- panel -->
+            <div style="margin-right: 0;" class="uk-width-2-3">
+                <div style="margin-bottom: 2vh" class="uk-width-1-1@l">
+                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Total Sales/Branch</h4></div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body">
+                        <div class="uk-overflow-auto">
+                            <!-- Stacked Bar /Branch-->
+                                <canvas id="totalBranchSales"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="uk-width-1-1@l" >
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body">
+                            <div class="uk-overflow-auto">
+                                <!-- GEOGRAPHIC CHART /Province-->
+                                <img src="{% static 'media/mapa1.svg' %}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-left: 0;" class="uk-width-1-3">
+                <div style="margin-bottom: 2vh" class="uk-width-1-1@s ">
+                    <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                        <div class="uk-card-header">
+                            <div class="uk-grid uk-grid-small">
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:bell" class="uk-margin-small-right uk-text-primary"></span>Customer City Distribution</h4></div>
+                            </div>
+                        </div>
+                        <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                            <!-- Metro City Breakdown -->
+                            <div id="container" style="width: 100%;height: 100%">
+                                <canvas id="customerCity"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-width-1-1@s ">
+                <div class="uk-card uk-card-default uk-card-small uk-card-hover">
+                    <div class="uk-card-header">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:link" class="uk-margin-small-right uk-text-primary"></span>Retentions/Room</h4></div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body" style="height: 40vh;overflow: scroll">
+                            <!-- Player Distribution -->
+                        <div id="container" style="width: 100%;height: 100%">
+                            <canvas id="totalRetentionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <footer class="uk-section uk-section-small uk-text-center">
+            <hr>
+            <a href="https://github.com/zzseba78/Kick-Off">Created by KickOff</a> | Built with <a href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span data-uk-icon="uikit"></span></a>
+        </footer>
+    </div>
+</div>
+<script>
+    var totalRetentionChartData = {
+          labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+        datasets: [{
+          label: "Count of anomalies per chart",
+          backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
+          data: [11, 2, 3, 0]
+        }]
+    };
+    var retentionCtx = document.getElementById('totalRetentionChart').getContext('2d');
+    var totalRetention = document.getElementById('totalRetention');
+    window.mytotalRetentionChart = new Chart(retentionCtx, {
+              type: 'horizontalBar',
+              data: totalRetentionChartData,
+              options: {
+                maintainAspectRatio: false,
+                responsiveAnimationDuration: 500,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  duration: 2000
+                },
+                title: {
+                  display: true,
+                  text: 'Number of Retaining Customers Per Room'
+                }
+              }
+            });
+
+
+    var customerCityCtx = document.getElementById('customerCity').getContext('2d');
+    new Chart(customerCityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ["Makati", "Manila", "Quezon City", "Alabang", "Las Pinas"],
+          datasets: [
+            {
+              label: "Population (millions)",
+              backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850"],
+              data: [2478,5267,734,784,433]
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsiveAnimationDuration: 500,
+          animation: {
+            duration: 2000
+          },
+        legend: {
+            display: true,
+            position: 'bottom'
+        },
+          title: {
+            display: true,
+            text: 'Customer Count Per /City'
+          }
+        }
+    });
+    chartColors = {
+              0: 'rgb(255, 65, 54)',
+              1: 'rgb(239, 206, 0)',
+              2: 'rgb(61, 142, 106)',
+              3: 'rgb(28, 143, 219)',
+              4: 'rgb(255, 118, 0)',
+              5: 'rgb(153, 102, 255)',
+              6: 'rgb(231,233,237)',
+              7: 'rgb(0,0,0)',
+            };
+        let color = Chart.helpers.color;
+    var totalBranchSalesData = {
+			labels: [{% for branch in sales_per_branch %}'{{ branch.branch_name }}',{% endfor %}],
+			datasets: [
+			    {% for branch in sales_per_branch %}
+                    {% for room in branch.room_sales %}
+                        {% if room.sales != 0 %}
+			    {
+				label: '{{ room.room_name }}',
+				backgroundColor: window.chartColors[{{ forloop.counter0 }}],
+				data: [{% for sales in room.sales_arr  %}{{ sales }},{% endfor %}
+				    ]
+			    },
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            ]
+
+		};
+		window.onload = function() {
+			var totalBranchCtx = document.getElementById('totalBranchSales').getContext('2d');
+			window.myTotalBranch = new Chart(totalBranchCtx, {
+				type: 'bar',
+				data: totalBranchSalesData,
+				options: {
+					title: {
+						display: true,
+						text: 'Sales Per Branch with Room Participation this Month'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+                        callbacks:{
+						    footer: function(tooltipItem, data) {
+						        console.log("set length: "+data.datasets.length);
+						        console.log("dat ind: "+tooltipItem[0].datasetIndex);
+						        console.log("ind: "+tooltipItem[0].index);
+						        total = 0;
+						        for(i = 0; i < data.datasets.length;i++){
+                                    total += data.datasets[i].data[tooltipItem[0].index];
+                                }
+                                return "Total Month Sales: "+total;
+                            },
+                        }
+					},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				}
+			});
+		};
+
+    
+</script>

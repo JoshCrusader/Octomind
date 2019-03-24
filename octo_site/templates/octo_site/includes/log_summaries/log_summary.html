@@ -37,6 +37,9 @@
                    log_sum_sensors.push(obj[i].sensor_id);
                    window.myLogSummary.update()
                 }
+                console.log("r vals:",bubbleChartData.dataset_r_vals);
+                console.log("datasets:",bubbleChartData.datasets);
+                console.log("sensor_names:",bubbleChartData.sensor_names);
                 let summary_data =  $.get("/octo_site/api/get_log_summary/{{ id_slugs }}/");
                 summary_data.done(function(summary){
                     colorName = colorNames[bubbleChartData.datasets.length % colorNames.length];
@@ -104,14 +107,14 @@
                 obj = results.data;
                 for (i in obj)
                 {
-                   if(obj[i].value !== "0"){
-                        console.log(obj[i].time_solved);
+                   if(obj[i].time_solved !== 0){
                        bubbleChartData.datasets[log_sum_sensors.indexOf(obj[i].sensor_id)].data.push(
                            {
                                x: obj[i].min_stamped,
                                y: obj[i].time_solved,
-                               r:obj[i].times_triggered*15
+                               r:obj[i].times_triggered*10
                            });
+
                        bubbleChartData.dataset_r_vals[obj[i].sensor_id].push(obj[i].times_triggered);
                        bubbleChartData.dataset_game_ids[obj[i].sensor_id].push({{ game.game_id }} );
                        window.myLogSummary.update();

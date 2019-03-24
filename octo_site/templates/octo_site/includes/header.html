@@ -25,6 +25,8 @@
 
 
 		<script src="{% static 'octo_site/res/jquery.js' %}"></script>
+		<script src="{% static 'octo_site/res/jsclock.js' %}"></script>
+
 
 
 		<script src="{% static 'octo_site/res/uikit/js/uikit.min.js' %}"></script>
@@ -146,7 +148,6 @@
     </div>
     <div class="bar-content uk-position-relative">
         <ul class="uk-nav-default uk-nav-parent-icon" data-uk-nav>
-
             <li class="uk-nav-header"><span class="uk-margin-small-right" data-uk-icon="icon: tv"></span> Monitoring</li>
             <li class="{% if request.resolver_match.view_name ==  'control_panel' %}uk-active uk-open{% endif %}"><a href="{% url 'control_panel' %}">Control Panel</a></li>
             <li class="{% if request.resolver_match.view_name ==  'game_logs' %}uk-active uk-open{% endif %}"><a href="{% url 'game_logs' %}">Game Logs</a></li>

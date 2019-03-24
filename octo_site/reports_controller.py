@@ -2,6 +2,7 @@ import MySQLdb
 from octo_site.models import *
 from octo_site.db_conf import *
 import math
+import random
 from datetime import datetime,timedelta
 import datetime as dt
 # open a database connection
@@ -38,6 +39,7 @@ def compute_report_data(games):
         for clue in Clues.objects.filter(game_id=g.game_id):
             clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
             sensors[clue.clue_details.get_sensor_asked] += 1
+
         if g.is_solved:
             report_data["win"] += 1
         else:
@@ -128,8 +130,7 @@ def get_monthly_report(request,room):
             if g.room_id == room.room_id:
                 games.append(g)
                 game_ids.append(g.game_id)
-        else:
-            print("removed!" , det.timestart.month)
+
     msg = "month of " + month.strftime("%b") + " " + str(month.year)
     return compute_report_data(games), msg, games,"-".join(map(str,game_ids))
 def get_yearly_report(request,room):
