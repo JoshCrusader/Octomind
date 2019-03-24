@@ -83,7 +83,17 @@
                         <div class="uk-card-body">
                             <div class="uk-overflow-auto">
                                 <!-- GEOGRAPHIC CHART /Province-->
-                                <img src="{% static 'media/mapa1.svg' %}" alt="">
+                                <div class="chart-container" style="height:60vh;width:100%" >
+                                    <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
+                                    <div class = "area-count" style = "position: absolute;width: 200px; height: 300px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important; border: 1px solid black; padding: 3px;">
+                                        <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
+                                        <div id = "area-legend">
+                                        </div>
+                                    </div>
+                                    <div id="mapdiv" style="width: 100%; height: 100%"></div>
+                                    
+                                </div>
+                                {% comment %} <img src="{% static 'media/mapa1.svg' %}" alt=""> {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -160,35 +170,6 @@
             });
 
 
-    var customerCityCtx = document.getElementById('customerCity').getContext('2d');
-    new Chart(customerCityCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ["Makati", "Manila", "Quezon City", "Alabang", "Las Pinas"],
-          datasets: [
-            {
-              label: "Population (millions)",
-              backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850"],
-              data: [2478,5267,734,784,433]
-            }
-          ]
-        },
-        options: {
-          maintainAspectRatio: false,
-          responsiveAnimationDuration: 500,
-          animation: {
-            duration: 2000
-          },
-        legend: {
-            display: true,
-            position: 'bottom'
-        },
-          title: {
-            display: true,
-            text: 'Customer Count Per /City'
-          }
-        }
-    });
     chartColors = {
               0: 'rgb(255, 65, 54)',
               1: 'rgb(239, 206, 0)',
@@ -259,3 +240,7 @@
 
     
 </script>
+
+{% include 'octo_site/dashboards/cities_graph.html' %}
+{% include 'octo_site/dashboards/map_graph.html' %}
+

@@ -957,6 +957,15 @@ class Players(models.Model):
         if self.times_repeat >=3 :
             return True
         return False
+
+class PlayersCity(models.Model):
+    players_city_id = models.AutoField(primary_key=True)
+    city = models.CharField(max_length=45, blank=True, null=True)
+    players_players = models.ForeignKey(Players, models.DO_NOTHING, unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'players_city'
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=45, blank=True, null=True)
@@ -1208,3 +1217,12 @@ class Teams(models.Model):
         managed = False
         db_table = 'teams'
         unique_together = (('game', 'players_players'),)
+
+class Voucher(models.Model):
+    voucher_id = models.AutoField(primary_key=True)
+    vouchercode = models.CharField(max_length=45, blank=True, null=True)
+    game_game = models.ForeignKey(Game, models.DO_NOTHING, unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'voucher'

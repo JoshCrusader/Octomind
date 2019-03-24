@@ -28,6 +28,7 @@ from django.http import HttpResponse
 from views_func import *
 from api_func import *
 import random
+import math
 def handler404(request, template_name="octo_site/handler404.html"):
     response = render_to_response(template_name)
     response.status_code = 404
@@ -495,4 +496,54 @@ def popstart(request):
 
 def pophim(request):
     populate_details.main_start()
+    return JsonResponse({"response":'end time setted'})
+
+@csrf_exempt
+def get_p_cities(request):
+    return get_players_cities(request)
+
+@csrf_exempt
+def get_locs_dashboard(request):
+    return get_all_market(request)
+
+def randomfunc(request):
+    # games = Game.objects.all()
+    # for game in games:
+    #     offgame = Offlinegames(gameid = game)
+    #     offgame.save()
+
+    # manila = 48
+    # cities = [
+    #     'Caloocan',
+    #     'Las Piñas',
+    #     'Las Piñas',
+    #     'Makati',
+    #     'Makati',
+    #     'Makati',
+    #     'Malabon',
+    #     'Mandaluyong',
+    #     'Manila',
+    #     'Marikina',
+    #     'Muntinlupa',
+    #     'Muntinlupa',
+    #     'Navotas',
+    #     'Parañaque',
+    #     'Parañaque',
+    #     'Pasay',
+    #     'Pasay',
+    #     'Pasig',
+    #     'Pateros',
+    #     'Quezon City',
+    #     'Quezon City',
+    #     'Quezon City',
+    #     'Quezon City',
+    #     'San Juan',
+    #     'Taguig'
+    # ]
+    # players = Players.objects.all().filter(loc_dictionary_id = 48)
+    # for player in players:
+    #     rng = math.floor(random.random()*len(cities))
+    #     playercity = PlayersCity(city = cities[rng], players_players_id = player.players_id)
+    #     playercity.save()
+        
     return JsonResponse({"response":'end time setted'})

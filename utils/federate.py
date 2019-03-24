@@ -1,9 +1,9 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from django.utils import timezone
-from octo_site.models import Game, GameDetails, Room, Players, Teams, LocDictionary, Offlinegames
+from octo_site.models import Game, GameDetails, Room, Players, Teams, LocDictionary, Offlinegames, PlayersCity, Voucher
 
-num_col = 28 #number of coloumns in the registration gsheet
+num_col = 55 #number of coloumns in the registration gsheet
 
 
 room_dict = {
@@ -39,11 +39,15 @@ def sync():
                     gamedets.save()
                     game = Game(room_id = data_obj['room_id'], game_details_id = gamedets.game_details_id, game_keeper_id = data_obj['game_keeper_id'], with_voucher = data_obj['has_voucher'])
                     game.save()
+                    if(data_obj['vouchername'] != ''):
+                        vouch = Voucher(vouchercode = data_obj['vouchername'], game_game_id=game.game_id)
                     for i in data_obj['players']:
-                        players = Players(firstname = i['firstname'], lastname = i['lastname'], contact = i['contact'], gender = i['gender'], email = i['email'], age = i['age'], loc_dictionary_id = i['loc'], times_repeat = i['repeat'])
+                        players = Players(firstname = i['firstname'], lastname = i['lastname'], contact = i['contact'], gender = i['gender'], email = i['email'], age = i['age'], loc_dictionary_id = i['loc'], times_repeat = 1)
                         players.save()
                         teams = Teams(game_id = game.game_id, players_players_id = players.players_id)
                         teams.save()
+                        cityaddress = PlayersCity(city = i['cityaddress'], players_players_id = players.player_id)
+                        cityaddress.save()
                     print("Finish scanning data")
                 curr_row = cell.row
                 data_obj = {}
@@ -54,19 +58,21 @@ def sync():
             else:
                 if (cell.col == 2):
                     data_obj['game_keeper_id'] = 1
+
                 elif (cell.col == 3):
-                    data_obj['room_id'] =  Room.objects.get(room_name = cell.value).room_id
+                    if(cell.value != ""):
+                        data_obj['has_voucher'] = 1
+                    else:
+                        data_obj['has_voucher'] = 0
+                    data_obj['vouchername'] = cell.value
                 elif (cell.col == 4):
+                    data_obj['room_id'] =  Room.objects.get(room_name = cell.value).room_id
+                elif (cell.col == 5):
                     player_cnt = (int)(cell.value)
                     data_obj['players'] = []
                     for i in range(0, player_cnt):
                         player_obj = {}
                         data_obj['players'].append(player_obj)
-                elif (cell.col == 5):
-                    if(cell.value == "Yes"):
-                        data_obj['has_voucher'] = 1
-                    else:
-                        data_obj['has_voucher'] = 0
                 elif (cell.col == 6):
                     data_obj['teamname'] = cell.value
                 elif (cell.col > 7 and cell.value != ''):
@@ -82,21 +88,19 @@ def sync():
                     elif(cur_c == 3):
                         data_obj['players'][cur_p]['contact'] = cell.value
                     elif(cur_c == 4):
-                        try:
-                            data_obj['players'][cur_p]['repeat'] = (int)(cell.value)
-                        except Exception as e2:
-                            data_obj['players'][cur_p]['repeat'] = 0
-                    elif(cur_c == 5):
-                        data_obj['players'][cur_p]['loc'] = LocDictionary.objects.get(loc_title = cell.value).loc_dictionary_id
-                    elif(cur_c == 6):
                         data_obj['players'][cur_p]['age'] = (int)(cell.value)
-                    elif(cur_c == 7):
+                    elif(cur_c == 5):
                         gender = 0
                         if(cell.value == 'Male'):
                             gender = 1
                         data_obj['players'][cur_p]['gender'] = gender
-                    pass
-                pass
+                    elif(cur_c == 6):
+                        data_obj['players'][cur_p]['cityaddress'] = (cell.value)
+                    elif(cur_c == 7):
+                        if(cell.value != ''):
+                            data_obj['players'][cur_p]['loc'] = LocDictionary.objects.get(loc_title = cell.value).loc_dictionary_id
+                        else:
+                            data_obj['players'][cur_p]['loc'] = LocDictionary.objects.get(loc_title = 48).loc_dictionary_id
             
         
         # gamedets = GameDetails(timestart = now_datetime, teamname = "yes")

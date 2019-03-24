@@ -1,0 +1,61 @@
+<script>
+    var citygames = [{% for game in games %}{{ game.game_id }},{% endfor %}];
+    
+    
+    function createChart(nlabels, ndata){
+        var customerCityCtx = document.getElementById('customerCity').getContext('2d');
+        new Chart(customerCityCtx, {
+            type: 'doughnut',
+            data: {
+            labels: nlabels,
+            datasets: [
+                {
+                label: "Population (millions)",
+                backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850", 'rgb(255, 65, 54)', 'rgb(239, 206, 0)'],
+                data: ndata
+                }
+            ]
+            },
+            options: {
+            maintainAspectRatio: false,
+            responsiveAnimationDuration: 500,
+            animation: {
+                duration: 2000
+            },
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            title: {
+                display: true,
+                text: 'Customer Count Per /City'
+            }
+            }
+        });
+    }
+
+    $.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_p_cities/",
+        data: {
+            'games': citygames,
+        },
+        success: function(data){
+            cities = data.data;
+            keysSorted = Object.keys(cities).sort(function(a,b){return cities[b]-cities[a]})
+            labels = [];
+            for(var i = 0; i < 7; i++){
+                labels.push(keysSorted[i])
+            }
+            newdata = [];
+            for(label in labels){
+                newdata.push(cities[labels[label]]);
+            }
+
+            createChart(labels, newdata);
+            console.log(newdata);
+            console.log(labels);
+        }
+    });
+
+</script>

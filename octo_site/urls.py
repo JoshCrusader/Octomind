@@ -104,6 +104,14 @@ urlpatterns = [
     #populate
     path('populateme/', views.popstart, name='populatestart'),
     path('populatehim/', views.pophim, name='populatehim'),
+    path('populatehim/', views.pophim, name='populatehim'),
+    path('randomfunc/', views.randomfunc, name='randomfunc'),
+
+
+    #additional dashboard apis
+    path('api/get_p_cities/', views.get_p_cities, name = 'get_p_cities'),
+    path('api/get_locs_dashboard/', views.get_locs_dashboard, name = 'get_locs_dashboard'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

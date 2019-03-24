@@ -1,0 +1,60 @@
+
+{% include 'octo_site/includes/map_market_script.html' %}
+<script>
+
+$.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_locs_dashboard/",
+        data: {
+        },
+        success: function(data){
+            console.log("MAP DATA");
+            const market = data.data;
+            console.log(market);
+
+            // <FUNCTION FOR LOADING MAP> //
+            window.map_market.dataProvider.areas = [];
+            areas = [],
+            loc_keys = Object.keys(market['locs']);
+            let area_max = -1;
+            for(i in loc_keys){
+                let area_val = market['locs'][loc_keys[i]]['value'];
+                let area_key = loc_keys[i];
+                window.map_market.dataProvider.areas.push({id: area_key, value: area_val > 0 ? area_val : 0});
+                if(area_val > area_max){
+                    area_max = area_val;
+                }
+            }
+            // console.log(areas);
+            // console.log(window.map_market);
+            window.map_market.dataGenerated = true;
+            window.map_market.valueLegend.maxValue = area_max;
+            window.map_market.validateNow();
+
+            // </FUNCTION FOR LOADING MAP> //
+
+             // <FUNCTION FOR LOADING MAP LEGEND> //
+            map_leg = document.getElementById("area-legend");
+            map_leg.innerHTML = ""
+            var map_str = ""
+            sort_market = []
+            for(i in market['locs']){
+                sort_market.push({value: market['locs'][i].value, title: market['locs'][i].title})
+            }
+            sort_market.sort(function(a, b) { 
+                if(b.value != a.value)
+                    return b.value - a.value;
+                else
+                    return a.title < b.title;
+
+            })
+
+
+            for(i in sort_market){
+                map_str += '<div style = \'color: #999; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;\'>'+sort_market[i]['title']+': '+sort_market[i]['value']+'</div>\n';
+            }
+            map_leg.innerHTML = map_str;
+            // </FUNCTION FOR LOADING MAP LEGEND> //
+        }
+});
+</script>
