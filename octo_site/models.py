@@ -126,21 +126,24 @@ class Branch(models.Model):
                     total_loyal_players += g.get_loyal_players
                     total_players += g.get_team_size_int
                 return [round(total_loyal_players/total_players,2)*100, total_loyal_players]
-        else:
-            str_date = str(date).split("-")
-            sd = datetime.strptime(str_date[0] + "-" + str_date[1] + "-01 00:00:00", '%Y-%m-%d %H:%M:%S')
-            ed = datetime.strptime(str_date[0] + "-" + str_date[1] + "-"
-                                   + str(calendar.monthrange(int(str_date[0]), int(str_date[1]))[1]) + " 00:00:00",
-                                   '%Y-%m-%d %H:%M:%S')
-            games = Game.objects.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
-            total_players = 0
-            total_loyal_players = 0
-            if len(games) == 0:
-                return [0, 0]
-            for g in games:
-                total_loyal_players += g.get_loyal_players
-                total_players += g.get_team_size_int
-            return [round(total_loyal_players / total_players, 2) * 100, total_loyal_players]
+            elif gtype == "monthly":
+
+                str_date = str(date).split("-")
+                sd = datetime.strptime(str_date[0] + "-" + str_date[1] + "-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+                ed = datetime.strptime(str_date[0] + "-" + str_date[1] + "-"
+                                       + str(calendar.monthrange(int(str_date[0]), int(str_date[1]))[1]) + " 00:00:00",
+                                       '%Y-%m-%d %H:%M:%S')
+                games = games.filter(game_details__timestart__gte=sd, game_details__timestart__lte=ed)
+                total_players = 0
+                total_loyal_players = 0
+                print(len(games))
+                if len(games) == 0:
+                    return [0, 0]
+                for g in games:
+                    total_loyal_players += g.get_loyal_players
+                    total_players += g.get_team_size_int
+                print(total_loyal_players)
+                return [round(total_loyal_players / total_players, 2) * 100, total_loyal_players]
 
     @staticmethod
     def get_sales_on_date(self, date,gtype, filter_room):
@@ -954,7 +957,7 @@ class Players(models.Model):
 
     @property
     def is_repeating(self):
-        if self.times_repeat >=3 :
+        if Players.objects.filter(email__exact=self.email).count() >= 3:
             return True
         return False
 

@@ -140,12 +140,22 @@
     </div>
 </div>
 <script>
+chartColors = {
+              0: 'rgb(255, 65, 54)',
+              1: 'rgb(239, 206, 0)',
+              2: 'rgb(61, 142, 106)',
+              3: 'rgb(28, 143, 219)',
+              4: 'rgb(255, 118, 0)',
+              5: 'rgb(153, 102, 255)',
+              6: 'rgb(231,233,237)',
+              7: 'rgb(0,0,0)',
+            };
     var totalRetentionChartData = {
-          labels: ['Debbys Doll', 'Alien Assault', 'Aztec Escape', 'Patricks Rock'],
+          labels: [{% for room in retention_per_room %}'{{ room.room_name }}',{% endfor %}],
         datasets: [{
-          label: "Count of anomalies per chart",
-          backgroundColor: ["#39f", "#895df6", "#3cba9f","#3cba9f"],
-          data: [11, 2, 3, 0]
+          label: "Count of Retention",
+          backgroundColor: window.chartColors[2],
+          data: [{% for room in retention_per_room %}'{{ room.retaining_customers.1 }}',{% endfor %}]
         }]
     };
     var retentionCtx = document.getElementById('totalRetentionChart').getContext('2d');
@@ -170,16 +180,7 @@
             });
 
 
-    chartColors = {
-              0: 'rgb(255, 65, 54)',
-              1: 'rgb(239, 206, 0)',
-              2: 'rgb(61, 142, 106)',
-              3: 'rgb(28, 143, 219)',
-              4: 'rgb(255, 118, 0)',
-              5: 'rgb(153, 102, 255)',
-              6: 'rgb(231,233,237)',
-              7: 'rgb(0,0,0)',
-            };
+
         let color = Chart.helpers.color;
     var totalBranchSalesData = {
 			labels: [{% for branch in sales_per_branch %}'{{ branch.branch_name }}',{% endfor %}],

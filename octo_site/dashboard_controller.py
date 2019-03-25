@@ -110,23 +110,16 @@ def own_dashboard(request):
     games = cur_branch.get_games_on_date(None, date, "monthly", None)
     warnings = cur_branch.get_warnings_on_date(None, date, "monthly", None)
     errors = cur_branch.get_errors_on_date(None, date, "monthly", None)
-    #rooms = Room.objects.filter(branch_id=cur_branch.branch_id)
+    rooms = Room.objects.all()
     # computing chart data
-    room_retentions = []
+
     sales_per_branch = cur_branch.get_sales_on_date(None, date, "monthly", "all")
-    '''
+    retention_per_room = []
     for r in rooms:
-        game_played_chart.append({'room_name': r.room_name, 'games_played': len(games.filter(room_id=r.room_id))})
-        room_retentions.append({'room_name': r.room_name,
-                                'retaining_customers': cur_branch.get_retentions_on_date(cur_branch, date, "weekly",
+        retention_per_room.append({'room_name': r.room_name,
+                                'retaining_customers': cur_branch.get_retentions_on_date(r.branch, date, "monthly",
                                                                                          r.room_id)})
-        anomalies_detected.append({'room_name': r.room_name,
-                                   'anomaly_count': len(errors.filter(game__room_id=r.room_id)) + len(
-                                       warnings.filter(game__room_id=r.room_id))})
-        sales_per_weekday.append({'room_name': r.room_name,
-                                  'week_data': cur_branch.get_sales_on_date(cur_branch, date, "weekly", r.room_id)})
-    # computing for the metric above
-    '''
+    print(retention_per_room)
     metrics = {}
     metrics['total_games'] = len(games)
     metrics['comp_total_games'] = metrics['total_games'] - len(
@@ -151,9 +144,8 @@ def own_dashboard(request):
     metrics['total_sales'] = cur_branch.get_sales_on_date(None, date, "monthly", None)
     metrics['comp_total_sales'] = metrics['total_sales'] - cur_branch.get_sales_on_date(None, yesterdate, "monthly", None)
     metrics['abs_total_sales'] = abs(metrics['comp_total_sales'])
-    print(sales_per_branch)
     return render(request, 'octo_site/dashboards/own_dashboard.html',
                   {'games': games, 'metrics': metrics, 'clues': clues,
                    'sales_per_branch': sales_per_branch,
-                   'room_retentions': room_retentions,
+                   'retention_per_room': retention_per_room,
                    'branch': cur_branch, 'cur_date': cur_date_str})
