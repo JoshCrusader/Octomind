@@ -23,15 +23,16 @@
                 </div>
             </div>
             <div>
+            {% load humanize %}
                 <span class="uk-text-small"><span data-uk-icon="icon:hashtag" class="uk-margin-small-right uk-text-primary"></span>Total Sales this Month</span>
-                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">{{ metrics.total_sales }}</h1>
+                <h1 class="uk-heading-primary uk-margin-remove uk-text-primary" id="errors">{{ metrics.total_sales|intcomma }}</h1>
                 <div class="uk-text-small">
                     {% if metrics.comp_total_sales == 0 %}
                     <span class="uk-text-primary">=</span> equal to last month.
                     {% elif metrics.comp_total_sales > 0 %}
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_sales }}</span> games more than last month.
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_sales|intcomma }}</span> games more than last month.
                     {% else %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_sales }}</span>less than last month.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_sales|intcomma }}</span>less than last month.
                     {% endif %}
                 </div>
             </div>
