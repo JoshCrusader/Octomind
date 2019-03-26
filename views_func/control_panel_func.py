@@ -6,7 +6,7 @@ import datetime
 import json
 def control_panel(request):
     if request.method == 'GET':
-        # federate.sync()
+        federate.sync()
         # gamess = Game.objects.all()
         # for gamee in gamess:
         #     offlinegame = Offliclsnegames(gameid = gamee)

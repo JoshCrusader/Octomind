@@ -8,10 +8,7 @@ $.ajax({
         data: {
         },
         success: function(data){
-            console.log("MAP DATA");
             const market = data.data;
-            console.log(market);
-
             // <FUNCTION FOR LOADING MAP> //
             window.map_market.dataProvider.areas = [];
             areas = [],

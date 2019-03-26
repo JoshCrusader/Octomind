@@ -1,0 +1,73 @@
+
+<script>
+function createprovincechart(nlabels, ndata){
+    var createprovincechartctx = document.getElementById('totalCityDistribution').getContext('2d');
+    new Chart(createprovincechartctx, {
+        type: 'bar',
+        data: {
+        labels: nlabels,
+        datasets: [
+            {
+            label: "Population (millions)",
+            backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850", 'rgb(255, 65, 54)', 'rgb(239, 206, 0)'],
+            data: ndata
+            }
+        ]
+        },
+        options: {
+        maintainAspectRatio: false,
+        responsiveAnimationDuration: 500,
+        animation: {
+            duration: 2000
+        },
+        legend: {
+            display: false,
+            position: 'bottom'
+        },
+        title: {
+            display: true,
+            text: 'Customer Count Per /Province'
+        },
+        scales: {
+            yAxes: [
+                {
+                    ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        stepSize: 1  // if i use this it always set it '1', which look very awkward if it have high value  e.g. '100'.
+                    }
+                }
+            ]
+        }
+        }
+    });
+}
+$.ajax({
+        type:"POST",
+        url:"/octo_site/api/get_locs_dashboard/",
+        data: {
+        },
+        success: function(data){
+            console.log("MAP DATA");
+            const market = data.data;
+            const marketlocs = market['locs'];
+            console.log(marketlocs);
+            keysSorted = Object.keys(marketlocs).sort(function(a,b){return marketlocs[b]['value']-marketlocs[a]['value']});
+            labels = [];
+            l2 = []
+            for(var i = 0; i < 8; i++){
+                labels.push(marketlocs[keysSorted[i]]['title'])
+                l2.push(keysSorted[i]);
+            }
+            newdata = [];
+            for(label in l2){
+                newdata.push(marketlocs[l2[label]]['value']);
+            }
+
+
+            console.log(labels);
+            console.log(newdata);
+            createprovincechart(labels,newdata);
+        }
+});
+</script>

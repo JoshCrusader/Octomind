@@ -151,7 +151,7 @@ def get_game_sales(games, req, propr):
         6: 400
     }
 
-    age_dict = ['0-17', '18-22', '23-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65', '66+']
+    age_dict = ['12-17', '18-24', '25-34', '35-44', '45-54', '55-64', '65+']
     stat = 12
 
     setup_sales(req.POST['report_cat'], data, req.POST['date'],req.POST['sd'],req.POST['ed'])
@@ -199,27 +199,19 @@ def get_game_sales(games, req, propr):
             age = player.age
             mg = '' ## huhu brute force is life
             if(age >= 0 and age <= 17):
-                mg = '0-17'
-            elif(age >= 18 and age <= 22):
-                mg = '18-22'
-            elif(age >= 23 and age <= 30):
-                mg = '23-30'
-            elif(age >= 31 and age <= 35):
-                mg = '31-35'
-            elif(age >= 36 and age <= 40):
-                mg = '36-40'
-            elif(age >= 41 and age <= 45):
-                mg = '41-45'
-            elif(age >= 46 and age <= 50):
-                mg = '46-50'
-            elif(age >= 51 and age <= 55):
-                mg = '51-55'
-            elif(age >= 56 and age <= 60):
-                mg = '56-60'
-            elif(age >= 61 and age <= 65):
-                mg = '61-65'
+                mg = '12-17'
+            elif(age >= 18 and age <= 24):
+                mg = '18-24'
+            elif(age >= 25 and age <= 34):
+                mg = '25-34'
+            elif(age >= 35 and age <= 44):
+                mg = '35-44'
+            elif(age >= 45 and age <= 54):
+                mg = '45-54'
+            elif(age >= 55 and age <= 64):
+                mg = '55-64'
             else:
-                mg = '66+'
+                mg = '65+'
             
             if(player.gender == 0):
                 data['gendersales'][0] += solo_dict[teamlen]

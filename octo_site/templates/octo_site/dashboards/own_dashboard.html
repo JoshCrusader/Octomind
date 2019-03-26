@@ -77,14 +77,20 @@
                 <div class="uk-width-1-1@l" >
                     <div class="uk-card uk-card-default uk-card-small uk-card-hover">
                         <div class="uk-card-header">
-                            <div class="uk-grid uk-grid-small">
-                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region</h4></div>
+                            <div class="uk-grid uk-grid-small" style = "float: left;">
+                            
+                                <div class="uk-width-auto"><h4 class="uk-margin-remove-bottom"><span data-uk-icon="icon:history" class="uk-margin-small-right uk-text-primary"></span>Sales Distribution/Region </h4></div>
+                                
                             </div>
+                            <button class="uk-button uk-button-default uk-button-small" style = "float: right" onclick = "tog()" id = "togbut">SHOW IN MAP</button>
                         </div>
                         <div class="uk-card-body">
-                            <div class="uk-overflow-auto">
+                            <div style = "width: 100%%; height: 500px;" id = "tog1">
+                                <canvas id="totalCityDistribution"></canvas>
+                            </div>
+                            <div class="uk-overflow-auto" style = "display: none;" id = "tog2">
                                 <!-- GEOGRAPHIC CHART /Province-->
-                                <div class="chart-container" style="height:60vh;width:100%" >
+                                <div class="chart-container" style="height:60vh;width:100%;" >
                                     <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
                                     <div class = "area-count" style = "position: absolute;width: 200px; height: 300px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important; border: 1px solid black; padding: 3px;">
                                         <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
@@ -96,6 +102,7 @@
                                 </div>
                                 {% comment %} <img src="{% static 'media/mapa1.svg' %}" alt=""> {% endcomment %}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -245,4 +252,35 @@ chartColors = {
 
 {% include 'octo_site/dashboards/cities_graph.html' %}
 {% include 'octo_site/dashboards/map_graph.html' %}
+{% include 'octo_site/dashboards/city_graph.html' %}
 
+<script>
+var istog = false;
+
+function tog(){
+    if(!istog){
+        var elem = document.getElementById("tog1");
+        elem.style.display = "none";
+        
+        elem = document.getElementById("tog2");
+        elem.style.display = "block";
+        istog = true;
+
+
+        elem = document.getElementById("togbut");
+        elem.innerHTML = "SHOW IN BAR CHART";
+    }
+    else{
+        var elem = document.getElementById("tog2");
+        elem.style.display = "none";
+        
+        elem = document.getElementById("tog1");
+        elem.style.display = "block";
+        istog = false;
+        
+        elem = document.getElementById("togbut");
+        elem.innerHTML = "SHOW IN MAP";
+    }
+}
+
+</script>

@@ -17,7 +17,7 @@ def sync():
         client = gspread.authorize(creds)
 
         print("Accessing worksheet...")
-        sheets = client.open_by_key("1Ezm3RSp8q8NMct19IeggjeAZnAQhADMacggcvomIBLg").worksheet("Registration")
+        sheets = client.open_by_key("1rfggoqKWu5pXYmJlJXMrnl42TBaFYCEqXNNnJqqvLC0").worksheet("Registration")
 
         beg_col = 1
         beg_row = Game.objects.all().count() - Offlinegames.objects.all().count()
@@ -35,18 +35,23 @@ def sync():
         for cell in data:
             if(cell.row != curr_row):
                 if(data_obj != {}):
+                    print("NIGA")
                     gamedets = GameDetails(teamname = data_obj['teamname'], solved = 0)
                     gamedets.save()
                     game = Game(room_id = data_obj['room_id'], game_details_id = gamedets.game_details_id, game_keeper_id = data_obj['game_keeper_id'], with_voucher = data_obj['has_voucher'])
                     game.save()
                     if(data_obj['vouchername'] != ''):
+                        print('woot voucher')
                         vouch = Voucher(vouchercode = data_obj['vouchername'], game_game_id=game.game_id)
+                        vouch.save()
                     for i in data_obj['players']:
+                        print(i)
                         players = Players(firstname = i['firstname'], lastname = i['lastname'], contact = i['contact'], gender = i['gender'], email = i['email'], age = i['age'], loc_dictionary_id = i['loc'], times_repeat = 1)
+                        print('sad')
                         players.save()
                         teams = Teams(game_id = game.game_id, players_players_id = players.players_id)
                         teams.save()
-                        cityaddress = PlayersCity(city = i['cityaddress'], players_players_id = players.player_id)
+                        cityaddress = PlayersCity(city = i['cityaddress'], players_players_id = players.players_id)
                         cityaddress.save()
                     print("Finish scanning data")
                 curr_row = cell.row
@@ -75,7 +80,7 @@ def sync():
                         data_obj['players'].append(player_obj)
                 elif (cell.col == 6):
                     data_obj['teamname'] = cell.value
-                elif (cell.col > 7 and cell.value != ''):
+                elif (cell.col > 7 and cell.col <= (7+8*player_cnt)):
                     p_col = cell.col - 8 #player coloumn, starts from 9 but normalize to 0 
                     cur_p = p_col//8 #each player has 7 cols so this is to check if its same player
                     cur_c = p_col%8 #this is get current coloumn with normalization
@@ -98,9 +103,11 @@ def sync():
                         data_obj['players'][cur_p]['cityaddress'] = (cell.value)
                     elif(cur_c == 7):
                         if(cell.value != ''):
+                            print("NO")
                             data_obj['players'][cur_p]['loc'] = LocDictionary.objects.get(loc_title = cell.value).loc_dictionary_id
                         else:
-                            data_obj['players'][cur_p]['loc'] = LocDictionary.objects.get(loc_title = 48).loc_dictionary_id
+                            print("FUQ")
+                            data_obj['players'][cur_p]['loc'] = 48
             
         
         # gamedets = GameDetails(timestart = now_datetime, teamname = "yes")
