@@ -27,8 +27,10 @@ def gen_day():
 def get_m(x):
     if("Apr" in x):
         return 4
-    elif("Myy" in x):
-        return 5
+    elif("Marso" in x):
+        return 3
+    elif("Ma" in x):
+        return 3
     elif("Jun" in x):
         return 6
     elif("Jul" in x):
@@ -45,14 +47,17 @@ def get_m(x):
         return 12
 def popu_start():
     gems = GameDetails.objects.all()
+    curhr = 1
     for gem in gems:
         if(gem.timestart is None):
 
             # day = gen_day()
-            day = gen_r_random(1,30)
-            mon = get_m(gem.teamname)
+            day = 1
+            mon = 4
             det = datetime.datetime(2019, mon, day)
-            delta_time = det+timedelta(hours = 12, minutes = 0, seconds = 0)
+            delta_time = det+timedelta(hours = 0+curhr, minutes = 25, seconds = 0)
+            curhr += 3
             gem.timestart = delta_time
             gem.save()
+            
     pass

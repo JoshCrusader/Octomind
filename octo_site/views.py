@@ -507,10 +507,10 @@ def get_locs_dashboard(request):
     return get_all_market(request)
 
 def randomfunc(request):
-    # games = Game.objects.all()
-    # for game in games:
-    #     offgame = Offlinegames(gameid = game)
-    #     offgame.save()
+    games = Game.objects.all()
+    for game in games:
+        offgame = Offlinegames(gameid = game)
+        offgame.save()
 
     # manila = 48
     # cities = [

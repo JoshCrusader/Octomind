@@ -51,8 +51,9 @@ def sync():
                         players.save()
                         teams = Teams(game_id = game.game_id, players_players_id = players.players_id)
                         teams.save()
-                        cityaddress = PlayersCity(city = i['cityaddress'], players_players_id = players.players_id)
-                        cityaddress.save()
+                        if(i['cityaddress'] != 'Not in Metropolitan Manila'):
+                            cityaddress = PlayersCity(city = i['cityaddress'], players_players_id = players.players_id)
+                            cityaddress.save()
                     print("Finish scanning data")
                 curr_row = cell.row
                 data_obj = {}
