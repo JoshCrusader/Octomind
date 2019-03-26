@@ -116,9 +116,14 @@
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
                                 <div class = "area-count" style = "position: absolute;width: 200px; height: 350px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important;">
-                                    <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold;'>Player distribution per area:</div>
-                                    <div id = "area-legend">
+                                    <div style = 'color: orange; font-size: 15px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-weight: bold; background-color: white; padding: 15px;'>Player distribution per area:</div>
+                                    <div id = "area-legend" style = "background-color: white; padding: 15px;">
                                     </div>
+                                </div>
+                                <div class = "area-count" style = "position: absolute;width: 300px; height: 250px; margin-left: 850px; z-index: 999!important;">
+                                    <canvas id="customerCity"></canvas>
+
+                                    {% include 'octo_site/dashboards/cities_graph.html' %}
                                 </div>
                                 <div id="mapdiv" style="width: 100%; height: 551px;"></div>
                                 
@@ -695,40 +700,28 @@
             // </FUNCTION FOR LOADING TEAMS> //
 
             // <FUNCTION FOR LOADING AGES> //
-            temp_data = [0,0,0,0,0,0,0,0,0,0,0];
+            temp_data = [0,0,0,0,0,0,0];
             for(i in market['ages']){
                 if(i <= 17){
                     temp_data[0] += market['ages'][i];
                 }
-                else if(i <= 22){
+                else if(i <= 24){
                     temp_data[1] += market['ages'][i];
                 }
-                else if(i <= 30){
+                else if(i <= 34){
                     temp_data[2] += market['ages'][i];
                 }
-                else if(i <= 35){
+                else if(i <= 44){
                     temp_data[3] += market['ages'][i];
                 }
-                else if(i <= 40){
+                else if(i <= 54){
                     temp_data[4] += market['ages'][i];
                 }
-                else if(i <= 45){
+                else if(i <= 64){
                     temp_data[5] += market['ages'][i];
                 }
-                else if(i <= 50){
-                    temp_data[6] += market['ages'][i];
-                }
-                else if(i <= 55){
-                    temp_data[7] += market['ages'][i];
-                }
-                else if(i <= 60){
-                    temp_data[8] += market['ages'][i];
-                }
-                else if(i <= 65){
-                    temp_data[9] += market['ages'][i];
-                }
                 else{
-                    temp_data[10] += market['ages'][i];
+                    temp_data[6] += market['ages'][i];
                 }
             }
             age_bar_data.datasets[0].data = temp_data;

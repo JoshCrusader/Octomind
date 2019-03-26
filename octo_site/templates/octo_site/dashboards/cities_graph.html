@@ -5,12 +5,12 @@
     function createChart(nlabels, ndata){
         var customerCityCtx = document.getElementById('customerCity').getContext('2d');
         new Chart(customerCityCtx, {
-            type: 'doughnut',
+            type: 'bar',
             data: {
             labels: nlabels,
             datasets: [
                 {
-                label: "Population (millions)",
+                label: "Player count",
                 backgroundColor: ["#39f", "#895df6","#3cba9f","#e8c3b9","#c45850", 'rgb(255, 65, 54)', 'rgb(239, 206, 0)'],
                 data: ndata
                 }
@@ -23,12 +23,23 @@
                 duration: 2000
             },
             legend: {
-                display: true,
+                display: false,
                 position: 'bottom'
             },
             title: {
                 display: true,
                 text: 'Customer Count Per /City'
+            },
+            scales: {
+                yAxes: [
+                    {
+                        ticks: {
+                            min: 0, // it is for ignoring negative step.
+                            beginAtZero: true,
+                            stepSize: 1  // if i use this it always set it '1', which look very awkward if it have high value  e.g. '100'.
+                        }
+                    }
+                ]
             }
             }
         });
