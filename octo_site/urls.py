@@ -60,6 +60,7 @@ urlpatterns = [
     path('api/get_all_time_data/<int:room_id>/', views.get_all_time_data, name='get_all_time_data'),
     path('api/check_notifs/', views.check_notif, name='check_notif'),
     path('api/open_notifs/', views.open_notif, name='open_notif'),
+    path('api/get_cohort_analysis/<slug:game_ids>/', views.cohort_analysis, name='cohort_analysis'),
 
     path('api/get_cur_phase/<int:game_id>/', views.get_cur_phase, name='get_cur_phase'),
 
@@ -86,6 +87,8 @@ urlpatterns = [
     path('log_distribution/<slug:game_ids>/', views.log_distribution, name='log_distribution'),
     path('log_summary/<slug:game_ids>/', views.log_summary, name='log_summary'),
     path('log_percentage_complete/<slug:game_ids>/', views.log_percentage_complete, name='log_percentage_complete'),
+    path('log_summary/<slug:game_ids>/', views.log_summary, name='log_summary'),
+
     ##
     #handlers
     path('error404/', views.handler404, name='error404'),

@@ -66,6 +66,18 @@ def analyze_game_logs(request,game_ids):
         return redirect('error404')
     for g in gids:
         games.append(Game.objects.get(game_id=g))
+
+    #cohort analysis data
+    total_players = 0
+    first_time_players = {"player_count":None,"avg_completion_time":0,"avg_clues":0,"avg_anomalies":0}
+    loyal_players = {"player_count":None, "avg_completion_time": 0, "avg_clues": 0, "avg_anomalies": 0}
+    players_repeated = {"player_count":None, "avg_completion_time": 0, "avg_clues": 0, "avg_anomalies": 0}
+    players_played_another = {"player_count":None, "avg_completion_time": 0, "avg_clues": 0, "avg_anomalies": 0}
+
+    #get_some data
+    for g in games:
+        total_players += g.get_team_size_int
+
     return render(request, 'octo_site/game_logs/game_logs_analysis.html',
                   {"room_id":games[0].room_id,
                    "room": games[0].room,

@@ -219,6 +219,94 @@ def select_sensor_data(request, game_ids):
     return JsonResponse({"data": data})
 
 @csrf_exempt
+def cohort_analysis(request, game_ids):
+    gids = game_ids.split("-")
+    games = []
+    data = {}
+    # cohort analysis data
+
+    total_players = 0
+    total_loyal_players = 0
+    total_first_time_players = 0
+    total_played_same_players = 0
+    total_played_another_players = 0
+
+    total_loyal_players_iswin = 0
+    total_first_time_players_iswin = 0
+    total_played_same_players_iswin = 0
+    total_played_another_players_iswin = 0
+
+    first_time_players = {"player_count": None, "completion_rate": 0,"completion_val":0}
+    loyal_players = {"player_count": None, "completion_rate": 0,"completion_val":0}
+    players_played_same = {"player_count": None, "completion_rate": 0,"completion_val":0}
+    players_played_another = {"player_count": None, "completion_rate": 0,"completion_val":0}
+
+    for g in gids:
+        games.append(Game.objects.get(game_id=int(g)))
+
+    total_first_time_players_comp = 0
+    total_loyal_players_comp = 0
+    total_played_same_players_comp = 0
+    total_played_another_players_comp = 0
+
+    # get_some data
+    for g in games:
+        total_players += g.get_team_size_int
+        total_first_time_players += g.get_first_time_players
+        total_loyal_players += g.get_loyal_players
+        total_played_same_players += g.get_played_same_players
+        total_played_another_players += g.get_played_another_players
+
+        if g.get_game_conclusion == "solved":
+            total_first_time_players_iswin += g.get_first_time_players
+            total_loyal_players_iswin += g.get_loyal_players
+            total_played_same_players_iswin += g.get_played_same_players
+            total_played_another_players_iswin += g.get_played_another_players
+
+    if total_first_time_players == 0:
+        total_first_time_players_comp = 0
+    else:
+        total_first_time_players_comp = round((total_first_time_players_iswin / total_first_time_players) * 100, 2)
+
+    if total_loyal_players == 0:
+        total_loyal_players_comp = 0
+    else:
+        total_loyal_players_comp = round((total_loyal_players_iswin / total_loyal_players) * 100, 2)
+
+    if total_played_same_players == 0:
+        total_played_same_players_comp = 0
+    else:
+        total_played_same_players_comp = round((total_played_same_players_iswin / total_played_same_players) * 100, 2)
+
+    if total_played_another_players == 0:
+        total_played_another_players_comp = 0
+    else:
+        total_played_another_players_comp = round((total_played_another_players_iswin / total_played_another_players) * 100, 2)
+
+    first_time_players['player_count'] = total_first_time_players
+    first_time_players['completion_rate'] = total_first_time_players_comp
+    first_time_players['completion_val'] = round(total_first_time_players*(total_first_time_players_comp/100),2)
+
+    loyal_players['player_count'] = total_loyal_players
+    loyal_players['completion_rate'] = total_loyal_players_comp
+    loyal_players['completion_val'] = round(total_loyal_players * (total_loyal_players_comp / 100),2)
+
+    players_played_same['player_count'] = total_played_same_players
+    players_played_same['completion_rate'] = total_played_same_players_comp
+    players_played_same['completion_val'] = round(total_played_same_players * (total_played_same_players_comp / 100),2)
+
+    players_played_another['player_count'] = total_played_another_players
+    players_played_another['completion_rate'] = total_played_another_players_comp
+    players_played_another['completion_val'] = round(total_played_another_players * (total_played_another_players_comp / 100),2)
+
+    data['total_players'] = total_players
+    data['first_time_players'] = first_time_players
+    data['loyal_players'] = loyal_players
+    data['players_played_same'] = players_played_same
+    data['players_played_another'] = players_played_another
+
+    return JsonResponse(data)
+@csrf_exempt
 def game_cur_logs(request,game_id):
     g = Game.objects.get(game_id=game_id)
     data = g.pull_data_game(g)

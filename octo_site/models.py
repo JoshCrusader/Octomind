@@ -373,12 +373,36 @@ class Game(models.Model):
     def get_progress_bar(self):
 
         return round(len(self.get_sensor_trigger_sequence)/len(self.room.get_all_sensors),2) * 100
+
+    # Get Teams Functions
     @property
     def get_loyal_players(self):
         ct = 0
         for team in Teams.objects.filter(game_id=self.game_id):
            if team.players_players.is_repeating:
                ct+=1
+        return ct
+
+    @property
+    def get_first_time_players(self):
+        ct = 0
+        for team in Teams.objects.filter(game_id=self.game_id):
+            if team.players_players.is_first_time:
+                ct += 1
+        return ct
+    @property
+    def get_played_same_players(self):
+        ct = 0
+        for team in Teams.objects.filter(game_id=self.game_id):
+            if team.players_players.is_played_same_room(team.players_players,self.room_id):
+                ct += 1
+        return ct
+    @property
+    def get_played_another_players(self):
+        ct = 0
+        for team in Teams.objects.filter(game_id=self.game_id):
+            if team.players_players.is_played_another_room(team.players_players,self.room_id):
+                ct += 1
         return ct
 
     @property
@@ -954,12 +978,43 @@ class Players(models.Model):
     class Meta:
         managed = False
         db_table = 'players'
-
+    @property
+    def get_games_played(self):
+        games = []
+        for player in Players.objects.filter(email__exact=self.email):
+            for team in Teams.objects.filter(players_players_id=player.players_id):
+                games.append(Game.objects.get(game_id=team.game_id))
+        return games
     @property
     def is_repeating(self):
         if Players.objects.filter(email__exact=self.email).count() >= 3:
             return True
         return False
+    @property
+    def is_first_time(self):
+        if Players.objects.filter(email__exact=self.email).count() == 1:
+            return True
+        return False
+
+    @staticmethod
+    def is_played_same_room(self, room_id):
+        ct=0
+        games = self.get_games_played
+        for g in games:
+            if g.room_id == room_id:
+                ct += 1
+            if ct > 1:
+                return True
+        return False
+
+    @staticmethod
+    def is_played_another_room(self, room_id):
+        games = self.get_games_played
+        for g in games:
+            if g.room_id != room_id:
+                return True
+        return False
+
 
 class PlayersCity(models.Model):
     players_city_id = models.AutoField(primary_key=True)

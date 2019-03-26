@@ -77,21 +77,21 @@
     <section class="uk-section uk-article" style="background-color: #f7f7f7;padding: 0px" >
         {% if report_data.has_result %}
 
-        <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 70vh;">
+        <div class="uk-container-expand" id="chart_container" style="margin-left: 0px; display:block;height: 80vh;">
             <div uk-grid>
                 <div class="uk-width-expand@m uk-align-center" >
                     <ul id="component-tab-right" STYLE="margin-left:10vw;"  class="uk-switcher">
-                        <li style="height: 70vh">
+                        <li style="height: 80vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <canvas class="uk-align-center" id="log_dist" ></canvas>
                             </div>
                         </li>
-                        <li style="height: 70vh">
+                        <li style="height: 80vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <canvas class="uk-align-center" id="log_sum" ></canvas>
                             </div>
                         </li>
-                        <li style="height: 70vh">
+                        <li style="height: 80vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
                                 <div id="player_div" style="width: 100%; height: 551px;">
@@ -112,7 +112,11 @@
                                 </div>
                             </div>
                         </li>
-                        <li style="height: 70vh">
+                        <li style="height: 80vh">
+
+                            {% include 'octo_site/includes/game_summaries/cohort_analysis.html' %}
+                        </li>
+                        <li style="height: 80vh">
                             <div class="chart-container" style="height:20vh;width:85%" >
                                 <!-- <canvas class="uk-align-center" id="log_sum" ></canvas> -->
                                 <div class = "area-count" style = "position: absolute;width: 200px; height: 350px; margin-top: 150px; overflow-x: auto; overflow-y: auto;z-index: 999!important;">
@@ -125,7 +129,7 @@
                             </div>
                         </li>
 
-                        <li style="height: 70vh">
+                        <li style="height: 80vh">
                         </li>
                     </ul>
 
@@ -152,6 +156,7 @@
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: users"></span> Player Summary</a></li>
+                            <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: users"></span> Cohort Segmentation</a></li>
                             <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: world"></span> Market Demographics</a></li>
                             <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
                         </ul>

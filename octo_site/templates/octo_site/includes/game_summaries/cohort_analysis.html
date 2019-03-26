@@ -1,0 +1,129 @@
+<style>
+.cohort_el {
+          border: 1px solid #ddd;
+          text-align: left;
+        }
+
+.cohort_table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.cohort_th{
+  padding: 5px;
+}
+</style>
+
+<div style="width: 100%; padding: 20px">
+    <div style = "margin-top: 7vw;width: 20%; height: 100%; float: left;">
+        <table class="cohort_el cohort_table">
+  <tr>
+    <td class="cohort_el cohort_th">Total players: <b id="total_players"></b></td>
+    <th class="cohort_el cohort_th" scope="col">Player Count</th>
+    <th class="cohort_el cohort_th" scope="col">Completion Rate</th>
+  </tr>
+  <tr>
+    <th class="cohort_el cohort_th" scope="row">First Time Players</th>
+    <td class="cohort_el cohort_th" id="r1_player_count">Open</td>
+    <td class="cohort_el cohort_th" id="r1_avg_comp">Open</td>
+  </tr>
+  <tr>
+    <th class="cohort_el cohort_th" scope="row">Loyal Players</th>
+    <td class="cohort_el cohort_th" id="r2_player_count">Open</td>
+    <td class="cohort_el cohort_th" id="r2_avg_comp">Open</td>
+  </tr>
+  <tr>
+    <th class="cohort_el cohort_th" scope="row">Players Played Same Room</th>
+    <td class="cohort_el cohort_th" id="r3_player_count">Open</td>
+    <td class="cohort_el cohort_th" id="r3_avg_comp">Open</td>
+  </tr>
+  <tr>
+    <th class="cohort_el cohort_th" scope="row">Players Played Another Room</th>
+    <td class="cohort_el cohort_th" id="r4_player_count">Open</td>
+    <td class="cohort_el cohort_th" id="r4_avg_comp">Open</td>
+  </tr>
+</table>
+    </div>
+
+    <div style = "width: 80%; height: 100%; float: right;">
+        <div id="container" style="width: 100%;height: 100%">
+          <canvas id="cohortChart"></canvas>
+        </div>
+    </div>
+</div>
+<script>
+    var cohortChartData = {
+      labels: [
+        "First Time Players",
+        "Loyal Players",
+        "Players Played Same Room",
+        "Players Played Another Room",
+      ],
+      datasets: [
+        {
+          label: "Cohorts Count",
+          backgroundColor: "green",
+          borderColor: "red",
+          borderWidth: 1,
+          data: []
+        },
+        {
+          label: "Completed Count",
+          backgroundColor: "yellow",
+          borderColor: "orange",
+          borderWidth: 1,
+          data: []
+        }
+      ]
+    };
+
+      var ctx = document.getElementById("cohortChart").getContext("2d");
+      window.myCohort = new Chart(ctx, {
+        type: "bar",
+        data: cohortChartData,
+        options: {
+          responsive: true,
+          legend: {
+            position: "top"
+          },
+          title: {
+            display: true,
+            text: "Player Segmentation"
+          },
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+            }
+        }
+      });
+    let cohort_data =  $.get("/octo_site/api/get_cohort_analysis/{{ id_slugs }}/");
+     cohort_data.done(function(results){
+         console.log(results);
+         $("#total_players").html(results.total_players);
+         $("#r1_player_count").html(results.first_time_players.player_count);
+         $("#r2_player_count").html(results.loyal_players.player_count);
+         $("#r3_player_count").html(results.players_played_same.player_count);
+         $("#r4_player_count").html(results.players_played_another.player_count);
+         window.myCohort.data.datasets[0].data.push(results.first_time_players.player_count);
+         window.myCohort.data.datasets[0].data.push(results.loyal_players.player_count);
+         window.myCohort.data.datasets[0].data.push(results.players_played_same.player_count);
+         window.myCohort.data.datasets[0].data.push(results.players_played_another.player_count);
+
+         $("#r1_avg_comp").html(results.first_time_players.completion_rate+"%");
+         $("#r2_avg_comp").html(results.loyal_players.completion_rate+"%");
+         $("#r3_avg_comp").html(results.players_played_same.completion_rate+"%");
+         $("#r4_avg_comp").html(results.players_played_another.completion_rate+"%");
+
+         window.myCohort.data.datasets[1].data.push(results.first_time_players.completion_val);
+         window.myCohort.data.datasets[1].data.push(results.loyal_players.completion_val);
+         window.myCohort.data.datasets[1].data.push(results.players_played_same.completion_val);
+         window.myCohort.data.datasets[1].data.push(results.players_played_another.completion_val);
+
+         window.myCohort.update();
+     });
+
+
+</script>
