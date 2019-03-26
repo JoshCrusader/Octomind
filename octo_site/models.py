@@ -981,19 +981,31 @@ class Players(models.Model):
     @property
     def get_games_played(self):
         games = []
-        for player in Players.objects.filter(email__exact=self.email):
+        if self.email is None:
+            players = Players.objects.filter(firstname__exact=self.firstname,lastname__exact=self.lastname)
+        else:
+            players = Players.objects.filter(email__exact=self.email)
+        for player in players:
             for team in Teams.objects.filter(players_players_id=player.players_id):
                 games.append(Game.objects.get(game_id=team.game_id))
         return games
     @property
     def is_repeating(self):
-        if Players.objects.filter(email__exact=self.email).count() >= 3:
-            return True
+        if self.email is None:
+            if Players.objects.filter(firstname__exact=self.firstname,lastname__exact=self.lastname).count() >= 3:
+                return True
+        else:
+            if Players.objects.filter(email__exact=self.email).count() >= 3:
+                return True
         return False
     @property
     def is_first_time(self):
-        if Players.objects.filter(email__exact=self.email).count() == 1:
-            return True
+        if self.email is None:
+            if Players.objects.filter(firstname__exact=self.firstname,lastname__exact=self.lastname).count() == 3:
+                return True
+        else:
+            if Players.objects.filter(email__exact=self.email).count() == 3:
+                return True
         return False
 
     @staticmethod

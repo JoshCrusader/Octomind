@@ -67,19 +67,16 @@
                             <div style="margin-top: 0vh;" uk-grid>
                                 <div class="uk-width-1-1 uk-text-right uk-align-right" style="margin-left: 0px;">
                                     <ul uk-tab="connect: #component-tab-right; animation:  uk-animation-slide-left-medium, uk-animation-slide-right-medium" >
-                                        <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: user"></span> Cohort Analysis</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: grid"></span> Sensor Log Distribution</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: thumbnails"></span> Joint Summary</a></li>
                                         <li><a href="#" onclick="$('#s_plot').show()"><span data-uk-icon="icon: rss"></span> Sensor Mapping</a></li>
                                         <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: table"></span> Overview</a></li>
+                                        <li><a href="#" onclick="$('#s_plot').hide()"><span data-uk-icon="icon: user"></span> Cohort Analysis</a></li>
                                     </ul>
                                 </div>
                                 <div class="uk-width-expand@m uk-align-center" STYLE="margin-top:0px ;">
                                     <ul id="component-tab-right" class="uk-switcher">
-                                    <li style="padding:5vw;height: 85vh">
-                                        <hr class="uk-divider-icon"/>
-                                        {% include 'octo_site/includes/game_summaries/cohort_analysis.html' %}
-                                        </li>
+
                                         <li style="height: 75vh">
                                             <div class="chart-container" style="height:20vh;width:95%" >
                                                 <canvas class="uk-align-center" id="log_dist" ></canvas>
@@ -170,6 +167,10 @@
 
                                             </div>
                                         </li>
+                                        <li style="padding:5vw;height: 85vh">
+                                            <hr class="uk-divider-icon"/>
+                                            {% include 'octo_site/includes/game_summaries/cohort_analysis.html' %}
+                                            </li>
                                     </ul>
                                     <div class ="m-content-wrapper" id="s_plot" style="margin-right: 40vh" >
                                         <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
