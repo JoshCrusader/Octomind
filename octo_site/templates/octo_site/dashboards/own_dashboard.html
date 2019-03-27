@@ -148,13 +148,14 @@
     </div>
 </div>
 <script>
+"#39f", "#895df6","#3cba9f","#e8c3b9","#c45850", 'rgb(255, 65, 54)', 'rgb(239, 206, 0)'
 chartColors = {
               0: 'rgb(255, 65, 54)',
               1: 'rgb(239, 206, 0)',
               2: 'rgb(61, 142, 106)',
-              3: 'rgb(28, 143, 219)',
-              4: 'rgb(255, 118, 0)',
-              5: 'rgb(153, 102, 255)',
+              3: "#c45850",
+              4: "#895df6",
+              5: "#3cba9f",
               6: 'rgb(231,233,237)',
               7: 'rgb(0,0,0)',
             };
@@ -186,8 +187,11 @@ chartColors = {
                 }
               }
             });
-
-
+    var color_ctr = -1;
+    function get_color() {
+        color_ctr ++;
+        return chartColors[color_ctr];
+    }
 
         let color = Chart.helpers.color;
     var totalBranchSalesData = {
@@ -198,7 +202,7 @@ chartColors = {
                         {% if room.sales != 0 %}
 			    {
 				label: '{{ room.room_name }}',
-				backgroundColor: window.chartColors[{{ forloop.counter0 }}],
+				backgroundColor: get_color(),
 				data: [{% for sales in room.sales_arr  %}{{ sales }},{% endfor %}
 				    ]
 			    },
@@ -232,6 +236,13 @@ chartColors = {
                                 }
                                 return "Total Month Sales: "+total;
                             },
+                            label: function(tooltipItem) {
+						        if (tooltipItem.yLabel === 0){
+						            return null;
+                                }
+                                return myTotalBranch.data.datasets[tooltipItem.datasetIndex].label+": "+tooltipItem.yLabel;
+                            }
+
                         }
 					},
 					responsive: true,
