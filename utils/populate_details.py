@@ -32,7 +32,7 @@ def gen_error(chance, dts, si, game):
 
 
 def main_start():
-    games = Game.objects.filter(game_id__gte=387)
+    games = Game.objects.filter(game_id__gte=939)
     for game in games:
         
         rd = gen_random(100)
@@ -81,7 +81,7 @@ def main_start():
 
 
 def sec_start():
-    games = Game.objects.filter(room_id=2).filter(game_id__gte=300)
+    games = Game.objects.filter(room_id=2).filter(game_id__gte=939)
     for game in games:
         detail = game.game_details
         dts = detail.timestart
