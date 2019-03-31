@@ -113,7 +113,6 @@
                             </div>
                         </li>
                         <li style="height: 80vh">
-
                             {% include 'octo_site/includes/game_summaries/cohort_analysis.html' %}
                         </li>
                         <li style="height: 80vh">
@@ -194,8 +193,18 @@
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:clock" class="uk-margin-small-right uk-text-primary"></span>Avg Duration</span>
                         <center>
-                            <h3 class="uk-margin-remove uk-text-primary">{{ report_data.avg_duration }} <small class="uk-text-small">min</small></h3>
+                            <h3 class="uk-margin-remove uk-text-primary" id="dur"><span id="fdur"></span> <div id="fdur_spinner" uk-spinner></div></h3>
                         </center>
+                        <script>
+                            game_comp =  $.get("/octo_site/api/get_game_durations/{{ id_slugs }}/");
+                            game_comp.done(function(results){
+                                console.log(results);
+                                let clean = parseFloat(results.avg_duration).toFixed(2);
+                                $("#fdur_spinner").remove();
+                                $("#dur").text(clean).append('<small class="uk-text-small">min</small>');
+                                $("#fdur").text(clean);
+                            });
+                        </script>
                     </div>
                     <div>
                         <span class="uk-text-small"><span data-uk-icon="icon:users" class="uk-margin-small-right uk-text-success"></span>Retention Rate </span>
@@ -259,7 +268,6 @@
                                                   <th class="uk-width-small">Match ID</th>
                                                   <th class="uk-width-medium">Time Start & End</th>
                                                   <th class="uk-width-medium">Team name</th>
-                                                  <th class="uk-width-medium">Duration</th>
                                                   <th class="uk-width-medium">Anomaly Detection</th>
                                               </tr>
                                           </thead>
@@ -288,18 +296,6 @@
                                                     <td>
                                                         <p class="uk-text-emphasis uk-margin-remove"><b>{{ game.game_details.teamname }}</b></p>
                                                         <p class="uk-text-small uk-margin-remove">{{ game.get_num_clues_asked }} clues asked</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="uk-text-emphasis uk-margin-remove"><b style="color: orange">{{ game.get_duration }}</b> minutes</p>
-                                                        <div class="myProgress">
-                                                            {% if game.get_game_conclusion == "solved" %}
-                                                            <div class="myBar" style="width: {{ game.get_duration }}px"></div>
-                                                            {% elif game.get_game_conclusion == "unsolved" %}
-                                                                <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: black">UNSOLVED</p></div>
-                                                            {% elif game.get_game_conclusion == "forfeit" %}
-                                                                <div class="myBar" style="background-color: orange;width: {{ game.get_duration }}px"><p style="font-size: 10px;color: dimgray">FORFEIT</p></div>
-                                                            {% endif %}
-                                                        </div>
                                                     </td>
                                                     <td>
                                                         {% if game.has_error %}

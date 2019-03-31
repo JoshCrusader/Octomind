@@ -154,6 +154,28 @@ def access_room(request):
         pass
 # AJAX FUNCTIONS
 @csrf_exempt
+def get_game_durations(request,game_ids):
+    gids = game_ids.split("-")
+    games_ctr = 0
+    total_dur = 0
+    for g in gids:
+        total_dur += Game.objects.get(game_id=int(g)).get_duration
+        games_ctr +=1
+    return JsonResponse({"avg_duration":round((total_dur / float(games_ctr)), 2)})
+@csrf_exempt
+def get_clues_data(request,game_ids):
+    players = Players.objects.all()
+    #for p in players:
+    #    if p.email == '2':
+    #        p.email = random.randint(600,800)
+    #        p.save()
+    games = []
+    gids = game_ids.split("-")
+    for game_id in gids:
+        games.append(Game.objects.get(game_id=game_id).get_data_clues)
+    return JsonResponse({"data": games})
+
+@csrf_exempt
 def get_game_duration(request,game_id):
     game = Game.objects.get(game_id=game_id)
     return JsonResponse({"duration":game.get_duration,"final_duration":game.get_final_duration})
@@ -236,10 +258,10 @@ def cohort_analysis(request, game_ids):
     total_played_same_players_iswin = 0
     total_played_another_players_iswin = 0
 
-    first_time_players = {"player_count": None, "completion_rate": 0,"completion_val":0}
-    loyal_players = {"player_count": None, "completion_rate": 0,"completion_val":0}
-    players_played_same = {"player_count": None, "completion_rate": 0,"completion_val":0}
-    players_played_another = {"player_count": None, "completion_rate": 0,"completion_val":0}
+    first_time_players = {"player_count": None,"player_count_rate": None, "completion_rate": 0,"completion_val":0}
+    loyal_players = {"player_count": None,"player_count_rate": None, "completion_rate": 0,"completion_val":0}
+    players_played_same = {"player_count": None,"player_count_rate": None, "completion_rate": 0,"completion_val":0}
+    players_played_another = {"player_count": None,"player_count_rate": None, "completion_rate": 0,"completion_val":0}
 
     for g in gids:
         games.append(Game.objects.get(game_id=int(g)))
@@ -251,18 +273,24 @@ def cohort_analysis(request, game_ids):
 
     # get_some data
     for g in games:
+        inc_1 = g.get_first_time_players
+        inc_2 = g.get_loyal_players
+        inc_3 = g.get_played_same_players
+        inc_4 = g.get_played_another_players
+
         total_players += g.get_team_size_int
-        total_first_time_players += g.get_first_time_players
-        total_loyal_players += g.get_loyal_players
-        total_played_same_players += g.get_played_same_players
-        total_played_another_players += g.get_played_another_players
+        total_first_time_players += inc_1
+        total_loyal_players += inc_2
+        total_played_same_players += inc_3
+        total_played_another_players += inc_4
 
         if g.get_game_conclusion == "solved":
-            total_first_time_players_iswin += g.get_first_time_players
-            total_loyal_players_iswin += g.get_loyal_players
-            total_played_same_players_iswin += g.get_played_same_players
-            total_played_another_players_iswin += g.get_played_another_players
+            total_first_time_players_iswin += inc_1
+            total_loyal_players_iswin += inc_2
+            total_played_same_players_iswin += inc_3
+            total_played_another_players_iswin += inc_4
 
+        print("oompa looping: ",g.game_id)
     if total_first_time_players == 0:
         total_first_time_players_comp = 0
     else:
@@ -284,18 +312,22 @@ def cohort_analysis(request, game_ids):
         total_played_another_players_comp = round((total_played_another_players_iswin / total_played_another_players) * 100, 2)
 
     first_time_players['player_count'] = total_first_time_players
+    first_time_players['player_count_rate'] = round((total_first_time_players/total_players)*100,2)
     first_time_players['completion_rate'] = total_first_time_players_comp
     first_time_players['completion_val'] = round(total_first_time_players*(total_first_time_players_comp/100),2)
 
     loyal_players['player_count'] = total_loyal_players
+    loyal_players['player_count_rate'] = round((total_loyal_players/total_players)*100,2)
     loyal_players['completion_rate'] = total_loyal_players_comp
     loyal_players['completion_val'] = round(total_loyal_players * (total_loyal_players_comp / 100),2)
 
     players_played_same['player_count'] = total_played_same_players
+    players_played_same['player_count_rate'] = round((total_played_same_players/total_players)*100,2)
     players_played_same['completion_rate'] = total_played_same_players_comp
     players_played_same['completion_val'] = round(total_played_same_players * (total_played_same_players_comp / 100),2)
 
     players_played_another['player_count'] = total_played_another_players
+    players_played_another['player_count_rate'] = round((total_played_another_players/total_players)*100,2)
     players_played_another['completion_rate'] = total_played_another_players_comp
     players_played_another['completion_val'] = round(total_played_another_players * (total_played_another_players_comp / 100),2)
 
@@ -304,7 +336,7 @@ def cohort_analysis(request, game_ids):
     data['loyal_players'] = loyal_players
     data['players_played_same'] = players_played_same
     data['players_played_another'] = players_played_another
-
+    print("cohort data:",data)
     return JsonResponse(data)
 @csrf_exempt
 def game_cur_logs(request,game_id):

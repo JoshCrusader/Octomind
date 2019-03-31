@@ -37,9 +37,13 @@ def compute_report_data(games):
 
     for g in games:
         for clue in Clues.objects.filter(game_id=g.game_id):
-            clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
-            sensors[clue.clue_details.get_sensor_asked] += 1
-
+            try:
+                clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
+                sensors[clue.clue_details.get_sensor_asked] += 1
+            except:
+                cid = ClueItemDetails(clue_id=clue.clue_id,clue_item_id=random.randint(1,15))
+                cid.save()
+                print("clue: ", clue.clue_id," saved")
         if g.is_solved:
             report_data["win"] += 1
         else:
@@ -55,7 +59,7 @@ def compute_report_data(games):
 
         report_data["retention_rate"] += g.get_loyal_players
         report_data["avg_clues_asked"] += g.get_num_clues_asked
-        report_data["avg_duration"] += g.get_duration
+        report_data["avg_duration"] += 1
 
     try:
         for key,value in clues.items():
@@ -89,7 +93,7 @@ def compute_report_data(games):
         report_data["retention_rate"] = round((report_data["retention_rate"] / float(total_team_size)) * 100, 2)
         report_data["completion_rate"] = round((report_data["win"]/float(len(games)))*100, 2)
         report_data["avg_clues_asked"] = round((report_data["avg_clues_asked"]/float(len(games))), 2)
-        report_data["avg_duration"] = round((report_data["avg_duration"] / float(len(games))), 2)
+        report_data["avg_duration"] = 0
         report_data["has_errors"] = round((report_data["has_errors"]/float(len(games)))*100, 2)
         report_data["warnings"] = round((report_data["warnings"]/float(len(games)))*100, 2)
     except Exception as e:

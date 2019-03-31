@@ -143,12 +143,13 @@
 </script>
 <script>
     function initClue() {
-        {% for game in games %}
-               clue_data = $.get("/octo_site/api/get_clue_data/{{ game.game_id }}/");
-               clue_data.done(function(results){
-                    let obj = results.data;
-                    if (obj.length !== 0){
-                    console.log("clue info", results.data);
+           clue_data = $.get("/octo_site/api/get_clues_data/{{ id_slugs }}/");
+           clue_data.done(function(results){
+                let obj_len = results.data;
+                if (obj_len.length !== 0){
+                console.log("clue info: ", results.data);
+                    for (g in results.data){
+                       obj = results.data[g];
                        for (ob in obj)
                        {
                            bubbleChartData.datasets[bubbleChartData.datasets.length-2].data.push({x:obj[ob].minute_asked, y:0.0});
@@ -163,7 +164,7 @@
                            $('#ov_clues_tbl').append(str_app);
                        }
                     }
-                });
-               {% endfor %}
+                }
+            });
     }
 </script>

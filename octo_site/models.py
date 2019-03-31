@@ -1001,10 +1001,10 @@ class Players(models.Model):
     @property
     def is_first_time(self):
         if self.email is None:
-            if Players.objects.filter(firstname__exact=self.firstname,lastname__exact=self.lastname).count() == 3:
+            if Players.objects.filter(firstname__exact=self.firstname,lastname__exact=self.lastname).count() == 1:
                 return True
         else:
-            if Players.objects.filter(email__exact=self.email).count() == 3:
+            if Players.objects.filter(email__exact=self.email).count() == 1:
                 return True
         return False
 

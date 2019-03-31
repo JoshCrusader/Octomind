@@ -15,7 +15,7 @@
 </style>
 
 <div style="width: 100%; padding: 20px">
-    <div style = "margin-top: 7vw;width: 20%; height: 100%; float: left;">
+    <div style = "margin-top: 7vw;width: 25%; height: 100%; float: left;">
         <table class="cohort_el cohort_table">
   <tr>
     <td class="cohort_el cohort_th">Total players: <b id="total_players"></b></td>
@@ -28,7 +28,7 @@
     <td class="cohort_el cohort_th" id="r1_avg_comp">Open</td>
   </tr>
   <tr>
-    <th class="cohort_el cohort_th" scope="row">Went back more then 3 Times Players</th>
+    <th class="cohort_el cohort_th" scope="row">Players played more than 3 Times</th>
     <td class="cohort_el cohort_th" id="r2_player_count">Open</td>
     <td class="cohort_el cohort_th" id="r2_avg_comp">Open</td>
   </tr>
@@ -45,7 +45,7 @@
 </table>
     </div>
 
-    <div style = "width: 80%; height: 100%; float: right;">
+    <div style = "width: 75%; height: 100%; float: right;">
         <div id="container" style="width: 100%;height: 100%">
           <canvas id="cohortChart"></canvas>
         </div>
@@ -103,10 +103,10 @@
      cohort_data.done(function(results){
          console.log(results);
          $("#total_players").html(results.total_players);
-         $("#r1_player_count").html(results.first_time_players.player_count);
-         $("#r2_player_count").html(results.loyal_players.player_count);
-         $("#r3_player_count").html(results.players_played_same.player_count);
-         $("#r4_player_count").html(results.players_played_another.player_count);
+         $("#r1_player_count").html(results.first_time_players.player_count+"<br>("+results.first_time_players.player_count_rate+"%)");
+         $("#r2_player_count").html(results.loyal_players.player_count+"<br>("+results.loyal_players.player_count_rate+"%)");
+         $("#r3_player_count").html(results.players_played_same.player_count+"<br>("+results.players_played_same.player_count_rate+"%)");
+         $("#r4_player_count").html(results.players_played_another.player_count+"<br>("+results.players_played_another.player_count_rate+"%)");
          window.myCohort.data.datasets[0].data.push(results.first_time_players.player_count);
          window.myCohort.data.datasets[0].data.push(results.loyal_players.player_count);
          window.myCohort.data.datasets[0].data.push(results.players_played_same.player_count);
