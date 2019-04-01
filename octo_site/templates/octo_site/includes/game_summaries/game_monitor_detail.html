@@ -1,5 +1,14 @@
 <script>
-
+    monitorchartColors = {
+              red: 'rgb(255, 65, 54,0.45)',
+              yellow: 'rgb(239, 206, 0,0.45)',
+              green: 'rgb(61, 142, 106,0.45)',
+              blue: 'rgb(28, 143, 219,0.45)',
+              orange: 'rgb(255, 118, 0,0.45)',
+              purple: 'rgb(153, 102, 255,0.45)',
+              grey: 'rgb(231,233,237,0.45)',
+              black: 'rgb(0,0,0,0.25)',
+            };
     let live_config = {
         type: 'line',
         data: {
@@ -50,12 +59,13 @@
                         labelString: 'Activation Status'
                     },
                     ticks: {
-                            beginAtZero: true,
-                            steps: 0,
-                            min:0,
-                            stepValue: 5,
-                            max: 1.0001
-                        }
+                        beginAtZero: true,
+                        steps: 0,
+                        min:0,
+                        max:1.01,
+                        stepValue: 1.01,
+                        stepSize: 1.01,
+                    }
                 }]
             }
         }
@@ -74,7 +84,7 @@
                for (i in obj)
                {
                    colorName = colorNames[live_config.data.datasets.length % colorNames.length];
-                   newColor = chartColors[colorName];
+                   newColor = monitorchartColors[colorName];
                    newXAxis = {
                         id: "id-"+i,
                         type: 'time',
@@ -93,9 +103,10 @@
                         label: obj[i].sensor_name,
                         xAxisID:"id-"+i,
                         steppedLine: true,
-                        pointStyle: 'circle',
-                        backgroundColor: color(newColor).alpha(0.2).rgbString(),
-                        borderColor: newColor,
+                        pointStyle: 'rectRot',backgroundColor: color(newColor).alpha((parseInt(i)+6)/10).rgbString(),
+                        borderColor: color(newColor).alpha((parseInt(i)+6)/10).rgbString(),
+                        radius:4.0,
+                        borderWidth:4,
                         data: [],
                         fill: false
                    };

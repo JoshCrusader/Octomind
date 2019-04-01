@@ -364,7 +364,7 @@ function callData(){
                    window.myLine.update();
                 for (ob in obj)
                 {
-                   config.data.datasets[config.data.datasets.length-1].data.push({x:new Date(obj[ob].timestamp),y:-0.4});
+                   config.data.datasets[config.data.datasets.length-1].data.push({x:new Date(obj[ob].timestamp),y:0});
                    config.data.clues_data.push({'phase_name':obj[ob].phase_name,'detail':obj[ob].detail});
                    window.myLine.update();
                 }
