@@ -23,7 +23,7 @@
                     {% if metrics.comp_total_errors == 0 %}
                     <span class="uk-text-warning">=</span> equal to yesterday.
                     {% elif metrics.comp_total_errors > 0 %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_errors }}</span> errors more than yesterday.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_errors }}</span> errors more than yesterday.
                     {% else %}
                     <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_errors }}</span> errors less than yesterday.
                     {% endif %}
@@ -37,9 +37,9 @@
                     {% if metrics.comp_total_warnings == 0 %}
                     <span class="uk-text-warning">=</span> equal to yesterday.
                     {% elif metrics.comp_total_warnings > 0 %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_warnings }}</span> errors more than yesterday.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_warnings }}</span> warnings more than yesterday.
                     {% else %}
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_warnings }}</span> errors less than yesterday.
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_warnings }}</span> warnings less than yesterday.
                     {% endif %}
                 </div>
             </div>
@@ -77,11 +77,10 @@
                                   {% for game in games%}
                                         <tr class="tbl_toggle" style="cursor:pointer">
                                             <td>
-
                                                 {% if game.is_ongoing %}
-                                                    <b style="color: cornflowerblue">{{ game.match_id }}</b>
+                                                    <a href="view_room/{{ game.game_id }}"><b>{{ game.match_id }}</b></a>
                                                 {% else %}
-                                                    <a href="game/{{ game.game_id }}/"><b>{{ game.match_id }}</b></a>
+                                                    <a href="view_room/{{ game.game_id }}"><b>{{ game.match_id }}</b></a>
                                                 {% endif %}
                                                 <p class="uk-text-small uk-margin-remove txt_light_gray .uk-text-truncate">{{ game.get_time_ago }}</p>
                                             </td>

@@ -92,7 +92,6 @@ def os_dashboard(request):
     metrics['comp_total_retentions'] = metrics['total_retentions'] - cur_branch.get_retentions_on_date(cur_branch, yesterdate, "weekly",None)[0]
     metrics['abs_total_retentions'] = abs(metrics['comp_total_retentions'])
 
-    print("sales",sales_per_weekday)
     return render(request, 'octo_site/dashboards/os_dashboard.html',
                   {'games': games,'metrics':metrics,
                    'games_played_chart':game_played_chart,
@@ -119,7 +118,7 @@ def own_dashboard(request):
         retention_per_room.append({'room_name': r.room_name,
                                 'retaining_customers': cur_branch.get_retentions_on_date(r.branch, date, "monthly",
                                                                                          r.room_id)})
-    print(retention_per_room)
+
     metrics = {}
     metrics['total_games'] = len(games)
     metrics['comp_total_games'] = metrics['total_games'] - len(
@@ -138,12 +137,14 @@ def own_dashboard(request):
 
     metrics['total_anomalies'] = metrics['total_errors'] + metrics['total_warnings']
     metrics['comp_total_anomalies'] = metrics['total_anomalies'] - (
-        metrics['total_errors'] + metrics['total_warnings'])
+        metrics['abs_total_errors'] + metrics['abs_total_warnings'])
+
     metrics['abs_total_anomalies'] = abs(metrics['comp_total_anomalies'])
 
     metrics['total_sales'] = cur_branch.get_sales_on_date(None, date, "monthly", None)
     metrics['comp_total_sales'] = metrics['total_sales'] - cur_branch.get_sales_on_date(None, yesterdate, "monthly", None)
     metrics['abs_total_sales'] = abs(metrics['comp_total_sales'])
+    print("metrics: ",metrics)
     return render(request, 'octo_site/dashboards/own_dashboard.html',
                   {'games': games, 'metrics': metrics, 'clues': clues,
                    'sales_per_branch': sales_per_branch,

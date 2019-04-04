@@ -43,9 +43,9 @@
                     {% if metrics.comp_total_anomalies == 0 %}
                     <span class="uk-text-warning">=</span> equal to last month.
                     {% elif metrics.comp_total_anomalies > 0 %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_anomalies }}</span> errors more than last month.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_anomalies }}</span> anomalies more than last month.
                     {% else %}
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_anomalies }}</span> errors less than last month.
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_anomalies }}</span> anomalies less than last month.
                     {% endif %}
                 </div>
             </div>

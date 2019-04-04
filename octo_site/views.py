@@ -165,10 +165,10 @@ def get_game_durations(request,game_ids):
 @csrf_exempt
 def get_clues_data(request,game_ids):
     players = Players.objects.all()
-    #for p in players:
-    #    if p.email == '2':
-    #        p.email = random.randint(600,800)
-    #        p.save()
+   # for p in players:
+    #    if int(p.email) >= 801 and int(p.email) <=840:
+     #       p.email = random.randint(801,1000)
+      #      p.save()
     games = []
     gids = game_ids.split("-")
     for game_id in gids:

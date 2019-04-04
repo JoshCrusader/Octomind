@@ -388,6 +388,7 @@ class Game(models.Model):
         ct = 0
         for team in Teams.objects.filter(game_id=self.game_id):
             if team.players_players.is_first_time:
+                #print("first time player: ", team.players_players.players_id, "|email: ", team.players_players.email)
                 ct += 1
         return ct
     @property

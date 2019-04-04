@@ -41,9 +41,8 @@ def compute_report_data(games):
                 clues[ClueItemDetails.objects.get(clue_id=clue.clue_id).clue_item_id] += 1
                 sensors[clue.clue_details.get_sensor_asked] += 1
             except:
-                cid = ClueItemDetails(clue_id=clue.clue_id,clue_item_id=random.randint(1,15))
+                cid = ClueItemDetails(clue_id=clue.clue_id,clue_item_id=random.randint(2,15))
                 cid.save()
-                print("clue: ", clue.clue_id," saved")
         if g.is_solved:
             report_data["win"] += 1
         else:
