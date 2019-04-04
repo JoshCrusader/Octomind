@@ -12,7 +12,7 @@
                     {% elif metrics.comp_total_games > 0 %}
                     <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_games }}</span> games more than yesterday.
                     {% else %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_games }}</span>less than yesterday.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_games }}</span>games less than yesterday.
                     {% endif %}
                 </div>
             </div>
@@ -23,9 +23,9 @@
                     {% if metrics.comp_total_errors == 0 %}
                     <span class="uk-text-warning">=</span> equal to yesterday.
                     {% elif metrics.comp_total_errors > 0 %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_errors }}</span> errors more than yesterday.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_errors }}</span> errors more than yesterday.
                     {% else %}
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_errors }}</span> errors less than yesterday.
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_errors }}</span> errors less than yesterday.
                     {% endif %}
                 </div>
             </div>
@@ -37,9 +37,9 @@
                     {% if metrics.comp_total_warnings == 0 %}
                     <span class="uk-text-warning">=</span> equal to yesterday.
                     {% elif metrics.comp_total_warnings > 0 %}
-                    <span class="uk-text-warning" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_warnings }}</span> warnings more than yesterday.
+                    <span class="uk-text-warning" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_warnings }}</span> warnings more than yesterday.
                     {% else %}
-                    <span class="uk-text-success" data-uk-icon="icon: triangle-up">{{ metrics.abs_total_warnings }}</span> warnings less than yesterday.
+                    <span class="uk-text-success" data-uk-icon="icon: triangle-down">{{ metrics.abs_total_warnings }}</span> warnings less than yesterday.
                     {% endif %}
                 </div>
             </div>

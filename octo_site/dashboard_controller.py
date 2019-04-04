@@ -16,7 +16,7 @@ def gk_dashboard(request):
     unstarted_games_arr = []
     unstarted_games = Game.objects.filter(game_details__timestart__isnull=True)
     for g in reversed(all_g):
-        if len(games) >= 5:
+        if len(games) >= 6:
             break
         if cur_branch.branch_id == g.room.branch_id:
             games.append(g)
@@ -85,13 +85,14 @@ def os_dashboard(request):
 
     metrics['total_anomalies'] = metrics['total_errors'] + metrics['total_warnings']
     metrics['comp_total_anomalies'] = metrics['total_anomalies'] - (
-        metrics['total_errors']+metrics['total_warnings'])
+        metrics['abs_total_errors'] + metrics['abs_total_warnings'])
+
     metrics['abs_total_anomalies'] = abs(metrics['comp_total_anomalies'])
 
     metrics['total_retentions'] = retentions[0]
     metrics['comp_total_retentions'] = metrics['total_retentions'] - cur_branch.get_retentions_on_date(cur_branch, yesterdate, "weekly",None)[0]
     metrics['abs_total_retentions'] = abs(metrics['comp_total_retentions'])
-
+    print(metrics)
     return render(request, 'octo_site/dashboards/os_dashboard.html',
                   {'games': games,'metrics':metrics,
                    'games_played_chart':game_played_chart,
