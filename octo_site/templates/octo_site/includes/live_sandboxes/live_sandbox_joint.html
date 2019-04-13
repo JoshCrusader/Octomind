@@ -76,7 +76,7 @@
 
             var t1n = "sensor-tip-"+pathdom.getAttribute("target1");
             var t2n = "sensor-tip-"+pathdom.getAttribute("target2");
-
+            console.log("t1n: "+t1n+" t2n: "+t2n);
             var p1 = document.getElementById(t1n);
             var p2 = document.getElementById(t2n);
 
@@ -100,7 +100,14 @@
 
             var l = pathdom;
             console.log(new_opacity+"px")
-            l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;background-color: rgba(0,255,0,"+new_opacity+");");
+            if(t1n == "sensor-tip-26" && t2n == "sensor-tip-27"
+             ||t1n == "sensor-tip-27" && t2n == "sensor-tip-28"
+             ||t1n == "sensor-tip-28" && t2n == "sensor-tip-29"){
+                l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;background-color: rgba(0,255,0,"+new_opacity+");");
+            }
+            else{
+                l.setAttribute("style", "transform: rotate("+theta_radians+"deg); position: absolute;background-color: rgba(200,0,0,"+new_opacity+");");
+            }
             l.style.top = p1.offsetTop+"px";
             l.style.left = p1.offsetLeft+"px";
             l.style.width = hypotenuse+"px";

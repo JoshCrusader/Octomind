@@ -138,6 +138,7 @@
                     </ul>
 
             <div class ="m-content-wrapper uk-position-center" id="s_plot" style="opacity:0.0;margin-bottom:10vh;height: 400px;width: 360px" >
+            This sensor mapping shows an estimate of the most heated (frequently visited) area of the room, A path is shown from a puzzle to another and its transparency is relative to its frequency. a <span style = "color: rgb(0,255,0)">green</span> path indicates correct pathing and <span style = "color: rgb(200,0,0)">red</span> indicated incorrect pathing.
                         <button class="uk-button uk-button-secondary" style="display: none;" type="button" onClick = ""  roomid = "{{ room_id }}" id = "mainInfo">Save</button>
                         <div class = "m-sandbox-content card-lite uk-card-hover" style="height: 400px">
                             <div class = "m-sandbox-frame" style="margin-right: 40vh;height: 360px;width: 360px">
@@ -245,7 +246,8 @@
                 <div class="uk-width-expand uk-text-right">
                     <label uk-tooltip="Show Reports with a summary chart"><input class="uk-checkbox" type="checkbox" onclick="show_chart(this)"> Chart</label> |
                     <label uk-tooltip="Show summary insights"><input class="uk-checkbox" type="checkbox"  onclick="show_summary(this)" checked> Summary</label> |
-                    <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a>
+                    <a href="#" uk-tooltip="Print Report" onclick="window.print()" ><i class="fa fa-print" style="font-size: 22px"></i></a> | 
+                    <a href="#" uk-tooltip="Compare to Previous Period" onclick="window.print()" ><i class="fa fa-file" style="font-size: 22px"></i></a>
                 </div>
             </div>
         </div>

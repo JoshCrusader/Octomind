@@ -199,6 +199,7 @@
                 </ul>
             </div>
             <div>
+                <div id = "teamn"></div>
                 Members:
                 <div id = "memberlist">
                     <div>None</div>
@@ -282,6 +283,7 @@ function addInfo(target){
             success: function(data){
                 var players = data.data;
                 var teamname = data.teamname;
+                $("#teamn").append('<b>TEAM:</b> '+teamname+"<br>");
                 if(players.length == 0){
                     $("#memberlist").empty();
                     $("#memberlist").append('<div>None</div>');
